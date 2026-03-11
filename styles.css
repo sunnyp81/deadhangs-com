@@ -47,12 +47,9 @@ body {
   display: flex; justify-content: space-between; align-items: center;
 }
 .logo {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 18px; font-weight: 800;
-  color: #0f172a; text-decoration: none;
-  letter-spacing: 2px;
-  background: none; -webkit-text-fill-color: unset;
-  -webkit-background-clip: unset; background-clip: unset;
+  text-decoration: none;
+  display: flex; align-items: center;
+  flex-shrink: 0;
 }
 .nav-links { display: flex; gap: 32px; list-style: none; }
 .nav-links a {

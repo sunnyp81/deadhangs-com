@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 44" role="img" aria-label="DeadHangs logo">
+  <!-- Pull-up bar -->
+  <rect x="4" y="10" width="36" height="5" rx="2.5" fill="#ea580c"/>
+  <!-- Bar end caps -->
+  <rect x="2" y="8" width="5" height="9" rx="2" fill="#c2410c"/>
+  <rect x="37" y="8" width="5" height="9" rx="2" fill="#c2410c"/>
+
+  <!-- Left hand grip -->
+  <rect x="11" y="15" width="7" height="5" rx="2" fill="#0f172a"/>
+  <!-- Right hand grip -->
+  <rect x="26" y="15" width="7" height="5" rx="2" fill="#0f172a"/>
+
+  <!-- Left arm -->
+  <line x1="14.5" y1="20" x2="16" y2="29" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Right arm -->
+  <line x1="29.5" y1="20" x2="28" y2="29" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Head -->
+  <circle cx="22" cy="26" r="4.5" fill="#0f172a"/>
+
+  <!-- Torso -->
+  <line x1="22" y1="30" x2="22" y2="39" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Legs -->
+  <line x1="22" y1="39" x2="18" y2="43" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="39" x2="26" y2="43" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Wordmark -->
+  <text x="52" y="30" font-family="'Barlow Condensed', 'Arial Narrow', Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a" letter-spacing="1.5">DEADHANGS</text>
+</svg>
