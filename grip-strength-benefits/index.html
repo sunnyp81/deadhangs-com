@@ -9,7 +9,7 @@
   <link rel="canonical" href="https://deadhangs.com/grip-strength-benefits/" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 
   <!-- Article Schema -->
@@ -75,15 +75,26 @@
     <div class="ambient-orb orb-3"></div>
   </div>
   <div class="content">
-    <nav class="nav">
+        <nav class="nav">
       <div class="nav-inner">
-        <a href="/" class="logo"><img src="/logo.svg" alt="DeadHangs" height="36" width="auto" style="display:block;height:36px;width:auto;"></a>
+        <a href="/" class="logo">DEADHANGS</a>
         <ul class="nav-links">
           <li><a href="/deadhang-benefits/">Benefits</a></li>
           <li><a href="/how-to-deadhang/">How To</a></li>
           <li><a href="/training-programs/">Programs</a></li>
           <li><a href="/equipment-guide/">Equipment</a></li>
         </ul>
+        <button class="nav-hamburger" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+      <div class="mobile-nav" id="mobile-nav">
+        <a href="/deadhang-benefits/">Benefits</a>
+        <a href="/how-to-deadhang/">How To</a>
+        <a href="/training-programs/">Programs</a>
+        <a href="/equipment-guide/">Equipment</a>
+        <a href="/grip-strength/">Grip Strength</a>
+        <a href="/deadhang-progressions/">Progressions</a>
       </div>
     </nav>
     <div class="container">
@@ -261,7 +272,79 @@
       </ol>
     </div>
     </article>
-    <footer class="footer"><div class="container"><div class="footer-links"><a href="/about/">About</a><a href="/privacy/">Privacy Policy</a><a href="/editorial-standards/">Editorial Standards</a><a href="mailto:hello@deadhangs.com">Contact</a></div><p>&copy; 2026 DeadHangs.com. All rights reserved. Content reviewed by certified fitness professionals.</p></div></footer>
+        <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="/" class="footer-logo">DEADHANGS</a>
+            <p class="footer-tagline">The definitive resource for dead hang training, grip strength, and shoulder health.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Guides</h4>
+            <a href="/deadhang-benefits/">Benefits & Science</a>
+            <a href="/how-to-deadhang/">Form Guide</a>
+            <a href="/training-programs/">Programs</a>
+            <a href="/deadhang-progressions/">Progressions</a>
+          </div>
+          <div class="footer-col">
+            <h4>Topics</h4>
+            <a href="/grip-strength/">Grip Strength</a>
+            <a href="/shoulder-health/">Shoulder Health</a>
+            <a href="/spine-decompression/">Spinal Decompression</a>
+            <a href="/equipment-guide/">Equipment</a>
+          </div>
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <a href="/longevity-research/">Longevity Research</a>
+            <a href="/deadhang-safety/">Safety Guide</a>
+            <a href="/community/">Community</a>
+            <a href="/about/">About</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 DeadHangs.com. Independent fitness resource.</p>
+          <div class="footer-links">
+            <a href="/privacy/">Privacy</a>
+            <a href="/editorial-standards/">Editorial Standards</a>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
+
+    <script>
+      // Hamburger nav
+      var toggle = document.getElementById('nav-toggle');
+      var mobileNav = document.getElementById('mobile-nav');
+      if (toggle && mobileNav) {
+        toggle.addEventListener('click', function() {
+          var open = mobileNav.classList.toggle('open');
+          toggle.classList.toggle('active', open);
+          toggle.setAttribute('aria-expanded', open);
+        });
+      }
+    </script>
+
+<!-- Cookie consent banner -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#111827;color:#fff;padding:1rem;box-shadow:0 -2px 12px rgba(0,0,0,0.3)">
+  <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:1rem">
+    <p style="margin:0;font-size:0.875rem;color:#d1d5db;flex:1;min-width:200px">
+      We use cookies to improve your experience. By continuing to use this site you agree to our
+      <a href="/privacy" style="color:#fff;text-decoration:underline">Privacy Policy</a>.
+    </p>
+    <div style="display:flex;gap:0.75rem;flex-shrink:0">
+      <button id="cookie-accept" style="background:#0d9488;color:#fff;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;cursor:pointer">Accept</button>
+      <button id="cookie-decline" style="background:#374151;color:#d1d5db;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;cursor:pointer">Decline</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('cookie-banner');
+  if(!localStorage.getItem('cookie-consent')&&b){b.style.display='block';}
+  document.getElementById('cookie-accept').onclick=function(){localStorage.setItem('cookie-consent','accepted');b.style.display='none';};
+  document.getElementById('cookie-decline').onclick=function(){localStorage.setItem('cookie-consent','declined');b.style.display='none';};
+})();
+</script>
 </body>
 </html>

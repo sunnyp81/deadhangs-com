@@ -9,5 +9,40 @@
 </head>
 <body>
   <p>This page has moved. <a href="/dead-hang-world-record/">Click here for Dead Hang World Records</a>.</p>
+
+    <script>
+      // Hamburger nav
+      var toggle = document.getElementById('nav-toggle');
+      var mobileNav = document.getElementById('mobile-nav');
+      if (toggle && mobileNav) {
+        toggle.addEventListener('click', function() {
+          var open = mobileNav.classList.toggle('open');
+          toggle.classList.toggle('active', open);
+          toggle.setAttribute('aria-expanded', open);
+        });
+      }
+    </script>
+
+<!-- Cookie consent banner -->
+<div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#111827;color:#fff;padding:1rem;box-shadow:0 -2px 12px rgba(0,0,0,0.3)">
+  <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:1rem">
+    <p style="margin:0;font-size:0.875rem;color:#d1d5db;flex:1;min-width:200px">
+      We use cookies to improve your experience. By continuing to use this site you agree to our
+      <a href="/privacy" style="color:#fff;text-decoration:underline">Privacy Policy</a>.
+    </p>
+    <div style="display:flex;gap:0.75rem;flex-shrink:0">
+      <button id="cookie-accept" style="background:#0d9488;color:#fff;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;cursor:pointer">Accept</button>
+      <button id="cookie-decline" style="background:#374151;color:#d1d5db;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;cursor:pointer">Decline</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var b=document.getElementById('cookie-banner');
+  if(!localStorage.getItem('cookie-consent')&&b){b.style.display='block';}
+  document.getElementById('cookie-accept').onclick=function(){localStorage.setItem('cookie-consent','accepted');b.style.display='none';};
+  document.getElementById('cookie-decline').onclick=function(){localStorage.setItem('cookie-consent','declined');b.style.display='none';};
+})();
+</script>
 </body>
 </html>
