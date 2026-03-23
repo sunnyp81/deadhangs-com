@@ -149,14 +149,44 @@
           <li><a href="/training-programs/">Programs</a></li>
           <li><a href="/equipment-guide/">Equipment</a></li>
         </ul>
+        <button class="nav-hamburger" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+      <div class="mobile-nav" id="mobile-nav">
+        <a href="/deadhang-benefits/">Benefits</a>
+        <a href="/how-to-deadhang/">How To</a>
+        <a href="/training-programs/">Programs</a>
+        <a href="/equipment-guide/">Equipment</a>
+        <a href="/grip-strength/">Grip Strength</a>
+        <a href="/deadhang-progressions/">Progressions</a>
       </div>
     </nav>
 
     <!-- Hero -->
     <section class="hero">
-      <div class="container">
+      <div class="hero-bg"></div>
+      <div class="hero-dots"></div>
+      <div class="container" style="position:relative;z-index:1;">
+        <span class="hero-badge">The Definitive Guide</span>
         <h1>Dead Hangs: The Complete Guide to Grip Strength, Shoulder Health & Spinal Decompression</h1>
         <p class="hero-sub">Build grip strength, decompress your spine, and improve shoulder mobility with the simplest bodyweight exercise that requires nothing more than a bar.</p>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-num">7</span>
+            <span class="hero-stat-label">Science-backed benefits</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">4</span>
+            <span class="hero-stat-label">Progressions</span>
+          </div>
+          <div class="hero-stat-divider"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">12</span>
+            <span class="hero-stat-label">Week programme</span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -355,6 +385,7 @@
             <input type="hidden" name="accessKey" value="sf_9e906eb6c00416b9d3354749">
             <input type="hidden" name="redirectTo" value="https://deadhangs.com/?joined=true">
             <input type="hidden" name="subject" value="New subscriber — DeadHangs.com">
+            <input type="text" name="name" class="email-input" placeholder="Your name" required>
             <input type="email" name="email" class="email-input" placeholder="Your email address" required>
             <button type="submit" class="cta-btn">Send Me the Programme</button>
           </form>
@@ -456,27 +487,45 @@
         <h2>Explore More</h2>
       </div>
       <div class="hub-grid">
-        <a href="/deadhang-benefits/" class="hub-card">
+        <a href="/deadhang-benefits/" class="hub-card fade-up" style="--i:0">
+          <div class="hub-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
           <h3>Benefits & Science</h3>
           <p>Deep dive into grip strength, spinal decompression, shoulder health, and longevity research.</p>
         </a>
-        <a href="/how-to-deadhang/" class="hub-card">
+        <a href="/how-to-deadhang/" class="hub-card fade-up" style="--i:1">
+          <div class="hub-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9l-2-2-4 4 2 2"/><path d="M10 15l2 2 4-4-2-2"/><circle cx="12" cy="12" r="10"/></svg>
+          </div>
           <h3>Complete Form Guide</h3>
           <p>Step-by-step technique breakdown with grip types, breathing cues, and common error fixes.</p>
         </a>
-        <a href="/training-programs/" class="hub-card">
+        <a href="/training-programs/" class="hub-card fade-up" style="--i:2">
+          <div class="hub-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
           <h3>Training Programs</h3>
           <p>Free 4-week, 8-week, and 12-week programs for beginners through advanced athletes.</p>
         </a>
-        <a href="/deadhang-progressions/" class="hub-card">
+        <a href="/deadhang-progressions/" class="hub-card fade-up" style="--i:3">
+          <div class="hub-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
           <h3>Progressions</h3>
           <p>Structured pathway from first hang to one-arm holds and weighted dead hangs.</p>
         </a>
-        <a href="/equipment-guide/" class="hub-card">
+        <a href="/equipment-guide/" class="hub-card fade-up" style="--i:4">
+          <div class="hub-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+          </div>
           <h3>Equipment Reviews</h3>
           <p>Pull-up bar reviews, chalk recommendations, and accessory buying guides.</p>
         </a>
-        <a href="/grip-strength/" class="hub-card">
+        <a href="/grip-strength/" class="hub-card fade-up" style="--i:5">
+          <div class="hub-card-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0d9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          </div>
           <h3>Grip Strength</h3>
           <p>Forearm anatomy, grip types, and training methods beyond the dead hang.</p>
         </a>
@@ -484,14 +533,68 @@
     </section>
 
     <script>
+      // Joined state
       if (window.location.search.includes('joined=true')) {
         document.getElementById('email-form').style.display = 'none';
         document.getElementById('join-success').style.display = 'block';
       }
+      // Hamburger nav
+      var toggle = document.getElementById('nav-toggle');
+      var mobileNav = document.getElementById('mobile-nav');
+      toggle.addEventListener('click', function() {
+        var open = mobileNav.classList.toggle('open');
+        toggle.classList.toggle('active', open);
+        toggle.setAttribute('aria-expanded', open);
+      });
+      // Fade-up on scroll
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.fade-up').forEach(function(el) { observer.observe(el); });
     </script>
 
     <footer class="footer">
-      <p>&copy; 2026 DeadHangs.com</p>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a href="/" class="footer-logo">DEADHANGS</a>
+            <p class="footer-tagline">The definitive resource for dead hang training, grip strength, and shoulder health.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Guides</h4>
+            <a href="/deadhang-benefits/">Benefits & Science</a>
+            <a href="/how-to-deadhang/">Form Guide</a>
+            <a href="/training-programs/">Programs</a>
+            <a href="/deadhang-progressions/">Progressions</a>
+          </div>
+          <div class="footer-col">
+            <h4>Topics</h4>
+            <a href="/grip-strength/">Grip Strength</a>
+            <a href="/shoulder-health/">Shoulder Health</a>
+            <a href="/spine-decompression/">Spinal Decompression</a>
+            <a href="/equipment-guide/">Equipment</a>
+          </div>
+          <div class="footer-col">
+            <h4>Resources</h4>
+            <a href="/longevity-research/">Longevity Research</a>
+            <a href="/deadhang-safety/">Safety Guide</a>
+            <a href="/community/">Community</a>
+            <a href="/about/">About</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 DeadHangs.com. Independent fitness resource.</p>
+          <div class="footer-links">
+            <a href="/privacy/">Privacy</a>
+            <a href="/editorial-standards/">Editorial Standards</a>
+          </div>
+        </div>
+      </div>
     </footer>
   </div>
 
