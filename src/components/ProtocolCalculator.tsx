@@ -74,7 +74,7 @@ export default function ProtocolCalculator() {
   }, [bw, unit, level, goal]);
 
   return (
-    <div style={{
+    <div className="protocol-grid" style={{
       display: 'grid',
       gridTemplateColumns: 'minmax(280px, 1fr) 1.2fr',
       gap: 24, padding: 28,

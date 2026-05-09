@@ -358,7 +358,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
       </div>
 
       {/* Settings grid */}
-      <div style={{
+      <div className="timer-settings" style={{
         display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12,
         width: '100%', maxWidth: dialSize + 80, margin: '0 auto',
         opacity: running ? 0.5 : 1,
@@ -424,6 +424,9 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
         @keyframes fadeInUp {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+          .timer-settings { grid-template-columns: 1fr !important; max-width: 280px !important; }
         }
       `}</style>
     </div>
