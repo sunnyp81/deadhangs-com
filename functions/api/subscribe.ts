@@ -1,5 +1,5 @@
 interface Env {
-  BUTTONDOWN_API_KEY: string;
+  BREVO_API_KEY: string;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -12,19 +12,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
   }
 
-  const res = await fetch('https://api.buttondown.email/v1/subscribers', {
+  const res = await fetch('https://api.brevo.com/v3/contacts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Token ${context.env.BUTTONDOWN_API_KEY}`,
+      'api-key': context.env.BREVO_API_KEY,
     },
     body: JSON.stringify({
-      email_address: email,
-      tags: ['drip-protocol'],
+      email,
+      listIds: [3],
+      attributes: {
+        SIGNUP_DATE: new Date().toISOString().split('T')[0],
+        DRIP_LAST_SENT: '-1',
+      },
+      updateEnabled: false,
     }),
   });
 
-  if (res.ok || res.status === 409) {
+  if (res.ok) {
+    return new Response(JSON.stringify({ ok: true }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  const body = await res.json<{ message?: string; code?: string }>();
+  if (body.code === 'duplicate_parameter') {
     return new Response(JSON.stringify({ ok: true }), {
       headers: { 'Content-Type': 'application/json' },
     });

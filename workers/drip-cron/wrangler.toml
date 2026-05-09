@@ -1,0 +1,9 @@
+name = "deadhangs-drip"
+main = "index.ts"
+compatibility_date = "2024-01-01"
+
+[triggers]
+crons = ["0 9 * * *"]
+
+[vars]
+DRIP_ENDPOINT = "https://deadhangs.com/api/drip-cron"
