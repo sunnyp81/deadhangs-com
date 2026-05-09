@@ -125,7 +125,13 @@ export default function ProtocolCalculator() {
           <Stat label="Hang load" value={protocol.load} />
           <Stat label="Tier" value={protocol.level.toUpperCase()} />
         </div>
-        <button className="dh-btn" style={{ marginTop: 8, justifyContent: 'center' }}>
+        <button className="dh-btn" style={{ marginTop: 8, justifyContent: 'center' }}
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('loadProtocol', {
+              detail: { work: protocol.work, rest: protocol.rest, rounds: protocol.rounds },
+            }));
+            document.getElementById('timer')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}>
           Run This Protocol →
         </button>
       </div>
