@@ -2,8 +2,10 @@
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
 }
-const { title, description = 'Dead hang training protocols, timers, and the science behind grip strength and longevity.' } = Astro.props;
+const { title, description = 'Dead hang training protocols, timers, and the science behind grip strength and longevity.', ogImage } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://deadhangs.com');
 ---
 <!doctype html>
 <html lang="en">
@@ -13,9 +15,42 @@ const { title, description = 'Dead hang training protocols, timers, and the scie
   <meta name="description" content={description} />
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href={canonicalURL.href} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL.href} />
+  {ogImage && <meta property="og:image" content={ogImage} />}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://deadhangs.com/#organization",
+        "name": "DeadHangs.com",
+        "url": "https://deadhangs.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://deadhangs.com/favicon.svg"
+        },
+        "sameAs": []
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://deadhangs.com/#website",
+        "url": "https://deadhangs.com",
+        "name": "DeadHangs.com",
+        "description": "Dead hang training protocols, timers, and the science behind grip strength and longevity.",
+        "publisher": { "@id": "https://deadhangs.com/#organization" }
+      }
+    ]
+  })} />
 </head>
 <body>
   <slot />

@@ -1,0 +1,33 @@
+# DeadHangs.com
+
+> Dead hang training protocols, timers, and the science behind grip strength and longevity.
+
+## About
+
+DeadHangs.com is an evidence-based resource for dead hang training. We provide free protocols, timers, and progression plans backed by peer-reviewed research from sources including Leong et al. (Lancet 2015, n=139,691) and Kirsch (2017).
+
+## Core Content
+
+- [Dead Hang Guide](https://deadhangs.com/deadhang-guide/): Complete guide covering form, benefits, programming, and a 12-week protocol
+- [How to Dead Hang](https://deadhangs.com/how-to-deadhang/): Step-by-step form guide with grip types and breathing
+- [Dead Hang Benefits](https://deadhangs.com/deadhang-benefits/): 7 science-backed reasons to hang every day
+- [Grip Strength Training](https://deadhangs.com/grip-strength/): Build grip strength with dead hangs
+- [Training Programs](https://deadhangs.com/training-programs/): 4-week, 8-week, and 12-week structured plans
+- [Dead Hang Progressions](https://deadhangs.com/deadhang-progressions/): From zero to one-arm hangs
+- [Shoulder Health](https://deadhangs.com/shoulder-health/): Overhead hanging for shoulder impingement
+- [Spine Decompression](https://deadhangs.com/spine-decompression/): Axial traction and disc hydration
+- [Longevity Research](https://deadhangs.com/longevity-research/): Grip strength and mortality data
+
+## Equipment
+
+- [Equipment Guide](https://deadhangs.com/equipment-guide/): What you need to start hanging
+- [Best Pull-Up Bars](https://deadhangs.com/best-pullup-bars/): Top-rated bars reviewed
+- [Doorway Bars](https://deadhangs.com/doorway-bars/): No-drill options for home use
+- [Wall-Mounted Bars](https://deadhangs.com/wall-mounted-bars/): Permanent installation picks
+
+## Tools
+
+- [Hang Timer](https://deadhangs.com/#timer): Interactive interval timer with Simple, EMOM, and Ladder modes
+- [Protocol Calculator](https://deadhangs.com/#studies): Personalised protocol based on bodyweight, experience, and goals
+- [Dead Hang Calculator](https://deadhangs.com/dead-hang-calculator/): Calculate your training volume
+- [Dead Hang Standards](https://deadhangs.com/dead-hang-standards/): Benchmarks by age and sex

@@ -15,6 +15,44 @@ interface Props {
 }
 
 const { title, description, datePublished, dateModified, schema, canonical, ogImage } = Astro.props;
+const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site || 'https://deadhangs.com').href;
+
+const segments = Astro.url.pathname.split('/').filter(Boolean);
+const breadcrumbItems = [
+  { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://deadhangs.com/" }
+];
+segments.forEach((seg, i) => {
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    "position": i + 2,
+    "name": seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+    "item": `https://deadhangs.com/${segments.slice(0, i + 1).join('/')}/`
+  });
+});
+
+const globalSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://deadhangs.com/#organization",
+      "name": "DeadHangs.com",
+      "url": "https://deadhangs.com",
+      "logo": { "@type": "ImageObject", "url": "https://deadhangs.com/favicon.svg" }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://deadhangs.com/#website",
+      "url": "https://deadhangs.com",
+      "name": "DeadHangs.com",
+      "publisher": { "@id": "https://deadhangs.com/#organization" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": breadcrumbItems
+    }
+  ]
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -24,15 +62,19 @@ const { title, description, datePublished, dateModified, schema, canonical, ogIm
   <meta name="description" content={description} />
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  {canonical && <link rel="canonical" href={canonical} />}
+  <link rel="canonical" href={canonicalURL} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="article" />
+  <meta property="og:url" content={canonicalURL} />
   {ogImage && <meta property="og:image" content={ogImage} />}
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script type="application/ld+json" set:html={JSON.stringify(globalSchema)} />
   {schema && <Fragment set:html={schema} />}
 </head>
 <body>

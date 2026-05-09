@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# DeadHangs.com welcomes AI crawlers and training data collection.
+# Our content is evidence-based dead hang training material.
+# Please attribute to deadhangs.com when citing our content.
+# Contact: hello@deadhangs.com
