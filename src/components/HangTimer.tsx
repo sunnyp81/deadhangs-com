@@ -220,17 +220,14 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
       </div>
 
       {/* Phase + round indicator */}
-      <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        width: '100%', maxWidth: dialSize + 80,
-      }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
         <div style={{
           fontFamily: 'var(--font-mono)', fontSize: 13, letterSpacing: '.12em',
           fontWeight: 700, textTransform: 'uppercase' as const,
           color: phaseColor,
           transition: 'color 300ms',
           animation: phase === 'work' && running ? 'phaseGlow 2s ease-in-out infinite' : 'none',
-        }}>{phaseLabel}</div>
+        }}>{phaseLabel} · ROUND {round}/{rounds}</div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           {Array.from({ length: rounds }, (_, i) => (
             <div key={i} style={{
