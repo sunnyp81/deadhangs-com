@@ -1,0 +1,18 @@
+﻿# leak-scan: standard ignores
+.env
+.env.*
+.env.local
+.env.production
+*.pem
+*.key
+credentials.json
+credentials*.json
+secrets.*
+.wrangler/
+.vercel/
+.next/cache/
+wordpress-config.md
+master-builds.md
+node_modules/
+dist/
+.astro/

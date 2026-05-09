@@ -1,0 +1,121 @@
+---
+import Article from '../../layouts/Article.astro';
+---
+
+<Article
+  title="Contact Us | DeadHangs.com"
+  description="Contact DeadHangs.com — reach our team with questions about dead hang training, content corrections, or advertising enquiries."
+  canonical="https://deadhangs.com/contact/"
+  schema={`<script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Contact DeadHangs.com",
+    "description": "Get in touch with the DeadHangs.com team.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "DeadHangs.com",
+      "url": "https://deadhangs.com",
+      "email": "hello@deadhangs.com"
+    },
+    "mainEntityOfPage": "https://deadhangs.com/contact/"
+  }</script>`}
+>
+  <div class="article-header">
+    <div class="article-breadcrumb">
+      <a href="/">Home</a><span class="sep">/</span>Contact Us | DeadHangs.com
+    </div>
+  </div>
+  <div class="article-body">
+    <Fragment set:html={`<div class="content">
+    
+
+    <div class="container">
+      <div class="breadcrumb"><a href="/">Home</a><span>›</span> Contact</div>
+      <div class="page-header">
+        <h1>Contact Us</h1>
+        <p class="subtitle">Questions about training, content corrections, or partnerships — we read every message.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h3>General Enquiries</h3>
+          <p>Questions about dead hang training, programming advice, or site content.</p>
+          <a href="mailto:hello@deadhangs.com" class="email-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h14a1 1 0 001-1V5a1 1 0 00-1-1H3zm0 2.586l7 4.667 7-4.667V15H3V6.586z"/></svg>
+            hello@deadhangs.com
+          </a>
+        </div>
+        <div class="contact-card">
+          <h3>Content Corrections</h3>
+          <p>Spotted an error in our data or training guidance? We take accuracy seriously and will update content promptly.</p>
+          <a href="mailto:hello@deadhangs.com?subject=Content+Correction" class="email-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h14a1 1 0 001-1V5a1 1 0 00-1-1H3zm0 2.586l7 4.667 7-4.667V15H3V6.586z"/></svg>
+            hello@deadhangs.com
+          </a>
+        </div>
+      </div>
+
+      <div class="contact-form">
+        <h2>Send a Message</h2>
+        <p>We aim to respond within 2 business days. Please be specific — training questions get the best answers with your current hold time, age, and training history.</p>
+
+        <form id="contact-form" action="https://api.staticforms.xyz/submit" method="POST">
+          <input type="hidden" name="accessKey" value="sf_9e906eb6c00416b9d3354749">
+          <input type="hidden" name="subject" value="DeadHangs.com Contact Form">
+          <input type="hidden" name="replyTo" value="@">
+          <input type="hidden" name="redirectTo" value="https://deadhangs.com/contact/?sent=1">
+
+          <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" placeholder="e.g. Alex" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="subject-select">Topic</label>
+            <select id="subject-select" name="$subject">
+              <option value="Training question">Training question</option>
+              <option value="Content correction">Content correction</option>
+              <option value="Partnership or advertising">Partnership or advertising</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Your message..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send Message</button>
+          <p class="form-note">We do not share your contact details with third parties. See our <a href="/privacy/">Privacy Policy</a>.</p>
+        </form>
+
+        <div class="success-msg" id="success-msg">
+          Message sent — thank you. We will reply within 2 business days.
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>Looking for training help?</strong> Start with our <a href="/deadhang-guide/">complete dead hang guide</a> or the <a href="/dead-hang-time-by-age/">time-by-age standards</a> — most common questions are answered there.</p>
+      </div>
+    </div>
+
+    
+  </div>
+
+  
+
+  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#111827;color:#fff;padding:1rem;box-shadow:0 -2px 12px rgba(0,0,0,0.3)">
+    <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:1rem">
+      <p style="margin:0;font-size:0.875rem;color:#d1d5db;flex:1;min-width:200px">
+        We use cookies to improve your experience. By continuing to use this site you agree to our
+        <a href="/privacy" style="color:#fff;text-decoration:underline">Privacy Policy</a>.
+      </p>
+      <div style="display:flex;gap:0.75rem;flex-shrink:0">
+        <button id="cookie-accept" style="background:#0d9488;color:#fff;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;cursor:pointer">Accept</button>
+        <button id="cookie-decline" style="background:#374151;color:#d1d5db;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;cursor:pointer">Decline</button>
+      </div>
+    </div>
+  </div>`} />
+  </div>
+</Article>

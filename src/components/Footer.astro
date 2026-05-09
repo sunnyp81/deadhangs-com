@@ -1,0 +1,40 @@
+---
+---
+<footer style="background:var(--color-bg);padding:48px 64px 32px;border-top:1px solid var(--color-divider);">
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:40px;">
+    <div style="max-width:320px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="20" height="20" viewBox="0 0 20 20">
+          <rect x="2" y="3" width="16" height="2.5" fill="var(--color-primary)"/>
+          <rect x="9" y="5" width="2" height="6" fill="var(--color-text)"/>
+          <circle cx="10" cy="13" r="3" fill="none" stroke="var(--color-text)" stroke-width="1.6"/>
+        </svg>
+        <span class="dh-display" style="font-weight:700;font-size:16px;letter-spacing:-0.02em;">
+          deadhangs<span style="color:var(--color-primary)">.com</span>
+        </span>
+      </div>
+      <p style="margin-top:16px;font-size:13px;color:var(--color-text-muted);">
+        A research-backed protocol for grip strength, longevity, and shoulder health. Berkeley, CA.
+      </p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:48px;">
+      {[
+        ["Protocol","Daily","Calculator","Timer"],
+        ["Science","Studies","FAQ","Newsletter"],
+        ["Co.","About","Contact","Press"]
+      ].map((col) => (
+        <div>
+          <div class="dh-eyebrow" style="margin-bottom:12px;">{col[0]}</div>
+          {col.slice(1).map(l => (
+            <a href="#" style="display:block;font-size:13px;color:var(--color-text-muted);margin-bottom:8px;">{l}</a>
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+  <hr class="dh-rule" style="margin-top:32px;"/>
+  <div style="max-width:1200px;margin:16px auto 0;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--color-text-faint);letter-spacing:.12em;text-transform:uppercase;">
+    <span>&copy; 2024 deadhangs.com</span>
+    <span>v 1.4.2 &middot; Made in California</span>
+  </div>
+</footer>

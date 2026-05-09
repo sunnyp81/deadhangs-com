@@ -1,0 +1,39 @@
+---
+---
+<header id="site-nav" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:transparent;border-bottom:1px solid transparent;transition:background 220ms,border 220ms,backdrop-filter 220ms;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <svg width="20" height="20" viewBox="0 0 20 20">
+      <rect x="2" y="3" width="16" height="2.5" fill="var(--color-primary)"/>
+      <rect x="9" y="5" width="2" height="6" fill="var(--color-text)"/>
+      <circle cx="10" cy="13" r="3" fill="none" stroke="var(--color-text)" stroke-width="1.6"/>
+    </svg>
+    <span class="dh-display" style="font-weight:700;font-size:16px;letter-spacing:-0.02em;">
+      deadhangs<span style="color:var(--color-primary)">.com</span>
+    </span>
+  </div>
+  <nav style="display:flex;gap:32px;align-items:center;">
+    {["Protocol","Science","Timer","Studies"].map((l) => (
+      <a href={`#${l.toLowerCase()}`} style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;color:var(--color-text-muted);text-transform:uppercase;">{l}</a>
+    ))}
+    <a href="#signup" class="dh-btn" style="padding:8px 16px;font-size:11px;">Start →</a>
+  </nav>
+</header>
+
+<script>
+  const nav = document.getElementById('site-nav')!;
+  let scrolled = false;
+  window.addEventListener('scroll', () => {
+    const now = window.scrollY > 60;
+    if (now === scrolled) return;
+    scrolled = now;
+    if (scrolled) {
+      nav.style.background = 'rgba(8,12,20,0.85)';
+      nav.style.backdropFilter = 'blur(12px) saturate(140%)';
+      nav.style.borderBottomColor = 'var(--color-divider)';
+    } else {
+      nav.style.background = 'transparent';
+      nav.style.backdropFilter = 'none';
+      nav.style.borderBottomColor = 'transparent';
+    }
+  }, { passive: true });
+</script>

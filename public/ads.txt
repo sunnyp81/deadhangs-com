@@ -1,0 +1,4 @@
+# Add your AdSense publisher ID below before applying.
+# Format: google.com, pub-XXXXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+# Replace pub-XXXXXXXXXXXXXXXXXX with your actual publisher ID from adsense.google.com
+google.com, pub-XXXXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
