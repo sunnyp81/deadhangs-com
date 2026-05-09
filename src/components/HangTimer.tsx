@@ -211,7 +211,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
   const glowIntensity = phase === 'work' && running ? 0.4 + Math.sin(Date.now() / 300) * 0.2 : 0;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, width: '100%', textAlign: 'center' }}>
       {/* Mode selector */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <span className="dh-eyebrow" style={{ fontSize: 9 }}>MODE</span>
