@@ -339,7 +339,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
       </div>
 
       {/* Controls */}
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'center' }}>
         {!running ? (
           <button className="dh-btn" onClick={start} style={{
             padding: '14px 28px', fontSize: 13,
@@ -363,7 +363,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
       {/* Settings grid */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12,
-        width: '100%', maxWidth: dialSize + 80,
+        width: '100%', maxWidth: dialSize + 80, margin: '0 auto',
         opacity: running ? 0.5 : 1,
         pointerEvents: running ? 'none' : 'auto',
         transition: 'opacity 300ms',
@@ -380,7 +380,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
       <div style={{
         fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.1em',
         color: 'var(--color-text-faint)', textAlign: 'center', maxWidth: 360,
-        textTransform: 'uppercase' as const,
+        textTransform: 'uppercase' as const, width: '100%',
       }}>
         {mode === 'simple' && 'Fixed hang and rest intervals each round'}
         {mode === 'emom' && 'Every Minute On the Minute — rest fills the remaining time'}
