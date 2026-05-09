@@ -115,9 +115,9 @@ import '../styles/global.css';
       </h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;">
         {[
-          { n: "01", title: "Longevity", body: "Grip strength is associated with all-cause mortality, cardiovascular mortality, and hospital admission across 17 countries (Leong et al., Lancet 2015, n=139,691).", tag: "PRIMARY OUTCOME" },
-          { n: "02", title: "Decompression", body: "Passive hanging creates axial traction on the spine, promoting disc hydration and reducing compressive load accumulated through prolonged sitting.", tag: "STRUCTURAL" },
-          { n: "03", title: "Shoulder Health", body: "Overhead hanging protocols are associated with improvements in shoulder impingement symptoms, as described by orthopaedic surgeon John Kirsch MD.", tag: "PROPHYLACTIC" },
+          { n: "01", title: "Longevity", body: "Grip strength is associated with all-cause mortality, cardiovascular mortality, and hospital admission across 17 countries (Leong et al., Lancet 2015, n=139,691).", tag: "PRIMARY OUTCOME", href: "/longevity-research/" },
+          { n: "02", title: "Decompression", body: "Passive hanging creates axial traction on the spine, promoting disc hydration and reducing compressive load accumulated through prolonged sitting.", tag: "STRUCTURAL", href: "/spine-decompression/" },
+          { n: "03", title: "Shoulder Health", body: "Overhead hanging protocols are associated with improvements in shoulder impingement symptoms, as described by orthopaedic surgeon John Kirsch MD.", tag: "PROPHYLACTIC", href: "/shoulder-health/" },
         ].map((p, i) => (
           <div class={`scroll-reveal ${i === 1 ? 'scroll-reveal-d1' : i === 2 ? 'scroll-reveal-d2' : ''}`}>
             <div style="position:relative;padding-top:24px;">
@@ -126,7 +126,8 @@ import '../styles/global.css';
               </div>
               <div class="dh-eyebrow" style="margin-bottom:12px;">{p.tag}</div>
               <h3 class="dh-display" style="font-size:34px;font-weight:600;margin:0 0 12px;">{p.title}</h3>
-              <p style="font-size:16px;color:var(--color-text-muted);margin:0;line-height:1.6;">{p.body}</p>
+              <p style="font-size:16px;color:var(--color-text-muted);margin:0 0 12px;line-height:1.6;">{p.body}</p>
+              <a href={p.href} style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-primary);">Read more →</a>
             </div>
           </div>
         ))}
@@ -164,6 +165,33 @@ import '../styles/global.css';
       </div>
       <div class="scroll-reveal scroll-reveal-d3">
         <ProtocolCalculator client:visible />
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK LINKS -->
+  <section style="padding:80px 64px;background:var(--color-surface);border-top:1px solid var(--color-divider);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="scroll-reveal" style="text-align:center;margin-bottom:40px;">
+        <div class="dh-eyebrow" style="margin-bottom:12px;">· START LEARNING</div>
+        <h2 class="dh-display" style="font-size:36px;font-weight:600;margin:0;">Go deeper.</h2>
+      </div>
+      <div class="scroll-reveal scroll-reveal-d3 link-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        {[
+          { title: "Dead Hang Guide", desc: "Form, benefits, and protocols", href: "/deadhang-guide/" },
+          { title: "How to Dead Hang", desc: "Step-by-step instructions", href: "/how-to-deadhang/" },
+          { title: "Training Programs", desc: "4, 8, and 12-week plans", href: "/training-programs/" },
+          { title: "Grip Strength", desc: "Build a stronger grip", href: "/grip-strength/" },
+          { title: "Equipment Guide", desc: "Bars, chalk, and grips", href: "/equipment-guide/" },
+          { title: "Progressions", desc: "Zero to one-arm hangs", href: "/deadhang-progressions/" },
+          { title: "Benefits", desc: "7 science-backed reasons", href: "/deadhang-benefits/" },
+          { title: "Safety", desc: "When to hang, when to stop", href: "/deadhang-safety/" },
+        ].map((link) => (
+          <a href={link.href} style="display:block;padding:20px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-sm);transition:all 160ms cubic-bezier(0.16,1,0.3,1);" class="link-card">
+            <div class="dh-display" style="font-size:16px;font-weight:600;margin-bottom:4px;">{link.title}</div>
+            <div style="font-size:13px;color:var(--color-text-muted);">{link.desc}</div>
+          </a>
+        ))}
       </div>
     </div>
   </section>

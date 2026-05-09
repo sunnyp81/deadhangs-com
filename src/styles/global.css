@@ -169,6 +169,12 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 0 0 3px var(--color-primary-highlight);
 }
 
+/* Link cards */
+.link-card:hover {
+  border-color: var(--color-primary) !important;
+  transform: translateY(-2px);
+}
+
 /* Scroll reveal animation */
 .scroll-reveal {
   opacity: 0;
@@ -265,6 +271,11 @@ a { color: inherit; text-decoration: none; }
   #signup > div > div:last-child {
     grid-template-columns: 1fr !important;
     gap: 24px !important;
+  }
+
+  /* Quick links grid: 2 col on mobile */
+  .link-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 
   /* Protocol calculator: single column */
