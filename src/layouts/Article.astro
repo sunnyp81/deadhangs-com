@@ -1,6 +1,7 @@
 ---
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import SidebarTOC from '../components/SidebarTOC.astro';
 import '../styles/global.css';
 import '../styles/article.css';
 
@@ -81,6 +82,7 @@ const globalSchema = {
   <Nav />
   <main class="article-main">
     <slot />
+    <SidebarTOC />
   </main>
   <Footer />
   <script>

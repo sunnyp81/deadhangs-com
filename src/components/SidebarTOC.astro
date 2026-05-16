@@ -1,0 +1,279 @@
+---
+/**
+ * Floating sidebar TOC — desktop right rail + mobile slide-in drawer.
+ * Zero dependencies. Drop into any Astro layout that wraps article content in <article> or .prose.
+ */
+---
+
+<!-- Mobile trigger -->
+<button id="toc-mobile-btn" class="toc-mobile-btn" aria-label="Table of contents" style="display:none">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+</button>
+
+<!-- Mobile backdrop -->
+<div id="toc-backdrop" class="toc-backdrop" style="display:none"></div>
+
+<!-- Mobile drawer -->
+<div id="toc-drawer" class="toc-drawer" style="display:none">
+  <div class="toc-drawer-header">
+    <span class="toc-label">On this page</span>
+    <button id="toc-close" class="toc-close" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="toc-drawer-body">
+    <div class="toc-progress-track"><div id="toc-drawer-progress" class="toc-progress-fill"></div></div>
+    <nav id="toc-drawer-list" class="toc-list"></nav>
+  </div>
+</div>
+
+<!-- Desktop sidebar -->
+<aside id="toc-sidebar" class="toc-sidebar" style="display:none">
+  <div class="toc-sidebar-inner">
+    <div class="toc-progress-track"><div id="toc-sidebar-progress" class="toc-progress-fill"></div></div>
+    <p class="toc-label">On this page</p>
+    <nav id="toc-sidebar-list" class="toc-list"></nav>
+  </div>
+</aside>
+
+<style>
+  .toc-sidebar {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 40;
+    width: 13rem;
+    max-height: 60vh;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  @media (min-width: 1280px) { .toc-sidebar { display: block !important; } }
+  @media (max-width: 1279px) { .toc-sidebar { display: none !important; } }
+  @media (min-width: 1536px) { .toc-sidebar { right: 2.5rem; width: 14rem; } }
+  .toc-sidebar.visible { opacity: 1; }
+
+  .toc-sidebar-inner {
+    position: relative;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(8,8,13,0.9);
+    padding: 1rem 1rem 1rem 1.25rem;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+    backdrop-filter: blur(12px);
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .toc-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .toc-progress-track {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.06);
+  }
+  .toc-progress-fill {
+    width: 100%;
+    border-radius: 9999px;
+    background: #5B8AEF;
+    height: 0%;
+    transition: height 0.15s ease-out;
+  }
+
+  .toc-list { display: flex; flex-direction: column; gap: 2px; position: relative; }
+  .toc-list a {
+    display: block;
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: rgba(255,255,255,0.4);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.2s, background 0.2s, transform 0.2s;
+  }
+  .toc-list a:hover { color: rgba(255,255,255,0.7); transform: translateX(2px); }
+  .toc-list a.active { color: #5B8AEF; font-weight: 500; }
+
+  /* Mobile button */
+  .toc-mobile-btn {
+    position: fixed;
+    right: 1rem;
+    top: 5rem;
+    z-index: 40;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(8,8,13,0.95);
+    color: rgba(255,255,255,0.5);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .toc-mobile-btn.visible { opacity: 1; }
+  @media (min-width: 1280px) { .toc-mobile-btn { display: none !important; } }
+
+  /* Backdrop */
+  .toc-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .toc-backdrop.visible { opacity: 1; }
+
+  /* Drawer */
+  .toc-drawer {
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 9999;
+    height: 100%;
+    width: 18rem;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    background: rgba(8,8,13,0.98);
+    padding: 1.5rem 1.25rem;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.4);
+    backdrop-filter: blur(20px);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  .toc-drawer.visible { transform: translateX(0); }
+
+  .toc-drawer-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .toc-drawer-body { position: relative; max-height: calc(100vh - 5rem); overflow-y: auto; padding-left: 0.75rem; }
+  .toc-close { background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; padding: 0.25rem; }
+  .toc-close:hover { color: rgba(255,255,255,0.8); }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const selector = 'article h2, article h3, article h4, .prose h2, .prose h3, .prose h4, [data-toc]';
+    const elements = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
+
+    const headings = elements
+      .filter(el => !el.hasAttribute('data-toc-ignore'))
+      .map((el, i) => {
+        if (!el.id) {
+          el.id = el.textContent?.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '') || `toc-${i}`;
+        }
+        const depthAttr = el.getAttribute('data-toc-depth');
+        let level = 2;
+        if (depthAttr) { level = parseInt(depthAttr, 10); }
+        else {
+          const tag = el.tagName.toUpperCase();
+          if (tag.startsWith('H') && tag.length === 2) level = parseInt(tag[1], 10);
+        }
+        const text = el.getAttribute('data-toc-title') || el.textContent || 'Section';
+        return { id: el.id, text, level, element: el };
+      });
+
+    if (headings.length < 2) return;
+
+    const minLevel = Math.min(...headings.map(h => h.level));
+
+    function buildLinks(container: HTMLElement) {
+      container.innerHTML = '';
+      headings.forEach(h => {
+        const a = document.createElement('a');
+        a.href = `#${h.id}`;
+        a.textContent = h.text;
+        a.dataset.id = h.id;
+        const indent = Math.max(0, h.level - minLevel);
+        a.style.paddingLeft = `${indent * 12 + 8}px`;
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const y = h.element.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: y, behavior: 'smooth' });
+          closeMobile();
+        });
+        container.appendChild(a);
+      });
+    }
+
+    const sidebar = document.getElementById('toc-sidebar')!;
+    const sidebarList = document.getElementById('toc-sidebar-list')!;
+    const sidebarProgress = document.getElementById('toc-sidebar-progress')!;
+    const mobileBtn = document.getElementById('toc-mobile-btn')!;
+    const backdrop = document.getElementById('toc-backdrop')!;
+    const drawer = document.getElementById('toc-drawer')!;
+    const drawerList = document.getElementById('toc-drawer-list')!;
+    const drawerProgress = document.getElementById('toc-drawer-progress')!;
+    const closeBtn = document.getElementById('toc-close')!;
+
+    buildLinks(sidebarList);
+    buildLinks(drawerList);
+
+    function closeMobile() {
+      drawer.classList.remove('visible');
+      backdrop.classList.remove('visible');
+      setTimeout(() => { drawer.style.display = 'none'; backdrop.style.display = 'none'; }, 300);
+    }
+
+    mobileBtn.addEventListener('click', () => {
+      drawer.style.display = 'block';
+      backdrop.style.display = 'block';
+      requestAnimationFrame(() => { drawer.classList.add('visible'); backdrop.classList.add('visible'); });
+    });
+    closeBtn.addEventListener('click', closeMobile);
+    backdrop.addEventListener('click', closeMobile);
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const scrollY = window.scrollY;
+        const docH = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docH > 0 ? Math.min(100, Math.max(0, (scrollY / docH) * 100)) : 0;
+        const visible = pct > 5 && pct < 95;
+
+        sidebar.style.display = '';
+        mobileBtn.style.display = '';
+        if (visible) { sidebar.classList.add('visible'); mobileBtn.classList.add('visible'); }
+        else { sidebar.classList.remove('visible'); mobileBtn.classList.remove('visible'); }
+
+        sidebarProgress.style.height = `${pct}%`;
+        drawerProgress.style.height = `${pct}%`;
+
+        let activeId: string | null = null;
+        for (const h of headings) {
+          if (h.element.getBoundingClientRect().top <= 120) activeId = h.id;
+          else break;
+        }
+        if (!activeId && headings.length) activeId = headings[0].id;
+
+        sidebarList.querySelectorAll('a').forEach(a => a.classList.toggle('active', a.dataset.id === activeId));
+        drawerList.querySelectorAll('a').forEach(a => a.classList.toggle('active', a.dataset.id === activeId));
+
+        ticking = false;
+      });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  });
+</script>
