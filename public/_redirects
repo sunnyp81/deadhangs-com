@@ -1,3 +1,7 @@
+# Old sitemap URL -> Astro's auto-generated sitemap index, so crawlers and Search
+# Console entries still pointing at /sitemap.xml don't hit a 404.
+/sitemap.xml    /sitemap-index.xml    301
+
 # 301 redirects for pages dropped in the May 2026 Astro rebuild.
 # Each dead URL points to its surviving hub page so crawl equity is preserved instead of 404ing.
 /community/climber-profiles/    /community/    301
