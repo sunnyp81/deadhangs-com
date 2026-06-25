@@ -1,0 +1,40 @@
+# Old sitemap URL -> Astro's auto-generated sitemap index, so crawlers and Search
+# Console entries still pointing at /sitemap.xml don't hit a 404.
+/sitemap.xml    /sitemap-index.xml    301
+
+# 301 redirects for pages dropped in the May 2026 Astro rebuild.
+# Each dead URL points to its surviving hub page so crawl equity is preserved instead of 404ing.
+/community/climber-profiles/    /community/    301
+/community/crossfit-deadhangs/    /community/    301
+/community/deadhang-challenges/    /community/    301
+/community/deadhang-records/    /community/    301
+/complementary-exercises/farmers-walk/    /complementary-exercises/    301
+/complementary-exercises/finger-exercises/    /complementary-exercises/    301
+/complementary-exercises/plate-pinches/    /complementary-exercises/    301
+/complementary-exercises/pullup-training/    /complementary-exercises/    301
+/complementary-exercises/wrist-curls/    /complementary-exercises/    301
+/equipment-reviews/budget-bars/    /equipment-reviews/    301
+/equipment-reviews/grip-trainers/    /equipment-reviews/    301
+/equipment-reviews/premium-bars/    /equipment-reviews/    301
+/equipment-reviews/pullup-bar-reviews/    /equipment-reviews/    301
+/grip-strength/forearm-anatomy/    /grip-strength/    301
+/grip-strength/grip-biomechanics/    /grip-strength/    301
+/grip-strength/grip-types/    /grip-strength/    301
+/grip-strength/hand-anatomy/    /grip-strength/    301
+/injury-prevention/elbow-pain/    /injury-prevention/    301
+/injury-prevention/finger-injuries/    /injury-prevention/    301
+/injury-prevention/golfers-elbow/    /injury-prevention/    301
+/injury-prevention/recovery-protocols/    /injury-prevention/    301
+/injury-prevention/shoulder-impingement/    /injury-prevention/    301
+/injury-prevention/tendonitis/    /injury-prevention/    301
+/injury-prevention/tennis-elbow/    /injury-prevention/    301
+/mobility/finger-mobility/    /mobility/    301
+/mobility/post-deadhang-stretching/    /mobility/    301
+/mobility/pre-deadhang-warmup/    /mobility/    301
+/mobility/shoulder-mobility/    /mobility/    301
+/mobility/wrist-flexibility/    /mobility/    301
+/training-science/deload-protocols/    /training-science/    301
+/training-science/nutrition-for-grip/    /training-science/    301
+/training-science/progressive-overload/    /training-science/    301
+/training-science/recovery-adaptation/    /training-science/    301
+/training-science/training-frequency-guide/    /training-science/    301

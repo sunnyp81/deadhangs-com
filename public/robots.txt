@@ -1,4 +1,4 @@
-﻿# AI Crawler Policy
+# AI Crawler Policy
 # Allow all AI bots for citation, search, and training.
 # Content-Signal (proposed standard): explicit opt-in.
 
@@ -59,7 +59,5 @@ Allow: /
 
 User-agent: YouBot
 Allow: /
-User-agent: *
-Allow: /
 
-Sitemap: https://deadhangs.com/sitemap.xml
+Sitemap: https://deadhangs.com/sitemap-index.xml
