@@ -51,6 +51,26 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://deadhang
       }
     ]
   })} />
+  <script is:inline>
+    // GA4 (property 530351656) — only loads once cookie consent has been accepted,
+    // matching the consent flow in Article.astro (localStorage key "cookieConsent").
+    window.__gaLoad = window.__gaLoad || function () {
+      if (window.__gaLoaded) return;
+      window.__gaLoaded = true;
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YBPRQVR2Y3';
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', 'G-YBPRQVR2Y3');
+    };
+    if (localStorage.getItem('cookieConsent') === 'accepted') {
+      window.__gaLoad();
+    }
+  </script>
 </head>
 <body>
   <slot />

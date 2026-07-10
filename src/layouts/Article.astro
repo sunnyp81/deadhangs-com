@@ -77,6 +77,25 @@ const globalSchema = {
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script type="application/ld+json" set:html={JSON.stringify(globalSchema)} />
   {schema && <Fragment set:html={schema} />}
+  <script is:inline>
+    // GA4 (property 530351656) — only loads once cookie consent has been accepted.
+    window.__gaLoad = window.__gaLoad || function () {
+      if (window.__gaLoaded) return;
+      window.__gaLoaded = true;
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { window.dataLayer.push(arguments); }
+      window.gtag = gtag;
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YBPRQVR2Y3';
+      document.head.appendChild(s);
+      gtag('js', new Date());
+      gtag('config', 'G-YBPRQVR2Y3');
+    };
+    if (localStorage.getItem('cookieConsent') === 'accepted') {
+      window.__gaLoad();
+    }
+  </script>
 </head>
 <body>
   <Nav />
@@ -117,6 +136,7 @@ const globalSchema = {
       document.getElementById('cookie-accept')?.addEventListener('click', function(){
         localStorage.setItem('cookieConsent', 'accepted');
         document.getElementById('cookie-banner').style.display = 'none';
+        if (window.__gaLoad) window.__gaLoad();
       });
       document.getElementById('cookie-decline')?.addEventListener('click', function(){
         localStorage.setItem('cookieConsent', 'declined');
