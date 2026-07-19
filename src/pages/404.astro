@@ -1,0 +1,56 @@
+---
+import Article from '../layouts/Article.astro';
+---
+
+<Article
+  title="Page Not Found"
+  description="That page does not exist on DeadHangs.com. Try the dead hang guide, the times by age chart, or the world record page."
+>
+  <div class="article-header">
+    <div class="article-breadcrumb">
+      <a href="/">Home</a><span class="sep">/</span>Page Not Found
+    </div>
+  </div>
+  <div class="article-body">
+    <Fragment set:html={`<div class="content">
+    <div class="container">
+      <header class="page-header">
+        <h1>Page Not Found</h1>
+        <p class="subtitle">That page does not exist, or it has moved. The most useful pages on the site are below.</p>
+      </header>
+    </div>
+    <article class="article">
+      <div class="container">
+        <h2>Popular Pages</h2>
+        <div class="related-grid">
+          <a href="/dead-hang-time-by-age/" class="related-card">
+            <h3>Dead Hang Time by Age</h3>
+            <p>Average hold times by age and gender with percentile rankings.</p>
+          </a>
+          <a href="/dead-hang-world-record/" class="related-card">
+            <h3>Dead Hang World Record</h3>
+            <p>The current Guinness record and every previous holder.</p>
+          </a>
+          <a href="/deadhang-guide/" class="related-card">
+            <h3>Dead Hang Guide</h3>
+            <p>Form, benefits, programming and progressions in one place.</p>
+          </a>
+          <a href="/dead-hang-calculator/" class="related-card">
+            <h3>Dead Hang Calculator</h3>
+            <p>Check your percentile by age and gender.</p>
+          </a>
+          <a href="/dead-hang-standards/" class="related-card">
+            <h3>Dead Hang Standards</h3>
+            <p>Beginner to elite benchmarks and how to test yourself.</p>
+          </a>
+          <a href="/training-programs/" class="related-card">
+            <h3>Training Programs</h3>
+            <p>4, 8 and 12 week plans to increase your hang time.</p>
+          </a>
+        </div>
+        <p>If you followed a link here from another site, <a href="/contact/">let us know</a> so we can fix it.</p>
+      </div>
+    </article>
+  </div>`} />
+  </div>
+</Article>
