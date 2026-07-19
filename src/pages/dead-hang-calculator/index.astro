@@ -70,7 +70,7 @@ import Article from '../../layouts/Article.astro';
 
     <div class="container">
       <div class="breadcrumb">
-        <a href="/">Home</a><span>â€º</span> Dead Hang Calculator
+        <a href="/">Home</a><span>›</span> Dead Hang Calculator
       </div>
       <header class="page-header">
         <h1>Dead Hang Calculator: Find Your Percentile by Age and Gender</h1>
@@ -84,10 +84,9 @@ import Article from '../../layouts/Article.astro';
           <span class="author-avatar">DH</span>
           <span>DeadHangs Team</span>
         </a>
-        <span class="meta-sep">Â·</span>
+        <span class="meta-sep">·</span>
         <span class="updated-date">Updated April 2026</span>
-        <span class="meta-sep">Â·</span>
-        <span class="review-badge"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.403 12.652a3 3 0 000-5.304 3 3 0 00-3.75-3.751 3 3 0 00-5.305 0 3 3 0 00-3.751 3.75 3 3 0 000 5.305 3 3 0 003.75 3.751 3 3 0 005.305 0 3 3 0 003.751-3.75zm-2.546-4.46a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg> Expert Reviewed</span>
+        
       </div>
 
       <div class="container">
@@ -105,7 +104,7 @@ import Article from '../../layouts/Article.astro';
 
         <!-- CALCULATOR -->
         <h2 id="calculator">Dead Hang Time Calculator</h2>
-        <p>The dead hang calculator compares your hold time against normative data for your age and gender. Results are based on grip strength research and fitness testing populations. Enter your best unassisted dead hang â€” feet must clear the floor for the entire hold.</p>
+        <p>The dead hang calculator compares your hold time against normative data for your age and gender. Results are based on grip strength research and fitness testing populations. Enter your best unassisted dead hang - feet must clear the floor for the entire hold.</p>
 
         <div class="calc-widget">
           <h2 style="font-size:1.15rem;margin-top:0">Enter Your Details</h2>
@@ -113,12 +112,12 @@ import Article from '../../layouts/Article.astro';
             <div class="calc-field">
               <label for="calc-age">Age</label>
               <select id="calc-age">
-                <option value="15">15â€“19</option>
-                <option value="20">20â€“29</option>
-                <option value="30" selected>30â€“39</option>
-                <option value="40">40â€“49</option>
-                <option value="50">50â€“59</option>
-                <option value="60">60â€“69</option>
+                <option value="15">15-19</option>
+                <option value="20">20-29</option>
+                <option value="30" selected>30-39</option>
+                <option value="40">40-49</option>
+                <option value="50">50-59</option>
+                <option value="60">60-69</option>
                 <option value="70">70+</option>
               </select>
             </div>
@@ -140,13 +139,13 @@ import Article from '../../layouts/Article.astro';
             <div class="result-card">
               <div class="result-badge" id="result-badge">
                 <div class="badge-label">Your Category</div>
-                <div class="badge-value" id="result-category">â€”</div>
-                <div class="badge-sub" id="result-percentile">â€”</div>
+                <div class="badge-value" id="result-category">-</div>
+                <div class="badge-sub" id="result-percentile">-</div>
               </div>
               <div class="result-info">
                 <div class="info-label">What This Means</div>
-                <div class="info-text" id="result-description">â€”</div>
-                <div class="info-range" id="result-range">â€”</div>
+                <div class="info-text" id="result-description">-</div>
+                <div class="info-range" id="result-range">-</div>
               </div>
             </div>
             <div class="result-next" id="result-next"></div>
@@ -158,11 +157,11 @@ import Article from '../../layouts/Article.astro';
         <p>Your result falls into one of five categories. Each category corresponds to a hold time range for your specific age group and gender, and maps to an approximate population percentile.</p>
 
         <div class="cat-pills">
-          <span class="cat-pill pill-untrained pill-active">Untrained â€” bottom 25%</span>
-          <span class="cat-pill pill-beginner pill-active">Beginner â€” 25thâ€“50th %ile</span>
-          <span class="cat-pill pill-intermediate pill-active">Intermediate â€” 50thâ€“75th %ile</span>
-          <span class="cat-pill pill-advanced pill-active">Advanced â€” 75thâ€“90th %ile</span>
-          <span class="cat-pill pill-elite pill-active">Elite â€” top 10%</span>
+          <span class="cat-pill pill-untrained pill-active">Untrained - bottom 25%</span>
+          <span class="cat-pill pill-beginner pill-active">Beginner - 25th-50th %ile</span>
+          <span class="cat-pill pill-intermediate pill-active">Intermediate - 50th-75th %ile</span>
+          <span class="cat-pill pill-advanced pill-active">Advanced - 75th-90th %ile</span>
+          <span class="cat-pill pill-elite pill-active">Elite - top 10%</span>
         </div>
 
         <table class="data-table">
@@ -170,8 +169,8 @@ import Article from '../../layouts/Article.astro';
             <tr>
               <th>Category</th>
               <th>Percentile Band</th>
-              <th>Men (20â€“39)</th>
-              <th>Women (20â€“39)</th>
+              <th>Men (20-39)</th>
+              <th>Women (20-39)</th>
               <th>What It Means</th>
             </tr>
           </thead>
@@ -185,23 +184,23 @@ import Article from '../../layouts/Article.astro';
             </tr>
             <tr>
               <td><strong>Beginner</strong></td>
-              <td>25thâ€“50th %ile</td>
-              <td>20â€“40 sec</td>
-              <td>15â€“25 sec</td>
+              <td>25th-50th %ile</td>
+              <td>20-40 sec</td>
+              <td>15-25 sec</td>
               <td>Developing grip endurance. Within 4 weeks of training.</td>
             </tr>
             <tr>
               <td><strong>Intermediate</strong></td>
-              <td>50thâ€“75th %ile</td>
-              <td>40â€“75 sec</td>
-              <td>25â€“50 sec</td>
+              <td>50th-75th %ile</td>
+              <td>40-75 sec</td>
+              <td>25-50 sec</td>
               <td>Solid grip base. Consistent training shows.</td>
             </tr>
             <tr>
               <td><strong>Advanced</strong></td>
-              <td>75thâ€“90th %ile</td>
-              <td>75â€“120 sec</td>
-              <td>50â€“75 sec</td>
+              <td>75th-90th %ile</td>
+              <td>75-120 sec</td>
+              <td>50-75 sec</td>
               <td>Strong relative grip. Meets Peter Attia's health floor for men.</td>
             </tr>
             <tr>
@@ -220,7 +219,7 @@ import Article from '../../layouts/Article.astro';
 
         <!-- STANDARDS TABLE -->
         <h2 id="standards">Dead Hang Time Standards by Age and Gender</h2>
-        <p>The full standards table below covers every age bracket from 15 through 70+. Standards scale with age â€” grip strength peaks at 25â€“35 and declines approximately 10â€“15 seconds per decade without training.</p>
+        <p>The full standards table below covers every age bracket from 15 through 70+. Standards scale with age - grip strength peaks at 25-35 and declines approximately 10-15 seconds per decade without training.</p>
 
         <div class="tabs">
           <button class="tab-btn active" data-tab="men-tab">Men</button>
@@ -240,13 +239,13 @@ import Article from '../../layouts/Article.astro';
               </tr>
             </thead>
             <tbody>
-              <tr><td>15â€“19</td><td>&lt;15 sec</td><td>15â€“30 sec</td><td>30â€“60 sec</td><td>60â€“90 sec</td><td>90+ sec</td></tr>
-              <tr><td>20â€“29</td><td>&lt;20 sec</td><td>20â€“40 sec</td><td>40â€“75 sec</td><td>75â€“120 sec</td><td>120+ sec</td></tr>
-              <tr><td>30â€“39</td><td>&lt;15 sec</td><td>15â€“35 sec</td><td>35â€“65 sec</td><td>65â€“100 sec</td><td>100+ sec</td></tr>
-              <tr><td>40â€“49</td><td>&lt;15 sec</td><td>15â€“30 sec</td><td>30â€“55 sec</td><td>55â€“85 sec</td><td>85+ sec</td></tr>
-              <tr><td>50â€“59</td><td>&lt;10 sec</td><td>10â€“25 sec</td><td>25â€“45 sec</td><td>45â€“70 sec</td><td>70+ sec</td></tr>
-              <tr><td>60â€“69</td><td>&lt;5 sec</td><td>5â€“15 sec</td><td>15â€“35 sec</td><td>35â€“55 sec</td><td>55+ sec</td></tr>
-              <tr><td>70+</td><td>&lt;5 sec</td><td>5â€“10 sec</td><td>10â€“25 sec</td><td>25â€“40 sec</td><td>40+ sec</td></tr>
+              <tr><td>15-19</td><td>&lt;15 sec</td><td>15-30 sec</td><td>30-60 sec</td><td>60-90 sec</td><td>90+ sec</td></tr>
+              <tr><td>20-29</td><td>&lt;20 sec</td><td>20-40 sec</td><td>40-75 sec</td><td>75-120 sec</td><td>120+ sec</td></tr>
+              <tr><td>30-39</td><td>&lt;15 sec</td><td>15-35 sec</td><td>35-65 sec</td><td>65-100 sec</td><td>100+ sec</td></tr>
+              <tr><td>40-49</td><td>&lt;15 sec</td><td>15-30 sec</td><td>30-55 sec</td><td>55-85 sec</td><td>85+ sec</td></tr>
+              <tr><td>50-59</td><td>&lt;10 sec</td><td>10-25 sec</td><td>25-45 sec</td><td>45-70 sec</td><td>70+ sec</td></tr>
+              <tr><td>60-69</td><td>&lt;5 sec</td><td>5-15 sec</td><td>15-35 sec</td><td>35-55 sec</td><td>55+ sec</td></tr>
+              <tr><td>70+</td><td>&lt;5 sec</td><td>5-10 sec</td><td>10-25 sec</td><td>25-40 sec</td><td>40+ sec</td></tr>
             </tbody>
           </table>
         </div>
@@ -264,18 +263,18 @@ import Article from '../../layouts/Article.astro';
               </tr>
             </thead>
             <tbody>
-              <tr><td>15â€“19</td><td>&lt;10 sec</td><td>10â€“20 sec</td><td>20â€“40 sec</td><td>40â€“60 sec</td><td>60+ sec</td></tr>
-              <tr><td>20â€“29</td><td>&lt;15 sec</td><td>15â€“25 sec</td><td>25â€“50 sec</td><td>50â€“75 sec</td><td>75+ sec</td></tr>
-              <tr><td>30â€“39</td><td>&lt;10 sec</td><td>10â€“25 sec</td><td>25â€“45 sec</td><td>45â€“65 sec</td><td>65+ sec</td></tr>
-              <tr><td>40â€“49</td><td>&lt;10 sec</td><td>10â€“20 sec</td><td>20â€“35 sec</td><td>35â€“55 sec</td><td>55+ sec</td></tr>
-              <tr><td>50â€“59</td><td>&lt;5 sec</td><td>5â€“15 sec</td><td>15â€“30 sec</td><td>30â€“45 sec</td><td>45+ sec</td></tr>
-              <tr><td>60â€“69</td><td>&lt;5 sec</td><td>5â€“10 sec</td><td>10â€“25 sec</td><td>25â€“35 sec</td><td>35+ sec</td></tr>
-              <tr><td>70+</td><td>&lt;3 sec</td><td>3â€“8 sec</td><td>8â€“15 sec</td><td>15â€“25 sec</td><td>25+ sec</td></tr>
+              <tr><td>15-19</td><td>&lt;10 sec</td><td>10-20 sec</td><td>20-40 sec</td><td>40-60 sec</td><td>60+ sec</td></tr>
+              <tr><td>20-29</td><td>&lt;15 sec</td><td>15-25 sec</td><td>25-50 sec</td><td>50-75 sec</td><td>75+ sec</td></tr>
+              <tr><td>30-39</td><td>&lt;10 sec</td><td>10-25 sec</td><td>25-45 sec</td><td>45-65 sec</td><td>65+ sec</td></tr>
+              <tr><td>40-49</td><td>&lt;10 sec</td><td>10-20 sec</td><td>20-35 sec</td><td>35-55 sec</td><td>55+ sec</td></tr>
+              <tr><td>50-59</td><td>&lt;5 sec</td><td>5-15 sec</td><td>15-30 sec</td><td>30-45 sec</td><td>45+ sec</td></tr>
+              <tr><td>60-69</td><td>&lt;5 sec</td><td>5-10 sec</td><td>10-25 sec</td><td>25-35 sec</td><td>35+ sec</td></tr>
+              <tr><td>70+</td><td>&lt;3 sec</td><td>3-8 sec</td><td>8-15 sec</td><td>15-25 sec</td><td>25+ sec</td></tr>
             </tbody>
           </table>
         </div>
 
-        <p>Body weight affects all of these numbers. A lighter person with equivalent grip strength holds longer because they support less load. Relative grip strength â€” force per unit of bodyweight â€” is a better predictor of hold duration than absolute strength.</p>
+        <p>Body weight affects all of these numbers. A lighter person with equivalent grip strength holds longer because they support less load. Relative grip strength - force per unit of bodyweight - is a better predictor of hold duration than absolute strength.</p>
 
         <!-- FACTORS -->
         <h2 id="factors">What Affects Your Dead Hang Calculator Score</h2>
@@ -285,29 +284,29 @@ import Article from '../../layouts/Article.astro';
           <li><strong>Grip strength.</strong> The primary driver. Forearm flexor endurance determines how long you resist fatigue before grip failure.</li>
           <li><strong>Body weight.</strong> Heavier bodyweight increases the load on your grip. Two people with identical forearm strength will get different scores if their weights differ significantly.</li>
           <li><strong>Shoulder mobility.</strong> Limited shoulder mobility causes early muscular fatigue as your traps and neck muscles compensate. A passive hang with full overhead reach is more efficient.</li>
-          <li><strong>Training history.</strong> Even 3â€“4 weeks of hanging practice produces measurable tendon and neuromuscular adaptations that separate trained from untrained results.</li>
-          <li><strong>Fatigue state.</strong> Grip endurance drops 15â€“25% when tested at the end of a workout versus fresh. Test your baseline when rested.</li>
-          <li><strong>Chalk use.</strong> Chalk reduces slip and can add 5â€“15 seconds to hold time by eliminating the distraction of sweating palms. Bars with knurling produce longer holds than smooth bars.</li>
+          <li><strong>Training history.</strong> Even 3-4 weeks of hanging practice produces measurable tendon and neuromuscular adaptations that separate trained from untrained results.</li>
+          <li><strong>Fatigue state.</strong> Grip endurance drops 15-25% when tested at the end of a workout versus fresh. Test your baseline when rested.</li>
+          <li><strong>Chalk use.</strong> Chalk reduces slip and can add 5-15 seconds to hold time by eliminating the distraction of sweating palms. Bars with knurling produce longer holds than smooth bars.</li>
         </ul>
 
         <!-- IMPROVE -->
         <h2 id="improve">How to Improve Your Dead Hang Score</h2>
-        <p>Dead hang time responds quickly to training. Most beginners add 5â€“10 seconds per week during the first 4 weeks. Progress slows to 2â€“5 seconds per week after the initial neural adaptation phase.</p>
+        <p>Dead hang time responds quickly to training. Most beginners add 5-10 seconds per week during the first 4 weeks. Progress slows to 2-5 seconds per week after the initial neural adaptation phase.</p>
 
-        <h3>If You Scored Untrained (Under 20 Seconds â€” Men / Under 15 Seconds â€” Women)</h3>
-        <p>Perform 3 sets of maximum-effort hangs three times per week. Rest 90 seconds between sets. Accumulate total hang time each session rather than chasing a single long effort. Use a box to reach the bar without jumping â€” save energy for the hang itself.</p>
+        <h3>If You Scored Untrained (Under 20 Seconds - Men / Under 15 Seconds - Women)</h3>
+        <p>Perform 3 sets of maximum-effort hangs three times per week. Rest 90 seconds between sets. Accumulate total hang time each session rather than chasing a single long effort. Use a box to reach the bar without jumping - save energy for the hang itself.</p>
 
-        <h3>If You Scored Beginner (20â€“40 Seconds â€” Men / 15â€“25 Seconds â€” Women)</h3>
-        <p>Increase to 4 sets per session. Introduce grip variation: alternate overhand, neutral and <a href="/mixed-grip-hang/">mixed grip</a> hangs each session. Add one set of <a href="/passive-vs-active-hang/">active hangs</a> â€” engage your lats and depress your shoulder blades â€” to build scapular strength alongside grip endurance.</p>
+        <h3>If You Scored Beginner (20-40 Seconds - Men / 15-25 Seconds - Women)</h3>
+        <p>Increase to 4 sets per session. Introduce grip variation: alternate overhand, neutral and <a href="/mixed-grip-hang/">mixed grip</a> hangs each session. Add one set of <a href="/passive-vs-active-hang/">active hangs</a> - engage your lats and depress your shoulder blades - to build scapular strength alongside grip endurance.</p>
 
-        <h3>If You Scored Intermediate (40â€“75 Seconds â€” Men / 25â€“50 Seconds â€” Women)</h3>
-        <p>Train for your target time. If 90 seconds is your goal, practice holds at 80â€“90% of your maximum with shorter rest periods (60 seconds). Add <a href="/weighted-deadhang/">weighted dead hangs</a> with 5â€“10 kg to build the grip strength reserve that converts to longer unweighted holds.</p>
+        <h3>If You Scored Intermediate (40-75 Seconds - Men / 25-50 Seconds - Women)</h3>
+        <p>Train for your target time. If 90 seconds is your goal, practice holds at 80-90% of your maximum with shorter rest periods (60 seconds). Add <a href="/weighted-deadhang/">weighted dead hangs</a> with 5-10 kg to build the grip strength reserve that converts to longer unweighted holds.</p>
 
-        <h3>If You Scored Advanced or Elite (75+ Seconds â€” Men / 50+ Seconds â€” Women)</h3>
+        <h3>If You Scored Advanced or Elite (75+ Seconds - Men / 50+ Seconds - Women)</h3>
         <p>Maintain your level with 3 sessions per week. Focus on specificity: one-arm negatives, <a href="/towel-hang/">towel hangs</a>, and finger-specific loading through <a href="/grip-attachments/">thick grip attachments</a>. Consider whether your training goal is continued hold time improvement or applying grip strength to another sport.</p>
 
         <div class="callout">
-          <p><strong>Frequency beats volume.</strong> Five short sessions per week â€” 3 sets each â€” produces faster gains than two long sessions. Your forearm tendons need frequent stimulus with adequate recovery between bouts. Never train to complete grip failure more than twice per week.</p>
+          <p><strong>Frequency beats volume.</strong> Five short sessions per week - 3 sets each - produces faster gains than two long sessions. Your forearm tendons need frequent stimulus with adequate recovery between bouts. Never train to complete grip failure more than twice per week.</p>
         </div>
 
         <p>Follow the structured <a href="/4-week-program/">4-week beginner program</a>, <a href="/8-week-program/">8-week intermediate program</a>, or <a href="/12-week-program/">12-week advanced program</a> for week-by-week programming matched to your current score.</p>
@@ -322,17 +321,17 @@ import Article from '../../layouts/Article.astro';
 
         <div class="faq">
           <h3>What is a good dead hang time by age?</h3>
-          <p>For men aged 20â€“39, 40â€“75 seconds is average and 75+ seconds is above average. For women aged 20â€“39, 25â€“50 seconds is average. Performance declines roughly 10â€“15 seconds per decade after 35 without training. See the full standards table above for every age bracket.</p>
+          <p>For men aged 20-39, 40-75 seconds is average and 75+ seconds is above average. For women aged 20-39, 25-50 seconds is average. Performance declines roughly 10-15 seconds per decade after 35 without training. See the full standards table above for every age bracket.</p>
         </div>
 
         <div class="faq">
           <h3>What percentile is a 60-second dead hang?</h3>
-          <p>A 60-second dead hang places a man aged 20â€“39 at approximately the 60thâ€“70th percentile. For a woman aged 20â€“39, 60 seconds is the 85thâ€“90th percentile. For both sexes over 50, 60 seconds is advanced territory.</p>
+          <p>A 60-second dead hang places a man aged 20-39 at approximately the 60th-70th percentile. For a woman aged 20-39, 60 seconds is the 85th-90th percentile. For both sexes over 50, 60 seconds is advanced territory.</p>
         </div>
 
         <div class="faq">
           <h3>Is a 2-minute dead hang good?</h3>
-          <p>A 2-minute dead hang is elite for any adult. It places men in the top 5â€“10% and women in the top 2â€“5% of the general population. Dr. Peter Attia recommends 2 minutes as the optimal longevity benchmark for men and 90 seconds for women.</p>
+          <p>A 2-minute dead hang is elite for any adult. It places men in the top 5-10% and women in the top 2-5% of the general population. Dr. Peter Attia recommends 2 minutes as the optimal longevity benchmark for men and 90 seconds for women.</p>
         </div>
 
         <div class="faq">
@@ -342,7 +341,7 @@ import Article from '../../layouts/Article.astro';
 
         <div class="faq">
           <h3>Should I use chalk for the dead hang test?</h3>
-          <p>For a consistent baseline test, skip chalk. Chalk can add 5â€“15 seconds by eliminating palm sweat. Test without chalk the first time so you have a true starting point, then retest with chalk to see your optimised performance ceiling.</p>
+          <p>For a consistent baseline test, skip chalk. Chalk can add 5-15 seconds by eliminating palm sweat. Test without chalk the first time so you have a true starting point, then retest with chalk to see your optimised performance ceiling.</p>
         </div>
 
         <h2>Related Guides</h2>
@@ -370,16 +369,16 @@ import Article from '../../layouts/Article.astro';
         <div class="author-photo">DH</div>
         <div class="author-info">
           <h4>The DeadHangs Team</h4>
-          <p class="author-title">NSCA-CSCS &amp; NASM-CPT Certified</p>
-          <p>Our content is written and reviewed by certified personal trainers and physical therapists with 10+ years of grip training experience. <a href="/about/">Learn more about our team</a>.</p>
+          <p class="author-title">Evidence-based grip training</p>
+          <p>DeadHangs.com publishes evidence-based dead hang and grip training guides. Health claims are referenced to published research. <a href="/about/">Learn more about our team</a>.</p>
         </div>
       </div>
 
       <div class="sources">
         <h3>Sources &amp; References</h3>
         <ol>
-          <li>Bohannon, R.W. (2019). Grip strength: An indispensable biomarker for older adults. <em>Clinical Interventions in Aging</em>, 14, 1681â€“1691.</li>
-          <li>Leong, D.P. et al. (2015). Prognostic value of grip strength. <em>The Lancet</em>, 386(9990), 266â€“273.</li>
+          <li>Bohannon, R.W. (2019). Grip strength: An indispensable biomarker for older adults. <em>Clinical Interventions in Aging</em>, 14, 1681-1691.</li>
+          <li>Leong, D.P. et al. (2015). Prognostic value of grip strength. <em>The Lancet</em>, 386(9990), 266-273.</li>
           <li>Dodds, R.M. et al. (2014). Grip strength across the life course: normative data from twelve British studies. <em>PLoS One</em>, 9(12), e113637.</li>
           <li>Attia, P. (2023). <em>Outlive: The Science and Art of Longevity</em>. Harmony Books.</li>
           <li>American College of Sports Medicine. (2021). <em>ACSM's Guidelines for Exercise Testing and Prescription</em>. 11th edition.</li>
