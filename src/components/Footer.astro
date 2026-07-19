@@ -19,14 +19,28 @@
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:48px;">
       {[
-        ["Protocol","Daily","Calculator","Timer"],
-        ["Science","Studies","FAQ","Newsletter"],
-        ["Co.","About","Contact","Press"]
+        { heading: "Popular", links: [
+          { label: "Dead Hang Times by Age", href: "/dead-hang-time-by-age/" },
+          { label: "Dead Hang World Record", href: "/dead-hang-world-record/" },
+          { label: "Dead Hang Calculator", href: "/dead-hang-calculator/" },
+          { label: "Dead Hang Standards", href: "/dead-hang-standards/" },
+        ]},
+        { heading: "Guides", links: [
+          { label: "Dead Hang Guide", href: "/deadhang-guide/" },
+          { label: "How to Dead Hang", href: "/how-to-deadhang/" },
+          { label: "Training Programs", href: "/training-programs/" },
+          { label: "Grip Strength", href: "/grip-strength/" },
+        ]},
+        { heading: "Site", links: [
+          { label: "About", href: "/about/" },
+          { label: "Contact", href: "/contact/" },
+          { label: "Privacy", href: "/privacy/" },
+        ]},
       ].map((col) => (
         <div>
-          <div class="dh-eyebrow" style="margin-bottom:12px;">{col[0]}</div>
-          {col.slice(1).map(l => (
-            <a href="#" style="display:block;font-size:13px;color:var(--color-text-muted);margin-bottom:8px;">{l}</a>
+          <div class="dh-eyebrow" style="margin-bottom:12px;">{col.heading}</div>
+          {col.links.map(l => (
+            <a href={l.href} style="display:block;font-size:13px;color:var(--color-text-muted);margin-bottom:8px;">{l.label}</a>
           ))}
         </div>
       ))}
@@ -34,7 +48,7 @@
   </div>
   <hr class="dh-rule" style="margin-top:32px;"/>
   <div style="max-width:1200px;margin:16px auto 0;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--color-text-faint);letter-spacing:.12em;text-transform:uppercase;">
-    <span>&copy; 2025 deadhangs.com</span>
+    <span>&copy; 2026 deadhangs.com</span>
     <span>Evidence-based training</span>
   </div>
 </footer>
