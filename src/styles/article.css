@@ -53,7 +53,8 @@
   margin: 0 0 32px;
 }
 
-.article-meta-bar {
+.article-meta-bar,
+.article-meta {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -68,7 +69,16 @@
   margin-bottom: 48px;
 }
 
-.article-meta-bar .author-avatar {
+.article-meta-bar .author-link,
+.article-meta .author-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+}
+
+.article-meta-bar .author-avatar,
+.article-meta .author-avatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -81,15 +91,23 @@
   font-weight: 600;
 }
 
-.article-meta-bar .meta-sep {
+.article-meta-bar .meta-sep,
+.article-meta .meta-sep {
   color: var(--color-divider);
 }
 
-.article-meta-bar .review-badge {
+.article-meta-bar .review-badge,
+.article-meta .review-badge {
   color: var(--color-primary);
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+.review-badge svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 /* Article body */
