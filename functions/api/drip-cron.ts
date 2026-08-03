@@ -41,19 +41,25 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
       for (let i = 0; i < DRIP_DAYS.length; i++) {
         if (daysSinceSignup >= DRIP_DAYS[i] && lastSent < i) {
+          // Record progress BEFORE sending. Brevo's update-contact endpoint is
+          // PUT /contacts/{identifier} (email in the URL path, not the body) -
+          // calling PUT /contacts silently failed, so DRIP_LAST_SENT never
+          // persisted and step 0 was re-sent every day. If the write fails,
+          // skip the send rather than risk spamming the contact again.
+          const update = await brevo(`/contacts/${encodeURIComponent(contact.email)}`, context.env, {
+            method: 'PUT',
+            body: JSON.stringify({
+              attributes: { DRIP_LAST_SENT: String(i) },
+            }),
+          });
+
+          if (!update.ok) break;
+
           await brevo('/smtp/email', context.env, {
             method: 'POST',
             body: JSON.stringify({
               templateId: TEMPLATE_IDS[i],
               to: [{ email: contact.email }],
-            }),
-          });
-
-          await brevo('/contacts', context.env, {
-            method: 'PUT',
-            body: JSON.stringify({
-              email: contact.email,
-              attributes: { DRIP_LAST_SENT: String(i) },
             }),
           });
 
