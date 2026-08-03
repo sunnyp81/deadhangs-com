@@ -16,7 +16,8 @@
 
   --color-text: #eef2ff;
   --color-text-muted: #8090b0;
-  --color-text-faint: #3a4a68;
+  /* was #3a4a68 — only 2.20:1 on --color-bg and 2.07:1 on --color-surface (WCAG AA needs 4.5:1) */
+  --color-text-faint: #7386a8;
   --color-text-inverse: #080c14;
 
   --color-primary: #00e5ff;

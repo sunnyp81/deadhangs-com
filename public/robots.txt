@@ -1,4 +1,4 @@
-﻿# AI Crawler Policy
+# AI Crawler Policy
 # Allow all AI bots for citation, search, and training.
 # Content-Signal (proposed standard): explicit opt-in.
 

@@ -266,11 +266,11 @@ import SignupForm from '../../components/SignupForm';
             <rect x="80" y="30" width="540" height="320" fill="#f8fafc" rx="8"/>
 
             <!-- Y-axis labels -->
-            <text x="70" y="68" text-anchor="end" fill="#64748b" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">120s</text>
-            <text x="70" y="132" text-anchor="end" fill="#64748b" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">90s</text>
-            <text x="70" y="196" text-anchor="end" fill="#64748b" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">60s</text>
-            <text x="70" y="260" text-anchor="end" fill="#64748b" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">30s</text>
-            <text x="70" y="324" text-anchor="end" fill="#64748b" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">0s</text>
+            <text x="70" y="68" text-anchor="end" fill="#94a3b8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">120s</text>
+            <text x="70" y="132" text-anchor="end" fill="#94a3b8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">90s</text>
+            <text x="70" y="196" text-anchor="end" fill="#94a3b8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">60s</text>
+            <text x="70" y="260" text-anchor="end" fill="#94a3b8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">30s</text>
+            <text x="70" y="324" text-anchor="end" fill="#94a3b8" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">0s</text>
 
             <!-- Grid lines -->
             <line x1="80" y1="64" x2="620" y2="64" stroke="#e2e8f0" stroke-width="1"/>
@@ -281,38 +281,41 @@ import SignupForm from '../../components/SignupForm';
 
             <!-- Percentile groups -->
             <!-- 25th percentile -->
-            <text x="155" y="360" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">25th %ile</text>
+            <text x="155" y="360" text-anchor="middle" fill="#cbd5e1" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">25th %ile</text>
             <rect x="120" y="270" width="30" height="50" fill="#0d9488" rx="3"/>
             <rect x="160" y="283" width="30" height="37" fill="#0d9488" opacity="0.5" rx="3"/>
             <text x="135" y="265" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">20s</text>
             <text x="175" y="278" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">15s</text>
 
             <!-- 50th percentile -->
-            <text x="275" y="360" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">50th %ile</text>
+            <text x="275" y="360" text-anchor="middle" fill="#cbd5e1" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">50th %ile</text>
             <rect x="240" y="228" width="30" height="92" fill="#0d9488" rx="3"/>
             <rect x="280" y="253" width="30" height="67" fill="#0d9488" opacity="0.5" rx="3"/>
             <text x="255" y="223" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">40s</text>
             <text x="295" y="248" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">28s</text>
 
             <!-- 75th percentile -->
-            <text x="395" y="360" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">75th %ile</text>
+            <text x="395" y="360" text-anchor="middle" fill="#cbd5e1" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">75th %ile</text>
             <rect x="360" y="181" width="30" height="139" fill="#0d9488" rx="3"/>
             <rect x="400" y="218" width="30" height="102" fill="#0d9488" opacity="0.5" rx="3"/>
             <text x="375" y="176" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">60s</text>
             <text x="415" y="213" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">45s</text>
 
             <!-- 95th percentile -->
-            <text x="515" y="360" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">95th %ile</text>
+            <text x="515" y="360" text-anchor="middle" fill="#cbd5e1" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="600">95th %ile</text>
             <rect x="480" y="105" width="30" height="215" fill="#0d9488" rx="3"/>
             <rect x="520" y="158" width="30" height="162" fill="#0d9488" opacity="0.5" rx="3"/>
             <text x="495" y="100" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">95s</text>
             <text x="535" y="153" text-anchor="middle" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="500">70s</text>
 
-            <!-- Legend -->
+            <!-- Legend. The swatches sit outside the white plot card, so opacity="0.5"
+                 blended them against the dark page and made the Women key render DARKER
+                 than the Men key - the inverse of the bars. Both keys now use the solid
+                 colour each bar actually renders as on the #f8fafc card. -->
             <rect x="230" y="388" width="14" height="14" fill="#0d9488" rx="2"/>
-            <text x="250" y="400" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">Men</text>
-            <rect x="310" y="388" width="14" height="14" fill="#0d9488" opacity="0.5" rx="2"/>
-            <text x="330" y="400" fill="#0f172a" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">Women</text>
+            <text x="250" y="400" fill="#cbd5e1" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">Men</text>
+            <rect x="310" y="388" width="14" height="14" fill="#82c7c2" rx="2"/>
+            <text x="330" y="400" fill="#cbd5e1" font-family="'Plus Jakarta Sans', sans-serif" font-size="12">Women</text>
           </svg>
           <p class="caption">Dead hang percentile rankings for the general adult population (ages 20-60). Times represent untrained averages.</p>
         </div>
