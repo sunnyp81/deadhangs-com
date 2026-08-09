@@ -104,4 +104,29 @@ import Article from '../../layouts/Article.astro';
     
   </div>`} />
   </div>
+
+<!-- Post-submit confirmation. On a static build Astro.url.searchParams is empty at
+     runtime, so the ?sent=1 check has to happen client side or the visitor sees the
+     same empty form and assumes the send failed. -->
+<script is:inline>
+  (function () {
+    if (new URLSearchParams(window.location.search).get('sent') !== '1') return;
+    var run = function () {
+      var forms = document.querySelectorAll('form');
+      for (var i = 0; i < forms.length; i++) {
+        var f = forms[i];
+        // only swap forms that actually post to the form service
+        if (!f.querySelector('[name="redirectTo"], [name="redirect"]')) continue;
+        var box = document.createElement('div');
+        box.setAttribute('role', 'status');
+        box.style.cssText = 'border:1px solid currentColor;border-radius:8px;padding:1.25rem 1.5rem;margin:0 0 1.5rem;line-height:1.5';
+        box.innerHTML = '<strong>Thanks, your message has been sent.</strong><br>We have received it and will be in touch.';
+        f.parentNode.insertBefore(box, f);
+        f.hidden = true;
+      }
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+    else run();
+  })();
+</script>
 </Article>
