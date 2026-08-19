@@ -1,0 +1,37 @@
+{
+  "pages": [
+    {
+      "url": "https://deadhangs.com/dead-hang-time-by-age/",
+      "faq_schema": {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What are the average dead hang times by age and gender?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The page provides comprehensive benchmarks for average dead hang times, categorized by age, gender, and training level, allowing you to see typical performance for various demographics."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How can I compare my dead hang time to others?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can compare your dead hang time using the percentile benchmarks available on the page, which show how your performance stacks up against others in your age group, gender, and training level."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are there different dead hang benchmarks for various training levels?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, the page offers dead hang benchmarks that account for different training levels, alongside age and gender, to give a more accurate comparison of your hang time."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
