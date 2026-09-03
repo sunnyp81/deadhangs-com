@@ -8,26 +8,125 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "What are the average dead hang times by age and gender?",
+            "name": "What is the average dead hang time?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The page provides comprehensive benchmarks for average dead hang times, categorized by age, gender, and training level, allowing you to see typical performance for various demographics."
+              "text": "The average dead hang time varies significantly by age and gender. For example, men in their 20s might average around 30-40 seconds, while women in the same age group might average 20-30 seconds. The page provides detailed charts with percentile rankings to help you compare your performance."
             }
           },
           {
             "@type": "Question",
-            "name": "How can I compare my dead hang time to others?",
+            "name": "How do dead hang times vary by age and gender?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "You can compare your dead hang time using the percentile benchmarks available on the page, which show how your performance stacks up against others in your age group, gender, and training level."
+              "text": "Dead hang times generally decrease with age for both men and women. Men typically have longer average dead hang times than women across all age groups due to differences in upper body strength and grip endurance. The article offers specific benchmarks and percentile rankings for various age categories and genders."
             }
           },
           {
             "@type": "Question",
-            "name": "Are there different dead hang benchmarks for various training levels?",
+            "name": "What is considered a good dead hang time for my age group?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes, the page offers dead hang benchmarks that account for different training levels, alongside age and gender, to give a more accurate comparison of your hang time."
+              "text": "A 'good' dead hang time is relative to your age and gender. The page includes percentile charts that allow you to see how your time compares to others in your demographic. For instance, achieving a time in the 75th percentile or higher would generally be considered good performance for your specific age and gender group."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://deadhangs.com/dead-hang-world-record/",
+      "faq_schema": {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is the current dead hang world record?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The current Guinness World Record for the longest dead hang is 80 minutes and 41 seconds, set by Kenta Adachi of Japan in 2022. This incredible feat showcases extreme grip strength and endurance."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Who holds the Guinness World Record for the dead hang?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The Guinness World Record for the dead hang is held by Kenta Adachi from Japan. He achieved his record-breaking time of 80 minutes and 41 seconds in 2022."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What are the official rules for a dead hang world record attempt?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Official rules for a dead hang world record attempt typically require a strict dead hang position with arms fully extended, no contact with the ground or support, and a specific grip (usually pronated or neutral). Judges monitor for any bending of the elbows or other form breaks. The page details the specific criteria set by Guinness World Records."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://deadhangs.com/deadhang-guide/",
+      "faq_schema": {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How can I improve my dead hang time?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "To improve your dead hang time, focus on consistent training that builds grip strength and endurance. This includes progressive overload, varying your hang durations, incorporating active hangs, and following a structured workout plan with appropriate sets, reps, and rest periods, as outlined in the complete training guide."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is a good dead hang workout plan for beginners?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "A good beginner dead hang workout plan typically starts with shorter hang durations (e.g., 10-20 seconds) for multiple sets, focusing on perfect form. The guide provides a structured progression, including recommended sets, reps, and rest times, to gradually increase your hang duration and strength safely."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the correct form for a dead hang?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The correct form for a dead hang involves hanging from a bar with arms fully extended, shoulders relaxed but not shrugged, and a neutral spine. Your feet should be off the ground, and your grip should be firm. The guide provides detailed instructions and visual cues to help you master proper dead hang form."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "url": "https://deadhangs.com/equipment-guide/",
+      "faq_schema": {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What equipment do I need for dead hang training?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "For dead hang training, the primary equipment you need is a sturdy pull-up bar. Optional but highly recommended accessories include chalk for improved grip, grip aids like straps or fat grips for specific training goals, and potentially a timer. The guide offers recommendations for various budgets and training levels."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the best type of pull-up bar for dead hangs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The best type of pull-up bar for dead hangs is one that is securely mounted, offers a comfortable grip diameter, and is wide enough to allow for a natural shoulder-width or slightly wider grip. Doorframe bars, wall-mounted bars, or power towers are all viable options, with the guide detailing the pros and cons of each."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is chalk necessary for dead hangs?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Chalk is not strictly necessary for dead hangs, but it can be highly beneficial, especially as your hang times increase or if your hands tend to sweat. Chalk absorbs moisture, improving grip friction and reducing the risk of slipping, allowing you to focus more on endurance rather than grip security. The guide discusses different types of chalk and their benefits."
             }
           }
         ]
