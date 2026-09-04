@@ -24,6 +24,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const now = Date.now();
   let sent = 0;
+  let failed = 0;
   let offset = 0;
   const limit = 50;
 
@@ -41,7 +42,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
       for (let i = 0; i < DRIP_DAYS.length; i++) {
         if (daysSinceSignup >= DRIP_DAYS[i] && lastSent < i) {
-          await brevo('/smtp/email', context.env, {
+          const sendRes = await brevo('/smtp/email', context.env, {
             method: 'POST',
             body: JSON.stringify({
               templateId: TEMPLATE_IDS[i],
@@ -49,13 +50,23 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
             }),
           });
 
-          await brevo('/contacts', context.env, {
+          if (!sendRes.ok) {
+            failed++;
+            console.error(`drip-cron: send failed for ${contact.email} template ${TEMPLATE_IDS[i]}: ${sendRes.status} ${await sendRes.text()}`);
+            break;
+          }
+
+          const updateRes = await brevo(`/contacts/${encodeURIComponent(contact.email)}`, context.env, {
             method: 'PUT',
             body: JSON.stringify({
-              email: contact.email,
               attributes: { DRIP_LAST_SENT: String(i) },
             }),
           });
+
+          if (!updateRes.ok) {
+            failed++;
+            console.error(`drip-cron: attribute update failed for ${contact.email}: ${updateRes.status} ${await updateRes.text()}`);
+          }
 
           sent++;
           break;
@@ -67,7 +78,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     if (data.contacts.length < limit) break;
   }
 
-  return new Response(JSON.stringify({ ok: true, sent }), {
+  return new Response(JSON.stringify({ ok: true, sent, failed }), {
     headers: { 'Content-Type': 'application/json' },
   });
 };
