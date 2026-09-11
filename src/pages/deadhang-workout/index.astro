@@ -126,12 +126,12 @@ import Article from '../../layouts/Article.astro';
       <h2>Weekly Programming</h2>
       <p>Run this dead hang workout 3-4 times per week. Space sessions at least 24 hours apart to allow connective tissue recovery. Tendons and ligaments adapt slower than muscle fibers.</p>
 
-      <table class="data-table">
+      <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Scrollable comparison table" tabindex="0"><table class="data-table">
         <thead>
           <tr>
-            <th>Day</th>
-            <th>Session Type</th>
-            <th>Focus</th>
+            <th scope="col">Day</th>
+            <th scope="col">Session Type</th>
+            <th scope="col">Focus</th>
           </tr>
         </thead>
         <tbody>
@@ -171,7 +171,7 @@ import Article from '../../layouts/Article.astro';
             <td>Full rest day</td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
 
       <p>Heavy days include all three blocks plus warm-up and cool-down. Light days focus on hang sets only with reduced volume. This alternating pattern prevents overuse injuries while maintaining <a href="/deadhang-frequency/">training frequency</a>.</p>
       <p>Deload every 4th week. Cut your total hang time by 50% and drop complementary exercises entirely. Your tendons need this recovery period to consolidate strength gains. Resume full volume in week 5.</p>

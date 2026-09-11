@@ -127,13 +127,13 @@ import Article from '../../layouts/Article.astro';
       <h2>Sport-Specific Programming</h2>
       <p>Use this table to match your dead hang training to your sport. Each recommendation targets the grip quality and training parameters that produce the most transfer.</p>
 
-      <table class="data-table">
+      <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Scrollable comparison table" tabindex="0"><table class="data-table">
         <thead>
           <tr>
-            <th>Sport</th>
-            <th>Primary Grip Variation</th>
-            <th>Frequency</th>
-            <th>Sets x Duration</th>
+            <th scope="col">Sport</th>
+            <th scope="col">Primary Grip Variation</th>
+            <th scope="col">Frequency</th>
+            <th scope="col">Sets x Duration</th>
           </tr>
         </thead>
         <tbody>
@@ -180,7 +180,7 @@ import Article from '../../layouts/Article.astro';
             <td>3-4 x max hold</td>
           </tr>
         </tbody>
-      </table>
+      </table></div>
 
       <p>These are starting recommendations. Adjust frequency and volume based on your total training load and recovery capacity. Dead hang training supplements your sport training. It does not replace it.</p>
       <p>Build the <a href="/training-programs/">training program</a> around your competitive season. Increase grip training volume during the off-season. Reduce to maintenance levels during competition periods. Two sessions per week at moderate intensity maintains grip capacity without creating excessive fatigue.</p>

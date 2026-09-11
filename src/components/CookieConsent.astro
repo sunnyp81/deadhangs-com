@@ -1,0 +1,33 @@
+<section id="cookie-banner" class="consent-panel" aria-label="Analytics choices" hidden>
+  <div>
+    <p><strong>Your analytics choice</strong></p>
+    <p>Allow Google Analytics to help us understand visits and equipment-link clicks? The tools work either way. <a href="/privacy/">Privacy details</a>.</p>
+    <p id="consent-status" role="status"></p>
+  </div>
+  <div class="button-row">
+    <button type="button" class="dh-btn" data-consent="accepted">Accept analytics</button>
+    <button type="button" class="dh-btn dh-btn-ghost" data-consent="declined">Decline analytics</button>
+  </div>
+</section>
+<script>
+  const banner = document.querySelector<HTMLElement>('#cookie-banner')!;
+  try { banner.hidden = ['accepted', 'declined'].includes(localStorage.getItem('cookieConsent') || ''); }
+  catch { banner.hidden = false; }
+  let opener: HTMLElement | null = null;
+  document.querySelectorAll<HTMLElement>('[data-open-consent]').forEach(button => button.addEventListener('click', () => {
+    opener = button; banner.hidden = false; banner.querySelector('button')?.focus();
+  }));
+  banner.querySelectorAll<HTMLButtonElement>('[data-consent]').forEach(button => button.addEventListener('click', () => {
+    const choice = button.dataset.consent!;
+    if (choice === 'declined') window.dispatchEvent(new CustomEvent('deadhangs:consent', { detail: choice }));
+    try { localStorage.setItem('cookieConsent', choice); }
+    catch {
+      window.dispatchEvent(new CustomEvent('deadhangs:consent', { detail: 'declined' }));
+      document.querySelector('#consent-status')!.textContent = 'Your browser could not save this choice. Analytics has been switched off for this page; your choice may not persist.';
+      return;
+    }
+    window.dispatchEvent(new CustomEvent('deadhangs:consent', { detail: choice }));
+    banner.hidden = true;
+    opener?.focus();
+  }));
+</script>
