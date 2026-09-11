@@ -32,7 +32,7 @@
 .training-workspace .tw-round { margin: 0; font-size: 12px; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
 .training-workspace .tw-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .training-workspace .tw-settings { border: 0; margin: 0; padding: 0; min-width: 0; }
-.training-workspace .tw-settings[disabled] { opacity: .6; }
+/* Keep labels readable while native controls are disabled. */
 .training-workspace .tw-legend { padding: 0 0 8px; }
 .training-workspace .tw-settings-grid, .training-workspace .tw-form-grid {
   display: grid; gap: 12px;
