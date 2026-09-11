@@ -414,7 +414,9 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
   function confirmImport() {
     if (!pendingImport || !canWrite) return;
     if (pendingImport.snapshot !== rawSnapshot.current) {
-      setPendingImport(null); setLogStatus('Your log changed after you selected the file. Select the file again.'); return;
+      setPendingImport(null);
+      if (importField.current) importField.current.value = '';
+      setLogStatus('Your log changed after you selected the file. Select the file again.'); return;
     }
     if (commit(pendingImport.entries, 'Imported ' + pendingImport.added + ' entries; skipped ' + pendingImport.skipped + ' duplicates.')) {
       setPendingImport(null); if (importField.current) importField.current.value = '';
