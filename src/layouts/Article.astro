@@ -1,8 +1,9 @@
 ---
+import Analytics from '../components/Analytics.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 import fs from 'node:fs';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import SidebarTOC from '../components/SidebarTOC.astro';
 import '../styles/global.css';
 import '../styles/article.css';
 
@@ -84,36 +85,22 @@ const globalSchema = {
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageURL} />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script type="application/ld+json" set:html={JSON.stringify(globalSchema)} />
   {schema && <Fragment set:html={schema} />}
-  <script is:inline>
-    // GA4 (property 530351656) — only loads once cookie consent has been accepted.
-    window.__gaLoad = window.__gaLoad || function () {
-      if (window.__gaLoaded) return;
-      window.__gaLoaded = true;
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { window.dataLayer.push(arguments); }
-      window.gtag = gtag;
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YBPRQVR2Y3';
-      document.head.appendChild(s);
-      gtag('js', new Date());
-      gtag('config', 'G-YBPRQVR2Y3');
-    };
-    if (localStorage.getItem('cookieConsent') === 'accepted') {
-      window.__gaLoad();
-    }
+  <link rel="preload" href="/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin />
+  <Analytics />
+  <script>
+    import { trackAffiliateClick } from '../scripts/affiliate-tracking.js';
+    document.addEventListener('click', (event) => trackAffiliateClick(event));
+    document.addEventListener('auxclick', (event) => trackAffiliateClick(event));
   </script>
 </head>
 <body>
   <Nav />
-  <main class="article-main">
+  <main id="main-content" class="article-main">
     <slot />
-    <SidebarTOC />
+
   </main>
   <Footer />
   <script>
@@ -127,34 +114,6 @@ const globalSchema = {
     }, { threshold: 0.15 });
     document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
   </script>
-  <!-- Cookie consent banner -->
-  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#111827;color:#fff;padding:1rem;box-shadow:0 -2px 12px rgba(0,0,0,0.3)">
-    <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:1rem">
-      <p style="margin:0;font-size:0.875rem;color:#d1d5db;flex:1;min-width:200px">
-        We use cookies to improve your experience. By continuing to use this site you agree to our
-        <a href="/privacy" style="color:#fff;text-decoration:underline">Privacy Policy</a>.
-      </p>
-      <div style="display:flex;gap:0.75rem;flex-shrink:0">
-        <button id="cookie-accept" style="background:#00e5ff;color:#080c14;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:600;cursor:pointer">Accept</button>
-        <button id="cookie-decline" style="background:#374151;color:#d1d5db;border:none;padding:0.5rem 1.25rem;border-radius:0.5rem;font-size:0.875rem;font-weight:500;cursor:pointer">Decline</button>
-      </div>
-    </div>
-  </div>
-  <script>
-    (function(){
-      if (!localStorage.getItem('cookieConsent')) {
-        document.getElementById('cookie-banner').style.display = 'block';
-      }
-      document.getElementById('cookie-accept')?.addEventListener('click', function(){
-        localStorage.setItem('cookieConsent', 'accepted');
-        document.getElementById('cookie-banner').style.display = 'none';
-        if (window.__gaLoad) window.__gaLoad();
-      });
-      document.getElementById('cookie-decline')?.addEventListener('click', function(){
-        localStorage.setItem('cookieConsent', 'declined');
-        document.getElementById('cookie-banner').style.display = 'none';
-      });
-    })();
-  </script>
+  <CookieConsent />
 </body>
 </html>

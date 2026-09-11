@@ -2,106 +2,73 @@
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import GripChart from '../components/GripChart';
+import TrainingWorkspace from '../components/TrainingWorkspace';
 import HangTimer from '../components/HangTimer';
-import ProtocolCalculator from '../components/ProtocolCalculator';
+import HangCalculator from '../components/HangCalculator';
 import SignupForm from '../components/SignupForm';
 import '../styles/global.css';
 ---
 
-<Base title="Dead Hang Training - Workouts, Timer & Protocol" description="Dead hang training with free timers and workout plans. Build grip strength, decompress your spine, and improve longevity.">
+<Base title="Dead Hang Training - Workouts, Timer & Protocol" description="Dead hang training with free timers and workout plans. Practice your hangs, track your own progress, and find a training plan.">
   <Nav />
+  <main id="main-content">
 
   <!-- HERO - typographic manifesto -->
   <section id="hero" style="position:relative;min-height:820px;padding:140px 64px 80px;background:var(--color-bg);overflow:hidden;">
     <!-- Backdrop ticker -->
-    <div style="position:absolute;top:96px;left:0;right:0;font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;color:var(--color-text-faint);text-align:center;text-transform:uppercase;white-space:nowrap;">
+    <div class="hero-ticker" aria-hidden="true" style="position:absolute;top:96px;left:0;right:0;font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;color:var(--color-text-faint);text-align:center;text-transform:uppercase;white-space:nowrap;">
       <span style="margin-right:24px;">· DEADHANGS.COM ·</span>
-      <span style="margin-right:24px;">GRIP STRENGTH × LONGEVITY ·</span>
-      <span style="margin-right:24px;">EVIDENCE-BASED ·</span>
-      <span style="margin-right:24px;">GRIP IS LIFE ·</span>
+      <span style="margin-right:24px;">GRIP STRENGTH × PRACTICE ·</span>
+      <span style="margin-right:24px;">FREE TRAINING TOOLS ·</span>
+      <span style="margin-right:24px;">YOUR OWN PROGRESS ·</span>
       <span>· DEADHANGS.COM ·</span>
     </div>
 
     <div id="hero-content" style="max-width:1100px;margin:0 auto;transform-origin:center 30%;">
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px;">
-        <span class="dh-eyebrow">Grip Strength · Longevity · Protocol</span>
-        <span class="dh-eyebrow">·· 90 sec read</span>
+        <span class="dh-eyebrow">Grip Strength · Practice · Progress</span>
+        <span class="dh-eyebrow">·· BUILT FOR PRACTICE</span>
       </div>
 
       <h1 class="dh-heavy" style="font-size:clamp(96px,14vw,220px);margin:0;color:var(--color-text);text-align:left;">
         HANG.<br/>
         <span style="color:var(--color-primary);">LONGER.</span><br/>
-        LIVE.<br/>
-        <span style="color:var(--color-text-muted);">LONGER.</span>
+        TRAIN.<br/>
+        <span style="color:var(--color-text-muted);">BETTER.</span>
       </h1>
 
       <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:48px;margin-top:56px;align-items:end;">
         <p class="dh-display" style="font-size:28px;font-weight:500;line-height:1.3;margin:0;color:var(--color-text);text-wrap:balance;">
-          The single best predictor of all-cause mortality after 50 isn't your VO₂ max.
-          It isn't your bench. It's how long you can hang from a bar.
-          <span class="dh-cite" title="Leong DP et al. Lancet. 2015;386(9990):266-273">1</span>
+          A bar. A timer. A record of your progress. Build a repeatable hanging practice, one session at a time.
         </p>
         <div style="display:flex;gap:12px;justify-content:flex-end;">
-          <a href="#timer" class="dh-btn">Start the protocol</a>
-          <a href="#science" class="dh-btn dh-btn-ghost">Read the science ↓</a>
+          <a href="#timer" class="dh-btn">Start the timer</a>
+          <a href="#science" class="dh-btn dh-btn-ghost">Track your progress ↓</a>
         </div>
       </div>
     </div>
 
     <!-- scroll cue -->
     <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;color:var(--color-text-faint);text-transform:uppercase;">
-      ↓ scroll · the data
+      ↓ scroll · your progress
     </div>
   </section>
 
   <!-- DATA STRIP -->
   <section id="science" style="background:var(--color-surface);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);padding:80px 64px;">
     <div style="max-width:1200px;margin:0 auto;">
-      <div class="scroll-reveal">
-        <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:32px;">
-          <div>
-            <div class="dh-eyebrow" style="margin-bottom:8px;">· FIG. 01 / GRIP × MORTALITY</div>
-            <h2 class="dh-display" style="font-size:40px;font-weight:500;margin:0;max-width:720px;">
-              Each <span style="color:var(--color-primary);">5 kg</span> increment in grip strength
-              corresponds to a <span style="color:var(--color-primary);">16% reduction</span> in all-cause mortality risk.
-            </h2>
-          </div>
-          <div style="text-align:right;min-width:180px;">
-            <div class="dh-mono" style="font-size:12px;color:var(--color-text-muted);letter-spacing:.12em;">SOURCE</div>
-            <div style="font-family:var(--font-mono);font-size:13px;color:var(--color-text);">Lancet, 2015</div>
-            <div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);margin-top:2px;">n = 139,691 · 17 nations</div>
-          </div>
-        </div>
+      <div class="scroll-reveal" style="margin-bottom:40px;">
+        <div class="dh-eyebrow" style="margin-bottom:12px;">· YOUR BASELINE / YOUR PROGRESS</div>
+        <h2 class="dh-display" style="font-size:40px;font-weight:500;margin:0;max-width:780px;">The useful benchmark is <span style="color:var(--color-primary);">your last comparable hang.</span></h2>
+        <p style="max-width:720px;color:var(--color-text-muted);margin-top:24px;">Use the same bar, grip and assistance when comparing sessions. Record what you actually held. The timer does not measure your performance.</p>
       </div>
-
-      <div class="scroll-reveal scroll-reveal-d3">
-        <div style="background:var(--color-bg);padding:32px;border-radius:var(--radius-md);border:1px solid var(--color-divider);">
-          <GripChart client:visible width={1100} height={300} />
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);margin-top:1px;border:1px solid var(--color-divider);">
-        <div class="stat-cell">
-          <div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">−16%</div>
-          <div style="font-family:var(--font-display);font-weight:600;font-size:14px;margin-top:12px;color:var(--color-text);">Mortality, per 5kg grip</div>
-          <div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);letter-spacing:.08em;margin-top:4px;">Leong, Lancet 2015</div>
-        </div>
-        <div class="stat-cell">
-          <div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">−17%</div>
-          <div style="font-family:var(--font-display);font-weight:600;font-size:14px;margin-top:12px;color:var(--color-text);">CV mortality, per 5kg grip</div>
-          <div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);letter-spacing:.08em;margin-top:4px;">Leong, Lancet 2015</div>
-        </div>
-        <div class="stat-cell">
-          <div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">7 min</div>
-          <div style="font-family:var(--font-display);font-weight:600;font-size:14px;margin-top:12px;color:var(--color-text);">Daily protocol</div>
-          <div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);letter-spacing:.08em;margin-top:4px;">3 rounds · 30s hang</div>
-        </div>
-        <div class="stat-cell">
-          <div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">46%</div>
-          <div style="font-family:var(--font-display);font-weight:600;font-size:14px;margin-top:12px;color:var(--color-text);">Shoulder pain reduction</div>
-          <div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);letter-spacing:.08em;margin-top:4px;">Kirsch, 2017</div>
-        </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);border:1px solid var(--color-divider);">
+        {[
+          { n: '01', title: 'Set up', detail: 'Same bar · same grip' },
+          { n: '02', title: 'Practice', detail: 'Choose your intervals' },
+          { n: '03', title: 'Record', detail: 'Log actual hold time' },
+          { n: '04', title: 'Compare', detail: 'Like-for-like sessions' },
+        ].map(item => <div class="stat-cell"><div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">{item.n}</div><div class="dh-display" style="font-weight:600;font-size:14px;margin-top:12px;">{item.title}</div><div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);margin-top:4px;">{item.detail}</div></div>)}
       </div>
     </div>
   </section>
@@ -109,15 +76,15 @@ import '../styles/global.css';
   <!-- THE CASE - three pillars -->
   <section id="protocol" style="padding:120px 64px;background:var(--color-bg);">
     <div style="max-width:1200px;margin:0 auto;">
-      <div class="dh-eyebrow" style="margin-bottom:16px;">§ II · The Case</div>
+      <div class="dh-eyebrow" style="margin-bottom:16px;">§ II · Your practice</div>
       <h2 class="dh-heavy" style="font-size:96px;margin:0 0 80px;max-width:900px;line-height:0.95;">
-        One bar.<br/><span style="color:var(--color-text-muted);">Three reasons</span> to hang.
+        One bar.<br/><span style="color:var(--color-text-muted);">Three ways</span> to start.
       </h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;">
         {[
-          { n: "01", title: "Longevity", body: "Grip strength is associated with all-cause mortality, cardiovascular mortality, and hospital admission across 17 countries (Leong et al., Lancet 2015, n=139,691).", tag: "PRIMARY OUTCOME", href: "/longevity-research/" },
-          { n: "02", title: "Decompression", body: "Passive hanging creates axial traction on the spine, promoting disc hydration and reducing compressive load accumulated through prolonged sitting.", tag: "STRUCTURAL", href: "/spine-decompression/" },
-          { n: "03", title: "Shoulder Health", body: "Overhead hanging protocols are associated with improvements in shoulder impingement symptoms, as described by orthopaedic surgeon John Kirsch MD.", tag: "PROPHYLACTIC", href: "/shoulder-health/" },
+          { n: "01", title: "Learn the setup", body: "Choose a secure bar, a comfortable grip and assistance you can control. Read the setup guide before your first session.", tag: "FOUNDATIONS", href: "/how-to-deadhang/" },
+          { n: "02", title: "Make a plan", body: "Use a 4, 8 or 12-week framework to organise practice and review your progress. Adjust the workload to your own starting point.", tag: "CONSISTENCY", href: "/training-programs/" },
+          { n: "03", title: "Find your bar", body: "Compare doorway, wall-mounted and freestanding setups. Check fit, installation requirements and the manufacturer’s load rating.", tag: "EQUIPMENT", href: "/equipment-guide/" },
         ].map((p, i) => (
           <div class={`scroll-reveal ${i === 1 ? 'scroll-reveal-d1' : i === 2 ? 'scroll-reveal-d2' : ''}`}>
             <div style="position:relative;padding-top:24px;">
@@ -148,23 +115,26 @@ import '../styles/global.css';
       </div>
       <div class="scroll-reveal scroll-reveal-d3">
         <HangTimer client:visible initialWork={30} initialRest={60} rounds={3} />
+        <p class="small-copy" style="text-align:center;margin-top:24px;">Choose manageable intervals and stop if anything hurts. These defaults are editable timer settings, not a prescribed workout. <a class="text-link" href="/deadhang-safety/">Read the safety guide</a></p>
       </div>
     </div>
   </section>
+
+  <section id="training-log" class="home-log" style="padding:100px 64px;background:var(--color-bg);"><div style="max-width:1000px;margin:0 auto;"><TrainingWorkspace client:visible showTimer={false} /></div></section>
 
   <!-- PROTOCOL CALCULATOR -->
   <section id="studies" style="padding:100px 64px;background:var(--color-bg);">
     <div style="max-width:1200px;margin:0 auto;">
       <div class="scroll-reveal">
         <div style="text-align:center;margin-bottom:48px;">
-          <div class="dh-eyebrow" style="margin-bottom:12px;">· MODULE 02 / PROTOCOL ENGINE</div>
+          <div class="dh-eyebrow" style="margin-bottom:12px;">· MODULE 03 / PERSONAL PROGRESS</div>
           <h2 class="dh-display" style="font-size:44px;font-weight:600;margin:0;line-height:1.1;">
-            Tell us your numbers. Get your protocol.
+            Your numbers. Your next target.
           </h2>
         </div>
       </div>
       <div class="scroll-reveal scroll-reveal-d3">
-        <ProtocolCalculator client:visible />
+        <HangCalculator client:visible />
       </div>
     </div>
   </section>
@@ -178,7 +148,7 @@ import '../styles/global.css';
       </div>
       <div class="scroll-reveal scroll-reveal-d3 link-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
         {[
-          { title: "Dead Hang Times by Age", desc: "Average times for every age group", href: "/dead-hang-time-by-age/" },
+          { title: "Dead Hang Times by Age", desc: "What age benchmarks can tell you", href: "/dead-hang-time-by-age/" },
           { title: "Dead Hang World Record", desc: "The longest dead hang ever", href: "/dead-hang-world-record/" },
           { title: "Dead Hang Guide", desc: "Form, benefits, and protocols", href: "/deadhang-guide/" },
           { title: "How to Dead Hang", desc: "Step-by-step instructions", href: "/how-to-deadhang/" },
@@ -186,10 +156,10 @@ import '../styles/global.css';
           { title: "Grip Strength", desc: "Build a stronger grip", href: "/grip-strength/" },
           { title: "Equipment Guide", desc: "Bars, chalk, and grips", href: "/equipment-guide/" },
           { title: "Progressions", desc: "Zero to one-arm hangs", href: "/deadhang-progressions/" },
-          { title: "Benefits", desc: "7 science-backed reasons", href: "/deadhang-benefits/" },
+          { title: "Benefits", desc: "Benefits and evidence limits", href: "/deadhang-benefits/" },
           { title: "Safety", desc: "When to hang, when to stop", href: "/deadhang-safety/" },
         ].map((link) => (
-          <a href={link.href} style="display:block;padding:20px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-sm);transition:all 160ms cubic-bezier(0.16,1,0.3,1);" class="link-card">
+          <a href={link.href} style="display:block;padding:20px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-sm);transition:border-color 160ms cubic-bezier(0.16,1,0.3,1);" class="link-card">
             <div class="dh-display" style="font-size:16px;font-weight:600;margin-bottom:4px;">{link.title}</div>
             <div style="font-size:13px;color:var(--color-text-muted);">{link.desc}</div>
           </a>
@@ -206,7 +176,7 @@ import '../styles/global.css';
       </h2>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px;align-items:end;">
         <p class="dh-display" style="font-size:22px;font-weight:500;margin:0;line-height:1.4;max-width:540px;">
-          7 minutes a day. 12 weeks. Get the protocol, a hang timer, and weekly progress tracking. Nothing else.
+          Start with the free printable session planner. Choose your intervals, record your holds and review your progress. Email updates are optional.
         </p>
         <SignupForm client:visible dark={true} />
       </div>
@@ -218,23 +188,11 @@ import '../styles/global.css';
   <section id="sources" style="padding:64px 64px 40px;background:var(--color-bg);border-top:1px solid var(--color-divider);">
     <div style="max-width:1200px;margin:0 auto;">
       <div class="dh-eyebrow" style="margin-bottom:20px;">Sources</div>
-      <ol style="list-style:none;padding:0;margin:0;font-family:var(--font-mono);font-size:12px;color:var(--color-text-muted);line-height:1.6;">
-        <li style="padding:8px 0;border-top:1px solid var(--color-divider);display:flex;gap:12px;">
-          <span style="color:var(--color-primary);flex-shrink:0;">1.</span>
-          <span>Leong DP, Teo KK, Rangarajan S, et al. Prognostic value of grip strength: findings from the Prospective Urban Rural Epidemiology (PURE) study. <em>Lancet.</em> 2015;386(9990):266-273.</span>
-        </li>
-        <li style="padding:8px 0;border-top:1px solid var(--color-divider);display:flex;gap:12px;">
-          <span style="color:var(--color-primary);flex-shrink:0;">2.</span>
-          <span>Bohannon RW. Grip Strength: An Indispensable Biomarker For Older Adults. <em>Clin Interv Aging.</em> 2019;14:1681-1691.</span>
-        </li>
-        <li style="padding:8px 0;border-top:1px solid var(--color-divider);display:flex;gap:12px;">
-          <span style="color:var(--color-primary);flex-shrink:0;">3.</span>
-          <span>Kirsch J. <em>Shoulder Pain? The Solution & Prevention.</em> 5th ed. Bookstand Publishing; 2017.</span>
-        </li>
-      </ol>
+      <p style="max-width:800px;color:var(--color-text-muted);">Dead hang time depends on your setup, body mass, grip and assistance. Our calculator compares your own entries; it does not assign a population percentile or estimate your lifespan.</p><div class="button-row"><a class="text-link" href="/editorial-standards/">How we handle evidence →</a><a class="text-link" href="/dead-hang-time-by-age/">Understanding age benchmarks →</a></div>
     </div>
   </section>
 
+  </main>
   <Footer />
 
   <style>
@@ -246,12 +204,10 @@ import '../styles/global.css';
 
   <script>
     const hero = document.getElementById('hero-content');
-    if (hero) {
+    if (hero && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       window.addEventListener('scroll', () => {
         const p = Math.min(1, window.scrollY / 600);
         hero.style.transform = `scale(${1 + p * 0.15})`;
-        hero.style.opacity = String(1 - p * 0.7);
-        hero.style.filter = `blur(${p * 6}px)`;
       }, { passive: true });
     }
   </script>

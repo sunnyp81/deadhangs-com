@@ -422,16 +422,16 @@ import Article from '../../layouts/Article.astro';
 
         <div class="callout">
           <h3>Recommended Programming</h3>
-          <table>
+          <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Scrollable comparison table" tabindex="0"><table>
             <thead>
-              <tr><th>Level</th><th>Hold Time</th><th>Sets</th><th>Rest</th><th>Frequency</th></tr>
+              <tr><th scope="col">Level</th><th scope="col">Hold Time</th><th scope="col">Sets</th><th scope="col">Rest</th><th scope="col">Frequency</th></tr>
             </thead>
             <tbody>
               <tr><td>Beginner</td><td>10-20s</td><td>3</td><td>90s</td><td>3x/week</td></tr>
               <tr><td>Intermediate</td><td>20-45s</td><td>3-4</td><td>60-90s</td><td>4-5x/week</td></tr>
               <tr><td>Advanced</td><td>45-90s</td><td>3-4</td><td>60s</td><td>5-7x/week</td></tr>
             </tbody>
-          </table>
+          </table></div>
         </div>
 
         <p>Progress by adding 5 seconds to your hold time each week. Once you reach 60 seconds for all sets you can add external load. View the structured <a href="/training-programs/">training programs</a> for detailed weekly plans.</p>

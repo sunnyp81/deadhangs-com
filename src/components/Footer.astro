@@ -1,6 +1,6 @@
 ---
 ---
-<footer style="background:var(--color-bg);padding:48px 64px 32px;border-top:1px solid var(--color-divider);">
+<footer class="site-footer" style="background:var(--color-bg);padding:48px 64px 32px;border-top:1px solid var(--color-divider);">
   <div style="max-width:1200px;margin:0 auto;display:flex;align-items:flex-start;justify-content:space-between;gap:40px;">
     <div style="max-width:320px;">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -14,7 +14,7 @@
         </span>
       </div>
       <p style="margin-top:16px;font-size:13px;color:var(--color-text-muted);">
-        Dead hang training protocols, timers, and the science behind grip strength and longevity.
+        Free dead hang tools, practical training guides and transparent equipment advice.
       </p>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:48px;">
@@ -29,12 +29,14 @@
           { label: "Dead Hang Guide", href: "/deadhang-guide/" },
           { label: "How to Dead Hang", href: "/how-to-deadhang/" },
           { label: "Training Programs", href: "/training-programs/" },
-          { label: "Grip Strength", href: "/grip-strength/" },
+          { label: "Timer & training log", href: "/training-log/" },
+          { label: "Equipment guide", href: "/equipment-guide/" },
         ]},
         { heading: "Site", links: [
           { label: "About", href: "/about/" },
           { label: "Contact", href: "/contact/" },
           { label: "Privacy", href: "/privacy/" },
+          { label: "Editorial standards", href: "/editorial-standards/" },
         ]},
       ].map((col) => (
         <div>
@@ -49,6 +51,6 @@
   <hr class="dh-rule" style="margin-top:32px;"/>
   <div style="max-width:1200px;margin:16px auto 0;display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--color-text-faint);letter-spacing:.12em;text-transform:uppercase;">
     <span>&copy; 2026 deadhangs.com</span>
-    <span>Evidence-based training</span>
+    <button type="button" class="text-button" data-open-consent>Analytics choices</button>
   </div>
 </footer>

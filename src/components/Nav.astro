@@ -1,155 +1,42 @@
 ---
+const links = [
+  { label: 'Guide', href: '/deadhang-guide/' },
+  { label: 'Times by age', href: '/dead-hang-time-by-age/' },
+  { label: 'World record', href: '/dead-hang-world-record/' },
+  { label: 'Calculator', href: '/dead-hang-calculator/' },
+  { label: 'Start →', href: '/#timer' },
+];
 ---
-<header id="site-nav" style="position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px 32px;background:transparent;border-bottom:1px solid transparent;transition:background 220ms,border 220ms,backdrop-filter 220ms;">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <svg width="20" height="20" viewBox="0 0 20 20">
-      <rect x="2" y="3" width="16" height="2.5" fill="var(--color-primary)"/>
-      <rect x="9" y="5" width="2" height="6" fill="var(--color-text)"/>
-      <circle cx="10" cy="13" r="3" fill="none" stroke="var(--color-text)" stroke-width="1.6"/>
-    </svg>
-    <span class="dh-display" style="font-weight:700;font-size:16px;letter-spacing:-0.02em;">
-      deadhangs<span style="color:var(--color-primary)">.com</span>
-    </span>
-  </div>
-
-  <!-- Desktop nav -->
-  <nav class="nav-desktop" style="display:flex;gap:32px;align-items:center;">
-    {[
-      { label: "Guide", href: "/deadhang-guide/" },
-      { label: "Times by Age", href: "/dead-hang-time-by-age/" },
-      { label: "World Record", href: "/dead-hang-world-record/" },
-      { label: "Calculator", href: "/dead-hang-calculator/" },
-    ].map((l) => (
-      <a href={l.href} style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;color:var(--color-text-muted);text-transform:uppercase;">{l.label}</a>
-    ))}
-    <a href="/training-programs/" class="dh-btn" style="padding:8px 16px;font-size:11px;">Start →</a>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+  <a class="site-brand" href="/" aria-label="DeadHangs home">
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="2.5" fill="var(--color-primary)"/><rect x="9" y="5" width="2" height="6" fill="var(--color-text)"/><circle cx="10" cy="13" r="3" fill="var(--color-text)"/></svg>
+    <span>deadhangs<span class="brand-dot">.com</span></span>
+  </a>
+  <button class="menu-toggle" aria-controls="primary-navigation" aria-expanded="false" type="button" aria-label="Toggle navigation"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+  <nav id="primary-navigation" aria-label="Main navigation">
+    {links.map(link => <a href={link.href} aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>{link.label}</a>)}
   </nav>
-
-  <!-- Mobile hamburger -->
-  <button id="nav-toggle" class="nav-hamburger" aria-label="Menu">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
 </header>
-
-<!-- Mobile drawer -->
-<div id="nav-drawer" class="nav-drawer">
-  <nav style="display:flex;flex-direction:column;gap:8px;padding:24px;">
-    {[
-      { label: "Guide", href: "/deadhang-guide/" },
-      { label: "Times by Age", href: "/dead-hang-time-by-age/" },
-      { label: "World Record", href: "/dead-hang-world-record/" },
-      { label: "Calculator", href: "/dead-hang-calculator/" },
-    ].map((l) => (
-      <a href={l.href} class="nav-drawer-link">{l.label}</a>
-    ))}
-    <a href="/training-programs/" class="dh-btn" style="margin-top:12px;justify-content:center;padding:14px 24px;">Start the protocol →</a>
-  </nav>
-</div>
-
-<style>
-  .nav-hamburger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    flex-direction: column;
-    gap: 5px;
-    z-index: 60;
-  }
-  .nav-hamburger span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: var(--color-text);
-    border-radius: 1px;
-    transition: all 250ms cubic-bezier(0.16, 1, 0.3, 1);
-    transform-origin: center;
-  }
-  .nav-hamburger.active span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-  .nav-hamburger.active span:nth-child(2) {
-    opacity: 0;
-    transform: scaleX(0);
-  }
-  .nav-hamburger.active span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-
-  .nav-drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 280px;
-    height: 100dvh;
-    background: rgba(8, 12, 20, 0.97);
-    backdrop-filter: blur(20px) saturate(140%);
-    border-left: 1px solid var(--color-divider);
-    z-index: 55;
-    transform: translateX(100%);
-    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
-    padding-top: 72px;
-  }
-  .nav-drawer.open {
-    transform: translateX(0);
-  }
-
-  .nav-drawer-link {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-text-muted);
-    padding: 14px 16px;
-    border-radius: var(--radius-sm);
-    transition: all 160ms;
-  }
-  .nav-drawer-link:hover {
-    background: var(--color-surface-2);
-    color: var(--color-text);
-  }
-
-  @media (max-width: 768px) {
-    .nav-desktop { display: none !important; }
-    .nav-hamburger { display: flex; }
-    #site-nav { padding: 12px 20px; }
-  }
-</style>
-
 <script>
-  const nav = document.getElementById('site-nav')!;
-  const toggle = document.getElementById('nav-toggle')!;
-  const drawer = document.getElementById('nav-drawer')!;
-
-  let scrolled = false;
-  window.addEventListener('scroll', () => {
-    const now = window.scrollY > 60;
-    if (now === scrolled) return;
-    scrolled = now;
-    if (scrolled) {
-      nav.style.background = 'rgba(8,12,20,0.85)';
-      nav.style.backdropFilter = 'blur(12px) saturate(140%)';
-      nav.style.borderBottomColor = 'var(--color-divider)';
-    } else {
-      nav.style.background = 'transparent';
-      nav.style.backdropFilter = 'none';
-      nav.style.borderBottomColor = 'transparent';
+  const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')!;
+  const nav = document.querySelector<HTMLElement>('#primary-navigation')!;
+  const mobile = matchMedia('(max-width: 768px)');
+  function setOpen(open: boolean) {
+    toggle.setAttribute('aria-expanded', String(open));
+    nav.hidden = mobile.matches && !open;
+  }
+  const header = document.querySelector<HTMLElement>('.site-header')!;
+  function updateHeader() { header.classList.toggle('is-scrolled', window.scrollY > 20 || location.pathname !== '/'); }
+  updateHeader();
+  window.addEventListener('scroll', updateHeader, { passive: true });
+  setOpen(false);
+  mobile.addEventListener('change', () => setOpen(false));
+  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+      setOpen(false); toggle.focus();
     }
-  }, { passive: true });
-
-  toggle.addEventListener('click', () => {
-    toggle.classList.toggle('active');
-    drawer.classList.toggle('open');
   });
-
-  drawer.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      toggle.classList.remove('active');
-      drawer.classList.remove('open');
-    });
-  });
+  nav.addEventListener('click', event => { if ((event.target as Element).closest('a')) setOpen(false); });
 </script>

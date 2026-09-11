@@ -1,0 +1,35 @@
+<script is:inline>
+  (function () {
+    var id = 'G-YBPRQVR2Y3';
+    window.__gaLoad = function () {
+      window['ga-disable-' + id] = false;
+      if (window.__gaLoaded) return;
+      window.__gaLoaded = true;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', id);
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
+      document.head.appendChild(script);
+    };
+    try { if (localStorage.getItem('cookieConsent') === 'accepted') window.__gaLoad(); } catch (_) {}
+    window.addEventListener('storage', function (event) {
+      if (event.key === 'cookieConsent' || event.key === null) window.dispatchEvent(new CustomEvent('deadhangs:consent', { detail: event.newValue === 'accepted' ? 'accepted' : 'declined' }));
+    });
+    window.addEventListener('deadhangs:consent', function (event) {
+      if (event.detail === 'accepted') window.__gaLoad();
+      else {
+        window['ga-disable-' + id] = true;
+        document.cookie.split(';').forEach(function (part) {
+          var name = part.trim().split('=')[0];
+          if (!/^_ga(?:_|$)/.test(name)) return;
+          ['', ';domain=' + location.hostname, ';domain=.deadhangs.com'].forEach(function (domain) {
+            document.cookie = name + '=;max-age=0;path=/' + domain + ';SameSite=Lax';
+          });
+        });
+      }
+    });
+  })();
+</script>

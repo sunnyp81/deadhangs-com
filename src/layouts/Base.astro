@@ -1,4 +1,6 @@
 ---
+import Analytics from '../components/Analytics.astro';
+import CookieConsent from '../components/CookieConsent.astro';
 interface Props {
   title: string;
   description?: string;
@@ -30,9 +32,6 @@ const ogImageURL = new URL(ogImage || '/images/homepage_banner.png', Astro.site 
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageURL} />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo+Black&family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@graph": [
@@ -57,25 +56,13 @@ const ogImageURL = new URL(ogImage || '/images/homepage_banner.png', Astro.site 
       }
     ]
   })} />
-  <script is:inline>
-    // GA4 (property 530351656) — only loads once cookie consent has been accepted,
-    // matching the consent flow in Article.astro (localStorage key "cookieConsent").
-    window.__gaLoad = window.__gaLoad || function () {
-      if (window.__gaLoaded) return;
-      window.__gaLoaded = true;
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { window.dataLayer.push(arguments); }
-      window.gtag = gtag;
-      var s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-YBPRQVR2Y3';
-      document.head.appendChild(s);
-      gtag('js', new Date());
-      gtag('config', 'G-YBPRQVR2Y3');
-    };
-    if (localStorage.getItem('cookieConsent') === 'accepted') {
-      window.__gaLoad();
-    }
+  <link rel="preload" href="/fonts/archivo-black.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-tight.woff2" as="font" type="font/woff2" crossorigin />
+  <Analytics />
+  <script>
+    import { trackAffiliateClick } from '../scripts/affiliate-tracking.js';
+    document.addEventListener('click', (event) => trackAffiliateClick(event));
+    document.addEventListener('auxclick', (event) => trackAffiliateClick(event));
   </script>
 </head>
 <body>
@@ -91,5 +78,6 @@ const ogImageURL = new URL(ogImage || '/images/homepage_banner.png', Astro.site 
     }, { threshold: 0.15 });
     document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
   </script>
+  <CookieConsent />
 </body>
 </html>
