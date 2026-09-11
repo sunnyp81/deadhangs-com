@@ -1,19 +1,19 @@
 ---
 const links = [
+  { label: 'Guide', href: '/deadhang-guide/' },
   { label: 'Times by age', href: '/dead-hang-time-by-age/' },
+  { label: 'World record', href: '/dead-hang-world-record/' },
   { label: 'Calculator', href: '/dead-hang-calculator/' },
-  { label: 'Training plans', href: '/training-programs/' },
-  { label: 'Equipment', href: '/equipment-guide/' },
-  { label: 'Timer & log', href: '/training-log/' },
+  { label: 'Start →', href: '/#timer' },
 ];
 ---
 <a class="skip-link" href="#main-content">Skip to content</a>
 <header class="site-header">
   <a class="site-brand" href="/" aria-label="DeadHangs home">
-    <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h20M12 4v8" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="12" cy="16" r="4" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="2.5" fill="var(--color-primary)"/><rect x="9" y="5" width="2" height="6" fill="var(--color-text)"/><circle cx="10" cy="13" r="3" fill="var(--color-text)"/></svg>
     <span>deadhangs<span class="brand-dot">.com</span></span>
   </a>
-  <button class="menu-toggle" aria-controls="primary-navigation" aria-expanded="false" type="button">Menu <span aria-hidden="true">+</span></button>
+  <button class="menu-toggle" aria-controls="primary-navigation" aria-expanded="false" type="button" aria-label="Toggle navigation"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
   <nav id="primary-navigation" aria-label="Main navigation">
     {links.map(link => <a href={link.href} aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>{link.label}</a>)}
   </nav>
@@ -21,11 +21,15 @@ const links = [
 <script>
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')!;
   const nav = document.querySelector<HTMLElement>('#primary-navigation')!;
-  const mobile = matchMedia('(max-width: 900px)');
+  const mobile = matchMedia('(max-width: 768px)');
   function setOpen(open: boolean) {
     toggle.setAttribute('aria-expanded', String(open));
     nav.hidden = mobile.matches && !open;
   }
+  const header = document.querySelector<HTMLElement>('.site-header')!;
+  function updateHeader() { header.classList.toggle('is-scrolled', window.scrollY > 20 || location.pathname !== '/'); }
+  updateHeader();
+  window.addEventListener('scroll', updateHeader, { passive: true });
   setOpen(false);
   mobile.addEventListener('change', () => setOpen(false));
   toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));

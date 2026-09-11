@@ -71,7 +71,7 @@
 }
 .training-workspace .tw-best-value { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .training-workspace .tw-bests-note { grid-column: 1 / -1; margin-top: 0; }
-.training-workspace .tw-table-wrap { overflow-x: auto; }
+.training-workspace .tw-table-wrap { position: relative; overflow-x: auto; }
 .training-workspace .tw-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .training-workspace .tw-table th, .training-workspace .tw-table td {
   padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--color-divider);
@@ -101,3 +101,6 @@
 }
 .training-workspace .tw-warning .dh-btn { margin: 8px 8px 0 0; }
 .training-workspace .tw-link { min-height: 24px; padding-block: 4px; }
+
+.training-workspace .tw-form-grid { align-items:end; }
+.training-workspace input { color-scheme:dark; }

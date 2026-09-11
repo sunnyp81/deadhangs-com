@@ -2,6 +2,10 @@
 
 The site now connects personal hang comparisons, editable intervals, a local training log and disclosed equipment links. Existing routes are retained; /training-log/ is new.
 
+## Existing design preserved
+
+The homepage follows the existing live theme: original colours and fonts, oversized four-line headline, compact fixed navigation, alternating sections, circular timer and cyan signup section. The calculator and local log are added within that structure. The circular timer retains Simple, EMOM, Ladder and sound controls, with deadline-based timing, automatic background pause and keyboard-safe settings locks. EMOM caps work at 50 seconds so each minute retains at least 10 seconds of rest. Completed timer intervals are never recorded as actual holds.
+
 ## Running locally
 
 Use Node 22.19.0 or newer. Run npm ci, npm run check, npm test and npm run build. npm run preview serves the generated site. Cloudflare Pages Functions need a Pages runtime; Astro preview alone serves only static files.

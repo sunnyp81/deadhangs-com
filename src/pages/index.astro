@@ -3,29 +3,212 @@ import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import TrainingWorkspace from '../components/TrainingWorkspace';
+import HangTimer from '../components/HangTimer';
+import HangCalculator from '../components/HangCalculator';
+import SignupForm from '../components/SignupForm';
 import '../styles/global.css';
 ---
-<Base title="Dead Hang Training - Workouts, Timer & Protocol" description="Free dead hang timer, training log and practical guides. Compare your hold, plan a manageable session and find equipment that fits your space.">
+
+<Base title="Dead Hang Training - Workouts, Timer & Protocol" description="Dead hang training with free timers and workout plans. Practice your hangs, track your own progress, and find a training plan.">
   <Nav />
   <main id="main-content">
-    <section class="home-hero shell">
-      <div class="hero-copy"><p class="dh-eyebrow">One bar. A practice you can measure.</p><h1>HANG.<br/><span>TRAIN.</span><br/>REPEAT.</h1><p class="hero-intro">A timer for your next set. A log for the holds you actually do. Clear guides for the questions in between.</p><div class="button-row"><a class="dh-btn" href="#timer">Start a session</a><a class="text-link" href="/dead-hang-calculator/">Compare my hold →</a></div><p class="small-copy">Free tools. No account. Training history stays on your device.</p></div>
-      <figure class="hero-figure"><svg class="hang-illustration" viewBox="0 0 520 500" role="img" aria-label="Illustration of a person hanging from a horizontal bar"><defs><pattern id="training-grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="currentColor" stroke-opacity=".1"/></pattern></defs><rect width="520" height="500" fill="var(--color-surface)"/><rect x="20" y="20" width="480" height="460" fill="url(#training-grid)"/><path d="M60 66H460" stroke="var(--color-primary)" stroke-width="12"/><path d="M80 46V86M440 46V86" stroke="var(--color-primary)" stroke-width="4"/><path d="M170 72L203 157L239 188M350 72L317 157L281 188" fill="none" stroke="var(--color-text)" stroke-width="18" stroke-linecap="round"/><circle cx="260" cy="153" r="23" fill="none" stroke="var(--color-text)" stroke-width="9"/><path d="M235 188Q260 180 285 188L282 296H238Z" fill="var(--color-primary)"/><path d="M250 297L230 365L229 425M270 297L291 365L291 425" fill="none" stroke="var(--color-text)" stroke-width="18" stroke-linecap="round"/><path d="M214 427H236M284 427H309" stroke="var(--color-text)" stroke-width="10" stroke-linecap="round"/><path d="M52 456H468" stroke="var(--color-border)" stroke-width="2"/><path d="M375 155H435M375 296H435M415 155V296" fill="none" stroke="var(--color-text-faint)" stroke-width="1" stroke-dasharray="4 6"/></svg><figcaption><span class="dh-mono">THE PRACTICE</span> Grip. Hang. Step down. Record.</figcaption><div class="hero-rule" aria-hidden="true"></div><p>Start from your own baseline.<br/>Build a record worth comparing.</p></figure>
-    </section>
-    <section class="route-strip shell" aria-label="Choose your next step">
-      <a href="/dead-hang-time-by-age/"><span>UNDERSTAND YOUR TIME</span><strong>What does my hold mean?</strong><span class="route-arrow" aria-hidden="true">↗</span></a>
-      <a href="/training-programs/"><span>BUILD A ROUTINE</span><strong>Find a starting plan</strong><span class="route-arrow" aria-hidden="true">↗</span></a>
-      <a href="/equipment-guide/"><span>SET UP YOUR SPACE</span><strong>Choose a suitable bar</strong><span class="route-arrow" aria-hidden="true">↗</span></a>
-    </section>
-    <section id="timer" class="workspace-section shell"><div class="section-heading"><div><p class="dh-eyebrow">Your training bench</p><h2>Make the next hold count.</h2></div><a class="text-link" href="/training-log/">Open dedicated timer & log →</a></div><TrainingWorkspace client:load /><noscript><p>The timer and log need JavaScript. Use the <a href="/training-programs/#print-plan">printable session planner</a> with a stopwatch.</p></noscript></section>
-    <section id="protocol" class="editorial-section shell"><div><p class="dh-eyebrow">First session?</p><h2>Start with control.<br/>Keep the record simple.</h2></div><div><p>Use a securely fitted bar and a stable way to step down. Choose a hold you can end under control. Keep your feet supported if you need assistance. Stop if the movement causes pain.</p><p>Record the same kind of hold each time. An assisted hang and an unassisted hang should have separate baselines.</p><a class="text-link" href="/how-to-deadhang/">Read the form guide →</a></div></section>
-    <section id="science" class="evidence-section shell"><p class="dh-eyebrow">What the evidence says</p><h2>Grip strength matters.<br/>A stopwatch is not a health score.</h2><p>Published grip-strength research often measures squeezing force with a dynamometer. Those findings do not give us population percentiles for timed dead hangs or a way to predict an individual's lifespan. Our calculator compares your own numbers.</p><div class="button-row"><a class="text-link" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0113637">Read the grip-strength study</a><a class="text-link" href="/editorial-standards/">Our editorial standards</a></div></section>
-    <section class="reading-list shell"><p class="dh-eyebrow">Keep learning</p><h2>Useful answers, next.</h2>{[
-      ['Dead hang times by age', 'Understand the limits of age comparisons.', '/dead-hang-time-by-age/'],
-      ['Dead hang workout guide', 'Form, routine and progression in one place.', '/deadhang-guide/'],
-      ['Equipment for home training', 'Mounting options, space and buying checks.', '/equipment-guide/'],
-      ['The dead hang world record', 'A different kind of endurance.', '/dead-hang-world-record/'],
-    ].map(([title, copy, href]) => <a href={href}><strong>{title}</strong><span>{copy}</span><span aria-hidden="true">→</span></a>)}</section>
+
+  <!-- HERO - typographic manifesto -->
+  <section id="hero" style="position:relative;min-height:820px;padding:140px 64px 80px;background:var(--color-bg);overflow:hidden;">
+    <!-- Backdrop ticker -->
+    <div class="hero-ticker" aria-hidden="true" style="position:absolute;top:96px;left:0;right:0;font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;color:var(--color-text-faint);text-align:center;text-transform:uppercase;white-space:nowrap;">
+      <span style="margin-right:24px;">· DEADHANGS.COM ·</span>
+      <span style="margin-right:24px;">GRIP STRENGTH × PRACTICE ·</span>
+      <span style="margin-right:24px;">FREE TRAINING TOOLS ·</span>
+      <span style="margin-right:24px;">YOUR OWN PROGRESS ·</span>
+      <span>· DEADHANGS.COM ·</span>
+    </div>
+
+    <div id="hero-content" style="max-width:1100px;margin:0 auto;transform-origin:center 30%;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px;">
+        <span class="dh-eyebrow">Grip Strength · Practice · Progress</span>
+        <span class="dh-eyebrow">·· BUILT FOR PRACTICE</span>
+      </div>
+
+      <h1 class="dh-heavy" style="font-size:clamp(96px,14vw,220px);margin:0;color:var(--color-text);text-align:left;">
+        HANG.<br/>
+        <span style="color:var(--color-primary);">LONGER.</span><br/>
+        TRAIN.<br/>
+        <span style="color:var(--color-text-muted);">BETTER.</span>
+      </h1>
+
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:48px;margin-top:56px;align-items:end;">
+        <p class="dh-display" style="font-size:28px;font-weight:500;line-height:1.3;margin:0;color:var(--color-text);text-wrap:balance;">
+          A bar. A timer. A record of your progress. Build a repeatable hanging practice, one session at a time.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:flex-end;">
+          <a href="#timer" class="dh-btn">Start the timer</a>
+          <a href="#science" class="dh-btn dh-btn-ghost">Track your progress ↓</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- scroll cue -->
+    <div style="position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;color:var(--color-text-faint);text-transform:uppercase;">
+      ↓ scroll · your progress
+    </div>
+  </section>
+
+  <!-- DATA STRIP -->
+  <section id="science" style="background:var(--color-surface);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);padding:80px 64px;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="scroll-reveal" style="margin-bottom:40px;">
+        <div class="dh-eyebrow" style="margin-bottom:12px;">· YOUR BASELINE / YOUR PROGRESS</div>
+        <h2 class="dh-display" style="font-size:40px;font-weight:500;margin:0;max-width:780px;">The useful benchmark is <span style="color:var(--color-primary);">your last comparable hang.</span></h2>
+        <p style="max-width:720px;color:var(--color-text-muted);margin-top:24px;">Use the same bar, grip and assistance when comparing sessions. Record what you actually held. The timer does not measure your performance.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);border:1px solid var(--color-divider);">
+        {[
+          { n: '01', title: 'Set up', detail: 'Same bar · same grip' },
+          { n: '02', title: 'Practice', detail: 'Choose your intervals' },
+          { n: '03', title: 'Record', detail: 'Log actual hold time' },
+          { n: '04', title: 'Compare', detail: 'Like-for-like sessions' },
+        ].map(item => <div class="stat-cell"><div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">{item.n}</div><div class="dh-display" style="font-weight:600;font-size:14px;margin-top:12px;">{item.title}</div><div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);margin-top:4px;">{item.detail}</div></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- THE CASE - three pillars -->
+  <section id="protocol" style="padding:120px 64px;background:var(--color-bg);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="dh-eyebrow" style="margin-bottom:16px;">§ II · Your practice</div>
+      <h2 class="dh-heavy" style="font-size:96px;margin:0 0 80px;max-width:900px;line-height:0.95;">
+        One bar.<br/><span style="color:var(--color-text-muted);">Three ways</span> to start.
+      </h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;">
+        {[
+          { n: "01", title: "Learn the setup", body: "Choose a secure bar, a comfortable grip and assistance you can control. Read the setup guide before your first session.", tag: "FOUNDATIONS", href: "/how-to-deadhang/" },
+          { n: "02", title: "Make a plan", body: "Use a 4, 8 or 12-week framework to organise practice and review your progress. Adjust the workload to your own starting point.", tag: "CONSISTENCY", href: "/training-programs/" },
+          { n: "03", title: "Find your bar", body: "Compare doorway, wall-mounted and freestanding setups. Check fit, installation requirements and the manufacturer’s load rating.", tag: "EQUIPMENT", href: "/equipment-guide/" },
+        ].map((p, i) => (
+          <div class={`scroll-reveal ${i === 1 ? 'scroll-reveal-d1' : i === 2 ? 'scroll-reveal-d2' : ''}`}>
+            <div style="position:relative;padding-top:24px;">
+              <div class="dh-mono" style={`position:absolute;top:0;left:0;font-size:12px;color:var(--color-primary);letter-spacing:.18em;`}>
+                /// {p.n}
+              </div>
+              <div class="dh-eyebrow" style="margin-bottom:12px;">{p.tag}</div>
+              <h3 class="dh-display" style="font-size:34px;font-weight:600;margin:0 0 12px;">{p.title}</h3>
+              <p style="font-size:16px;color:var(--color-text-muted);margin:0 0 12px;line-height:1.6;">{p.body}</p>
+              <a href={p.href} style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-primary);">Read more →</a>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- HANG TIMER -->
+  <section id="timer" style="padding:100px 64px;background:var(--color-surface);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);">
+    <div style="max-width:800px;margin:0 auto;">
+      <div class="scroll-reveal">
+        <div style="text-align:center;margin-bottom:48px;">
+          <div class="dh-eyebrow" style="margin-bottom:12px;">· MODULE 01 / HANG TIMER</div>
+          <h2 class="dh-display" style="font-size:44px;font-weight:600;margin:0;">
+            Start your session.
+          </h2>
+        </div>
+      </div>
+      <div class="scroll-reveal scroll-reveal-d3">
+        <HangTimer client:visible initialWork={30} initialRest={60} rounds={3} />
+        <p class="small-copy" style="text-align:center;margin-top:24px;">Choose manageable intervals and stop if anything hurts. These defaults are editable timer settings, not a prescribed workout. <a class="text-link" href="/deadhang-safety/">Read the safety guide</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="training-log" class="home-log" style="padding:100px 64px;background:var(--color-bg);"><div style="max-width:1000px;margin:0 auto;"><TrainingWorkspace client:visible showTimer={false} /></div></section>
+
+  <!-- PROTOCOL CALCULATOR -->
+  <section id="studies" style="padding:100px 64px;background:var(--color-bg);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="scroll-reveal">
+        <div style="text-align:center;margin-bottom:48px;">
+          <div class="dh-eyebrow" style="margin-bottom:12px;">· MODULE 03 / PERSONAL PROGRESS</div>
+          <h2 class="dh-display" style="font-size:44px;font-weight:600;margin:0;line-height:1.1;">
+            Your numbers. Your next target.
+          </h2>
+        </div>
+      </div>
+      <div class="scroll-reveal scroll-reveal-d3">
+        <HangCalculator client:visible />
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK LINKS -->
+  <section style="padding:80px 64px;background:var(--color-surface);border-top:1px solid var(--color-divider);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="scroll-reveal" style="text-align:center;margin-bottom:40px;">
+        <div class="dh-eyebrow" style="margin-bottom:12px;">· START LEARNING</div>
+        <h2 class="dh-display" style="font-size:36px;font-weight:600;margin:0;">Go deeper.</h2>
+      </div>
+      <div class="scroll-reveal scroll-reveal-d3 link-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        {[
+          { title: "Dead Hang Times by Age", desc: "What age benchmarks can tell you", href: "/dead-hang-time-by-age/" },
+          { title: "Dead Hang World Record", desc: "The longest dead hang ever", href: "/dead-hang-world-record/" },
+          { title: "Dead Hang Guide", desc: "Form, benefits, and protocols", href: "/deadhang-guide/" },
+          { title: "How to Dead Hang", desc: "Step-by-step instructions", href: "/how-to-deadhang/" },
+          { title: "Training Programs", desc: "4, 8, and 12-week plans", href: "/training-programs/" },
+          { title: "Grip Strength", desc: "Build a stronger grip", href: "/grip-strength/" },
+          { title: "Equipment Guide", desc: "Bars, chalk, and grips", href: "/equipment-guide/" },
+          { title: "Progressions", desc: "Zero to one-arm hangs", href: "/deadhang-progressions/" },
+          { title: "Benefits", desc: "Benefits and evidence limits", href: "/deadhang-benefits/" },
+          { title: "Safety", desc: "When to hang, when to stop", href: "/deadhang-safety/" },
+        ].map((link) => (
+          <a href={link.href} style="display:block;padding:20px;background:var(--color-bg);border:1px solid var(--color-divider);border-radius:var(--radius-sm);transition:border-color 160ms cubic-bezier(0.16,1,0.3,1);" class="link-card">
+            <div class="dh-display" style="font-size:16px;font-weight:600;margin-bottom:4px;">{link.title}</div>
+            <div style="font-size:13px;color:var(--color-text-muted);">{link.desc}</div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / SIGNUP -->
+  <section id="signup" style="padding:120px 64px;background:var(--color-primary);color:var(--color-text-inverse);position:relative;overflow:hidden;">
+    <div style="max-width:1100px;margin:0 auto;">
+      <h2 class="dh-heavy" style="font-size:clamp(64px,9vw,140px);margin:0;line-height:0.92;">
+        START<br/>HANGING.
+      </h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px;align-items:end;">
+        <p class="dh-display" style="font-size:22px;font-weight:500;margin:0;line-height:1.4;max-width:540px;">
+          Start with the free printable session planner. Choose your intervals, record your holds and review your progress. Email updates are optional.
+        </p>
+        <SignupForm client:visible dark={true} />
+      </div>
+    </div>
+    <div class="dh-heavy" style="position:absolute;bottom:-80px;right:-40px;font-size:380px;color:rgba(0,0,0,0.06);line-height:0.8;pointer-events:none;letter-spacing:-0.05em;">HANG</div>
+  </section>
+
+  <!-- SOURCES -->
+  <section id="sources" style="padding:64px 64px 40px;background:var(--color-bg);border-top:1px solid var(--color-divider);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="dh-eyebrow" style="margin-bottom:20px;">Sources</div>
+      <p style="max-width:800px;color:var(--color-text-muted);">Dead hang time depends on your setup, body mass, grip and assistance. Our calculator compares your own entries; it does not assign a population percentile or estimate your lifespan.</p><div class="button-row"><a class="text-link" href="/editorial-standards/">How we handle evidence →</a><a class="text-link" href="/dead-hang-time-by-age/">Understanding age benchmarks →</a></div>
+    </div>
+  </section>
+
   </main>
   <Footer />
+
+  <style>
+    .stat-cell {
+      background: var(--color-bg);
+      padding: 32px 24px;
+    }
+  </style>
+
+  <script>
+    const hero = document.getElementById('hero-content');
+    if (hero && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.addEventListener('scroll', () => {
+        const p = Math.min(1, window.scrollY / 600);
+        hero.style.transform = `scale(${1 + p * 0.15})`;
+      }, { passive: true });
+    }
+  </script>
 </Base>

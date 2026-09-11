@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 
 function fmtTime(s: number) {
-  const m = Math.floor(s / 60);
-  const ss = Math.floor(s % 60);
+  const seconds = Math.max(0, Math.ceil(s));
+  const m = Math.floor(seconds / 60);
+  const ss = seconds % 60;
   return `${String(m).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
 }
 
@@ -29,10 +30,10 @@ function Stepper({ label, value, setValue, min, max, step = 1, unit = '' }: {
   min: number; max: number; step?: number; unit?: string;
 }) {
   const btnStyle: React.CSSProperties = {
-    width: 32, height: 32, borderRadius: 6, border: '1px solid var(--color-border)',
+    width: 44, height: 44, borderRadius: 6, border: '1px solid var(--color-border)',
     background: 'transparent', color: 'var(--color-text)', cursor: 'pointer',
     fontSize: 16, lineHeight: 1, padding: 0,
-    transition: 'all 160ms cubic-bezier(0.16,1,0.3,1)',
+    transition: 'background 160ms, color 160ms, transform 160ms',
   };
   return (
     <div style={{
@@ -43,13 +44,13 @@ function Stepper({ label, value, setValue, min, max, step = 1, unit = '' }: {
       <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.14em',
         color: 'var(--color-text-muted)', textTransform: 'uppercase' as const }}>{label}</span>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={() => setValue(Math.max(min, value - step))} style={btnStyle}
+        <button aria-label={`Decrease ${label}`} disabled={value <= min} onClick={() => setValue(Math.max(min, value - step))} style={btnStyle}
           onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.9)')}
           onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}>−</button>
         <span className="dh-mono" style={{ minWidth: 36, textAlign: 'center', fontWeight: 600, fontSize: 16 }}>
           {value}{unit}
         </span>
-        <button onClick={() => setValue(Math.min(max, value + step))} style={btnStyle}
+        <button aria-label={`Increase ${label}`} disabled={value >= max} onClick={() => setValue(Math.min(max, value + step))} style={btnStyle}
           onMouseDown={e => (e.currentTarget.style.transform = 'scale(0.9)')}
           onMouseUp={e => (e.currentTarget.style.transform = 'scale(1)')}>+</button>
       </div>
@@ -68,7 +69,7 @@ function Seg({ value, setValue, options }: {
       padding: 3, gap: 2,
     }}>
       {options.map(([v, l]) => (
-        <button key={v} onClick={() => setValue(v)}
+        <button key={v} aria-pressed={v === value} onClick={() => setValue(v)}
           style={{
             border: 0, padding: '8px 14px', borderRadius: 4,
             background: v === value ? 'var(--color-primary)' : 'transparent',
@@ -85,6 +86,11 @@ function Seg({ value, setValue, options }: {
 export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: initialRounds = 3 }: {
   initialWork?: number; initialRest?: number; rounds?: number;
 }) {
+  const [hydrated, setHydrated] = useState(false);
+  const deadline = useRef(0);
+  const lastRemaining = useRef(initialWork);
+  const [notice, setNotice] = useState('');
+  useEffect(() => setHydrated(true), []);
   const [work, setWork] = useState(initialWork);
   const [rest, setRest] = useState(initialRest);
   const [rounds, setRounds] = useState(initialRounds);
@@ -96,7 +102,6 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
   const [mode, setMode] = useState<'simple' | 'emom' | 'ladder'>('simple');
   const totalRef = useRef(initialWork);
   const [pulse, setPulse] = useState(false);
-  const [flash, setFlash] = useState(false);
   const [totalHangTime, setTotalHangTime] = useState(0);
 
   const ladderWork = useMemo(() => {
@@ -108,46 +113,45 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
 
   useEffect(() => {
     if (!running) return;
-    const id = setInterval(() => {
-      setT(prev => {
-        const next = prev - 0.1;
-
-        if (phase === 'work') setTotalHangTime(h => h + 0.1);
-
-        if (next <= 3.05 && next > 2.95) { setPulse(true); if (soundOn) beep(660, 0.08); }
-        if (next <= 2.05 && next > 1.95) { if (soundOn) beep(660, 0.08); }
-        if (next <= 1.05 && next > 0.95) { if (soundOn) beep(660, 0.08); }
-
-        if (next <= 0) {
-          setFlash(true);
-          setTimeout(() => setFlash(false), 300);
-          setPulse(false);
-
-          if (phase === 'work') {
-            if (soundOn) beep(330, 0.3, 'square', 0.08);
-            if (round >= rounds) {
-              setPhase('done');
-              setRunning(false);
-              return 0;
-            }
-            setPhase('rest');
-            const restTime = mode === 'emom' ? Math.max(10, 60 - currentWork) : rest;
-            totalRef.current = restTime;
-            return restTime;
-          } else if (phase === 'rest') {
-            if (soundOn) beep(880, 0.25, 'square', 0.08);
-            setPhase('work');
-            setRound(r => r + 1);
-            const nextWork = mode === 'ladder' ? Math.min(work + round * 5, 120) : work;
-            totalRef.current = nextWork;
-            return nextWork;
-          }
-        }
-        return next;
-      });
-    }, 100);
-    return () => clearInterval(id);
+    let announcedSecond = Math.ceil(lastRemaining.current);
+    function tick() {
+      const remaining = Math.max(0, (deadline.current - performance.now()) / 1000);
+      const elapsed = Math.max(0, lastRemaining.current - remaining);
+      if (phase === 'work') setTotalHangTime(h => h + elapsed);
+      lastRemaining.current = remaining;
+      setT(remaining);
+      const second = Math.ceil(remaining);
+      if (second !== announcedSecond && second > 0 && second <= 3) {
+        setPulse(true); if (soundOn) beep(660, 0.08);
+      }
+      announcedSecond = second;
+      if (remaining > 0) return;
+      clearInterval(id);
+      setPulse(false);
+      if (phase === 'work' && round >= rounds) {
+        setPhase('done'); setRunning(false);
+        setNotice('Session complete. Record your actual holds in the training log; nothing was saved automatically.');
+        if (soundOn) beep(330, .3, 'square', .08);
+        return;
+      }
+      const nextSeconds = phase === 'work'
+        ? (mode === 'emom' ? 60 - currentWork : rest)
+        : (mode === 'ladder' ? Math.min(work + round * 5, 120) : work);
+      totalRef.current = nextSeconds;
+      lastRemaining.current = nextSeconds;
+      deadline.current = performance.now() + nextSeconds * 1000;
+      setT(nextSeconds);
+      if (phase === 'work') { setPhase('rest'); if (soundOn) beep(330, .3, 'square', .08); }
+      else { setPhase('work'); setRound(r => r + 1); if (soundOn) beep(880, .2, 'square', .08); }
+    }
+    const id = window.setInterval(tick, 50);
+    function onVisibility() {
+      if (document.hidden) { pause(); setNotice('Timer paused because this page was hidden. Resume when you are ready.'); }
+    }
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => { clearInterval(id); document.removeEventListener('visibilitychange', onVisibility); };
   }, [running, phase, work, rest, round, rounds, soundOn, mode, currentWork]);
+
 
   useEffect(() => {
     if (pulse) {
@@ -160,7 +164,8 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
   useEffect(() => {
     function handleProtocol(e: Event) {
       const detail = (e as CustomEvent).detail;
-      if (detail) {
+      if (detail && Number.isInteger(detail.work) && detail.work >= 5 && detail.work <= 120 && Number.isInteger(detail.rest) && detail.rest >= 10 && detail.rest <= 300 && Number.isInteger(detail.rounds) && detail.rounds >= 1 && detail.rounds <= 10) {
+        setMode('simple');
         setWork(detail.work);
         setRest(detail.rest);
         setRounds(detail.rounds);
@@ -177,6 +182,11 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
   }, []);
 
   function start() {
+    if (!hydrated || document.hidden) return;
+    const seconds = phase === 'idle' || phase === 'done' ? work : t;
+    deadline.current = performance.now() + seconds * 1000;
+    lastRemaining.current = seconds;
+    setNotice('');
     if (phase === 'idle' || phase === 'done') {
       setPhase('work');
       setRound(1);
@@ -187,8 +197,15 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
     }
     setRunning(true);
   }
-  function pause() { setRunning(false); }
+  function pause() {
+    const remaining = Math.max(0, (deadline.current - performance.now()) / 1000);
+    const elapsed = Math.max(0, lastRemaining.current - remaining);
+      if (phase === 'work') setTotalHangTime(h => h + elapsed);
+    lastRemaining.current = remaining;
+    setT(remaining); setRunning(false);
+  }
   function reset() {
+    setNotice('');
     setRunning(false);
     setPhase('idle');
     setRound(1);
@@ -197,6 +214,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
     setTotalHangTime(0);
   }
 
+  const locked = !hydrated || phase === 'work' || phase === 'rest';
   const progress = totalRef.current > 0 ? 1 - t / totalRef.current : 0;
   const display = phase === 'idle' ? work : Math.max(0, t);
   const phaseLabel = { idle: 'READY', work: 'HANG', rest: 'REST', done: 'COMPLETE' }[phase];
@@ -208,16 +226,16 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
   const r = (dialSize - stroke) / 2;
   const C = 2 * Math.PI * r;
 
-  const glowIntensity = phase === 'work' && running ? 0.4 + Math.sin(Date.now() / 300) * 0.2 : 0;
+  const glowIntensity = phase === 'work' && running ? 0.4 : 0;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, width: '100%', textAlign: 'center' }}>
+    <div className="circular-timer" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20, width: '100%', textAlign: 'center' }}>
       {/* Mode selector */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <fieldset disabled={locked} style={{ display: 'flex', alignItems: 'center', gap: 12, border: 0, padding: 0, margin: 0 }}>
         <span className="dh-eyebrow" style={{ fontSize: 9 }}>MODE</span>
-        <Seg value={mode} setValue={(v) => { setMode(v as any); reset(); }}
+        <Seg value={mode} setValue={(v) => { setMode(v as typeof mode); reset(); if (v === 'emom' && work > 50) { setWork(50); setT(50); totalRef.current = 50; } }}
           options={[['simple', 'Simple'], ['emom', 'EMOM'], ['ladder', 'Ladder']]} />
-      </div>
+      </fieldset>
 
       {/* Phase + round indicator */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
@@ -227,7 +245,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
           color: phaseColor,
           transition: 'color 300ms',
           animation: phase === 'work' && running ? 'phaseGlow 2s ease-in-out infinite' : 'none',
-        }}>{phaseLabel} · ROUND {round}/{rounds}</div>
+        }} aria-live="polite">{phaseLabel} · ROUND {round}/{rounds}</div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           {Array.from({ length: rounds }, (_, i) => (
             <div key={i} style={{
@@ -239,7 +257,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
                 : i + 1 === round && (phase === 'work' || phase === 'rest')
                   ? phaseColor
                   : 'var(--color-divider)',
-              transition: 'all 400ms cubic-bezier(0.16,1,0.3,1)',
+              transition: 'width 400ms, background 400ms',
               opacity: i + 1 <= round || phase === 'done' ? 1 : 0.4,
             }} />
           ))}
@@ -248,9 +266,8 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
 
       {/* Dial */}
       <div style={{
-        position: 'relative', width: dialSize, height: dialSize,
+        position: 'relative', width: 'min(320px, 100%)', aspectRatio: '1',
         transition: 'transform 300ms cubic-bezier(0.16,1,0.3,1)',
-        transform: flash ? 'scale(1.03)' : 'scale(1)',
       }}>
         {/* Glow behind dial */}
         {phase === 'work' && running && (
@@ -263,7 +280,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
           }} />
         )}
 
-        <svg width={dialSize} height={dialSize} style={{ display: 'block', transform: 'rotate(-90deg)' }}>
+        <svg aria-hidden="true" viewBox="0 0 320 320" width="100%" height="100%" style={{ display: 'block', transform: 'rotate(-90deg)' }}>
           <circle cx={dialSize / 2} cy={dialSize / 2} r={r} fill="none"
             stroke="var(--color-divider)" strokeWidth={stroke} />
           <circle cx={dialSize / 2} cy={dialSize / 2} r={r} fill="none"
@@ -291,7 +308,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
         </svg>
 
         {/* Tick marks */}
-        <svg width={dialSize} height={dialSize} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <svg aria-hidden="true" viewBox="0 0 320 320" width="100%" height="100%" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           {Array.from({ length: 60 }, (_, i) => {
             const a = (i / 60) * Math.PI * 2 - Math.PI / 2;
             const inner = r - (i % 5 === 0 ? 14 : 8);
@@ -327,7 +344,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
             color: 'var(--color-text-faint)', marginTop: 8, textTransform: 'uppercase' as const,
           }}>
             {phase === 'rest' ? `next: hang ${mode === 'ladder' ? Math.min(work + round * 5, 120) : work}s` :
-             phase === 'done' ? `${Math.round(totalHangTime)}s total hang time` :
+             phase === 'done' ? `${Math.round(totalHangTime)}s timer work` :
              mode === 'ladder' ? `${currentWork}s → ${Math.min(currentWork + 5, 120)}s` :
              mode === 'emom' ? `every ${currentWork + Math.max(10, 60 - currentWork)}s` :
              `${work}s × ${rounds} rounds`}
@@ -338,7 +355,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
       {/* Controls */}
       <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'center' }}>
         {!running ? (
-          <button className="dh-btn" onClick={start} style={{
+          <button disabled={!hydrated} className="dh-btn" onClick={start} style={{
             padding: '14px 28px', fontSize: 13,
             animation: phase === 'idle' ? 'subtlePulse 3s ease-in-out infinite' : 'none',
           }}>
@@ -349,8 +366,8 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
             Pause
           </button>
         )}
-        <button className="dh-btn dh-btn-ghost" onClick={reset} style={{ padding: '14px 20px' }}>Reset</button>
-        <button className="dh-btn dh-btn-ghost" onClick={() => setSoundOn(!soundOn)}
+        <button disabled={!hydrated} className="dh-btn dh-btn-ghost" onClick={reset} style={{ padding: '14px 20px' }}>Reset</button>
+        <button disabled={!hydrated} aria-label={soundOn ? 'Mute timer' : 'Unmute timer'} aria-pressed={soundOn} className="dh-btn dh-btn-ghost" onClick={() => setSoundOn(!soundOn)}
           style={{ padding: '14px 14px', fontSize: 14, minWidth: 0 }}
           title={soundOn ? 'Mute' : 'Unmute'}>
           {soundOn ? '♪' : '✕'}
@@ -358,20 +375,20 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
       </div>
 
       {/* Settings grid */}
-      <div className="timer-settings" style={{
+      <fieldset disabled={locked} className="timer-settings" style={{
+        border: 0, padding: 0, minWidth: 0,
         display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12,
-        width: '100%', maxWidth: dialSize + 80, margin: '0 auto',
-        opacity: running ? 0.5 : 1,
-        pointerEvents: running ? 'none' : 'auto',
+        width: '100%', maxWidth: 780, margin: '0 auto',
+
         transition: 'opacity 300ms',
       }}>
         <Stepper label="Hang" value={work} unit="s"
           setValue={(v) => { setWork(v); if (phase === 'idle') { setT(v); totalRef.current = v; } }}
-          min={5} max={120} step={5} />
-        <Stepper label="Rest" value={rest} unit="s"
-          setValue={setRest} min={10} max={300} step={10} />
+          min={5} max={mode === 'emom' ? 50 : 120} step={5} />
+        <Stepper label={mode === 'emom' ? 'Rest (auto)' : 'Rest'} value={mode === 'emom' ? 60 - work : rest} unit="s"
+          setValue={setRest} min={mode === 'emom' ? 60 - work : 10} max={mode === 'emom' ? 60 - work : 300} step={10} />
         <Stepper label="Rounds" value={rounds} setValue={setRounds} min={1} max={10} step={1} />
-      </div>
+      </fieldset>
 
       {/* Mode description */}
       <div style={{
@@ -384,6 +401,8 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
         {mode === 'ladder' && 'Hang time increases +5s each round'}
       </div>
 
+      <p className="small-copy" role="status">{notice || (locked && hydrated ? 'Reset to change session settings.' : '')}</p>
+
       {/* Session stats (visible after completion) */}
       {phase === 'done' && (
         <div style={{
@@ -394,7 +413,7 @@ export default function HangTimer({ initialWork = 30, initialRest = 60, rounds: 
           animation: 'fadeInUp 500ms cubic-bezier(0.16,1,0.3,1)',
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div className="dh-eyebrow" style={{ fontSize: 9 }}>Total Hang</div>
+            <div className="dh-eyebrow" style={{ fontSize: 9 }}>Timer work</div>
             <div className="dh-mono" style={{ fontSize: 22, fontWeight: 600, marginTop: 4, color: 'var(--color-primary)' }}>
               {Math.round(totalHangTime)}s
             </div>

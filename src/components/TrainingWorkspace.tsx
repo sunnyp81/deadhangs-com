@@ -85,7 +85,7 @@ function writeRawLog(text: string): boolean {
   }
 }
 
-export default function TrainingWorkspace() {
+export default function TrainingWorkspace({ showTimer = true }: { showTimer?: boolean }) {
   const uid = useId();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => { setHydrated(true); }, []);
@@ -383,15 +383,14 @@ export default function TrainingWorkspace() {
     <section className="training-workspace tw-root" aria-labelledby={`${uid}-title`}>
       <header className="tw-header">
         <p className="dh-eyebrow">Free · no account</p>
-        <h2 id={`${uid}-title`} className="dh-display tw-title">Training workspace</h2>
+        <h2 id={`${uid}-title`} className="dh-display tw-title">{showTimer ? 'Training workspace' : 'Your training log'}</h2>
         <p className="tw-lede">
-          An interval timer and a hang log. Use the timer on its own — nothing is saved unless you
-          fill in the log yourself.
+          {showTimer ? 'An interval timer and a hang log. Nothing is saved unless you fill in the log yourself.' : 'Record your holds. Compare like-for-like sessions. Export your progress whenever you want.'}
         </p>
       </header>
 
       {/* ---------------------------------------------------------- timer */}
-      <div className="tw-panel">
+      {showTimer && <div className="tw-panel">
         <h3 className="tw-panel-title">Interval timer</h3>
 
         <div className="tw-clock" role="group" aria-label="Interval timer readout">
@@ -483,7 +482,7 @@ export default function TrainingWorkspace() {
             </button>
           </div>
         )}
-      </div>
+      </div>}
 
       {/* ------------------------------------------------------------ log */}
       <div className="tw-panel">
