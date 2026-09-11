@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { compareHang } from '../lib/hang-comparison.mjs';
 
 export default function HangCalculator() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
   const [hold, setHold] = useState('');
   const [target, setTarget] = useState('60');
   const [previous, setPrevious] = useState('');
@@ -18,12 +20,12 @@ export default function HangCalculator() {
   return <div className="hang-calculator">
     <form onSubmit={calculate}>
       <div className="field-grid">
-        <label htmlFor="calc-time">Your hold, seconds<input id="calc-time" type="number" min="0" max="3600" step="0.1" required value={hold} onChange={e => {setHold(e.target.value); setResult(null);}} inputMode="decimal" /></label>
-        <label htmlFor="calc-target">Your target, seconds<input id="calc-target" type="number" min="1" max="3600" step="0.1" required value={target} onChange={e => {setTarget(e.target.value); setResult(null);}} inputMode="decimal" /></label>
-        <label htmlFor="calc-previous">Previous hold, seconds <span className="optional">Optional</span><input id="calc-previous" type="number" min="0.1" max="3600" step="0.1" value={previous} onChange={e => {setPrevious(e.target.value); setResult(null);}} inputMode="decimal" /></label>
+        <label htmlFor="calc-time">Your hold, seconds<input id="calc-time" type="number" disabled={!hydrated} min="0" max="3600" step="0.1" required value={hold} onChange={e => {setHold(e.target.value); setResult(null);}} inputMode="decimal" /></label>
+        <label htmlFor="calc-target">Your target, seconds<input id="calc-target" type="number" disabled={!hydrated} min="1" max="3600" step="0.1" required value={target} onChange={e => {setTarget(e.target.value); setResult(null);}} inputMode="decimal" /></label>
+        <label htmlFor="calc-previous">Previous hold, seconds <span className="optional">Optional</span><input id="calc-previous" type="number" disabled={!hydrated} min="0.1" max="3600" step="0.1" value={previous} onChange={e => {setPrevious(e.target.value); setResult(null);}} inputMode="decimal" /></label>
       </div>
       <p className="small-copy">60 seconds is an editable personal target, not an age norm or a fitness requirement. Compare holds with the same assistance, bar and grip.</p>
-      <button className="dh-btn" type="submit">Compare my hold</button>
+      <button className="dh-btn" type="submit" disabled={!hydrated}>Compare my hold</button>
       {error && <p className="form-error" role="alert">{error}</p>}
     </form>
     <div id="calc-result" aria-live="polite" aria-atomic="true">

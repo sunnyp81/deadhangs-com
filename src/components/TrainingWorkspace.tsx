@@ -87,6 +87,8 @@ function writeRawLog(text: string): boolean {
 
 export default function TrainingWorkspace() {
   const uid = useId();
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
 
   /* ---------------------------------------------------------------- timer */
 
@@ -97,7 +99,7 @@ export default function TrainingWorkspace() {
   const workSec = settingValue(workInput, WORK_MIN, WORK_MAX);
   const restSec = settingValue(restInput, REST_MIN, REST_MAX);
   const setsCount = settingValue(setsInput, SETS_MIN, SETS_MAX);
-  const settingsValid = workSec !== null && restSec !== null && setsCount !== null;
+  const settingsValid = hydrated && workSec !== null && restSec !== null && setsCount !== null;
 
   const [status, setStatus] = useState<Status>('idle');
   const [phase, setPhase] = useState<Phase>('work');
@@ -112,7 +114,7 @@ export default function TrainingWorkspace() {
   const statusRef = useRef<Status>('idle');
   statusRef.current = status;
 
-  const settingsLocked = status === 'running' || status === 'paused';
+  const settingsLocked = !hydrated || status === 'running' || status === 'paused';
   const displayMs = status === 'idle' ? (workSec ?? 0) * 1000 : remainingMs;
 
   const pause = useCallback(() => {
@@ -414,13 +416,13 @@ export default function TrainingWorkspace() {
               onClick={status === 'paused' ? resume : start}
               disabled={!settingsValid}
             >
-              {status === 'paused' ? 'Resume' : status === 'done' ? 'Start again' : 'Start'}
+              {!hydrated ? 'Loading timer…' : status === 'paused' ? 'Resume' : status === 'done' ? 'Start again' : 'Start'}
             </button>
           )}
-          <button type="button" className="dh-btn dh-btn-ghost" onClick={reset}>Reset</button>
+          <button type="button" className="dh-btn dh-btn-ghost" onClick={reset} disabled={!hydrated}>Reset</button>
         </div>
 
-        {!settingsValid && (
+        {hydrated && !settingsValid && (
           <p className="tw-error" role="alert">
             Enter hang {WORK_MIN}–{WORK_MAX}s, rest {REST_MIN}–{REST_MAX}s and {SETS_MIN}–{SETS_MAX} sets
             to start.
