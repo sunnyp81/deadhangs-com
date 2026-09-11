@@ -108,6 +108,11 @@ const globalSchema = {
       window.__gaLoad();
     }
   </script>
+  <script>
+    import { trackAffiliateClick } from '../scripts/affiliate-tracking.js';
+    document.addEventListener('click', (event) => trackAffiliateClick(event));
+    document.addEventListener('auxclick', (event) => trackAffiliateClick(event));
+  </script>
 </head>
 <body>
   <Nav />
