@@ -116,4 +116,4 @@ button:disabled { cursor: not-allowed; opacity: .65; }
 
 @media(max-width:768px) { .hero-ticker { display:none; } }
 
-@media(max-width:480px) { .link-grid { grid-template-columns:1fr !important; } }
+@media(max-width:480px) { #main-content .link-grid { grid-template-columns:1fr !important; } }
