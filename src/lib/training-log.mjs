@@ -268,3 +268,60 @@ export function toCsv(entries) {
 export function csvFilename(today = toLocalDateString()) {
   return `deadhangs-training-log-${today}.csv`;
 }
+
+/** Portable, versioned backup. Only the existing fixed entry fields are exported. */
+export const MAX_IMPORT_BYTES = 128 * 1024;
+export function toBackup(entries) {
+  return JSON.stringify({ format: 'deadhangs-training-log', version: 1, entries: JSON.parse(serializeLog(entries)) }, null, 2);
+}
+
+/** Validate the whole file before proposing a non-destructive merge. */
+export function prepareLogImport(text, existing, today = toLocalDateString()) {
+  const fail = (error) => ({ ok: false, error, entries: existing, added: 0, skipped: 0 });
+  if (typeof text !== 'string' || new TextEncoder().encode(text).length > MAX_IMPORT_BYTES) return fail('Choose a backup smaller than 128 KB.');
+  const raw = text.replace(/^\uFEFF/, '').trim();
+  let imported;
+  let csv = false;
+  if (raw.startsWith('[') || raw.startsWith('{')) {
+    let parsed;
+    try { parsed = JSON.parse(raw); } catch { return fail('This JSON file could not be read.'); }
+    if (Array.isArray(parsed)) imported = parsed;
+    else if (parsed?.format === 'deadhangs-training-log' && parsed.version === 1 && Array.isArray(parsed.entries)) imported = parsed.entries;
+    else return fail('Choose a DeadHangs version 1 backup or exported CSV.');
+  } else {
+    csv = true;
+    const lines = raw.split(/\r?\n/);
+    const cell = (s) => /^"[^"]*"$/.test(s) ? s.slice(1, -1) : s;
+    if (lines.shift()?.split(',').map(cell).join(',') !== CSV_FIELDS.join(',')) return fail('CSV columns must match a DeadHangs export.');
+    imported = [];
+    for (let i = 0; i < lines.length; i++) {
+      const cells = lines[i].split(',').map(cell);
+      if (cells.length !== 4) return fail('CSV row ' + (i + 2) + ' has the wrong number of columns. Nothing was imported.');
+      const [date, seconds, assistance, sets] = cells;
+      imported.push({ id: 'csv-' + i, date, seconds: parseIntStrict(seconds), assistance, sets: parseIntStrict(sets) });
+    }
+  }
+  if (imported.length > MAX_ENTRIES) return fail('This file exceeds the 200-entry limit. Nothing was imported.');
+  const validated = imported.map((entry) => normalizeStoredEntry(entry, today));
+  const badIndex = validated.findIndex((entry) => !entry);
+  if (badIndex >= 0) return fail('Entry ' + (badIndex + 1) + ' has invalid values or a future date. Nothing was imported.');
+  const key = (e) => JSON.stringify([e.date, e.seconds, e.assistance, e.sets]);
+  const next = [...existing];
+  const byId = new Map(next.map(e => [e.id, e]));
+  const remaining = new Map();
+  for (const e of existing) remaining.set(key(e), (remaining.get(key(e)) || 0) + 1);
+  let skipped = 0;
+  for (const e of validated) {
+    if (csv) {
+      const count = remaining.get(key(e)) || 0;
+      if (count > 0) { remaining.set(key(e), count - 1); skipped++; continue; }
+      e.id = makeEntryId(next);
+    } else if (byId.has(e.id)) {
+      if (key(byId.get(e.id)) !== key(e)) return fail('A backup entry conflicts with an existing ID. Nothing was changed.');
+      skipped++; continue;
+    }
+    next.push(e); byId.set(e.id, e);
+  }
+  if (next.length > MAX_ENTRIES) return fail('The merged log would exceed 200 entries. Export your current log and make room first.');
+  return { ok: true, error: '', entries: sortEntries(next), added: next.length - existing.length, skipped };
+}

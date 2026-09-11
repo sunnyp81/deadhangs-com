@@ -5,6 +5,9 @@ import {
   ASSISTANCE_LABELS,
   ASSISTANCE_TYPES,
   MAX_ENTRIES,
+  MAX_IMPORT_BYTES,
+  prepareLogImport,
+  toBackup,
   MAX_SECONDS,
   MAX_SETS,
   MIN_SECONDS,
@@ -235,6 +238,10 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [confirmClearAll, setConfirmClearAll] = useState(false);
   const [confirmReplace, setConfirmReplace] = useState(false);
+  const [pendingImport, setPendingImport] = useState<{ entries: Entry[]; added: number; skipped: number; snapshot: string | null } | null>(null);
+  const [readingImport, setReadingImport] = useState(false);
+  const importAttempt = useRef(0);
+  const importField = useRef<HTMLInputElement | null>(null);
 
   const [dateInput, setDateInput] = useState('');
   const [holdInput, setHoldInput] = useState('');
@@ -307,7 +314,7 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
       return;
     }
     const { date, seconds, assistance, sets } = result.value;
-    if (seconds === null || sets === null || (assistance !== 'assisted' && assistance !== 'unassisted')) {
+    if (seconds === null || sets === null || !ASSISTANCE_OPTIONS.includes(assistance)) {
       setFormErrors(['Check the hold, assistance and set values.']);
       return;
     }
@@ -372,6 +379,46 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
     document.body.appendChild(link); link.click(); link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     setLogStatus('Recovery file download requested. Keep it before starting a fresh log.');
+  }
+
+  function backupLog() {
+    const current = readRawLog();
+    if (!current.available || current.raw !== rawSnapshot.current) {
+      setLogStatus('Your log changed or is unavailable. Reload before exporting a backup.'); return;
+    }
+    const url = URL.createObjectURL(new Blob([toBackup(entries)], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url; link.download = 'deadhangs-training-log-' + toLocalDateString() + '.json';
+    document.body.appendChild(link); link.click(); link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setLogStatus('Backup download requested. You can import this file on another device.');
+  }
+
+  async function readImport(file?: File) {
+    const attempt = ++importAttempt.current;
+    setPendingImport(null);
+    if (!file || !canWrite) { setReadingImport(false); return; }
+    if (file.size > MAX_IMPORT_BYTES) { setLogStatus('Choose a backup smaller than 128 KB.'); setReadingImport(false); return; }
+    const snapshot = rawSnapshot.current;
+    setReadingImport(true);
+    try {
+      const result = prepareLogImport(await file.text(), entries, toLocalDateString());
+      if (attempt !== importAttempt.current) return;
+      if (!result.ok) { setLogStatus(result.error); return; }
+      setPendingImport({ entries: result.entries as Entry[], added: result.added, skipped: result.skipped, snapshot });
+      setLogStatus('File checked. Review the import below. Nothing has changed yet.');
+    } catch { if (attempt === importAttempt.current) setLogStatus('This file could not be read. Nothing was changed.'); }
+    finally { if (attempt === importAttempt.current) setReadingImport(false); }
+  }
+
+  function confirmImport() {
+    if (!pendingImport || !canWrite) return;
+    if (pendingImport.snapshot !== rawSnapshot.current) {
+      setPendingImport(null); setLogStatus('Your log changed after you selected the file. Select the file again.'); return;
+    }
+    if (commit(pendingImport.entries, 'Imported ' + pendingImport.added + ' entries; skipped ' + pendingImport.skipped + ' duplicates.')) {
+      setPendingImport(null); if (importField.current) importField.current.value = '';
+    }
   }
 
   const bests = useMemo(
@@ -587,6 +634,20 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
           </p>
         </form>
 
+        <div className="tw-controls">
+          <button type="button" className="dh-btn dh-btn-ghost" onClick={backupLog} disabled={!canWrite || entries.length === 0}>Download backup</button>
+        </div>
+        <div className="tw-field">
+          <label htmlFor={uid + '-import'}>Import a DeadHangs backup or CSV</label>
+          <input ref={importField} id={uid + '-import'} type="file" accept=".json,.csv,application/json,text/csv" disabled={!canWrite} onChange={e => { void readImport(e.target.files?.[0]); }} />
+          <p className="tw-hint">Up to 128 KB. Imports add to this log; existing entries stay. JSON backups preserve entry IDs. CSV duplicates are matched by date, hold, assistance and sets.</p>
+        </div>
+        {readingImport && <p role="status">Checking file…</p>}
+        {pendingImport && <div className="tw-warning">
+          <p>Add {pendingImport.added} entries and skip {pendingImport.skipped} duplicates? Your log will contain {pendingImport.entries.length} entries.</p>
+          <button type="button" className="dh-btn" onClick={confirmImport}>Confirm import</button>
+          <button type="button" className="dh-btn dh-btn-ghost" onClick={() => { setPendingImport(null); if (importField.current) importField.current.value = ''; setLogStatus('Import cancelled. Nothing was changed.'); }}>Cancel import</button>
+        </div>}
         <p className="tw-status" aria-live="polite">{logStatus}</p>
 
         {entries.length > 0 && (
