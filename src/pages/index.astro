@@ -5,8 +5,11 @@ import Footer from '../components/Footer.astro';
 import TrainingWorkspace from '../components/TrainingWorkspace';
 import HangTimer from '../components/HangTimer';
 import HangCalculator from '../components/HangCalculator';
+import PracticeGraph from '../components/PracticeGraph';
+import GearFinder from '../components/GearFinder';
 import SignupForm from '../components/SignupForm';
 import '../styles/global.css';
+import '../styles/home-interactions.css';
 ---
 
 <Base title="Dead Hang Training - Workouts, Timer & Protocol" description="Dead hang training with free timers and workout plans. Practice your hangs, track your own progress, and find a training plan.">
@@ -61,6 +64,9 @@ import '../styles/global.css';
         <div class="dh-eyebrow" style="margin-bottom:12px;">· YOUR BASELINE / YOUR PROGRESS</div>
         <h2 class="dh-display" style="font-size:40px;font-weight:500;margin:0;max-width:780px;">The useful benchmark is <span style="color:var(--color-primary);">your last comparable hang.</span></h2>
         <p style="max-width:720px;color:var(--color-text-muted);margin-top:24px;">Use the same bar, grip and assistance when comparing sessions. Record what you actually held. The timer does not measure your performance.</p>
+      </div>
+      <div class="scroll-reveal scroll-reveal-d1" style="margin-bottom:1px;">
+        <PracticeGraph client:load />
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--color-divider);border:1px solid var(--color-divider);">
         {[
@@ -121,6 +127,10 @@ import '../styles/global.css';
   </section>
 
   <section id="training-log" class="home-log" style="padding:100px 64px;background:var(--color-bg);"><div style="max-width:1000px;margin:0 auto;"><TrainingWorkspace client:visible showTimer={false} analyticsSource="home" formAction="/" /></div></section>
+
+  <section id="equipment-matcher" style="padding:80px 64px;background:var(--color-surface);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);">
+    <div style="max-width:1000px;margin:0 auto;" class="scroll-reveal"><GearFinder client:visible /></div>
+  </section>
 
   <!-- PROTOCOL CALCULATOR -->
   <section id="studies" style="padding:100px 64px;background:var(--color-bg);">
@@ -199,6 +209,9 @@ import '../styles/global.css';
     .stat-cell {
       background: var(--color-bg);
       padding: 32px 24px;
+    }
+    @media (max-width: 768px) {
+      #equipment-matcher { padding: 64px 20px !important; }
     }
   </style>
 

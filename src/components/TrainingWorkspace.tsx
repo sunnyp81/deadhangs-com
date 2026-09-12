@@ -83,6 +83,7 @@ function readRawLog(): { available: boolean; raw: string | null } {
 function writeRawLog(text: string): boolean {
   try {
     window.localStorage.setItem(STORAGE_KEY, text);
+    window.dispatchEvent(new Event("deadhangs:training-log-updated"));
     return true;
   } catch {
     return false;

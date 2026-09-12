@@ -1,0 +1,36 @@
+.practice-graph, .gear-finder { border: 1px solid var(--color-divider); background: var(--color-bg); }
+.practice-graph { padding: clamp(20px, 4vw, 36px); }
+.practice-graph-heading { display: flex; justify-content: space-between; gap: 24px; align-items: start; }
+.practice-graph h2, .gear-finder h2 { margin: 4px 0 8px; font-size: clamp(30px, 4vw, 44px); }
+.practice-graph-heading p, .gear-finder > div > p { max-width: 620px; margin: 0; color: var(--color-text-muted); }
+.practice-graph-controls, .gear-finder-options { display: flex; flex-wrap: wrap; gap: 10px 24px; margin: 28px 0 16px; }
+.practice-graph-controls fieldset, .gear-finder-options { border: 0; padding: 0; min-width: 0; }
+.practice-graph-controls legend { margin-bottom: 6px; font: 10px var(--font-mono); color: var(--color-text-muted); letter-spacing: .12em; text-transform: uppercase; }
+.practice-graph-controls label, .gear-finder-options label { display: inline-flex; align-items: center; gap: 7px; min-height: 44px; color: var(--color-text-muted); font-size: 13px; cursor: pointer; }
+.practice-graph-controls input, .gear-finder-options input { accent-color: var(--color-primary); }
+.practice-graph-canvas { overflow-x: auto; border: 1px solid var(--color-divider); background: var(--color-surface); }
+.practice-graph-canvas svg { display: block; min-width: 560px; width: 100%; }
+.practice-graph-grid { stroke: var(--color-divider); stroke-dasharray: 3 5; stroke-width: 1; }
+.practice-graph-axis { fill: var(--color-text-faint); font: 10px var(--font-mono); }
+.practice-graph-line { fill: none; stroke: var(--color-primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; transition: stroke-dashoffset 850ms cubic-bezier(.16,1,.3,1); }
+.practice-graph-area { transition: opacity 480ms ease 280ms; }
+.practice-graph-point { fill: var(--color-bg); stroke: var(--color-primary); stroke-width: 2; cursor: pointer; transition: r 160ms ease, fill 160ms ease; }
+.practice-graph-point:hover, .practice-graph-point:focus { fill: var(--color-primary); outline: none; }
+.practice-graph-callout rect { fill: var(--color-surface-2); stroke: var(--color-primary); }
+.practice-graph-callout text { fill: var(--color-text-muted); font: 9px var(--font-mono); letter-spacing: .04em; }
+.practice-graph-callout text:last-child { fill: var(--color-primary); font-size: 10px; font-weight: 700; }
+.practice-graph-summary { margin: 12px 0 0; color: var(--color-text-muted); font-size: 13px; }
+.practice-graph-empty { display: grid; gap: 16px; justify-items: start; padding: 24px; border: 1px dashed var(--color-border); background: var(--color-surface); }
+.practice-graph-empty svg { width: 100%; max-height: 150px; }
+.practice-graph-empty path { fill: none; stroke: var(--color-primary); stroke-width: 2; stroke-dasharray: 8 8; animation: graph-pulse 2.4s linear infinite; }
+.practice-graph-empty circle { fill: var(--color-primary); }
+.practice-graph-empty p { margin: 0; color: var(--color-text-muted); }
+.gear-finder { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); gap: 32px; padding: clamp(20px, 4vw, 36px); }
+.gear-finder-options label { padding: 9px 12px; border: 1px solid var(--color-border); background: var(--color-surface); transition: border-color 160ms ease, color 160ms ease, transform 160ms ease; }
+.gear-finder-options legend { flex-basis: 100%; margin-bottom: -4px; font: 10px var(--font-mono); color: var(--color-text-muted); letter-spacing: .12em; text-transform: uppercase; }
+.gear-finder-options label:hover, .gear-finder-options label.is-selected { border-color: var(--color-primary); color: var(--color-text); transform: translateY(-1px); }
+.gear-finder-result { border-left: 1px solid var(--color-divider); padding-left: 32px; }
+.gear-finder-result > p:not(.dh-eyebrow):not(.small-copy) { color: var(--color-text-muted); line-height: 1.6; }
+@keyframes graph-pulse { to { stroke-dashoffset: -32; } }
+@media (max-width: 720px) { .practice-graph-heading, .gear-finder { grid-template-columns: 1fr; display: grid; } .practice-graph-heading .text-link { justify-self: start; } .gear-finder-result { border-left: 0; border-top: 1px solid var(--color-divider); padding: 24px 0 0; } }
+@media (prefers-reduced-motion: reduce) { .practice-graph-line, .practice-graph-area, .practice-graph-point, .gear-finder-options label { transition: none; } .practice-graph-empty path { animation: none; } }
