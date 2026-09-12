@@ -8,7 +8,22 @@
       window.dataLayer = window.dataLayer || [];
       window.gtag = function () { window.dataLayer.push(arguments); };
       window.gtag('js', new Date());
-      window.gtag('config', id);
+      var canonical = document.querySelector('link[rel="canonical"]')?.href;
+      if (canonical) {
+        try {
+          var canonicalUrl = new URL(canonical, window.location.origin);
+          canonicalUrl.search = '';
+          canonicalUrl.hash = '';
+          canonical = canonicalUrl.href;
+        } catch (_) {
+          canonical = null;
+        }
+      }
+      // Keep automatic page measurement clear of query, hash and referrer data.
+      window.gtag('config', id, {
+        page_location: canonical || window.location.origin + window.location.pathname,
+        page_referrer: ''
+      });
       var script = document.createElement('script');
       script.async = true;
       script.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;

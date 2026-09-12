@@ -39,6 +39,8 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
 }
 .training-workspace .tw-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.training-workspace label.tw-field { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--color-text-muted); }
+.training-workspace .tw-field .dh-input { letter-spacing: normal; text-transform: none; }
 .training-workspace .tw-field label {
   font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em;
   text-transform: uppercase; color: var(--color-text-muted);
@@ -71,6 +73,9 @@
 }
 .training-workspace .tw-best-value { font-size: 24px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .training-workspace .tw-bests-note { grid-column: 1 / -1; margin-top: 0; }
+.training-workspace .tw-goal { display: grid; gap: 8px; font-size: 13px; color: var(--color-text-muted); }
+.training-workspace .tw-goal-track { height: 8px; overflow: hidden; background: var(--color-surface-offset); border: 1px solid var(--color-divider); border-radius: 999px; }
+.training-workspace .tw-goal-fill { height: 100%; background: var(--color-primary); transition: width 180ms ease; }
 .training-workspace .tw-table-wrap { position: relative; overflow-x: auto; }
 .training-workspace .tw-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .training-workspace .tw-table th, .training-workspace .tw-table td {
@@ -104,3 +109,12 @@
 
 .training-workspace .tw-form-grid { align-items:end; }
 .training-workspace input { color-scheme:dark; }
+
+@media (max-width: 360px) {
+  .training-workspace .tw-panel { padding: 16px; }
+  .training-workspace .tw-controls { align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .training-workspace .tw-goal-fill { transition: none; }
+}

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import '../styles/training-workspace.css';
+import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 import {
   ASSISTANCE_LABELS,
   ASSISTANCE_TYPES,
@@ -88,10 +89,13 @@ function writeRawLog(text: string): boolean {
   }
 }
 
-export default function TrainingWorkspace({ showTimer = true }: { showTimer?: boolean }) {
+export default function TrainingWorkspace({ showTimer = true, onEntriesChange, onManualEntrySaved, registerActualFocus, analyticsSource, formAction = "/training-log/" }: { showTimer?: boolean; onEntriesChange?: (entries: Entry[]) => void; onManualEntrySaved?: () => void; registerActualFocus?: (focus: () => void) => void; analyticsSource?: "calculator" | "plans" | "workspace" | "home" | "shared" | "embed"; formAction?: string }) {
   const uid = useId();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => { setHydrated(true); }, []);
+  useEffect(() => {
+    if (analyticsSource) trackTrainingToolView({ source: analyticsSource });
+  }, [analyticsSource]);
 
   /* ---------------------------------------------------------------- timer */
 
@@ -249,6 +253,8 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
   const [logSetsInput, setLogSetsInput] = useState('1');
 
   const holdFieldRef = useRef<HTMLInputElement | null>(null);
+  useEffect(() => { registerActualFocus?.(() => holdFieldRef.current?.focus()); }, [registerActualFocus]);
+  useEffect(() => { onEntriesChange?.(entries); }, [entries, onEntriesChange]);
   // Resolved on the client only: the server's timezone must not decide "today".
   const [today, setToday] = useState('');
 
@@ -326,6 +332,9 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
     }
     if (commit(added.entries as Entry[], `Saved ${entry.seconds}s on ${formatLocalDate(entry.date)} to this device.`)) {
       setHoldInput('');
+      onManualEntrySaved?.();
+      if (analyticsSource)
+        trackTrainingEvent("training_log_saved", { source: analyticsSource });
     }
   }
 
@@ -576,7 +585,7 @@ export default function TrainingWorkspace({ showTimer = true }: { showTimer?: bo
           </p>
         )}
 
-        <form className="tw-form" onSubmit={handleSubmit}>
+        <form className="tw-form" action={formAction} method="post" onSubmit={handleSubmit}>
           <div className="tw-form-grid">
             <div className="tw-field">
               <label htmlFor={`${uid}-date`}>Date</label>

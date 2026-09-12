@@ -1,0 +1,5 @@
+# Training-tool measurement
+
+The helper can emit only `training_tool_view`, `training_goal_saved`, `training_session_loaded`, `training_timer_started`, `training_timer_finished`, and `training_log_saved` after the visitor has accepted analytics. Each payload contains only a fixed page pathname, fixed source, and where applicable a fixed timer mode. It never accepts hold times, goals, assistance, dates, IDs, drafts, email addresses, or full URLs.
+
+Session activation is user-level: consent-observed users with a tool view followed by a manual log save in the same session, divided by consent-observed users with a tool view in that session. A returning logger is a member of a first-log cohort with a later manual log save on another local reporting date within 7 or 28 days; report only fully observed cohort dates. Imports, deletions, failed writes, timer completion, pause and resume do not count as manual log saves. GA4 reporting timezone and account access were not available for this implementation, so no configured timezone, retention dashboard or inferred retention rate is claimed.
