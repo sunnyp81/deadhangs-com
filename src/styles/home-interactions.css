@@ -11,9 +11,10 @@
 .practice-graph-canvas { overflow-x: auto; border: 1px solid var(--color-divider); background: var(--color-surface); }
 .practice-graph-canvas svg { display: block; min-width: 560px; width: 100%; }
 .practice-graph-grid { stroke: var(--color-divider); stroke-dasharray: 3 5; stroke-width: 1; }
-.practice-graph-axis { fill: var(--color-text-faint); font: 10px var(--font-mono); }
-.practice-graph-line { fill: none; stroke: var(--color-primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; transition: stroke-dashoffset 850ms cubic-bezier(.16,1,.3,1); }
-.practice-graph-area { transition: opacity 480ms ease 280ms; }
+.practice-graph-axis, .practice-graph-date-tick text { fill: var(--color-text-faint); font: 10px var(--font-mono); letter-spacing: .08em; }
+.practice-graph-date-tick line { stroke: var(--color-text-faint); stroke-width: .6; }
+.practice-graph-line { fill: none; stroke: var(--color-primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.practice-graph-area { opacity: 1; }
 .practice-graph-point { fill: var(--color-bg); stroke: var(--color-primary); stroke-width: 2; cursor: pointer; transition: r 160ms ease, fill 160ms ease; }
 .practice-graph-point:hover, .practice-graph-point:focus { fill: var(--color-primary); outline: none; }
 .practice-graph-callout rect { fill: var(--color-surface-2); stroke: var(--color-primary); }
