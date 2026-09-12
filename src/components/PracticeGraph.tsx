@@ -19,7 +19,7 @@ export default function PracticeGraph() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [windowDays, setWindowDays] = useState<30 | 90>(90);
   const [assistance, setAssistance] = useState<Assistance>("unassisted");
-  const [revealed, setRevealed] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   useEffect(() => {
@@ -38,11 +38,20 @@ export default function PracticeGraph() {
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setRevealed(true);
+      setProgress(1);
       return;
     }
-    const timer = window.setTimeout(() => setRevealed(true), 80);
-    return () => window.clearTimeout(timer);
+    let frame = 0;
+    let startedAt: number | null = null;
+    setProgress(0);
+    const reveal = (now: number) => {
+      if (startedAt === null) startedAt = now;
+      const elapsed = Math.min(1, (now - startedAt) / 1050);
+      setProgress(1 - Math.pow(1 - elapsed, 3));
+      if (elapsed < 1) frame = window.requestAnimationFrame(reveal);
+    };
+    frame = window.requestAnimationFrame(reveal);
+    return () => window.cancelAnimationFrame(frame);
   }, [windowDays, assistance, entries.length]);
 
   const daily = useMemo(
@@ -62,9 +71,14 @@ export default function PracticeGraph() {
     const area = path ? `${path} L${x(daily.length - 1)},${pad.top + plotHeight} L${x(0)},${pad.top + plotHeight} Z` : "";
     return { width, height, pad, min, max, plotWidth, plotHeight, x, y, path, area };
   }, [daily]);
-  const active = activeIndex === null ? daily.at(-1) : daily[activeIndex];
+  const visibleCount = daily.length ? Math.max(1, Math.ceil(daily.length * progress)) : 0;
+  const visibleDaily = daily.slice(0, visibleCount);
+  const visiblePath = visibleDaily.map((entry, index) => `${index ? "L" : "M"}${chart.x(index).toFixed(1)},${chart.y(entry.seconds).toFixed(1)}`).join(" ");
+  const visibleArea = visiblePath ? `${visiblePath} L${chart.x(visibleDaily.length - 1)},${chart.pad.top + chart.plotHeight} L${chart.x(0)},${chart.pad.top + chart.plotHeight} Z` : "";
+  const active = activeIndex === null ? visibleDaily.at(-1) : visibleDaily[activeIndex];
   const label = assistance === "feet-supported" ? "supported" : "unassisted";
-  const ticks = [chart.min, Math.round((chart.min + chart.max) / 2), chart.max];
+  const ticks = Array.from({ length: 4 }, (_, index) => Math.round((chart.min + ((chart.max - chart.min) * index) / 3) / 5) * 5);
+  const dateTicks = daily.filter((_, index) => index === 0 || index === daily.length - 1 || index % Math.max(1, Math.ceil((daily.length - 1) / 3)) === 0);
 
   return (
     <section className="practice-graph" aria-labelledby={`${uid}-title`}>
@@ -112,13 +126,17 @@ export default function PracticeGraph() {
                 <line x1={chart.pad.left} x2={chart.pad.left + chart.plotWidth} y1={chart.y(tick)} y2={chart.y(tick)} className="practice-graph-grid" />
                 <text x={chart.pad.left - 10} y={chart.y(tick) + 4} textAnchor="end" className="practice-graph-axis">{tick}s</text>
               </g>)}
-              <path className="practice-graph-area" d={chart.area} fill={`url(#${uid}-area)`} style={{ opacity: revealed ? 1 : 0 }} />
-              <path className="practice-graph-line" d={chart.path} style={{ strokeDasharray: `${Math.max(1, chart.path.length * 1.45)}`, strokeDashoffset: revealed ? 0 : Math.max(1, chart.path.length * 1.45) }} />
-              {daily.map((entry, index) => <circle key={entry.date} tabIndex={0} role="button" aria-label={`${entry.date}, ${entry.seconds} seconds`} className="practice-graph-point" cx={chart.x(index)} cy={chart.y(entry.seconds)} r={activeIndex === index ? 6 : 4} onMouseEnter={() => setActiveIndex(index)} onFocus={() => setActiveIndex(index)} onBlur={() => setActiveIndex(null)} onClick={() => setActiveIndex(index)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActiveIndex(index); } }} />)}
-              {active && <g aria-hidden="true" className="practice-graph-callout" transform={`translate(${Math.min(chart.x(activeIndex ?? daily.length - 1) + 12, chart.width - 116)}, ${Math.max(chart.y(active.seconds) - 42, 8)})`}>
+              {dateTicks.map((entry) => <g key={entry.date} className="practice-graph-date-tick">
+                <line x1={chart.x(daily.indexOf(entry))} x2={chart.x(daily.indexOf(entry))} y1={chart.pad.top + chart.plotHeight} y2={chart.pad.top + chart.plotHeight + 5} />
+                <text x={chart.x(daily.indexOf(entry))} y={chart.height - 12} textAnchor="middle">{entry.date.slice(5)}</text>
+              </g>)}
+              <path className="practice-graph-area" d={visibleArea} fill={`url(#${uid}-area)`} />
+              <path className="practice-graph-line" d={visiblePath} />
+              {visibleDaily.map((entry, index) => <circle key={entry.date} tabIndex={0} role="button" aria-label={`${entry.date}, ${entry.seconds} seconds`} className="practice-graph-point" cx={chart.x(index)} cy={chart.y(entry.seconds)} r={activeIndex === index ? 6 : 4} onMouseEnter={() => setActiveIndex(index)} onFocus={() => setActiveIndex(index)} onBlur={() => setActiveIndex(null)} onClick={() => setActiveIndex(index)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActiveIndex(index); } }} />)}
+              {active && <g aria-hidden="true" className="practice-graph-callout" transform={`translate(${Math.min(chart.x(activeIndex ?? visibleDaily.length - 1) + 12, chart.width - 116)}, ${Math.max(chart.y(active.seconds) - 42, 8)})`}>
                 <rect width="104" height="34" rx="3" />
-                <text x="8" y="13">{active.date}</text>
-                <text x="8" y="27">{active.seconds}s daily best</text>
+                <text x="8" y="13">CURRENT</text>
+                <text x="8" y="27">{active.seconds}s HOLD</text>
               </g>}
             </svg>
           </div>
