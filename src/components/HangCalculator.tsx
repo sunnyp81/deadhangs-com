@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { compareHang } from "../lib/hang-comparison.mjs";
 import { makeDraft, stageDraft } from "../lib/journey-draft.mjs";
 import type { JourneyDraft } from "../lib/training-types";
-import { trackTrainingToolView } from "../scripts/training-events.js";
+import {
+  trackTrainingToolView,
+  trackTrainingEvent,
+} from "../scripts/training-events.js";
 
 type Props = {
   onContinue?: (draft: JourneyDraft) => void;
@@ -35,6 +38,9 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
         ),
       );
       setError("");
+      trackTrainingEvent("training_calculator_used", {
+        source: analyticsSource,
+      });
     } catch (reason) {
       setResult(null);
       setError((reason as Error).message);
@@ -47,6 +53,9 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
         targetSeconds: Number(target),
         holdSeconds: Number(hold),
       }) as JourneyDraft;
+      trackTrainingEvent("training_calculator_continued", {
+        source: analyticsSource,
+      });
       if (onContinue) {
         onContinue(draft);
         return;

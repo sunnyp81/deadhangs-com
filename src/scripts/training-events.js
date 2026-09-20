@@ -5,6 +5,8 @@ const EVENTS = new Set([
   "training_timer_started",
   "training_timer_finished",
   "training_log_saved",
+  "training_calculator_used",
+  "training_calculator_continued",
 ]);
 const SOURCES = new Set([
   "calculator",
