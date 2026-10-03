@@ -8,92 +8,26 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "What is the average dead hang time?",
+            "name": "What is a good dead hang time?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "The average dead hang time varies significantly by age and gender. This page provides detailed charts and percentile rankings to help you find the average for your specific demographic."
+              "text": "A useful starting point is a controlled hold you can repeat without pain. Use 10, 30 or 60 seconds as personal milestones if they suit you, not as population averages. Compare repeat tests under the same conditions."
             }
           },
           {
             "@type": "Question",
-            "name": "How do dead hang times differ between men and women?",
+            "name": "How long should a 40-year-old be able to dead hang?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Dead hang times generally differ between men and women, with specific benchmarks provided for each gender across various age groups. The article details these differences and offers separate percentile rankings."
+              "text": "The sources cited here do not establish a required time for a 40-year-old. Training experience, bodyweight, grip, bar and assistance all affect the task. Record your own baseline instead of treating an age table as a pass or fail."
             }
           },
           {
             "@type": "Question",
-            "name": "Where can I find dead hang performance benchmarks for my age group?",
+            "name": "Is a two-minute dead hang good?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "This page offers comprehensive charts and percentile rankings for dead hang times, allowing you to easily find performance benchmarks tailored to your specific age group and gender."
-            }
-          }
-        ]
-      }
-    },
-    {
-      "url": "https://deadhangs.com/dead-hang-world-record/",
-      "faq_schema": {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What is the current dead hang world record?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The current Guinness World Record for the longest dead hang is 80 minutes and 41 seconds, set by Kenta Adachi of Japan in 2022."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Who holds the dead hang world record?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Kenta Adachi of Japan currently holds the Guinness World Record for the dead hang, achieving a time of 80 minutes and 41 seconds in 2022."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What are the official rules for a dead hang world record attempt?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The official rules for a dead hang world record attempt, as recognized by Guinness, typically involve specific grip requirements, body position, and strict adherence to maintaining a static hang without assistance. The article details these rules."
-            }
-          }
-        ]
-      }
-    },
-    {
-      "url": "https://deadhangs.com/deadhang-guide/",
-      "faq_schema": {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "How can I improve my dead hang time?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "To improve your dead hang time, follow a structured workout plan that includes proper form, progressive overload, and consistent training. This guide offers complete workout plans and progressions from beginner to advanced levels."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What is a good dead hang workout plan for beginners?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "A good dead hang workout plan for beginners focuses on mastering proper form and gradually increasing hang duration. This guide provides specific sets, reps, rest times, and training schedules designed for beginners to build foundational strength."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does this guide include advanced dead hang training techniques?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes, this complete training guide covers progressions from beginner to advanced levels, including detailed workout plans, sets, reps, rest periods, and training schedules to help you master advanced dead hang techniques and significantly improve your hold time."
+              "text": "Two minutes is a sustained hold, but this site cannot assign it a verified population percentile. It is not necessary to reach two minutes before a session counts as useful practice."
             }
           }
         ]
