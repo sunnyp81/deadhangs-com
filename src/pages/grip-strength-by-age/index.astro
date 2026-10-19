@@ -204,9 +204,7 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
   <p>A dead hang tests something different: how long you can support your bodyweight. Both depend on grip, but the two measures are not interchangeable. If you want the timed version, see <a href="/dead-hang-time-by-age/">dead hang time by age</a>, and for building grip see <a href="/grip-strength/">the grip strength training guide</a>.</p>
 
   <h2 id="faq">Grip strength by age: frequently asked questions</h2>
-  <div class="faq">
-    {faqs.map(([q, a]) => (<><h3>{q}</h3><p>{a}</p></>))}
-  </div>
+  {faqs.map(([q, a]) => (<div class="faq"><h3>{q}</h3><p>{a}</p></div>))}
 
   <div class="sources">
     <h2>Sources</h2>
@@ -214,7 +212,7 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
       <li>Dodds RM et al. Grip strength across the life course: normative data from twelve British studies. PLOS ONE 2014;9(12):e113637. <a href="https://doi.org/10.1371/journal.pone.0113637" rel="noopener">doi.org/10.1371/journal.pone.0113637</a></li>
       <li>Tomkinson GR, Lang JJ, Rubin L, McGrath R, et al. International norms for adult handgrip strength: a systematic review of data on 2.4 million adults aged 20 to 100+ years from 69 countries and regions. J Sport Health Sci 2025;14:101014. <a href="https://doi.org/10.1016/j.jshs.2024.101014" rel="noopener">doi.org/10.1016/j.jshs.2024.101014</a></li>
       <li>Wang YC, Bohannon RW, Li X, Sindhu B, Kapellusch J. Hand-grip strength: normative reference values and equations for individuals 18 to 85 years of age residing in the United States. J Orthop Sports Phys Ther 2018;48(9):685-693. <a href="https://doi.org/10.2519/jospt.2018.7851" rel="noopener">doi.org/10.2519/jospt.2018.7851</a></li>
-      <li>Wang YC et al. Handgrip strength norms from US NHANES 2011 to 2014. J Hand Ther 2019. <a href="https://doi.org/10.1016/j.jht.2018.03.002" rel="noopener">doi.org/10.1016/j.jht.2018.03.002</a></li>
+      <li>Wang YC et al. Summary of grip strength measurements obtained in the 2011-2012 and 2013-2014 National Health and Nutrition Examination Surveys. J Hand Ther 2019;32(4):489-496. <a href="https://doi.org/10.1016/j.jht.2018.03.002" rel="noopener">doi.org/10.1016/j.jht.2018.03.002</a></li>
       <li>Cruz-Jentoft AJ et al. Sarcopenia: revised European consensus on definition and diagnosis (EWGSOP2). Age Ageing 2019;48(1):16-31, Table 3. <a href="https://doi.org/10.1093/ageing/afy169" rel="noopener">doi.org/10.1093/ageing/afy169</a></li>
       <li>Leong DP et al. Prognostic value of grip strength: findings from the Prospective Urban Rural Epidemiology (PURE) study. Lancet 2015;386(9990):266-273. <a href="https://doi.org/10.1016/S0140-6736(14)62000-6" rel="noopener">doi.org/10.1016/S0140-6736(14)62000-6</a></li>
     </ol>
