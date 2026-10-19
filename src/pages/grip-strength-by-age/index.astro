@@ -1,0 +1,275 @@
+---
+import Article from '../../layouts/Article.astro';
+import { rows } from './_data';
+
+const title = 'Grip Strength by Age: Average kg for Men and Women';
+const description = 'Grip strength by age in kg for men and women: dynamometer centiles from 20 to 90, the 27 kg and 16 kg weak-grip cut-offs, and how to test.';
+
+const faqs: [string, string][] = [
+  ['What is the average grip strength by age?',
+   'In Dodds et al. (2014, 12 British studies, 49,964 participants), median grip peaked at 51 kg in males and 31 kg in females. The full table on this page gives the 10th, 50th and 90th centile for every five years from 20 to 90. These are dynamometer measurements of grip force, not dead hang seconds.'],
+  ['What is a good grip strength for a 60 year old?',
+   'In the Dodds 2014 table, the median at age 60 is 45 kg for men (10th centile 33 kg, 90th centile 56 kg) and 27 kg for women (10th centile 18 kg, 90th centile 34 kg). A reading near the median is typical for that age in those British studies. It is not a pass mark.'],
+  ['What is normal grip strength for women?',
+   'In the Dodds 2014 table, the median for women is 28 kg at age 20, 31 kg at ages 30 to 40, 27 kg at 60, 24 kg at 70 and 19 kg at 80. Women peaked at a median of 31 kg between roughly ages 26 and 42.'],
+  ['What grip strength is considered weak?',
+   'The EWGSOP2 sarcopenia guideline (2019) lists low grip strength as below 27 kg for men and below 16 kg for women, referenced to Dodds 2014. This is a screening cut-off used by clinicians, not a diagnosis. Dodds found weak grip, defined as 2.5 SD or more below the sex-specific peak mean, in 23.0% of males and 26.6% of females by age 80.'],
+  ['Does grip strength decline with age?',
+   'Yes, in cross-sectional data. In the Dodds 2014 table the male median falls from 51 kg at age 30 to 39 kg at 70, and the female median from 31 kg to 24 kg. Cross-sectional tables compare different people at different ages, so they do not show how any one person will change.'],
+  ['Is grip strength the same as dead hang time?',
+   'No. Grip strength here means peak squeezing force on a hand dynamometer, in kg. A dead hang is a timed hold of your bodyweight. No study cited on this page converts one into the other, so this page does not.'],
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  author: { '@type': 'Organization', name: 'DeadHangs.com', url: 'https://deadhangs.com' },
+  publisher: { '@type': 'Organization', name: 'DeadHangs.com' },
+  mainEntityOfPage: 'https://deadhangs.com/grip-strength-by-age/',
+  datePublished: '2026-10-19',
+  dateModified: '2026-10-19',
+};
+const schema =
+  '<script type="application/ld+json">' + JSON.stringify(articleSchema) + '</script>' +
+  '<script type="application/ld+json">' + JSON.stringify(faqSchema) + '</script>';
+
+// Line chart geometry (viewBox units)
+const W = 720, H = 440, L = 56, R = 620, T = 20, B = 380, KMAX = 70;
+const x = (age: number) => L + ((age - 20) / 70) * (R - L);
+const y = (kg: number) => B - (kg / KMAX) * (B - T);
+const line = (s: 'm' | 'f') => rows.map((r) => `${x(r.age).toFixed(1)},${y(r[s][1]).toFixed(1)}`).join(' ');
+const band = (s: 'm' | 'f') =>
+  rows.map((r) => `${x(r.age).toFixed(1)},${y(r[s][2]).toFixed(1)}`).join(' ') + ' ' +
+  [...rows].reverse().map((r) => `${x(r.age).toFixed(1)},${y(r[s][0]).toFixed(1)}`).join(' ');
+const last = rows[rows.length - 1];
+const yTicks = [0, 10, 20, 30, 40, 50, 60, 70];
+const xTicks = [20, 30, 40, 50, 60, 70, 80, 90];
+
+const compare = [30, 50, 70, 90].map((a) => rows.find((r) => r.age === a)!);
+const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
+---
+<Article title={title} description={description} schema={schema}>
+<div class="article-header">
+  <div class="article-breadcrumb"><a href="/">Home</a><span class="sep">/</span>Grip strength by age</div>
+  <h1 class="article-h1">Grip strength by age: average kg for men and women</h1>
+  <p class="article-subtitle">This page gives hand dynamometer grip force in kg by age and sex. It is not dead hang time in seconds. For hanging times see <a href="/dead-hang-time-by-age/">dead hang time by age</a>; for training see <a href="/grip-strength/">how to build grip strength</a>.</p>
+</div>
+
+<div class="article-body gba">
+  <p>The figures below come from a pooled analysis of 12 British studies (Dodds et al., PLOS ONE, 2014): 60,803 grip measurements from 49,964 participants, 26,687 of them female, aged 4 to 90 and over. The data are observational. Median grip peaked at <strong>51 kg in males</strong> (ages 29 to 39) and <strong>31 kg in females</strong> (ages 26 to 42), then fell with age.</p>
+
+  <div class="stat-row" role="list">
+    <div class="stat-card" role="listitem"><div class="stat-value">51 kg</div><div class="stat-label">Peak median, males</div><div class="stat-source">Dodds 2014, ages 29 to 39</div></div>
+    <div class="stat-card" role="listitem"><div class="stat-value">31 kg</div><div class="stat-label">Peak median, females</div><div class="stat-source">Dodds 2014, ages 26 to 42</div></div>
+    <div class="stat-card" role="listitem"><div class="stat-value">27 / 16 kg</div><div class="stat-label">Low-grip cut-offs, men / women</div><div class="stat-source">EWGSOP2 2019</div></div>
+  </div>
+
+  <h2 id="chart">Median grip strength by age, men and women</h2>
+  <p>The chart plots the 50th centile (median) from Table 2 of Dodds 2014 for every fifth year from 20 to 90. The shaded bands run from the 10th to the 90th centile, so most people of that age and sex fell inside them.</p>
+
+  <figure class="gba-figure">
+    <div class="gba-scroll" tabindex="0" role="region" aria-label="Line chart of median grip strength in kg by age, scrollable on small screens">
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="gba-t gba-d" xmlns="http://www.w3.org/2000/svg">
+        <title id="gba-t">Median grip strength in kg by age, men and women, ages 20 to 90</title>
+        <desc id="gba-d">Men start at a median of 40 kg at age 20, peak at 51 kg at ages 30 and 35, and fall to 25 kg at age 90. Women start at 28 kg, peak at 31 kg from age 30 to 40, and fall to 14 kg at age 90. Shaded bands show the 10th to 90th centile. The full numbers are in the table below the chart.</desc>
+        {yTicks.map((t) => (
+          <g>
+            <line x1={L} x2={R} y1={y(t)} y2={y(t)} class="grid" />
+            <text x={L - 10} y={y(t) + 5} class="tick" text-anchor="end">{t}</text>
+          </g>
+        ))}
+        {xTicks.map((a) => (
+          <text x={x(a)} y={B + 24} class="tick" text-anchor="middle">{a}</text>
+        ))}
+        <text x={(L + R) / 2} y={B + 52} class="axis" text-anchor="middle">Age (years)</text>
+        <text transform={`translate(14 ${(T + B) / 2}) rotate(-90)`} class="axis" text-anchor="middle">Grip force (kg)</text>
+        <polygon points={band('m')} class="band-m" />
+        <polygon points={band('f')} class="band-f" />
+        <polyline points={line('m')} class="line-m" fill="none" />
+        <polyline points={line('f')} class="line-f" fill="none" />
+        {rows.map((r) => (
+          <g>
+            <circle cx={x(r.age)} cy={y(r.m[1])} r="3.5" class="dot-m" />
+            <rect x={x(r.age) - 3.5} y={y(r.f[1]) - 3.5} width="7" height="7" class="dot-f" />
+          </g>
+        ))}
+        <text x={R + 12} y={y(last.m[1]) + 5} class="lab-m">Men</text>
+        <text x={R + 12} y={y(last.f[1]) + 5} class="lab-f">Women</text>
+      </svg>
+    </div>
+    <figcaption class="caption">Median grip force (kg) by age. Solid line with circles: men. Dashed line with squares: women. Shaded bands: 10th to 90th centile. Source: Dodds et al., PLOS ONE 2014, Table 2 (12 British studies). Observational, cross-sectional. Swipe sideways on a phone.</figcaption>
+  </figure>
+
+  <h2 id="table">Grip strength norms table in kg</h2>
+  <p>This is Table 2 of Dodds 2014, as printed: model estimates at each age, in kg, with the mean and standard deviation. The centile columns show how wide normal is. At age 40, for example, the male 10th centile is 38 kg and the 90th is 63 kg. On a phone, swipe the table sideways to see the women columns.</p>
+  <div class="gba-scroll gba-table" tabindex="0" role="region" aria-label="Grip strength by age table, scrollable sideways on small screens">
+    <table>
+      <caption>Grip strength (kg) by age and sex: 10th, 50th and 90th centile, and mean (SD). Dodds et al., PLOS ONE 2014, Table 2.</caption>
+      <thead>
+        <tr>
+          <th scope="col" rowspan="2">Age</th>
+          <th scope="colgroup" colspan="4">Men</th>
+          <th scope="colgroup" colspan="4">Women</th>
+        </tr>
+        <tr>
+          <th scope="col">10th</th><th scope="col">50th</th><th scope="col">90th</th><th scope="col">Mean (SD)</th>
+          <th scope="col">10th</th><th scope="col">50th</th><th scope="col">90th</th><th scope="col">Mean (SD)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            <th scope="row">{r.age}</th>
+            <td>{r.m[0]}</td><td>{r.m[1]}</td><td>{r.m[2]}</td><td>{r.m[3].toFixed(1)} ({r.m[4].toFixed(1)})</td>
+            <td>{r.f[0]}</td><td>{r.f[1]}</td><td>{r.f[2]}</td><td>{r.f[3].toFixed(1)} ({r.f[4].toFixed(1)})</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Read the row for your age and the column for your sex. A value near the 50th centile is typical for that age in these studies; it is not a target. Grip also varies with hand size, height and the device used.</p>
+
+  <h2 id="men-vs-women">Men versus women: the sex split</h2>
+  <p>Men had a higher median than women at every age in the table. The bars below set the two medians side by side at four ages, using the same kg scale from 0 to 70.</p>
+
+  <figure class="gba-figure">
+    <div class="split" role="img" aria-label="Paired bars of median grip strength in kg, men and women, at ages 30, 50, 70 and 90. Values are listed in the table above.">
+      {compare.map((r) => (
+        <div class="split-row">
+          <div class="split-age">Age {r.age}</div>
+          <div class="split-bars">
+            <div class="bar bar-m" style={`width:${pct(r.m[1])}%`}><span>Men {r.m[1]} kg</span></div>
+            <div class="bar bar-f" style={`width:${pct(r.f[1])}%`}><span>Women {r.f[1]} kg</span></div>
+          </div>
+        </div>
+      ))}
+    </div>
+    <figcaption class="caption">Median grip (kg) at ages 30, 50, 70 and 90, men (solid bar) and women (hatched bar). Bar length is proportional to kg on a 0 to 70 scale. Source: Dodds 2014, Table 2.</figcaption>
+  </figure>
+
+  <p>Within each sex the spread is wide, and the ranges overlap: at age 40 the female 90th centile is 39 kg and the male 10th centile is 38 kg. Compare yourself with your own sex and age row, not across sexes.</p>
+
+  <h2 id="decline">How grip strength changes after the peak</h2>
+  <p>In the Dodds table the male median falls from 51 kg at age 30 to 39 kg at age 70, and the female median from 31 kg to 24 kg. That is an average difference between younger and older groups measured at one time, not a measured loss within individuals. The same paper found weak grip (2.5 SD or more below the sex-specific peak mean) in 23.0% of males and 26.6% of females by age 80.</p>
+  <p>Large cohort studies have linked lower grip with higher mortality risk. In the Lancet's PURE analysis (Leong et al., 2015; 139,691 adults aged 35 to 70 in 17 countries), each 5 kg lower grip strength was associated with a 16% higher risk of death from any cause. That is an association in observational data, not proof that raising grip strength lengthens life.</p>
+
+  <h2 id="weak">What counts as weak grip strength</h2>
+  <p>The European consensus on sarcopenia (EWGSOP2, Cruz-Jentoft et al., Age and Ageing, 2019) lists low grip strength as <strong>below 27 kg for men and below 16 kg for women</strong>, referenced to the Dodds data. Clinicians use these as screening cut-offs. They are not a diagnosis, and a single low reading can reflect pain, fatigue, arthritis or poor technique.</p>
+
+  <figure class="gba-figure">
+    <div class="ruler" role="img" aria-label="Kg scale from 0 to 70 with the EWGSOP2 low-grip cut-offs marked at 16 kg for women and 27 kg for men, and the peak medians at 31 kg for women and 51 kg for men.">
+      <div class="ruler-track">
+        <div class="zone zone-f" style={`width:${pct(16)}%`}></div>
+        <div class="zone zone-m" style={`left:${pct(16)}%;width:${pct(27 - 16)}%`}></div>
+      </div>
+      <div class="ruler-ticks">
+        {[0, 10, 20, 30, 40, 50, 60, 70].map((t) => (<span style={`left:${pct(t)}%`}>{t}</span>))}
+      </div>
+      <div class="ruler-marks">
+        <span class="mark" style={`left:${pct(16)}%`}>Women 16</span>
+        <span class="mark mark-2" style={`left:${pct(27)}%`}>Men 27</span>
+      </div>
+    </div>
+    <figcaption class="caption">Grip force scale in kg. Hatched zone: below the EWGSOP2 female cut-off of 16 kg. Solid zone: between 16 kg and the male cut-off of 27 kg. Cut-offs from Cruz-Jentoft et al., Age and Ageing 2019, Table 3.</figcaption>
+  </figure>
+
+  <p>If a reading is below these values and you have noticed weakness, dropping things or difficulty with daily tasks, mention it to a GP or physiotherapist. This page is not medical advice.</p>
+
+  <h2 id="other-datasets">Other large grip strength datasets</h2>
+  <p>Different studies use different devices and protocols, so their numbers do not line up exactly with Dodds. Three others are worth knowing:</p>
+  <ul>
+    <li><strong>International, 2025.</strong> A systematic review of 100 observational studies covering 2,405,863 adults (51.9% female) aged 20 to 100 and over, from 69 countries and regions, tested from 2000 onward. Absolute grip peaked at ages 30 to 39: 49.7 kg in males and 29.7 kg in females (Tomkinson et al., J Sport Health Sci 2025).</li>
+    <li><strong>United States, NIH Toolbox, 2018.</strong> In 1,232 US adults aged 18 to 85, mean grip ranged from 49.7 kg (dominant hand, men aged 25 to 29) to 18.7 kg (non-dominant hand, women aged 75 to 79) (Wang et al., JOSPT 2018).</li>
+    <li><strong>United States, NHANES 2011 to 2014.</strong> In 13,676 participants aged 6 to 80, mean grip ranged from 50.3 kg (dominant hand, men aged 30 to 34) to 10.0 kg (non-dominant hand, girls aged 6) (Wang et al., J Hand Ther 2019).</li>
+  </ul>
+  <p>The broad pattern agrees: a peak in the 30s, and men above women at every age group. Each source is a different population, so use one table at a time rather than mixing them.</p>
+
+  <h2 id="how-to-test">How to test grip strength</h2>
+  <p>Clinics and research studies use a hand dynamometer. The norms above were collected that way, so only a dynamometer reading can be compared with them. A bathroom scale, a dead hang or a bar hold cannot.</p>
+  <ol>
+    <li>Use a calibrated hand dynamometer and follow the manufacturer's instructions for grip width and posture.</li>
+    <li>Sit in a chair with your back supported and your arm in the same position each time.</li>
+    <li>Squeeze as hard as you can, without jerking, and read the peak value in kg. Allow a rest between attempts.</li>
+    <li>Test both hands, make several attempts, and note the best reading for each.</li>
+    <li>Repeat at the same time of day, with the same device, if you are tracking change.</li>
+  </ol>
+  <p>The Dodds figures use the maximum across trials and both hands, so compare your best reading, not your average. A reading from a different device or protocol may not be directly comparable.</p>
+  <p>A dead hang tests something different: how long you can support your bodyweight. Both depend on grip, but the two measures are not interchangeable. If you want the timed version, see <a href="/dead-hang-time-by-age/">dead hang time by age</a>, and for building grip see <a href="/grip-strength/">the grip strength training guide</a>.</p>
+
+  <h2 id="faq">Grip strength by age: frequently asked questions</h2>
+  {faqs.map(([q, a]) => (<div class="faq"><h3>{q}</h3><p>{a}</p></div>))}
+
+  <div class="sources">
+    <h2>Sources</h2>
+    <ol>
+      <li>Dodds RM et al. Grip strength across the life course: normative data from twelve British studies. PLOS ONE 2014;9(12):e113637. <a href="https://doi.org/10.1371/journal.pone.0113637" rel="noopener">doi.org/10.1371/journal.pone.0113637</a></li>
+      <li>Tomkinson GR, Lang JJ, Rubin L, McGrath R, et al. International norms for adult handgrip strength: a systematic review of data on 2.4 million adults aged 20 to 100+ years from 69 countries and regions. J Sport Health Sci 2025;14:101014. <a href="https://doi.org/10.1016/j.jshs.2024.101014" rel="noopener">doi.org/10.1016/j.jshs.2024.101014</a></li>
+      <li>Wang YC, Bohannon RW, Li X, Sindhu B, Kapellusch J. Hand-grip strength: normative reference values and equations for individuals 18 to 85 years of age residing in the United States. J Orthop Sports Phys Ther 2018;48(9):685-693. <a href="https://doi.org/10.2519/jospt.2018.7851" rel="noopener">doi.org/10.2519/jospt.2018.7851</a></li>
+      <li>Wang YC et al. Summary of grip strength measurements obtained in the 2011-2012 and 2013-2014 National Health and Nutrition Examination Surveys. J Hand Ther 2019;32(4):489-496. <a href="https://doi.org/10.1016/j.jht.2018.03.002" rel="noopener">doi.org/10.1016/j.jht.2018.03.002</a></li>
+      <li>Cruz-Jentoft AJ et al. Sarcopenia: revised European consensus on definition and diagnosis (EWGSOP2). Age Ageing 2019;48(1):16-31, Table 3. <a href="https://doi.org/10.1093/ageing/afy169" rel="noopener">doi.org/10.1093/ageing/afy169</a></li>
+      <li>Leong DP et al. Prognostic value of grip strength: findings from the Prospective Urban Rural Epidemiology (PURE) study. Lancet 2015;386(9990):266-273. <a href="https://doi.org/10.1016/S0140-6736(14)62000-6" rel="noopener">doi.org/10.1016/S0140-6736(14)62000-6</a></li>
+    </ol>
+  </div>
+</div>
+</Article>
+
+<style is:global>
+  .gba .note { font-size: 14px; }
+  .gba .sources a, .gba li { overflow-wrap: anywhere; }
+  .gba-figure { margin: 28px 0; }
+  .gba-figure .caption { font-size: 13px; line-height: 1.5; color: var(--color-text-muted); margin: 12px 0 0; }
+  .gba-scroll { overflow-x: auto; border: 1px solid var(--color-divider); border-radius: var(--radius-md); background: var(--color-surface); -webkit-overflow-scrolling: touch; }
+  .gba-scroll:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .gba-scroll svg { display: block; min-width: 640px; width: 100%; height: auto; }
+  .gba-table table { margin: 0; border: 0; min-width: 640px; }
+  .gba-table caption { text-align: left; padding: 12px 16px; font-size: 13px; color: var(--color-text-muted); caption-side: top; }
+  .gba-table th[scope="row"] { color: var(--color-text); font-weight: 600; text-align: left; font-family: var(--font-mono); font-size: 13px; padding: 10px 16px; border-bottom: 1px solid var(--color-divider); }
+  .gba-table thead th { text-align: center; }
+  .gba-table thead tr:first-child th:first-child { text-align: left; }
+  .gba-table td { text-align: center; font-variant-numeric: tabular-nums; padding: 10px 12px; }
+  .gba-table td:first-child { font-weight: 400; color: var(--color-text-muted); }
+  .gba-table th { position: static; }
+  .gba-table th[colspan] { border-left: 1px solid var(--color-divider); }
+  .gba-table tbody tr td:nth-child(5) { border-left: 1px solid var(--color-divider); }
+  .gba-table tbody tr td:nth-child(3), .gba-table tbody tr td:nth-child(7) { color: var(--color-text); font-weight: 600; }
+
+  .gba svg .grid { stroke: var(--color-divider); stroke-width: 1; }
+  .gba svg .tick { fill: #9aa8c4; font: 13px var(--font-mono); }
+  .gba svg .axis { fill: #9aa8c4; font: 13px var(--font-body); }
+  .gba svg .band-m { fill: #00e5ff; fill-opacity: 0.14; }
+  .gba svg .band-f { fill: #ffb020; fill-opacity: 0.14; }
+  .gba svg .line-m { stroke: #00e5ff; stroke-width: 3; }
+  .gba svg .line-f { stroke: #ffb020; stroke-width: 3; stroke-dasharray: 8 5; }
+  .gba svg .dot-m { fill: #00e5ff; }
+  .gba svg .dot-f { fill: #ffb020; }
+  .gba svg .lab-m { fill: #00e5ff; font: 700 15px var(--font-display); }
+  .gba svg .lab-f { fill: #ffb020; font: 700 15px var(--font-display); }
+
+  .split { display: grid; gap: 18px; padding: 20px; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-md); }
+  .split-row { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; }
+  .split-age { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-muted); }
+  .split-bars { display: grid; gap: 6px; }
+  .bar { min-height: 30px; display: flex; align-items: center; border-radius: 2px; min-width: 120px; }
+  .bar span { font: 600 13px var(--font-mono); padding: 0 10px; white-space: nowrap; }
+  .bar-m { background: #00e5ff; color: #04222a; }
+  .bar-f { background: repeating-linear-gradient(135deg, #ffb020 0 6px, #e69a10 6px 12px); color: #2a1a00; }
+
+  .ruler { position: relative; padding: 48px 20px 54px; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-md); }
+  .ruler-track { position: relative; height: 26px; background: var(--color-surface-2); border: 1px solid var(--color-border); }
+  .zone { position: absolute; top: 0; bottom: 0; }
+  .zone-f { left: 0; background: repeating-linear-gradient(135deg, #ffb020 0 6px, #e69a10 6px 12px); }
+  .zone-m { background: #00e5ff; }
+  .ruler-ticks { position: relative; height: 22px; margin-top: 4px; }
+  .ruler-ticks span { position: absolute; transform: translateX(-50%); font: 12px var(--font-mono); color: #9aa8c4; }
+  .ruler-marks { position: absolute; left: 20px; right: 20px; top: 14px; height: 28px; }
+  .ruler-marks .mark { position: absolute; font: 600 12px var(--font-mono); color: var(--color-text); white-space: nowrap; transform: translateX(-100%); padding-right: 6px; border-right: 2px solid var(--color-text); }
+  .ruler-marks .mark-2 { transform: none; padding: 0 0 0 6px; border-right: 0; border-left: 2px solid var(--color-text); top: 0; }
+  .ruler-marks .mark { top: 0; }
+</style>
