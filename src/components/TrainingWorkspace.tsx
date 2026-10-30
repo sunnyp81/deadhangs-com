@@ -115,7 +115,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
   const [remainingMs, setRemainingMs] = useState(0);
   const [announcement, setAnnouncement] = useState('');
 
-  // Absolute monotonic deadline for the current phase — the countdown is always
+  // Absolute monotonic deadline for the current phase. The countdown is always
   // derived from it, so a slow or coalesced interval can never accumulate drift.
   const deadlineRef = useRef(0);
   const pausedRemainingRef = useRef(0);
@@ -208,7 +208,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     return () => document.removeEventListener('visibilitychange', onVisibility);
   }, [pause]);
 
-  // Announce phase changes only — never per tick, which would flood a screen reader.
+  // Announce phase changes only, never per tick, which would flood a screen reader.
   useEffect(() => {
     if (status === 'idle') {
       setAnnouncement('');
@@ -259,7 +259,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
   // Resolved on the client only: the server's timezone must not decide "today".
   const [today, setToday] = useState('');
 
-  // Read once on the client — never during SSR.
+  // Read once on the client, never during SSR.
   useEffect(() => {
     setToday(toLocalDateString());
     setDateInput(toLocalDateString());
@@ -458,7 +458,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
           </p>
           <p className="dh-mono tw-time">{formatClock(displayMs)}</p>
           <p className="tw-round dh-mono">
-            Round {round} / {setsCount ?? '—'}
+            Round {round} / {setsCount ?? '-'}
           </p>
         </div>
 
@@ -482,7 +482,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
 
         {hydrated && !settingsValid && (
           <p className="tw-error" role="alert">
-            Enter hang {WORK_MIN}–{WORK_MAX}s, rest {REST_MIN}–{REST_MAX}s and {SETS_MIN}–{SETS_MAX} sets
+            Enter hang {WORK_MIN} to {WORK_MAX}s, rest {REST_MIN} to {REST_MAX}s and {SETS_MIN} to {SETS_MAX} sets
             to start.
           </p>
         )}
@@ -499,7 +499,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
                 min={WORK_MIN} max={WORK_MAX} step={1} value={workInput}
                 onChange={(e) => setWorkInput(e.target.value)}
               />
-              <span className="tw-hint">{WORK_MIN}–{WORK_MAX}</span>
+              <span className="tw-hint">{WORK_MIN} to {WORK_MAX}</span>
             </div>
             <div className="tw-field">
               <label htmlFor={`${uid}-rest`}>Rest seconds</label>
@@ -517,11 +517,11 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
                 min={SETS_MIN} max={SETS_MAX} step={1} value={setsInput}
                 onChange={(e) => setSetsInput(e.target.value)}
               />
-              <span className="tw-hint">{SETS_MIN}–{SETS_MAX}</span>
+              <span className="tw-hint">{SETS_MIN} to {SETS_MAX}</span>
             </div>
           </div>
           <p className="tw-note">
-            These numbers are just the intervals you picked — edit them to whatever suits your
+            These numbers are just the intervals you picked. Edit them to whatever suits your
             session. Come off the bar if anything hurts, and step down under control rather than
             dropping.
           </p>
@@ -547,7 +547,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
       <div className="tw-panel">
         <h3 className="tw-panel-title">Training log</h3>
         <p className="tw-lede">
-          Stored in this browser on this device only. No account, no server, nothing sent anywhere.
+          Your log entries are stored in this browser on this device only. No account, no server upload of entries.
           Clearing your browser data removes it, and it will not appear on your other devices.
         </p>
 
@@ -642,7 +642,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
           </div>
           <p className="tw-hint">
             {entries.length} / {MAX_ENTRIES} entries saved
-            {atLimit ? ' — the log is full. Export to CSV first, then delete entries to make room.' : ''}
+            {atLimit ? '. The log is full. Export to CSV first, then delete entries to make room.' : ''}
           </p>
         </form>
 
@@ -669,7 +669,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
               return (
                 <div key={type} className="tw-best">
                   <span className="dh-eyebrow">Best · {assistanceLabel(type)}</span>
-                  <span className="dh-mono tw-best-value">{best ? `${best.seconds}s` : '—'}</span>
+                  <span className="dh-mono tw-best-value">{best ? `${best.seconds}s` : '-'}</span>
                   <span className="tw-hint">
                     {best ? `on ${formatLocalDate(best.date)}` : 'no entries of this type yet'}
                   </span>
@@ -677,8 +677,8 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
               );
             })}
             <p className="tw-note tw-bests-note">
-              Bests are compared only against your own entries of the same assistance type —
-              feet-supported holds are never stacked against unassisted ones.
+              Bests are compared only against your own entries of the same assistance type.
+              Feet-supported holds are never stacked against unassisted ones.
             </p>
           </div>
         )}

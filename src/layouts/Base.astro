@@ -8,7 +8,7 @@ interface Props {
 }
 const { title, description = 'Dead hang training protocols, timers, and the science behind grip strength and longevity.', ogImage } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://deadhangs.com');
-// og/home.png is a real 1200x630 asset in public/images/og — never point og:image at a file that does not exist.
+// og/home.png is a real 1200x630 asset in public/images/og. Never point og:image at a file that does not exist.
 const ogImageURL = new URL(ogImage || '/images/og/home.png', Astro.site || 'https://deadhangs.com').href;
 ---
 <!doctype html>

@@ -1046,7 +1046,7 @@ export default function HangTimer({
       >
         {mode === "simple" && "Fixed hang and rest intervals each round"}
         {mode === "emom" &&
-          "Every Minute On the Minute — rest fills the remaining time"}
+          "Every Minute On the Minute: rest fills the remaining time"}
         {mode === "ladder" && "Hang time increases +5s each round"}
       </div>
 
