@@ -1,15 +1,16 @@
 ---
 import Article from '../../layouts/Article.astro';
 import HangCalculator from '../../components/HangCalculator';
-const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Dead Hang Calculator', url: 'https://deadhangs.com/dead-hang-calculator/', applicationCategory: 'HealthApplication', operatingSystem: 'Any', description: 'Compare a dead hang with your own target and previous hold. No population percentile is calculated.', offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' } };
+const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Dead Hang Calculator', url: 'https://deadhangs.com/dead-hang-calculator/', applicationCategory: 'SportsApplication', dateModified: '2026-10-30', operatingSystem: 'Any', description: 'Compare a dead hang with your own target and previous hold. No population percentile is calculated.', offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' } };
 ---
 <Article title="Dead Hang Calculator: Compare Your Time & Track Progress" description="Compare your dead hang time with a personal target and previous hold. Free calculator with clear results, training links and no invented percentiles." schema={'<script type="application/ld+json">' + JSON.stringify(schema) + '</script>'}>
-  <div class="article-header"><div class="article-breadcrumb"><a href="/">Home</a><span class="sep">/</span>Calculator</div><h1 class="article-h1">Your hang. Your next target.</h1><p class="article-subtitle">Compare a dead hang with your own target and previous result. Get a useful number without pretending to rank you against the population.</p></div>
+  <div class="article-header"><div class="article-breadcrumb"><a href="/">Home</a><span class="sep">/</span>Calculator</div><h1 class="article-h1">Your hang. Your next target.</h1><p class="article-subtitle">Compare a dead hang with your own target and previous result. Get a useful number without ranking you against the population.</p></div>
   <div class="article-body">
+    <p class="small-copy">Updated October 30, 2026.</p>
     <section aria-label="Dead hang calculator"><HangCalculator client:load /><noscript><p>The interactive calculator needs JavaScript. Calculate your target progress by dividing your hold time by your target, then multiplying by 100.</p></noscript></section>
     <h2 id="reading-results">How the comparison works</h2>
     <p>A 30-second hold against a 60-second target is 50% of your goal. If your previous hold was 20 seconds, the same result is an improvement of 10 seconds or 50%. These percentages describe your own entries.</p>
-    <p>The calculator accepts zero for your current hold. A target or previous hold must be greater than zero because it is used as a divisor. It does not store your inputs.</p>
+    <p>The hold can be zero. The target and the previous hold must be above zero because each is a divisor. The calculator does not save your inputs. If you choose to continue to the timer, the target and hold are held temporarily in this browser to pre-fill the setup.</p>
     <h2 id="standards">Can this calculate a percentile by age?</h2>
     <p>No. The research cited by this site does not establish population dead-hang percentiles by age and sex. Dodds and colleagues measured handgrip force with dynamometers. A timed bodyweight hang is a different test.</p>
     <p><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0113637">Read the Dodds et al. study and its methods</a>. The <a href="/dead-hang-time-by-age/">age guide</a> explains what can and cannot be inferred from these measurements.</p>

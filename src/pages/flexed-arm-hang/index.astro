@@ -28,7 +28,7 @@ const schemaArticle = {
   publisher: { '@type': 'Organization', name: 'DeadHangs.com' },
   mainEntityOfPage: 'https://deadhangs.com/flexed-arm-hang/',
   datePublished: '2026-10-19',
-  dateModified: '2026-10-19',
+  dateModified: '2026-10-30',
 };
 const schemaFaq = {
   '@context': 'https://schema.org',
@@ -47,9 +47,10 @@ const scale = 18; // px per second, max 15 s = 270 px
   <p class="article-subtitle">The flexed arm hang is a bent-arm, chin-over-bar hold. It is not a dead hang, so its times and its norms belong to a different test.</p>
 </div>
 <div class="article-body">
-<p>The flexed arm hang is a test where you hold your chin above a bar with your elbows bent, for as long as you can. A dead hang keeps the arms straight and the body below the bar. That difference matters when you compare numbers. If you want straight-arm times instead, start with <a href="/dead-hang-time-by-age/">dead hang time by age</a>, and see <a href="/grip-strength/">grip strength</a> for the hand side of the story.</p>
+<p class="source-note">Updated October 30, 2026.</p>
+<p>The flexed arm hang is a test where you hold your chin above a bar with your elbows bent, for as long as you can. A dead hang keeps the arms straight and the body below the bar. That difference matters when you compare numbers.</p>
 
-<p>This page gives the official school fitness minimums for the flexed arm hang, shows how the test is run, and explains what a dead hang sample can and cannot be compared with. Every figure below has its source under it.</p>
+<p>This page gives the official school fitness minimums for the flexed arm hang, shows how the test is run, and explains what a dead hang sample can and cannot be compared with. Every figure below has its source under it. For straight-arm times, start with <a href="/dead-hang-time-by-age/">dead hang time by age</a>.</p>
 
 <h2 id="what-it-is">What the flexed arm hang measures</h2>
 <p>In FitnessGram, the flexed arm hang is one of three options for upper body strength and endurance. The other two are the 90 degree push-up and the modified pull-up. The child is held with the chin above the bar and then supports that position unaided, with the hands gripping the bar throughout. Because the elbows are bent, the position looks more like the top of a pull-up than a hang.</p>
@@ -59,13 +60,14 @@ const scale = 18; // px per second, max 15 s = 270 px
 
 <div class="table-scroll" role="region" aria-label="Flexed arm hang minimum seconds by age and sex" tabindex="0">
 <table>
+<caption>Healthy Fitness Zone minimum seconds, 2010 Cooper Institute, 2011-12 CDE publication</caption>
 <thead><tr><th scope="col">Age</th><th scope="col">Boys: at least (seconds)</th><th scope="col">Girls: at least (seconds)</th></tr></thead>
 <tbody>
 {norms.map(([age, boys, girls]) => <tr><th scope="row">{age}</th><td>{boys}</td><td>{girls}</td></tr>)}
 </tbody>
 </table>
 </div>
-<p class="source-note"><strong>Source:</strong> California Department of Education, <em>2011-12 Physical Fitness Test (PFT): FITNESSGRAM Healthy Fitness Zones</em>, September 2011 (updated 26 August 2011). Girls: page 1 of 2. Boys: page 2 of 2. Column heading "Flexed-Arm Hang, # of seconds, up to max of 90". Footnote: "To achieve the HFZ, the score must be greater than or equal to the indicated value." Healthy Fitness Zones copyright 2010 The Cooper Institute, Dallas, Texas. Read in the <a href="https://transylvania.schoolboard.net/sites/nc.transylvania.schoolboard.net/files/FitnessGram%20Healthy%20Fitness%20Zones.pdf" rel="nofollow noopener">PDF copy hosted by Transylvania County Schools</a> on 19 October 2026.</p>
+<p class="source-note"><strong>Source:</strong> California Department of Education, <em>2011-12 Physical Fitness Test (PFT): FITNESSGRAM Healthy Fitness Zones</em>, September 2011 (updated 26 August 2011). Girls: page 1 of 2. Boys: page 2 of 2. Column heading "Flexed-Arm Hang, # of seconds, up to max of 90". Footnote: "To achieve the HFZ, the score must be greater than or equal to the indicated value." Healthy Fitness Zones copyright 2010 The Cooper Institute, Dallas, Texas. The primary reference for the standards is The Cooper Institute's FITNESSGRAM program. Read in the <a href="https://transylvania.schoolboard.net/sites/nc.transylvania.schoolboard.net/files/FitnessGram%20Healthy%20Fitness%20Zones.pdf" rel="nofollow noopener">PDF copy hosted by Transylvania County Schools</a> on 19 October 2026.</p>
 
 <div class="visual-block">
 <svg width="480" height="488" viewBox="0 0 480 488" role="img" aria-labelledby="chart1-title chart1-desc" xmlns="http://www.w3.org/2000/svg">
@@ -93,7 +95,7 @@ const scale = 18; // px per second, max 15 s = 270 px
 <p>Two patterns stand out. The minimums are identical for boys and girls up to age 11. From age 12 the boys' minimum climbs to 15 seconds by age 14, while the girls' minimum levels off at 8 seconds from age 13. The table does not describe an average child and it does not describe an adult. It stops at "17+".</p>
 
 <h2 id="protocol">How the test is run</h2>
-<p>The PhenX Toolkit summarises the FitnessGram protocol for the flexed arm hang. It states that its descriptions are paraphrased from the FitnessGram/ActivityGram Test Administration Manual and that the complete protocols are in that manual. The summary reads: "The instructor helps the child grasp the bar with palms facing outwards and lifts the child so the child is positioned with his or her chin above the bar. Then the child will hang independently in this position for as long as possible. Once the child is in position with chin above the bar, a stopwatch is used to determine how long the child retains the position."</p>
+<p>The PhenX Toolkit summarizes the FitnessGram protocol for the flexed arm hang. It states that its descriptions are paraphrased from the FitnessGram/ActivityGram Test Administration Manual and that the complete protocols are in that manual. The summary reads: "The instructor helps the child grasp the bar with palms facing outwards and lifts the child so the child is positioned with his or her chin above the bar. Then the child will hang independently in this position for as long as possible. Once the child is in position with chin above the bar, a stopwatch is used to determine how long the child retains the position."</p>
 <ol>
 <li>Palms face away from the child (an overhand grip).</li>
 <li>The instructor lifts the child so the chin is above the bar. The child does not pull up unaided.</li>
@@ -101,7 +103,7 @@ const scale = 18; // px per second, max 15 s = 270 px
 <li>A stopwatch times how long the child keeps the position.</li>
 </ol>
 <p>The summary does not say exactly when the clock stops, for example how far the chin may drop. We have not read the manual itself, so this page does not state a stop rule. Use the Test Administration Manual if you need to score a test.</p>
-<p class="source-note"><strong>Source:</strong> PhenX Toolkit, <em>Integrated Fitness - Child</em>, protocol 150203 (2010), section "Option - Flexed Arm Hang", citing Welk, G. J. and Meredith, M. D. (Eds.) (2007), <em>FITNESSGRAM/ACTIVITYGRAM Test Administration Manual</em>, Human Kinetics. <a href="https://www.phenxtoolkit.org/protocols/view/150203" rel="nofollow noopener">phenxtoolkit.org/protocols/view/150203</a>, read 19 October 2026.</p>
+<p class="source-note"><strong>Source:</strong> PhenX Toolkit, <em>Integrated Fitness (Child)</em>, protocol 150203 (2010), section "Option: Flexed Arm Hang", citing Welk, G. J. and Meredith, M. D. (Eds.) (2007), <em>FITNESSGRAM/ACTIVITYGRAM Test Administration Manual</em>, Human Kinetics. <a href="https://www.phenxtoolkit.org/protocols/view/150203" rel="nofollow noopener">phenxtoolkit.org/protocols/view/150203</a>, read 19 October 2026.</p>
 
 <h2 id="vs-dead-hang">Flexed arm hang vs dead hang</h2>
 <div class="visual-block">
@@ -131,7 +133,7 @@ const scale = 18; // px per second, max 15 s = 270 px
 <p class="caption">Figure 2. Schematic only. Flexed arm hang: elbows bent, chin above the bar. Dead hang: arms straight, body below the bar.</p>
 </div>
 
-<p>The two holds both use a bar, and that is about where the similarity ends. The table below sets out the differences, and gives the only two straight-arm adult samples this site has read. They are samples of particular groups, not norms, and they measured a different task from the school test above.</p>
+<p>The two holds both use a bar, and that is about where the similarity ends. The table below sets out the differences, and gives the two measured straight-arm samples cited on this site. They are samples of particular groups, not norms, and they measured a different task from the school test above.</p>
 
 <div class="table-scroll" role="region" aria-label="Flexed arm hang compared with dead hang" tabindex="0">
 <table>
@@ -142,22 +144,23 @@ const scale = 18; // px per second, max 15 s = 270 px
 <tr><th scope="row">Start</th><td>Instructor lifts the child into position</td><td>Hang from the bar</td></tr>
 <tr><th scope="row">Published reference</th><td>FitnessGram minimums by age and sex (table above)</td><td>No official age norms, only research samples</td></tr>
 <tr><th scope="row">Adult straight-arm sample 1</th><td>Not measured</td><td>Men 64.0 s (SD 35.3), women 48.4 s (SD 29.1) before training; 11 men and 14 women, mean age 20.4 years, recreational athletes</td></tr>
-<tr><th scope="row">Adult straight-arm sample 2</th><td>Not measured</td><td>95.4 s on a standard bar; 32 moderately trained men</td></tr>
+<tr><th scope="row">Adult straight-arm sample 2</th><td>Not measured</td><td>95.4 s hanging on a standard bar; 32 moderately trained men (Drury et al., 2004)</td></tr>
 </tbody>
 </table>
 </div>
-<p class="source-note"><strong>Sources:</strong> Sample 1: Chomiuk T, Męczyński A, Kasiak P, Mamcarz A, Śliż D. (2025). "Impact of 6-Week Combined Gym and Climbing Training on Handgrip Strength and Arm Size: GRIP-6 Study". <em>J Funct Morphol Kinesiol</em> 10(4):427, Table 2. Passive bar hang, overhand grip, shoulder width, straight arms, held until drop, best of three trials averaged. <a href="https://doi.org/10.3390/jfmk10040427" rel="nofollow noopener">doi.org/10.3390/jfmk10040427</a>. Sample 2: Drury DG, Faggiono H, Stuempfle KJ. (2004). "An investigation of the tri-bar gripping system on isometric muscular endurance". <em>J Strength Cond Res</em> 18(4):782-786, standard bar versus Tri-Bar, 95.4 s versus 107.6 s (p = 0.015). <a href="https://doi.org/10.1519/R-13883.1" rel="nofollow noopener">doi.org/10.1519/R-13883.1</a>.</p>
+<p class="source-note"><strong>Sources:</strong> Sample 1: Chomiuk T, Męczyński A, Kasiak P, Mamcarz A, Śliż D. (2025). "Impact of 6-Week Combined Gym and Climbing Training on Handgrip Strength and Arm Size: GRIP-6 Study". <em>J Funct Morphol Kinesiol</em> 10(4):427, Table 2. Passive bar hang, overhand grip, shoulder width, straight arms, held until the person dropped, mean of three trials with 3 minutes rest. <a href="https://doi.org/10.3390/jfmk10040427" rel="nofollow noopener">doi.org/10.3390/jfmk10040427</a>. Sample 2: Drury DG, Faggiono H, Stuempfle KJ. (2004). "An investigation of the tri-bar gripping system on isometric muscular endurance". <em>J Strength Cond Res</em> 18(4):782-786, standard bar versus Tri-Bar, 95.4 s versus 107.6 s (p = 0.015). <a href="https://doi.org/10.1519/R-13883.1" rel="nofollow noopener">doi.org/10.1519/R-13883.1</a>.</p>
 
 <p>Do not read the flexed arm hang minimums against those straight-arm times. The school minimums are the lowest score for a child to meet a health-related zone. The adult figures are group means from small studies of fit adults. Different bodies, different positions and different questions are being answered, so the numbers cannot be lined up as "better" or "worse".</p>
 
 <h2 id="what-not-covered">What this page does not cover</h2>
-<p>Other programmes have used versions of this test, including youth award schemes and military fitness tests. We could not open their primary scoring documents, so we quote none of their numbers. If you need one of those standards, take it from the issuing body's current document.</p>
+<p>Other programs have used versions of this test, including youth award schemes and military fitness tests. We could not open their primary scoring documents, so we quote none of their numbers. If you need one of those standards, take it from the issuing body's current document.</p>
 
 <h2 id="faq">Flexed arm hang FAQ</h2>
 {faqs.map(([q, a]) => <div class="faq"><h3>{q}</h3><p>{a}</p></div>)}
 
 <h2 id="sources">Sources and method</h2>
-<p>Norm figures come only from the 2011-12 California Department of Education document reproducing the 2010 Cooper Institute Healthy Fitness Zones, read page by page. The protocol comes from the PhenX Toolkit summary of the FitnessGram manual. Dead hang figures come from the two papers cited under the comparison table. Read our <a href="/editorial-standards/">editorial standards</a> for how we separate sourced figures from interpretation. Last checked 19 October 2026.</p>
+<p>Norm figures come only from the 2011-12 California Department of Education document reproducing the 2010 Cooper Institute Healthy Fitness Zones, read page by page. The protocol comes from the PhenX Toolkit summary of the FitnessGram manual. Dead hang figures come from the two papers cited under the comparison table. Last checked 19 October 2026.</p>
+<p>Read our <a href="/editorial-standards/">editorial standards</a> for how we separate sourced figures from interpretation.</p>
 </div>
 </Article>
 
