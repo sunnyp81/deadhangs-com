@@ -91,7 +91,6 @@ export default function PracticeGraph() {
     <section className="practice-graph" aria-labelledby={`${uid}-title`}>
       <div className="practice-graph-heading">
         <div>
-          <p className="dh-eyebrow">Live from your training log</p>
           <h2 id={`${uid}-title`} className="dh-display">Your practice trend.</h2>
           <p>Daily bests only. Filter by setup to compare like with like, and only against your own holds.</p>
         </div>

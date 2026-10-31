@@ -168,10 +168,6 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 0 0 3px var(--color-primary-highlight);
 }
 
-/* Dial ring marker for section heads (see DialMark.tsx). */
-.section-dial { display: block; margin: 0 0 12px; }
-.text-center .section-dial, .section-dial.is-centered { margin-inline: auto; }
-
 /* Link cards */
 .link-card:hover {
   border-color: var(--color-primary) !important;

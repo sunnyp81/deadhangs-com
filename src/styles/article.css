@@ -2,8 +2,6 @@
 
 :root {
   --measure: 700px;
-  /* Timer dial ring (same artwork as DialMark.astro), used as the callout marker. */
-  --dial-mark: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22%3E%3Ccircle cx=%2212%22 cy=%2212%22 r=%2210%22 stroke=%22%237386a8%22 stroke-width=%221.5%22/%3E%3Cline x1=%2212.0%22 y1=%226.0%22 x2=%2212.0%22 y2=%223.4%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%2215.6%22 y1=%225.76%22 x2=%2216.3%22 y2=%224.55%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%2218.24%22 y1=%228.4%22 x2=%2219.45%22 y2=%227.7%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%2218.0%22 y1=%2212.0%22 x2=%2220.6%22 y2=%2212.0%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%2218.24%22 y1=%2215.6%22 x2=%2219.45%22 y2=%2216.3%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%2215.6%22 y1=%2218.24%22 x2=%2216.3%22 y2=%2219.45%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%2212.0%22 y1=%2218.0%22 x2=%2212.0%22 y2=%2220.6%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%228.4%22 y1=%2218.24%22 x2=%227.7%22 y2=%2219.45%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%225.76%22 y1=%2215.6%22 x2=%224.55%22 y2=%2216.3%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%226.0%22 y1=%2212.0%22 x2=%223.4%22 y2=%2212.0%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%225.76%22 y1=%228.4%22 x2=%224.55%22 y2=%227.7%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cline x1=%228.4%22 y1=%225.76%22 x2=%227.7%22 y2=%224.55%22 stroke=%22%237386a8%22 stroke-width=%221%22/%3E%3Cpath d=%22M12 2A10 10 0 0 1 21.85 13.74%22 stroke=%22%2300e5ff%22 stroke-width=%222.6%22 stroke-linecap=%22round%22/%3E%3C/svg%3E");
 }
 
 .article-main {
@@ -264,15 +262,6 @@
   margin: 24px 0;
 }
 
-.article-body .callout::before,
-.article-body .key-takeaway::before {
-  content: "";
-  display: block;
-  width: 22px;
-  height: 22px;
-  margin-bottom: 10px;
-  background: var(--dial-mark) center / contain no-repeat;
-}
 
 .article-body .callout h4,
 .article-body .key-takeaway h4 {

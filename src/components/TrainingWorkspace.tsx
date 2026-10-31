@@ -482,8 +482,10 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
   return (
     <section className="training-workspace tw-root" aria-labelledby={`${uid}-title`}>
       <header className="tw-header">
-        <p className="dh-eyebrow">Free · no account</p>
-        <h2 id={`${uid}-title`} className="dh-display tw-title">{showTimer ? 'Training workspace' : 'Your training log'}</h2>
+        <div className="tw-title-row">
+          <h2 id={`${uid}-title`} className="dh-display tw-title">{showTimer ? 'Training workspace' : 'Your training log'}</h2>
+          <span className="dh-tag">Free · no account</span>
+        </div>
         <p className="tw-lede">
           {showTimer ? 'An interval timer and a hang log. Nothing is saved unless you fill in the log yourself.' : 'Record your holds. Compare like-for-like sessions. Export your progress whenever you want.'}
         </p>

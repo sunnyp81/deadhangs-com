@@ -1,4 +1,6 @@
 .training-workspace.tw-root { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+.training-workspace .tw-title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.training-workspace .tw-title-row .tw-title { margin: 0; }
 .training-workspace .tw-header { display: flex; flex-direction: column; gap: 6px; }
 .training-workspace .tw-title { font-size: 28px; margin: 0; }
 .training-workspace .tw-lede { margin: 0; color: var(--color-text-muted); max-width: 62ch; }

@@ -1143,7 +1143,7 @@ export default function HangTimer({
           </div>
           <div
             style={{
-              fontFamily: "var(--font-body)",
+              fontFamily: mode !== "test" && phase !== "done" ? "var(--font-mono)" : "var(--font-body)",
               fontSize: 12,
               color: "var(--color-text-faint)",
               marginTop: 8,
