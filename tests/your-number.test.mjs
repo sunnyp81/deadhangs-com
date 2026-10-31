@@ -39,7 +39,8 @@ test('positions against each reference', () => {
   assert.equal(pos(describeHold(50, { sex: 'men' }), 'measured', 'men'), 'below');
   const eq = describeHold(120, { sex: 'men' });
   assert.equal(pos(eq, 'target', 'men'), 'equal');
-  assert.match(eq.lines[1].text, /^At /);
+  assert.equal(eq.lines[1].label, 'At');
+  assert.equal(describeHold(30, { sex: 'men' }).lines[0].label, 'Below');
 });
 
 test('age only adds a note, never changes the lines', () => {

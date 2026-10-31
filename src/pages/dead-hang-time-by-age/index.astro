@@ -10,7 +10,7 @@ const extraFaqs = [
 ["What is an elite dead hang time?","No measured threshold for elite exists. Attia's two minutes for a very strong 40-year-old man is a target for strong people and not a population figure. The Guinness World Record for the dead hang position is 80 minutes 41 seconds. Kenta Adachi of Japan set it on 18 November 2022."]
 ];
 const allFaqs = [...faqs, ...extraFaqs];
-const dateModified = '2026-10-30';
+const dateModified = '2026-10-31';
 const faqSchema = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":allFaqs.map(([q,a])=>({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}}))};
 const articleSchema = {"@context":"https://schema.org","@type":"Article","headline":"Dead Hang Times by Age Chart: Men & Women","description":"Measured dead hang times, expert targets and what they do and do not mean, with sources.","dateModified":dateModified,"mainEntityOfPage":"https://deadhangs.com/dead-hang-time-by-age/","author":{"@id":"https://deadhangs.com/#organization"},"publisher":{"@id":"https://deadhangs.com/#organization"},"citation":[
 {"@type":"ScholarlyArticle","name":"Impact of 6-Week Combined Gym and Climbing Training on Handgrip Strength and Arm Size: GRIP-6 Study","url":"https://doi.org/10.3390/jfmk10040427"},
@@ -48,7 +48,8 @@ const jsonLd = [faqSchema, articleSchema].map(o=>'<script type="application/ld+j
 @media (max-width:480px){.article-body .ng-cards{gap:8px}.article-body .ng-card{padding:12px}.article-body .ng-measured .ng-value{font-size:30px}.article-body .ng-target .ng-value{font-size:17px}}
 .article-body .yn-title{margin:0 0 16px;font-size:20px}
 .article-body .yn-lines{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:12px}
-.article-body .yn-lines li{padding:12px 14px;border-left:4px solid var(--color-primary);background:var(--color-bg)}
+.article-body .yn-lines li{padding:12px 14px;border:1px solid var(--color-border);background:var(--color-bg)}
+.article-body .yn-chip{display:inline-block;margin-right:6px;padding:2px 8px;border:1px solid var(--color-text-muted);font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text)}
 .article-body .yn-text{display:block;color:var(--color-text);line-height:1.5}
 .article-body .yn-source{display:block;margin-top:4px;font-size:13px;line-height:1.5;color:var(--color-text-muted)}
 .article-body .yn-next{margin:12px 0 0}
@@ -85,7 +86,7 @@ const jsonLd = [faqSchema, articleSchema].map(o=>'<script type="application/ld+j
 <p class="ng-source">Source: Guinness World Records</p>
 </div>
 </div>
-<p class="bya-updated">Updated 30 October 2026. The GRIP-6 sample is young and trained. Attia's numbers are a podcast target for very strong people. Neither is a population average.</p>
+<p class="bya-updated">Updated 31 October 2026. The GRIP-6 sample is young and trained. Attia's numbers are a podcast target for very strong people. Neither is a population average.</p>
 <h2 id="average-times">Dead hang times by age: what the chart can tell you</h2>
 <p>An age chart is only as useful as the test behind it. The same person can record different hang times on different bars or with different assistance. Keep the testing conditions consistent before interpreting a change.</p>
 <p class="table-cue">Scroll horizontally on a smaller screen.</p><div class="table-scroll" role="region" tabindex="0" aria-label="Age and hang-time interpretation"><table><thead><tr><th scope="col">Age group</th><th scope="col">What to use</th><th scope="col">What not to infer</th></tr></thead><tbody>{[['Adults under 40','Your own baseline with a consistent grip and bar.','An exact percentile from a generic internet seconds chart.'],['Adults 40 to 59','Comparable holds and a record of assistance used.','A fixed decline in hanging seconds each decade.'],['Adults 60 and over','A controlled, suitable variation and individual advice where needed.','A required unassisted hold or a lifespan prediction.']].map(([age,use,avoid])=><tr><th scope="row">{age}</th><td>{use}</td><td>{avoid}</td></tr>)}</tbody></table></div>

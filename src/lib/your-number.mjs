@@ -44,7 +44,8 @@ function measuredLine(seconds, sex) {
     kind: 'measured',
     sex,
     position: p,
-    text: `${rel} the ${men ? "men's" : "women's"} mean of ${mean.toFixed(1)} s in one small study of ${men ? '11 trained men' : '14 trained women'}, mean age about 20.`,
+    label: rel,
+    text: `The ${men ? "men's" : "women's"} mean of ${mean.toFixed(1)} s in one small study of ${men ? '11 trained men' : '14 trained women'}, mean age about 20.`,
     source: 'GRIP-6 study (2025). A small, young sample and not a norm.',
   };
 }
@@ -58,7 +59,8 @@ function targetLine(seconds, sex) {
     kind: 'target',
     sex,
     position: p,
-    text: `${rel} Attia's suggested target of ${target} s for a very strong 40-year-old ${men ? 'man' : 'woman'}.`,
+    label: rel,
+    text: `Attia's suggested target of ${target} s for a very strong 40-year-old ${men ? 'man' : 'woman'}.`,
     source: 'The Peter Attia Drive #329 (Dec 2024). A podcast target for very strong people, not measured data.',
   };
 }

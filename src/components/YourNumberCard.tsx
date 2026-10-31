@@ -104,7 +104,7 @@ export default function YourNumberCard() {
             <ul className="yn-lines">
               {shown.out.lines.map((line) => (
                 <li key={`${line.kind}-${line.sex}`}>
-                  <span className="yn-text">{line.text}</span>
+                  <span className="yn-text"><span className="yn-chip">{line.label}</span> {line.text}</span>
                   <span className="yn-source">{line.source}</span>
                 </li>
               ))}
