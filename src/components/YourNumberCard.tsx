@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import DialMark from "./DialMark";
 import { describeHold, parseAge, parseHold } from "../lib/your-number.mjs";
 
 type Described = ReturnType<typeof describeHold>;
@@ -33,7 +34,7 @@ export default function YourNumberCard() {
 
   return (
     <div className="hang-calculator yn-card">
-      <p className="yn-title dh-eyebrow" id="yn-title">Your number</p>
+      <p className="yn-title dh-eyebrow" id="yn-title"><DialMark size={24} className="yn-dial" /> Your number</p>
       <form onSubmit={submit} noValidate aria-labelledby="yn-title">
         <div className="field-grid">
           <label htmlFor="yn-hold">

@@ -91,7 +91,6 @@ export default function PracticeGraph() {
     <section className="practice-graph" aria-labelledby={`${uid}-title`}>
       <div className="practice-graph-heading">
         <div>
-          <p className="dh-eyebrow">Live from your training log</p>
           <h2 id={`${uid}-title`} className="dh-display">Your practice trend.</h2>
           <p>Daily bests only. Filter by setup to compare like with like, and only against your own holds.</p>
         </div>
@@ -150,8 +149,8 @@ export default function PracticeGraph() {
               {visibleDaily.map((entry, index) => <circle key={entry.date} tabIndex={0} role="button" aria-label={`${entry.date}, ${entry.seconds} seconds`} className="practice-graph-point" cx={chart.x(index)} cy={chart.y(entry.seconds)} r={activeIndex === index ? 6 : 4} onMouseEnter={() => setActiveIndex(index)} onFocus={() => setActiveIndex(index)} onBlur={() => setActiveIndex(null)} onClick={() => setActiveIndex(index)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActiveIndex(index); } }} />)}
               {active && <g aria-hidden="true" className="practice-graph-callout" transform={`translate(${Math.min(chart.x(activeIndex ?? visibleDaily.length - 1) + 12, chart.width - 116)}, ${Math.max(chart.y(active.seconds) - 42, 8)})`}>
                 <rect width="104" height="34" rx="3" />
-                <text x="8" y="13">CURRENT</text>
-                <text x="8" y="27">{active.seconds}s HOLD</text>
+                <text x="8" y="13">Current</text>
+                <text x="8" y="27">{active.seconds}s hold</text>
               </g>}
             </svg>
           </div>

@@ -20,8 +20,8 @@ function Seg({ value, setValue, options, block = false }: {
             border: 0, padding: '8px 12px', borderRadius: 4,
             background: v === value ? 'var(--color-primary)' : 'transparent',
             color: v === value ? 'var(--color-text-inverse)' : 'var(--color-text-muted)',
-            fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '.1em',
-            textTransform: 'uppercase', cursor: 'pointer', fontWeight: 600,
+            fontFamily: 'var(--font-body)', fontSize: 13,
+            cursor: 'pointer', fontWeight: 600,
             transition: 'all 160ms cubic-bezier(0.16,1,0.3,1)',
           }}>{l}</button>
       ))}
@@ -32,7 +32,7 @@ function Seg({ value, setValue, options, block = false }: {
 function Stat({ label, value, big = false }: { label: string; value: string | number; big?: boolean }) {
   return (
     <div>
-      <div className="dh-eyebrow" style={{ fontSize: 9 }}>{label}</div>
+      <div className="dh-eyebrow" style={{ fontSize: 12 }}>{label}</div>
       <div className="dh-mono" style={{
         fontSize: big ? 32 : 16, fontWeight: 600, color: 'var(--color-text)',
         marginTop: 4, lineHeight: 1, fontVariantNumeric: 'tabular-nums',
@@ -111,7 +111,7 @@ export default function ProtocolCalculator() {
         position: 'relative',
       }}>
         <div style={{ position: 'absolute', top: 14, right: 14 }}>
-          <span className="dh-tag dh-tag-accent">YOUR PROTOCOL</span>
+          <span className="dh-tag dh-tag-accent">Your protocol</span>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginTop: 16 }}>
           <Stat big label="Rounds" value={protocol.rounds} />

@@ -83,7 +83,7 @@ export default function GripChart({ width = 1100, height = 300 }: { width?: numb
             <rect x="0" y="0" width="84" height="32" rx="3"
               fill="var(--color-surface-2)" stroke="var(--color-primary)" strokeWidth="1" />
             <text x="8" y="13" fill="var(--color-text-muted)"
-              fontFamily="var(--font-mono)" fontSize="9" letterSpacing=".12em">CURRENT</text>
+              fontFamily="var(--font-body)" fontSize="11">Current</text>
             <text x="8" y="26" fill="var(--color-primary)"
               fontFamily="var(--font-mono)" fontSize="13" fontWeight="700">{last.val.toFixed(1)} kg</text>
           </g>
