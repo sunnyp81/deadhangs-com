@@ -213,37 +213,13 @@ a { color: inherit; text-decoration: none; }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  /* Hero text sizing */
-  #hero h1 { font-size: clamp(56px, 18vw, 96px) !important; }
-  #hero-content > div:last-child > div {
-    flex-direction: column !important;
-    gap: 10px !important;
-  }
-  #hero-content > div:last-child .dh-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
   /* Global section padding */
-  #hero { padding: 100px 20px 60px !important; min-height: auto !important; }
   #science { padding: 48px 20px !important; }
   #protocol { padding: 64px 20px !important; }
-  #timer { padding: 64px 20px !important; }
   #studies { padding: 64px 20px !important; }
   #signup { padding: 64px 20px !important; }
   #sources { padding: 40px 20px 24px !important; }
   footer { padding: 32px 20px 24px !important; }
-
-  /* Hero: stack layout */
-  #hero-content > div:first-child { flex-direction: column; gap: 8px; }
-  #hero-content > div:last-child {
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-    margin-top: 32px !important;
-  }
-  #hero-content > div:last-child > div {
-    justify-content: flex-start !important;
-  }
 
   /* Data strip: stack source, stack stats */
   #science > div > .scroll-reveal:first-child > div {

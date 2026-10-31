@@ -53,7 +53,7 @@ const defaults = (): Form => ({
   workSeconds: 30,
   restSeconds: 60,
   rounds: 3,
-  prepSeconds: 5,
+  prepSeconds: 0,
 });
 
 const formFromProfile = (profile: TrainingProfile): Form => ({
@@ -164,8 +164,8 @@ export default function GoalSetup({
     if (!loadResult || loadResult.requestId !== pendingLoadId) return;
     setState(
       loadResult.accepted
-        ? "Session settings loaded. Start when ready."
-        : "The timer refused this load request. Finish or reset the current session, then try again.",
+        ? "Applied to the timer above. Start when ready."
+        : "The timer did not accept these settings. Finish or reset the current session, then press Apply to timer again.",
     );
     setPendingLoadId(null);
   }, [loadResult, pendingLoadId]);
@@ -261,8 +261,8 @@ export default function GoalSetup({
     setPendingLoadId(onLoad(candidate.profile as TrainingProfile, unsaved));
     setState(
       unsaved
-        ? "Load request sent from unsaved settings. Waiting for the timer to confirm it."
-        : "Load request sent from saved settings. Waiting for the timer to confirm it.",
+        ? "Applying unsaved settings to the timer. Waiting for it to confirm."
+        : "Applying saved settings to the timer. Waiting for it to confirm.",
     );
   }
 
@@ -343,11 +343,12 @@ export default function GoalSetup({
     <section className="training-workspace" aria-labelledby={`${id}-title`}>
       <div className="tw-panel">
         <h2 id={`${id}-title`} className="tw-panel-title">
-          Goal and session setup
+          Goal, schedule and session intervals
         </h2>
         <p className="tw-note">
-          Save a plan only if you want it on this device. Loading a session never
-          starts the timer or records a hold.
+          The timer above keeps its own settings until you choose Apply to timer.
+          Save a plan only if you want it on this device. Neither action starts the
+          timer or records a hold.
         </p>
 
         {draft && draftVisible && (
@@ -463,6 +464,8 @@ export default function GoalSetup({
             </label>
           ))}
         </fieldset>
+        <fieldset className="tw-settings">
+          <legend className="tw-legend">Session intervals to apply to the timer</legend>
         <div className="tw-settings-grid">
           <label className="tw-field">
             Hang seconds
@@ -485,6 +488,7 @@ export default function GoalSetup({
             </select>
           </label>
         </div>
+        </fieldset>
 
         <p className="tw-status" role="status">
           {state} {candidate.ok && `Next planned date: ${nextScheduledDate(candidate.profile) || "none in this window"}.`}
@@ -520,7 +524,7 @@ export default function GoalSetup({
             </button>
           )}
           <button type="button" className="dh-btn" onClick={() => save()}>Save plan</button>
-          <button type="button" className="dh-btn dh-btn-ghost" onClick={load}>Load session</button>
+          <button type="button" className="dh-btn dh-btn-ghost" onClick={load}>Apply to timer</button>
           <button type="button" className="tw-link" disabled={!persisted.profile} onClick={() => persisted.profile && download("deadhangs-training-plan.json", serializeProfile(persisted.profile))}>
             Export saved settings
           </button>

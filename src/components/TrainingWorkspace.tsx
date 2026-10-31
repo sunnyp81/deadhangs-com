@@ -309,7 +309,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     if (!canWrite) return;
 
     if (atLimit) {
-      setFormErrors([`This log holds ${MAX_ENTRIES} entries. Export to CSV, then delete some entries to make room.`]);
+      setFormErrors([`This log holds ${MAX_ENTRIES} entries. Open “Your data” to export a CSV, then delete some entries to make room.`]);
       return;
     }
     const result = validateEntryInput(
@@ -328,7 +328,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     const entry: Entry = { id: makeEntryId(entries), date, seconds, assistance, sets };
     const added = addEntry(entries, entry);
     if (!added.ok) {
-      setFormErrors([`This log holds ${MAX_ENTRIES} entries. Export to CSV first, then delete some entries.`]);
+      setFormErrors([`This log holds ${MAX_ENTRIES} entries. Open “Your data” to export a CSV first, then delete some entries.`]);
       return;
     }
     if (commit(added.entries as Entry[], `Saved ${entry.seconds}s on ${formatLocalDate(entry.date)} to this device.`)) {
@@ -633,33 +633,34 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
 
           <div className="tw-controls">
             <button type="submit" className="dh-btn" disabled={!canWrite}>Save to this device</button>
-            <button
-              type="button" className="dh-btn dh-btn-ghost" onClick={handleExport}
-              disabled={entries.length === 0}
-            >
-              Export CSV
-            </button>
           </div>
           <p className="tw-hint">
             {entries.length} / {MAX_ENTRIES} entries saved
-            {atLimit ? '. The log is full. Export to CSV first, then delete entries to make room.' : ''}
+            {atLimit ? '. The log is full. Open “Your data” to export a CSV first, then delete entries to make room.' : ''}
           </p>
         </form>
 
-        <div className="tw-controls">
-          <button type="button" className="dh-btn dh-btn-ghost" onClick={backupLog} disabled={!canWrite || entries.length === 0}>Download backup</button>
-        </div>
-        <div className="tw-field">
-          <label htmlFor={uid + '-import'}>Import a DeadHangs backup or CSV</label>
-          <input ref={importField} id={uid + '-import'} type="file" accept=".json,.csv,application/json,text/csv" disabled={!canWrite} onChange={e => { void readImport(e.target.files?.[0]); }} />
-          <p className="tw-hint">Up to 128 KB. Imports add to this log; existing entries stay. JSON backups preserve entry IDs. CSV duplicates are matched by date, hold, assistance and sets.</p>
-        </div>
-        {readingImport && <p role="status">Checking file…</p>}
-        {pendingImport && <div className="tw-warning">
-          <p>Add {pendingImport.added} entries and skip {pendingImport.skipped} duplicates? Your log will contain {pendingImport.entries.length} entries.</p>
-          <button type="button" className="dh-btn" onClick={confirmImport}>Confirm import</button>
-          <button type="button" className="dh-btn dh-btn-ghost" onClick={() => { setPendingImport(null); if (importField.current) importField.current.value = ''; setLogStatus('Import cancelled. Nothing was changed.'); }}>Cancel import</button>
-        </div>}
+        <details className="tw-data">
+          <summary>Your data: export, backup and import</summary>
+          <div className="tw-data-body">
+            <p className="tw-hint">Everything stays in this browser. Use these to keep a copy or move your log to another device.</p>
+            <div className="tw-controls">
+              <button type="button" className="dh-btn dh-btn-ghost" onClick={handleExport} disabled={entries.length === 0}>Export CSV</button>
+              <button type="button" className="dh-btn dh-btn-ghost" onClick={backupLog} disabled={!canWrite || entries.length === 0}>Download backup</button>
+            </div>
+            <div className="tw-field">
+              <label htmlFor={uid + '-import'}>Import a DeadHangs backup or CSV</label>
+              <input ref={importField} id={uid + '-import'} type="file" accept=".json,.csv,application/json,text/csv" disabled={!canWrite} onChange={e => { void readImport(e.target.files?.[0]); }} />
+              <p className="tw-hint">Up to 128 KB. Imports add to this log; existing entries stay. JSON backups preserve entry IDs. CSV duplicates are matched by date, hold, assistance and sets.</p>
+            </div>
+            {readingImport && <p role="status">Checking file…</p>}
+            {pendingImport && <div className="tw-warning">
+              <p>Add {pendingImport.added} entries and skip {pendingImport.skipped} duplicates? Your log will contain {pendingImport.entries.length} entries.</p>
+              <button type="button" className="dh-btn" onClick={confirmImport}>Confirm import</button>
+              <button type="button" className="dh-btn dh-btn-ghost" onClick={() => { setPendingImport(null); if (importField.current) importField.current.value = ''; setLogStatus('Import cancelled. Nothing was changed.'); }}>Cancel import</button>
+            </div>}
+          </div>
+        </details>
         <p className="tw-status" aria-live="polite">{logStatus}</p>
 
         {entries.length > 0 && (

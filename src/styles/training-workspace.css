@@ -118,3 +118,32 @@
 @media (prefers-reduced-motion: reduce) {
   .training-workspace .tw-goal-fill { transition: none; }
 }
+
+.training-workspace .tw-data { border-top: 1px solid var(--color-divider); padding-top: 4px; }
+.training-workspace .tw-data summary, .plan-disclosure > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); }
+.training-workspace .tw-data-body { display: flex; flex-direction: column; gap: 16px; padding: 8px 0 12px; }
+.training-workspace .tw-data-body .tw-hint { margin: 0; }
+.training-workspace .tw-link { min-height: 44px; padding-inline: 4px; }
+.training-workspace fieldset.tw-settings:has(> label) { display: flex; flex-wrap: wrap; gap: 8px 12px; }
+.training-workspace fieldset.tw-settings > label { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 16px 0 12px; border: 1px solid var(--color-divider); background: var(--color-bg); cursor: pointer; font-size: 14px; }
+.training-workspace fieldset.tw-settings > label:has(input:checked) { border-color: var(--color-primary); color: var(--color-text); }
+.training-workspace fieldset.tw-settings > label input { width: 18px; height: 18px; accent-color: var(--color-primary); }
+.training-journey { display: flex; flex-direction: column; gap: 32px; }
+.today-session .timer-dial { width: min(240px, 100%) !important; }
+.today-session .circular-timer { gap: 12px !important; }
+.today-session { display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 20px; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-lg); }
+.today-session > h2, .plan-disclosure > .plan-body > h2:first-child { margin: 0; }
+.today-session h2, .article-body .today-session h2 { font-size: 22px; text-align: center; margin: 0; padding: 0; }
+.plan-disclosure { border: 1px solid var(--color-divider); border-radius: var(--radius-lg); background: var(--color-surface); padding: 0 24px; }
+.plan-disclosure[open] { padding-bottom: 8px; }
+.plan-disclosure .tw-panel { border: 0; padding: 8px 0 16px; background: transparent; }
+.plan-disclosure .tw-settings-legend-group { margin: 0; }
+@media (max-width: 480px) { .plan-disclosure { padding: 0 12px; } .today-session { padding: 20px 8px; } }
+.training-workspace .tw-table-wrap { height: 250px; overflow: auto; }
+.training-workspace .tw-table thead th { position: sticky; top: 0; background: var(--color-surface); }
+@media (max-width: 600px) {
+  .today-session .timer-dial { width: min(200px, 100%) !important; }
+  .today-session .timer-dial .dh-mono { font-size: 46px !important; }
+  .today-session .circular-timer, .today-session .circular-timer .timer-main, .today-session .circular-timer .timer-layout { gap: 8px !important; }
+  .today-session { padding: 12px 8px 16px; }
+}

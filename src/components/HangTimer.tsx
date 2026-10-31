@@ -60,7 +60,7 @@ function Stepper({
     width: 44,
     height: 44,
     borderRadius: 6,
-    border: "1px solid var(--color-border)",
+    border: "1px solid var(--color-text-faint)",
     background: "transparent",
     color: "var(--color-text)",
     cursor: "pointer",
@@ -143,6 +143,8 @@ function Seg({
     <div
       style={{
         display: "inline-flex",
+        flexWrap: "wrap",
+        justifyContent: "center",
         background: "var(--color-bg)",
         border: "1px solid var(--color-divider)",
         borderRadius: "var(--radius-sm)",
@@ -157,6 +159,8 @@ function Seg({
           onClick={() => setValue(v)}
           style={{
             border: 0,
+            minHeight: 44,
+            minWidth: 56,
             padding: "8px 14px",
             borderRadius: 4,
             background: v === value ? "var(--color-primary)" : "transparent",
@@ -170,7 +174,7 @@ function Seg({
             textTransform: "uppercase" as const,
             cursor: "pointer",
             fontWeight: 600,
-            transition: "all 160ms cubic-bezier(0.16,1,0.3,1)",
+            transition: "background-color 160ms cubic-bezier(0.16,1,0.3,1), color 160ms cubic-bezier(0.16,1,0.3,1)",
           }}
         >
           {l}
@@ -192,7 +196,9 @@ export default function HangTimer({
   onRunState,
   feedbackAdapters,
   analyticsSource,
+  compact = false,
 }: {
+  compact?: boolean;
   initialWork?: number;
   initialRest?: number;
   rounds?: number;
@@ -610,33 +616,13 @@ export default function HangTimer({
 
   const glowIntensity = phase === "work" && running ? 0.4 : 0;
 
-  return (
-    <div
-      className="circular-timer"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 20,
-        width: "100%",
-        textAlign: "center",
-      }}
-    >
-      {/* Mode selector */}
+  const modeBlock = (
+    <>
       <fieldset
         disabled={locked}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          border: 0,
-          padding: 0,
-          margin: 0,
-        }}
+        className="timer-group"
       >
-        <span className="dh-eyebrow" style={{ fontSize: 9 }}>
-          MODE
-        </span>
+        <legend className="timer-legend">Mode</legend>
         <Seg
           value={mode}
           setValue={(v) => {
@@ -656,7 +642,146 @@ export default function HangTimer({
           ]}
         />
       </fieldset>
+    </>
+  );
 
+  const settingsBlock = (
+    <>
+      {mode !== "test" && <fieldset
+        disabled={locked}
+        className="timer-settings"
+        style={{
+          border: 0,
+          padding: 0,
+          minWidth: 0,
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 12,
+          width: "100%",
+          maxWidth: 780,
+          margin: "0 auto",
+        }}
+      >
+        <legend className="timer-sr">Interval settings</legend>
+        <Stepper
+          label="Hang"
+          value={work}
+          unit="s"
+          setValue={(v) => {
+            setWork(v);
+            if (phase === "idle") {
+              setT(v);
+              totalRef.current = v;
+            }
+          }}
+          min={5}
+          max={mode === "emom" ? 50 : 120}
+          step={5}
+        />
+        <Stepper
+          label={mode === "emom" ? "Rest (auto)" : "Rest"}
+          value={mode === "emom" ? 60 - work : rest}
+          unit="s"
+          setValue={setRest}
+          min={mode === "emom" ? 60 - work : 10}
+          max={mode === "emom" ? 60 - work : 300}
+          step={10}
+        />
+        <Stepper
+          label="Rounds"
+          value={rounds}
+          setValue={setRounds}
+          min={1}
+          max={10}
+          step={1}
+        />
+      </fieldset>}
+    </>
+  );
+
+  const prepBlock = (
+    <>
+      <fieldset disabled={locked} className="timer-group">
+        <legend className="timer-legend">Preparation</legend>
+        <Seg
+          value={String(prep)}
+          setValue={(v) => setPrep(Number(v) as 0 | 5 | 10)}
+          options={[
+            ["0", "None"],
+            ["5", "5 sec"],
+            ["10", "10 sec"],
+          ]}
+        />
+      </fieldset>
+    </>
+  );
+
+  const modeDesc = (
+    <>
+      <div
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 11,
+          letterSpacing: ".1em",
+          color: "var(--color-text-faint)",
+          textAlign: "center",
+          maxWidth: 360,
+          textTransform: "uppercase" as const,
+          width: "100%",
+        }}
+      >
+        {mode === "simple" && "Fixed hang and rest intervals each round"}
+        {mode === "emom" &&
+          "Every Minute On the Minute: rest fills the remaining time"}
+        {mode === "ladder" && "Hang time increases +5s each round"}
+      </div>
+    </>
+  );
+
+  const togglesBlock = (
+    <>
+      <div className="timer-toggles">
+        <label className="timer-toggle">
+          <input
+            type="checkbox"
+            checked={voiceOn}
+            onChange={(e) => {
+              if (!e.target.checked) feedbackRef.current?.cancelSpeech();
+              setVoiceOn(e.target.checked);
+            }}
+          />{" "}
+          Voice
+        </label>
+        <label className="timer-toggle">
+          <input
+            type="checkbox"
+            checked={awakeRequested}
+            onChange={(e) => {
+              setWakeTouched(true);
+              setAwakeRequested(e.target.checked);
+            }}
+          />{" "}
+          Keep screen awake
+        </label>
+
+      </div>
+    </>
+  );
+
+  return (
+    <div
+      className="circular-timer"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 20,
+        width: "100%",
+        textAlign: "center",
+      }}
+    >
+      <div className="timer-layout">
+      <div className="timer-main">
       {/* Phase + round indicator */}
       <div
         style={{
@@ -711,9 +836,10 @@ export default function HangTimer({
 
       {/* Dial */}
       <div
+        className="timer-dial"
         style={{
           position: "relative",
-          width: "min(320px, 100%)",
+          width: `min(${compact ? 248 : 320}px, 100%)`,
           aspectRatio: "1",
           transition: "transform 300ms cubic-bezier(0.16,1,0.3,1)",
         }}
@@ -830,7 +956,7 @@ export default function HangTimer({
           <div
             className="dh-mono"
             style={{
-              fontSize: isCountdown ? 80 : 64,
+              fontSize: isCountdown ? (compact ? 68 : 80) : compact ? 54 : 64,
               fontWeight: 600,
               color: isCountdown ? phaseColor : "var(--color-text)",
               lineHeight: 1,
@@ -941,114 +1067,16 @@ export default function HangTimer({
         >
           {soundOn ? "♪" : "✕"}
         </button>
-        <label className="small-copy">
-          <input
-            type="checkbox"
-            checked={voiceOn}
-            onChange={(e) => {
-              if (!e.target.checked) feedbackRef.current?.cancelSpeech();
-              setVoiceOn(e.target.checked);
-            }}
-          />{" "}
-          Voice
-        </label>
-        <label className="small-copy">
-          <input
-            type="checkbox"
-            checked={awakeRequested}
-            onChange={(e) => {
-              setWakeTouched(true);
-              setAwakeRequested(e.target.checked);
-            }}
-          />{" "}
-          Keep screen awake
-        </label>
       </div>
-
-      {/* Settings grid */}
-      {mode !== "test" && <fieldset
-        disabled={locked}
-        className="timer-settings"
-        style={{
-          border: 0,
-          padding: 0,
-          minWidth: 0,
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 12,
-          width: "100%",
-          maxWidth: 780,
-          margin: "0 auto",
-
-          transition: "opacity 300ms",
-        }}
-      >
-        <Stepper
-          label="Hang"
-          value={work}
-          unit="s"
-          setValue={(v) => {
-            setWork(v);
-            if (phase === "idle") {
-              setT(v);
-              totalRef.current = v;
-            }
-          }}
-          min={5}
-          max={mode === "emom" ? 50 : 120}
-          step={5}
-        />
-        <Stepper
-          label={mode === "emom" ? "Rest (auto)" : "Rest"}
-          value={mode === "emom" ? 60 - work : rest}
-          unit="s"
-          setValue={setRest}
-          min={mode === "emom" ? 60 - work : 10}
-          max={mode === "emom" ? 60 - work : 300}
-          step={10}
-        />
-        <Stepper
-          label="Rounds"
-          value={rounds}
-          setValue={setRounds}
-          min={1}
-          max={10}
-          step={1}
-        />
-      </fieldset>}
-      <fieldset disabled={locked} style={{ border: 0 }}>
-        <span className="dh-eyebrow" style={{ fontSize: 9 }}>
-          PREPARATION
-        </span>
-        <Seg
-          value={String(prep)}
-          setValue={(v) => setPrep(Number(v) as 0 | 5 | 10)}
-          options={[
-            ["0", "None"],
-            ["5", "5 sec"],
-            ["10", "10 sec"],
-          ]}
-        />
-      </fieldset>
-
-      {/* Mode description */}
-      <div
-        style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 10,
-          letterSpacing: ".1em",
-          color: "var(--color-text-faint)",
-          textAlign: "center",
-          maxWidth: 360,
-          textTransform: "uppercase" as const,
-          width: "100%",
-        }}
-      >
-        {mode === "simple" && "Fixed hang and rest intervals each round"}
-        {mode === "emom" &&
-          "Every Minute On the Minute: rest fills the remaining time"}
-        {mode === "ladder" && "Hang time increases +5s each round"}
       </div>
+      {!compact && <div className="timer-side">{modeBlock}{settingsBlock}{prepBlock}{togglesBlock}{modeDesc}</div>}
+      </div>
+      {compact && (
+        <details className="timer-more">
+          <summary>Adjust intervals, mode and sound</summary>
+          <div className="timer-more-body">{modeBlock}{settingsBlock}{prepBlock}{modeDesc}{togglesBlock}</div>
+        </details>
+      )}
 
       <p className="small-copy" role="status">
         {notice ||
@@ -1084,7 +1112,7 @@ export default function HangTimer({
           }}
         >
           <div style={{ textAlign: "center" }}>
-            <div className="dh-eyebrow" style={{ fontSize: 9 }}>
+            <div className="dh-eyebrow" style={{ fontSize: 11 }}>
               Timer work
             </div>
             <div
@@ -1100,7 +1128,7 @@ export default function HangTimer({
             </div>
           </div>
           <div style={{ textAlign: "center" }}>
-            <div className="dh-eyebrow" style={{ fontSize: 9 }}>
+            <div className="dh-eyebrow" style={{ fontSize: 11 }}>
               Rounds
             </div>
             <div
@@ -1111,7 +1139,7 @@ export default function HangTimer({
             </div>
           </div>
           <div style={{ textAlign: "center" }}>
-            <div className="dh-eyebrow" style={{ fontSize: 9 }}>
+            <div className="dh-eyebrow" style={{ fontSize: 11 }}>
               Avg / Round
             </div>
             <div
@@ -1134,6 +1162,22 @@ export default function HangTimer({
       )}
 
       <style>{`
+        .circular-timer .timer-layout { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
+        .circular-timer .timer-main, .circular-timer .timer-side { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; min-width: 0; }
+        @media (min-width: 900px) {
+          .today-session .circular-timer .timer-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 32px; }
+          .today-session .circular-timer .timer-side { padding-top: 4px; }
+          .today-session .circular-timer .timer-side .timer-settings { grid-template-columns: 1fr !important; max-width: 360px !important; }
+        }
+        .circular-timer .timer-group { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .circular-timer .timer-legend { padding: 0; margin: 0 0 8px; font: 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); text-align: center; }
+        .circular-timer .timer-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+        .circular-timer .timer-toggles { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; }
+        .circular-timer .timer-toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; color: var(--color-text-muted); cursor: pointer; }
+        .circular-timer .timer-toggle input { width: 20px; height: 20px; accent-color: var(--color-primary); }
+        .circular-timer .timer-more { width: 100%; max-width: 420px; border-top: 1px solid var(--color-divider); }
+        .circular-timer .timer-more summary { display: flex; align-items: center; justify-content: center; min-height: 44px; cursor: pointer; font: 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); }
+        .circular-timer .timer-more-body { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 8px 0 12px; }
         @keyframes pulseGlow {
           0%, 100% { opacity: 0.6; transform: scale(1); }
           50% { opacity: 1; transform: scale(1.05); }
