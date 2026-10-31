@@ -42,8 +42,9 @@ const cards = await Promise.all(
         <div class="bc-qr" role="img" aria-label={`QR code that opens the ${card.name} timer`} set:html={card.qr} />
         <p class="bc-scan">Scan to open the timer, then tap Start.</p>
         <p class="bc-dose">{card.dose}. {card.rest}.{card.id === 'level-1-voice' ? ' Voice cues are on.' : ''}</p>
-        <p class="bc-stop">Stop 1 to 2 seconds before your grip fails. Stop if anything hurts.</p>
-        <p class="bc-fine">deadhangs.com/training-log/{card.id !== 'max-test' ? '. The Level 1 dose is common training practice, not a tested prescription.' : ''}</p>
+        <p class="bc-stop">{card.id === 'max-test' ? 'Come down under control as your grip starts to slip. Stop if anything hurts. Test no more than once every two weeks.' : 'Stop 1 to 2 seconds before your grip fails. Stop if anything hurts.'}</p>
+        <p class="bc-fine">deadhangs.com/training-log/</p>
+        {card.id !== 'max-test' && <p class="bc-fine">The Level 1 dose is common training practice, not a tested prescription.</p>}
       </article>
     ))}
   </div>
