@@ -133,9 +133,17 @@
 .today-session .circular-timer { gap: 12px !important; }
 .today-session { display: flex; flex-direction: column; gap: 8px; padding: 16px 16px 20px; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-lg); }
 .today-session > h2, .plan-disclosure > .plan-body > h2:first-child { margin: 0; }
-.today-session h2 { font-size: 22px; text-align: center; }
+.today-session h2, .article-body .today-session h2 { font-size: 22px; text-align: center; margin: 0; padding: 0; }
 .plan-disclosure { border: 1px solid var(--color-divider); border-radius: var(--radius-lg); background: var(--color-surface); padding: 0 24px; }
 .plan-disclosure[open] { padding-bottom: 8px; }
 .plan-disclosure .tw-panel { border: 0; padding: 8px 0 16px; background: transparent; }
 .plan-disclosure .tw-settings-legend-group { margin: 0; }
 @media (max-width: 480px) { .plan-disclosure { padding: 0 12px; } .today-session { padding: 20px 8px; } }
+.training-workspace .tw-table-wrap { height: 250px; overflow: auto; }
+.training-workspace .tw-table thead th { position: sticky; top: 0; background: var(--color-surface); }
+@media (max-width: 600px) {
+  .today-session .timer-dial { width: min(200px, 100%) !important; }
+  .today-session .timer-dial .dh-mono { font-size: 46px !important; }
+  .today-session .circular-timer, .today-session .circular-timer .timer-main, .today-session .circular-timer .timer-layout { gap: 8px !important; }
+  .today-session { padding: 12px 8px 16px; }
+}

@@ -92,7 +92,7 @@ export default function PracticeGraph() {
         </div>
         <a className="text-link" href="/training-log/">Open full log →</a>
       </div>
-      {!noEntries && <div className="practice-graph-controls">
+      <div className="practice-graph-controls" style={{ visibility: noEntries ? "hidden" : "visible" }} aria-hidden={noEntries} {...(noEntries ? { inert: "" as any } : {})}>
         <fieldset>
           <legend>Assistance</legend>
           {(["unassisted", "feet-supported"] as const).map((value) => (
@@ -111,7 +111,8 @@ export default function PracticeGraph() {
             </label>
           ))}
         </fieldset>
-      </div>}
+      </div>
+      <div className="practice-graph-stage">
       {daily.length ? (
         <>
           <div className="practice-graph-canvas" role="group" aria-label={`${windowDays}-day ${label} hold-time graph`}>
@@ -142,7 +143,6 @@ export default function PracticeGraph() {
               </g>}
             </svg>
           </div>
-          <p className="practice-graph-summary" aria-live="polite">{daily.length} recorded {daily.length === 1 ? "day" : "days"} in this view. Focus a point to inspect a day.</p>
         </>
       ) : (
         <div className="practice-graph-empty">
@@ -161,6 +161,8 @@ export default function PracticeGraph() {
           )}
         </div>
       )}
+      </div>
+      <p className="practice-graph-summary" aria-live="polite">{daily.length ? `${daily.length} recorded ${daily.length === 1 ? "day" : "days"} in this view. Focus a point to inspect a day.` : " "}</p>
     </section>
   );
 }
