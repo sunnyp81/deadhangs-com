@@ -6,8 +6,11 @@
  * validates, normalises, serialises and exports.
  *
  * Entry shape (the ONLY fields ever stored or exported):
- *   { id: string, date: 'YYYY-MM-DD', seconds: int, assistance: string, sets: int }
- * No names, emails, ages, weights or any other identifier is accepted.
+ *   { id, date: 'YYYY-MM-DD', seconds: int, assistance, sets: int,
+ *     // optional, absent on older entries and never required:
+ *     kind?: 'test', bar?, grip?, chalk?: boolean, load?: number, loadUnit?: 'kg'|'lb', ended? }
+ * `load` is optional added load on the body, not body weight. No names, emails,
+ * ages or any other identifier is accepted.
  */
 
 export const STORAGE_KEY = 'dh.training-log.v1';
@@ -22,6 +25,32 @@ export const ASSISTANCE_LABELS = {
   unassisted: 'Unassisted',
   'feet-supported': 'Feet supported',
 };
+
+/** Optional setup fields. Stored as slugs; labels are for display only. */
+export const BAR_TYPES = ['standard', 'thick', 'thin', 'rings', 'towel', 'other'];
+export const BAR_LABELS = {
+  standard: 'Standard bar',
+  thick: 'Thick bar',
+  thin: 'Thin bar',
+  rings: 'Rings',
+  towel: 'Towel',
+  other: 'Other bar',
+};
+export const BAR_OPTION_LABELS = { ...BAR_LABELS, standard: 'Standard (about 28 to 32 mm)' };
+export const GRIP_TYPES = ['overhand', 'underhand', 'mixed', 'neutral'];
+export const GRIP_LABELS = { overhand: 'Overhand', underhand: 'Underhand', mixed: 'Mixed', neutral: 'Neutral' };
+export const ENDED_TYPES = ['grip-gave-out', 'slipping', 'discomfort', 'chose-to-stop', 'time-goal'];
+export const ENDED_LABELS = {
+  'grip-gave-out': 'Grip gave out',
+  slipping: 'Slipping',
+  discomfort: 'Discomfort, so I stopped',
+  'chose-to-stop': 'I chose to stop',
+  'time-goal': 'Time goal reached',
+};
+export const LOAD_UNITS = ['kg', 'lb'];
+export const MAX_LOAD = 500;
+export const KG_PER_LB = 0.45359237;
+export const KINDS = ['test'];
 
 export const MIN_SECONDS = 1;
 export const MAX_SECONDS = 3600;
@@ -77,6 +106,59 @@ export function parseIntStrict(value) {
   return Number.isSafeInteger(n) ? n : null;
 }
 
+/** Added load: a plain decimal with at most one place, 0.1 to MAX_LOAD. Returns a number or null. */
+export function parseLoad(value) {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) && value > 0 && value <= MAX_LOAD && Math.round(value * 10) === value * 10 ? value : null;
+  }
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!/^\d{1,3}(\.\d)?$/.test(trimmed)) return null;
+  const n = Number(trimmed);
+  return n > 0 && n <= MAX_LOAD ? n : null;
+}
+
+/**
+ * Validates the optional setup part of the form. Blank means "not recorded".
+ * Returns { errors, value } where value holds only the fields that were set.
+ */
+export function validateSetupInput(input) {
+  const raw = input || {};
+  const errors = [];
+  const value = {};
+  const text = (v) => (typeof v === 'string' ? v.trim() : '');
+
+  const bar = text(raw.bar);
+  if (bar) { if (BAR_TYPES.includes(bar)) value.bar = bar; else errors.push('Choose a bar type from the list.'); }
+  const grip = text(raw.grip);
+  if (grip) { if (GRIP_TYPES.includes(grip)) value.grip = grip; else errors.push('Choose a grip from the list.'); }
+  const chalk = text(raw.chalk);
+  if (chalk) { if (chalk === 'yes' || chalk === 'no') value.chalk = chalk === 'yes'; else errors.push('Choose chalk or no chalk.'); }
+  const load = text(raw.load);
+  if (load) {
+    const parsed = parseLoad(load);
+    const unit = text(raw.loadUnit) || 'kg';
+    if (parsed === null) errors.push(`Added load must be a number from 0.1 to ${MAX_LOAD} with at most one decimal place, or left blank.`);
+    else if (!LOAD_UNITS.includes(unit)) errors.push('Choose kg or lb for the added load.');
+    else { value.load = parsed; value.loadUnit = unit; }
+  }
+  const ended = text(raw.ended);
+  if (ended) { if (ENDED_TYPES.includes(ended)) value.ended = ended; else errors.push('Choose how the hold ended from the list.'); }
+  return { errors, value };
+}
+
+/** Keeps only the known fields, in a fixed order, omitting anything unset. */
+export function compactEntry(e) {
+  const out = { id: e.id, date: e.date, seconds: e.seconds, assistance: e.assistance, sets: e.sets };
+  if (e.kind === 'test') out.kind = 'test';
+  if (e.bar) out.bar = e.bar;
+  if (e.grip) out.grip = e.grip;
+  if (typeof e.chalk === 'boolean') out.chalk = e.chalk;
+  if (e.load !== undefined && e.load !== null) { out.load = e.load; out.loadUnit = e.loadUnit; }
+  if (e.ended) out.ended = e.ended;
+  return out;
+}
+
 /**
  * Validates raw form input. Returns { ok, errors, value } where `value` is the
  * entry without an id (the caller assigns one).
@@ -114,8 +196,12 @@ export function validateEntryInput(input, today = toLocalDateString()) {
     errors.push(`Sets must be between ${MIN_SETS} and ${MAX_SETS}.`);
   }
 
+  const setup = validateSetupInput(raw);
+  errors.push(...setup.errors);
+  const kind = raw.kind === 'test' ? 'test' : undefined;
+
   if (errors.length) return { ok: false, errors, value: null };
-  return { ok: true, errors, value: { date, seconds, assistance, sets } };
+  return { ok: true, errors, value: { date, seconds, assistance, sets, ...(kind ? { kind } : {}), ...setup.value } };
 }
 
 /**
@@ -129,7 +215,16 @@ export function normalizeStoredEntry(raw, today = toLocalDateString()) {
   if (!isInt(raw.seconds, MIN_SECONDS, MAX_SECONDS)) return null;
   if (!ASSISTANCE_TYPES.includes(raw.assistance)) return null;
   if (!isInt(raw.sets, MIN_SETS, MAX_SETS)) return null;
-  return { id: raw.id, date: raw.date, seconds: raw.seconds, assistance: raw.assistance, sets: raw.sets };
+  const present = (v) => v !== undefined && v !== null;
+  if (present(raw.kind) && !KINDS.includes(raw.kind)) return null;
+  if (present(raw.bar) && !BAR_TYPES.includes(raw.bar)) return null;
+  if (present(raw.grip) && !GRIP_TYPES.includes(raw.grip)) return null;
+  if (present(raw.chalk) && typeof raw.chalk !== 'boolean') return null;
+  if (present(raw.ended) && !ENDED_TYPES.includes(raw.ended)) return null;
+  if (present(raw.load) || present(raw.loadUnit)) {
+    if (parseLoad(raw.load) === null || !LOAD_UNITS.includes(raw.loadUnit)) return null;
+  }
+  return compactEntry(raw);
 }
 
 /**
@@ -187,15 +282,7 @@ export function sortEntries(entries) {
 }
 
 export function serializeLog(entries) {
-  return JSON.stringify(
-    entries.map((e) => ({
-      id: e.id,
-      date: e.date,
-      seconds: e.seconds,
-      assistance: e.assistance,
-      sets: e.sets,
-    })),
-  );
+  return JSON.stringify(entries.map(compactEntry));
 }
 
 /** Returns an id not already present in `entries`. */
@@ -240,8 +327,169 @@ export function bestByAssistance(entries) {
   return best;
 }
 
+/* ------------------------------------------------------------------ setups */
+
+/** Added load in kilograms, or 0 when none was recorded. */
+export function loadKg(entry) {
+  if (entry?.load === undefined || entry?.load === null) return 0;
+  return entry.loadUnit === 'lb' ? entry.load * KG_PER_LB : entry.load;
+}
+
+/** Load bands are defined in kilograms; pounds are converted first. */
+export const LOAD_BANDS = ['none', 'up-to-5', '5-10', '10-20', 'over-20'];
+export const LOAD_BAND_LABELS = {
+  none: 'No added load',
+  'up-to-5': 'Up to 5 kg added',
+  '5-10': '5 to 10 kg added',
+  '10-20': '10 to 20 kg added',
+  'over-20': 'Over 20 kg added',
+};
+export function loadBand(entry) {
+  const kg = loadKg(entry);
+  if (kg <= 0) return 'none';
+  if (kg <= 5) return 'up-to-5';
+  if (kg <= 10) return '5-10';
+  if (kg <= 20) return '10-20';
+  return 'over-20';
+}
+
+/** True when the entry carries any of bar, grip, chalk or load. */
+export function hasSetup(entry) {
+  return Boolean(entry?.bar || entry?.grip || typeof entry?.chalk === 'boolean' || (entry?.load !== undefined && entry?.load !== null));
+}
+
+/**
+ * Identity of a setup: bar + grip + chalk + load band + assistance. Each unrecorded
+ * field is its own value, so "grip not recorded" never merges with "overhand".
+ */
+export function setupKey(entry) {
+  if (!hasSetup(entry)) return `${entry.assistance}|unrecorded`;
+  const chalk = typeof entry.chalk === 'boolean' ? (entry.chalk ? 'chalk' : 'no-chalk') : '?';
+  return [entry.assistance, entry.bar || '?', entry.grip || '?', chalk, loadBand(entry)].join('|');
+}
+
+export function setupLabel(entry) {
+  const assistance = ASSISTANCE_LABELS[entry.assistance] ?? entry.assistance;
+  if (!hasSetup(entry)) return `Setup not recorded · ${assistance}`;
+  const chalk = typeof entry.chalk === 'boolean' ? (entry.chalk ? 'Chalk' : 'No chalk') : 'Chalk not recorded';
+  return [
+    entry.bar ? BAR_LABELS[entry.bar] : 'Bar not recorded',
+    entry.grip ? GRIP_LABELS[entry.grip] : 'Grip not recorded',
+    chalk,
+    LOAD_BAND_LABELS[loadBand(entry)],
+    assistance,
+  ].join(' · ');
+}
+
+/** Compact setup text for a table row (assistance is shown in its own column). */
+export function setupSummary(entry) {
+  if (!hasSetup(entry)) return 'Not recorded';
+  const parts = [];
+  if (entry.bar) parts.push(BAR_LABELS[entry.bar]);
+  if (entry.grip) parts.push(GRIP_LABELS[entry.grip]);
+  if (typeof entry.chalk === 'boolean') parts.push(entry.chalk ? 'Chalk' : 'No chalk');
+  if (entry.load !== undefined && entry.load !== null) parts.push(`+${entry.load} ${entry.loadUnit}`);
+  return parts.join(' · ');
+}
+
+/** Short load text for a row, in the unit the user entered. */
+export function loadText(entry) {
+  if (entry?.load === undefined || entry?.load === null) return '';
+  return `${entry.load} ${entry.loadUnit}`;
+}
+
+/**
+ * Every distinct setup in the log with its own best hold. Never compares across
+ * setups and never uses anyone else's data. Sorted by best hold, longest first.
+ */
+export function bestsBySetup(entries) {
+  const groups = new Map();
+  for (const entry of entries) {
+    const key = setupKey(entry);
+    const group = groups.get(key) ?? { key, label: setupLabel(entry), assistance: entry.assistance, best: null, count: 0 };
+    group.count += 1;
+    if (!group.best || entry.seconds > group.best.seconds || (entry.seconds === group.best.seconds && entry.date > group.best.date)) group.best = entry;
+    groups.set(key, group);
+  }
+  return [...groups.values()].sort((a, b) => b.best.seconds - a.best.seconds || (a.label < b.label ? -1 : 1));
+}
+
+/** Setups present in the log, optionally limited to one assistance type. */
+export function listSetups(entries, assistance) {
+  return bestsBySetup(entries.filter((e) => !assistance || e.assistance === assistance));
+}
+
+/** 'all' (or empty) keeps everything. */
+export function filterBySetup(entries, key) {
+  if (!key || key === 'all') return entries;
+  return entries.filter((e) => setupKey(e) === key);
+}
+
+/** Form values copied from a saved entry: the "same setup again" shortcut. */
+export function setupFormFromEntry(entry) {
+  return {
+    assistance: entry.assistance,
+    bar: entry.bar ?? '',
+    grip: entry.grip ?? '',
+    chalk: typeof entry.chalk === 'boolean' ? (entry.chalk ? 'yes' : 'no') : '',
+    load: entry.load !== undefined && entry.load !== null ? String(entry.load) : '',
+    loadUnit: entry.loadUnit ?? 'kg',
+    ended: '',
+  };
+}
+
+export const EMPTY_SETUP_FORM = { assistance: ASSISTANCE_TYPES[0], bar: '', grip: '', chalk: '', load: '', loadUnit: 'kg', ended: '' };
+
+/** Last-used setup, kept apart from the log so it never touches the entries array. */
+export const SETUP_DEFAULT_KEY = 'dh.log-setup.v1';
+
+export function serializeSetupDefault(form) {
+  const clean = validateSetupInput({ ...form, ended: '' });
+  const assistance = ASSISTANCE_TYPES.includes(form?.assistance) ? form.assistance : ASSISTANCE_TYPES[0];
+  return JSON.stringify({ assistance, ...clean.value });
+}
+
+/** Returns a form-shaped default, or the empty default when the stored text is unusable. */
+export function parseSetupDefault(text) {
+  if (typeof text !== 'string' || text === '') return { ...EMPTY_SETUP_FORM };
+  try {
+    const raw = JSON.parse(text);
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { ...EMPTY_SETUP_FORM };
+    const form = {
+      assistance: ASSISTANCE_TYPES.includes(raw.assistance) ? raw.assistance : ASSISTANCE_TYPES[0],
+      bar: typeof raw.bar === 'string' ? raw.bar : '',
+      grip: typeof raw.grip === 'string' ? raw.grip : '',
+      chalk: typeof raw.chalk === 'boolean' ? (raw.chalk ? 'yes' : 'no') : '',
+      load: raw.load !== undefined && raw.load !== null ? String(raw.load) : '',
+      loadUnit: typeof raw.loadUnit === 'string' ? raw.loadUnit : 'kg',
+      ended: '',
+    };
+    return validateSetupInput(form).errors.length ? { ...EMPTY_SETUP_FORM, assistance: form.assistance } : form;
+  } catch {
+    return { ...EMPTY_SETUP_FORM };
+  }
+}
+
+/**
+ * Pure append used by anything that writes a single new entry (for example the
+ * timer's max-attempt test). Refuses rather than overwrite an unreadable or full log.
+ */
+export function appendToStoredLog(rawText, entry, today = toLocalDateString()) {
+  const parsed = parseStoredLog(rawText, today);
+  if (parsed.status === 'corrupt') return { ok: false, reason: 'corrupt', text: rawText, entries: [] };
+  const clean = normalizeStoredEntry(entry, today);
+  if (!clean) return { ok: false, reason: 'invalid', text: rawText, entries: parsed.entries };
+  const added = addEntry(parsed.entries, clean);
+  if (!added.ok) return { ok: false, reason: 'full', text: rawText, entries: parsed.entries };
+  return { ok: true, reason: null, text: serializeLog(added.entries), entries: added.entries, entry: clean };
+}
+
+/* -------------------------------------------------------------------- export */
+
+/** Original four columns, still accepted on import. */
+export const CSV_FIELDS_V1 = ['date', 'best_hold_seconds', 'assistance', 'sets'];
 /** Fixed export columns. Nothing else is ever written to CSV. */
-export const CSV_FIELDS = ['date', 'best_hold_seconds', 'assistance', 'sets'];
+export const CSV_FIELDS = [...CSV_FIELDS_V1, 'entry_type', 'bar', 'grip', 'chalk', 'added_load', 'load_unit', 'hold_ended_by'];
 
 function csvCell(value) {
   let text = String(value);
@@ -254,11 +502,19 @@ function csvCell(value) {
 export function toCsv(entries) {
   const rows = [CSV_FIELDS.join(',')];
   for (const entry of sortEntries(entries)) {
+    const hasLoad = entry.load !== undefined && entry.load !== null;
     rows.push([
       csvCell(entry.date),
       csvCell(entry.seconds),
       csvCell(entry.assistance),
       csvCell(entry.sets),
+      csvCell(entry.kind === 'test' ? 'test' : 'hold'),
+      csvCell(entry.bar ?? ''),
+      csvCell(entry.grip ?? ''),
+      csvCell(typeof entry.chalk === 'boolean' ? (entry.chalk ? 'yes' : 'no') : ''),
+      csvCell(hasLoad ? entry.load : ''),
+      csvCell(hasLoad ? entry.loadUnit : ''),
+      csvCell(entry.ended ?? ''),
     ].join(','));
   }
   return `${rows.join('\r\n')}\r\n`;
@@ -269,43 +525,62 @@ export function csvFilename(today = toLocalDateString()) {
   return `deadhangs-training-log-${today}.csv`;
 }
 
-/** Portable, versioned backup. Only the existing fixed entry fields are exported. */
+/** Portable, versioned backup. Version 2 adds the optional setup fields; version 1 backups still import. */
 export const MAX_IMPORT_BYTES = 128 * 1024;
+export const BACKUP_VERSION = 2;
 export function toBackup(entries) {
-  return JSON.stringify({ format: 'deadhangs-training-log', version: 1, entries: JSON.parse(serializeLog(entries)) }, null, 2);
+  return JSON.stringify({ format: 'deadhangs-training-log', version: BACKUP_VERSION, entries: JSON.parse(serializeLog(entries)) }, null, 2);
+}
+
+const INVALID = '\u0000invalid';
+function csvEntry(cells, index) {
+  const [date, seconds, assistance, sets, type, bar, grip, chalk, load, unit, ended] = cells;
+  const entry = { id: 'csv-' + index, date, seconds: parseIntStrict(seconds), assistance, sets: parseIntStrict(sets) };
+  if (cells.length === CSV_FIELDS_V1.length) return entry;
+  if (type === 'test') entry.kind = 'test';
+  else if (type !== 'hold' && type !== '') entry.kind = INVALID;
+  if (bar) entry.bar = bar;
+  if (grip) entry.grip = grip;
+  if (chalk === 'yes') entry.chalk = true;
+  else if (chalk === 'no') entry.chalk = false;
+  else if (chalk) entry.chalk = INVALID;
+  if (load || unit) { entry.load = parseLoad(load) ?? INVALID; entry.loadUnit = unit; }
+  if (ended) entry.ended = ended;
+  return entry;
 }
 
 /** Validate the whole file before proposing a non-destructive merge. */
 export function prepareLogImport(text, existing, today = toLocalDateString()) {
   const fail = (error) => ({ ok: false, error, entries: existing, added: 0, skipped: 0 });
   if (typeof text !== 'string' || new TextEncoder().encode(text).length > MAX_IMPORT_BYTES) return fail('Choose a backup smaller than 128 KB.');
-  const raw = text.replace(/^\uFEFF/, '').trim();
+  const raw = text.replace(/^﻿/, '').trim();
   let imported;
   let csv = false;
   if (raw.startsWith('[') || raw.startsWith('{')) {
     let parsed;
     try { parsed = JSON.parse(raw); } catch { return fail('This JSON file could not be read.'); }
     if (Array.isArray(parsed)) imported = parsed;
-    else if (parsed?.format === 'deadhangs-training-log' && parsed.version === 1 && Array.isArray(parsed.entries)) imported = parsed.entries;
-    else return fail('Choose a DeadHangs version 1 backup or exported CSV.');
+    else if (parsed?.format === 'deadhangs-training-log' && (parsed.version === 1 || parsed.version === 2) && Array.isArray(parsed.entries)) imported = parsed.entries;
+    else return fail('Choose a DeadHangs version 1 or 2 backup or exported CSV.');
   } else {
     csv = true;
     const lines = raw.split(/\r?\n/);
     const cell = (s) => /^"[^"]*"$/.test(s) ? s.slice(1, -1) : s;
-    if (lines.shift()?.split(',').map(cell).join(',') !== CSV_FIELDS.join(',')) return fail('CSV columns must match a DeadHangs export.');
+    const header = lines.shift()?.split(',').map(cell).join(',');
+    const width = header === CSV_FIELDS.join(',') ? CSV_FIELDS.length : header === CSV_FIELDS_V1.join(',') ? CSV_FIELDS_V1.length : 0;
+    if (!width) return fail('CSV columns must match a DeadHangs export.');
     imported = [];
     for (let i = 0; i < lines.length; i++) {
       const cells = lines[i].split(',').map(cell);
-      if (cells.length !== 4) return fail('CSV row ' + (i + 2) + ' has the wrong number of columns. Nothing was imported.');
-      const [date, seconds, assistance, sets] = cells;
-      imported.push({ id: 'csv-' + i, date, seconds: parseIntStrict(seconds), assistance, sets: parseIntStrict(sets) });
+      if (cells.length !== width) return fail('CSV row ' + (i + 2) + ' has the wrong number of columns. Nothing was imported.');
+      imported.push(csvEntry(cells, i));
     }
   }
   if (imported.length > MAX_ENTRIES) return fail('This file exceeds the 200-entry limit. Nothing was imported.');
   const validated = imported.map((entry) => normalizeStoredEntry(entry, today));
   const badIndex = validated.findIndex((entry) => !entry);
   if (badIndex >= 0) return fail('Entry ' + (badIndex + 1) + ' has invalid values or a future date. Nothing was imported.');
-  const key = (e) => JSON.stringify([e.date, e.seconds, e.assistance, e.sets]);
+  const key = (e) => JSON.stringify([e.date, e.seconds, e.assistance, e.sets, e.kind ?? null, e.bar ?? null, e.grip ?? null, e.chalk ?? null, e.load ?? null, e.loadUnit ?? null, e.ended ?? null]);
   const next = [...existing];
   const byId = new Map(next.map(e => [e.id, e]));
   const remaining = new Map();

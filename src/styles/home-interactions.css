@@ -73,3 +73,6 @@
 @media (max-width: 900px) { .has-log #training-log { min-height: 1390px; } }
 @media (max-width: 768px) { .has-log #training-log { min-height: 1340px; } }
 @media (max-width: 480px) { .has-log #training-log { min-height: 1650px; } }
+.practice-graph-controls .practice-graph-setup { display: flex; flex-direction: column; gap: 10px; min-width: min(100%, 260px); max-width: 100%; }
+.practice-graph-controls .practice-graph-setup label { display: block; min-height: 0; font: 12px var(--font-mono); color: var(--color-text-muted); letter-spacing: .12em; text-transform: uppercase; }
+.practice-graph-controls .practice-graph-setup select { min-height: 44px; max-width: 100%; }

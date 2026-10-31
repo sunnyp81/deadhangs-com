@@ -1,19 +1,24 @@
 import { useEffect, useId, useState } from "react";
+import { useMemo } from "react";
+import { filterBySetup, listSetups } from "../lib/training-log.mjs";
 import { progressFor } from "../lib/training-progress.mjs";
-import type { TrainingProfile } from "../lib/training-types";
+import type { LogEntry, TrainingProfile } from "../lib/training-types";
 
-type Entry = { id: string; date: string; seconds: number; assistance: string; sets: number };
+type Entry = LogEntry;
 type Assistance = "unassisted" | "feet-supported";
 
 export default function ProgressSummary({ entries, profile }: { entries: Entry[]; profile: TrainingProfile | null }) {
   const id = useId();
   const [assistance, setAssistance] = useState<Assistance>(profile?.assistance || "unassisted");
   const [windowDays, setWindowDays] = useState<30 | 90>(90);
+  const [setupKey, setSetupKey] = useState("all");
   useEffect(() => {
     setAssistance(profile?.assistance || "unassisted");
   }, [profile?.assistance]);
   const target = profile?.assistance === assistance ? profile.targetSeconds : null;
-  const progress = progressFor(entries, assistance, target, new Date(), windowDays);
+  const setups = useMemo(() => listSetups(entries, assistance) as { key: string; label: string; count: number }[], [entries, assistance]);
+  const activeSetup = setupKey !== "all" && setups.some((group) => group.key === setupKey) ? setupKey : "all";
+  const progress = progressFor(filterBySetup(entries, activeSetup), assistance, target, new Date(), windowDays);
   const assistanceLabel = assistance === "feet-supported" ? "supported" : "unassisted";
 
   return (
@@ -31,6 +36,13 @@ export default function ProgressSummary({ entries, profile }: { entries: Entry[]
             <label><input type="radio" name={`${id}-window`} checked={windowDays === 30} onChange={() => setWindowDays(30)} /> Last 30 days</label>{" "}
             <label><input type="radio" name={`${id}-window`} checked={windowDays === 90} onChange={() => setWindowDays(90)} /> Last 90 days</label>
           </fieldset>
+          <div className="tw-field">
+            <label htmlFor={`${id}-setup`}>Compare setup</label>
+            <select id={`${id}-setup`} className="dh-input" value={activeSetup} onChange={(event) => setSetupKey(event.target.value)}>
+              <option value="all">All {assistanceLabel} setups</option>
+              {setups.map((group) => <option key={group.key} value={group.key}>{group.label} ({group.count})</option>)}
+            </select>
+          </div>
         </div>
         {!progress.daily.length ? (
           <p className="tw-empty">No comparable {assistanceLabel} entries yet. Save an actual hold to start a record.</p>
@@ -48,7 +60,7 @@ export default function ProgressSummary({ entries, profile }: { entries: Entry[]
                 <div className="tw-goal-track" aria-hidden="true"><div className="tw-goal-fill" style={{ width: `${progress.visualTargetPercent}%` }} /></div>
               </div>
             )}
-            <p className="tw-note">Daily bests cover {progress.windowStart} through today. Compare holds using a similar bar and grip; the log does not record that setup.</p>
+            <p className="tw-note">Daily bests cover {progress.windowStart} through today. {activeSetup === "all" ? "Choose a setup to compare holds on the same bar, grip, chalk and load." : "Showing one setup only."} Compared only with your own holds.</p>
             <div className="tw-table-wrap" tabIndex={0} aria-label="Scrollable progress table">
               <table className="tw-table">
                 <caption>Daily best {assistanceLabel} holds in the last {windowDays} calendar days</caption>

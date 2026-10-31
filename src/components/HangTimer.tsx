@@ -1,6 +1,19 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { browserFeedbackAdapters, createFeedbackLifecycle } from "../lib/timer-feedback.mjs";
-import { activeTestElapsed, isBusy, normalizeLegacyTimerConfig, validTimerLoad } from "../lib/timer-state.mjs";
+import {
+  MAX_TEST_DEFAULTS,
+  MAX_TEST_REST_CHOICES,
+  MAX_TEST_WARMUP_BREAK_SECONDS,
+  MAX_TEST_WARMUP_SECONDS,
+  activeTestElapsed,
+  isBusy,
+  isRestBeforeMax,
+  maxTestNext,
+  normalizeLegacyTimerConfig,
+  testSecondsToLog,
+  validTimerLoad,
+} from "../lib/timer-state.mjs";
+import MaxTestSave from "./MaxTestSave";
 import type { TimerConfig, TimerLoad, TimerRunState } from "../lib/training-types";
 import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 
@@ -194,6 +207,7 @@ export default function HangTimer({
   onFinished,
   onResultReady,
   onRunState,
+  onTestSaved,
   feedbackAdapters,
   analyticsSource,
   compact = false,
@@ -208,6 +222,7 @@ export default function HangTimer({
   onFinished?: (mode: string) => void;
   onResultReady?: () => void;
   onRunState?: (state: TimerRunState) => void;
+  onTestSaved?: () => void;
   feedbackAdapters?: Parameters<typeof createFeedbackLifecycle>[0];
   analyticsSource?: "calculator" | "plans" | "workspace" | "home" | "shared" | "embed";
 }) {
@@ -236,6 +251,10 @@ export default function HangTimer({
   const [pulse, setPulse] = useState(false);
   const [totalHangTime, setTotalHangTime] = useState(0);
   const [prep, setPrep] = useState<0 | 5 | 10>(0);
+  const [warmups, setWarmups] = useState<number>(MAX_TEST_DEFAULTS.warmups);
+  const [maxRest, setMaxRest] = useState<number>(MAX_TEST_DEFAULTS.restSeconds);
+  const [testLogSeconds, setTestLogSeconds] = useState<number | null>(null);
+  const [testRunId, setTestRunId] = useState(0);
   const seenRequest = useRef(new Set<string>());
   const testElapsed = useRef(0);
   const testRunStart = useRef<number | null>(null);
@@ -317,11 +336,14 @@ export default function HangTimer({
     setPhase("done");
     setRunning(false);
     transitionCue("Finish", () => beep(330, 0.3, "square", 0.08));
-    if (shown < 1) {
+    const loggable = testSecondsToLog(shown);
+    if (loggable === null) {
       setNotice("Test stopped before one second. No hold was recorded.");
       return;
     }
-    setNotice(`Test stopped at ${fmtTestTime(shown)}. Record only your actual hold.`);
+    setTestLogSeconds(loggable);
+    setTestRunId((n) => n + 1);
+    setNotice(`Test stopped at ${fmtTestTime(shown)}. Check the time below, then save it only if it matches your actual hold.`);
   }
 
   const ladderWork = useMemo(() => {
@@ -345,8 +367,10 @@ export default function HangTimer({
           setRunning(false);
           releaseFeedback();
           transitionCue("Finish", () => beep(330, 0.3, "square", 0.08));
+          setTestLogSeconds(3600);
+          setTestRunId((n) => n + 1);
           setNotice(
-            "Test stopped at 60:00.0, the 60-minute limit. Record only your actual hold.",
+            "Test stopped at 60:00.0, the 60-minute limit. Check the time below, then save it only if it matches your actual hold.",
           );
           return;
         }
@@ -370,6 +394,25 @@ export default function HangTimer({
       if (remaining > 0) return;
       clearInterval(id);
       setPulse(false);
+      if (mode === "test") {
+        const step = maxTestNext({ phase, round, warmups, restSeconds: maxRest });
+        totalRef.current = step.seconds;
+        lastRemaining.current = step.seconds;
+        deadline.current = performance.now() + step.seconds * 1000;
+        setT(step.seconds);
+        setPhase(step.phase as typeof phase);
+        setRound(step.round);
+        if (step.phase === "test") {
+          testElapsed.current = 0;
+          testRunStart.current = performance.now();
+          transitionCue("Max hold. Go", () => beep(880, 0.2, "square", 0.08));
+        } else if (step.phase === "rest") {
+          transitionCue("Rest", () => beep(330, 0.3, "square", 0.08));
+        } else {
+          transitionCue("Warm up", () => beep(880, 0.2, "square", 0.08));
+        }
+        return;
+      }
       if (phase === "work" && round >= rounds) {
         setPhase("done");
         setRunning(false);
@@ -388,9 +431,7 @@ export default function HangTimer({
       }
       const nextSeconds =
         phase === "prep"
-          ? mode === "test"
-            ? 0
-            : work
+          ? work
           : phase === "work"
             ? mode === "emom"
               ? 60 - currentWork
@@ -403,8 +444,7 @@ export default function HangTimer({
       deadline.current = performance.now() + nextSeconds * 1000;
       setT(nextSeconds);
       if (phase === "prep") {
-        setPhase(mode === "test" ? "test" : "work");
-        if (mode === "test") testRunStart.current = performance.now();
+        setPhase("work");
         transitionCue("Start", () => beep(880, 0.2, "square", 0.08));
       } else if (phase === "work") {
         setPhase("rest");
@@ -439,6 +479,8 @@ export default function HangTimer({
     soundOn,
     mode,
     currentWork,
+    warmups,
+    maxRest,
     onFinished,
     onResultReady,
   ]);
@@ -524,27 +566,31 @@ export default function HangTimer({
       transitionCue("Resume", () => beep(880, 0.12, "square", 0.08));
       return;
     }
+    const first = mode === "test" ? maxTestNext({ phase: "prep", round: 1, warmups, restSeconds: maxRest }) : null;
     const seconds =
       phase === "idle" || phase === "done"
         ? prep > 0
           ? prep
-          : mode === "test"
-            ? 0
+          : first
+            ? first.seconds
             : work
         : t;
     deadline.current = performance.now() + seconds * 1000;
     lastRemaining.current = seconds;
     setNotice("");
     if (phase === "idle" || phase === "done") {
-      setPhase(prep > 0 ? "prep" : mode === "test" ? "test" : "work");
-      setRound(1);
+      const startPhase = prep > 0 ? "prep" : first ? first.phase : "work";
+      setPhase(startPhase as typeof phase);
+      setRound(prep === 0 && first ? first.round : 1);
       setT(seconds);
       totalRef.current = seconds;
       setTotalHangTime(0);
+      setTestLogSeconds(null);
       testElapsed.current = 0;
-      testRunStart.current = mode === "test" && prep === 0 ? performance.now() : null;
-      transitionCue(prep > 0 ? "Get ready" : "Start", () =>
-        beep(880, 0.2, "square", 0.08),
+      testRunStart.current = startPhase === "test" ? performance.now() : null;
+      transitionCue(
+        prep > 0 ? "Get ready" : startPhase === "test" ? "Max hold. Go" : startPhase === "rest" ? "Rest" : mode === "test" ? "Warm up" : "Start",
+        () => beep(880, 0.2, "square", 0.08),
       );
       onStart?.(mode);
       if (analyticsSource)
@@ -582,22 +628,44 @@ export default function HangTimer({
     setT(mode === "test" ? 0 : work);
     totalRef.current = work;
     setTotalHangTime(0);
+    setTestLogSeconds(null);
     testElapsed.current = 0;
     testRunStart.current = null;
   }
 
+  function skipRest() {
+    if (!running || phase !== "rest" || mode !== "test") return;
+    deadline.current = performance.now();
+  }
+
+  const restBeforeMax = mode === "test" && isRestBeforeMax({ phase, round, warmups });
   const locked = !hydrated || isBusy(phase);
-  const progress = mode === "test" ? t / 3600 : totalRef.current > 0 ? 1 - t / totalRef.current : 0;
+  const progress =
+    mode === "test" && (phase === "test" || phase === "done")
+      ? t / 3600
+      : totalRef.current > 0
+        ? 1 - t / totalRef.current
+        : 0;
   const display =
     phase === "idle" ? (mode === "test" ? 0 : work) : Math.max(0, t);
-  const phaseLabel = {
-    idle: "READY",
-    prep: "GET READY",
-    work: "HANG",
-    rest: "REST",
-    test: "TEST",
-    done: "COMPLETE",
-  }[phase];
+  const phaseLabel =
+    mode === "test"
+      ? {
+          idle: "READY",
+          prep: "GET READY",
+          work: `WARM-UP ${round}/${warmups}`,
+          rest: restBeforeMax ? "REST BEFORE MAX" : "REST",
+          test: "MAX HOLD",
+          done: "COMPLETE",
+        }[phase]
+      : {
+          idle: "READY",
+          prep: "GET READY",
+          work: "HANG",
+          rest: "REST",
+          test: "TEST",
+          done: "COMPLETE",
+        }[phase];
   const phaseColor =
     phase === "rest"
       ? "var(--color-cool)"
@@ -638,7 +706,7 @@ export default function HangTimer({
             ["simple", "Simple"],
             ["emom", "EMOM"],
             ["ladder", "Ladder"],
-            ["test", "Test"],
+            ["test", "Max test"],
           ]}
         />
       </fieldset>
@@ -647,6 +715,17 @@ export default function HangTimer({
 
   const settingsBlock = (
     <>
+      {mode === "test" && (
+        <fieldset disabled={locked} className="timer-group">
+          <legend className="timer-legend">Max test plan</legend>
+          <Stepper label="Warm-up holds" value={warmups} setValue={setWarmups} min={0} max={3} step={1} />
+          <Seg
+            value={String(maxRest)}
+            setValue={(v) => setMaxRest(Number(v))}
+            options={MAX_TEST_REST_CHOICES.map((s): [string, string] => [String(s), s === 0 ? "No rest" : `${s / 60} min rest`])}
+          />
+        </fieldset>
+      )}
       {mode !== "test" && <fieldset
         disabled={locked}
         className="timer-settings"
@@ -734,6 +813,8 @@ export default function HangTimer({
         {mode === "emom" &&
           "Every Minute On the Minute: rest fills the remaining time"}
         {mode === "ladder" && "Hang time increases +5s each round"}
+        {mode === "test" &&
+          `Easy ${MAX_TEST_WARMUP_SECONDS} s warm-up holds with ${MAX_TEST_WARMUP_BREAK_SECONDS} s breaks, a timed rest, then one max hold counting up. No target.`}
       </div>
     </>
   );
@@ -956,7 +1037,11 @@ export default function HangTimer({
           <div
             className="dh-mono"
             style={{
-              fontSize: isCountdown ? (compact ? 68 : 80) : compact ? 54 : 64,
+              fontSize: isCountdown
+                ? compact ? 68 : 80
+                : phase === "test" && t < 600
+                  ? compact ? 58 : 72
+                  : compact ? 54 : 64,
               fontWeight: 600,
               color: isCountdown ? phaseColor : "var(--color-text)",
               lineHeight: 1,
@@ -980,16 +1065,26 @@ export default function HangTimer({
               textTransform: "uppercase" as const,
             }}
           >
-            {phase === "rest"
+            {mode === "test" && phase === "work"
+              ? "easy hold, well short of your max"
+              : mode === "test" && phase === "rest"
+                ? restBeforeMax
+                  ? "next: one max hold, counting up"
+                  : "next: warm-up hold"
+                : mode === "test" && phase === "test"
+                  ? "count up. no target. stop when you stop."
+                  : mode === "test" && phase === "prep"
+                    ? "first up: warm-up"
+              : phase === "rest"
               ? `next: hang ${mode === "ladder" ? Math.min(work + round * 5, 120) : work}s`
               : phase === "done" && mode !== "test"
                 ? `${Math.round(totalHangTime)}s timer work`
                 : phase === "done"
-                  ? "Test complete. Record only an actual hold."
+                  ? "Test complete. Save only an actual hold."
                 : mode === "ladder"
                   ? `${currentWork}s → ${Math.min(currentWork + 5, 120)}s`
                   : mode === "test"
-                    ? "Count up. Stop and record only the actual hold."
+                    ? "Max test: warm-up, rest, one count-up hold"
                     : mode === "emom"
                       ? `every ${currentWork + Math.max(10, 60 - currentWork)}s`
                       : `${work}s × ${rounds} rounds`}
@@ -1042,17 +1137,25 @@ export default function HangTimer({
               reset();
               return;
             }
-            if (phase === "prep") {
-              reset();
-              setNotice("Preparation cancelled. No hold was recorded.");
+            if (phase === "test") {
+              finishTest();
               return;
             }
-            if (phase === "test") finishTest();
+            if (phase === "prep" || phase === "work" || phase === "rest") {
+              reset();
+              setNotice("Test cancelled. No hold was recorded.");
+            }
           }}
+          disabled={!hydrated || (mode === "test" && (phase === "idle" || phase === "done"))}
           style={{ padding: "14px 20px" }}
         >
           {mode === "test" ? "Stop" : "Reset"}
         </button>
+        {mode === "test" && running && phase === "rest" && (
+          <button className="dh-btn dh-btn-ghost" onClick={skipRest} style={{ padding: "14px 20px" }}>
+            {restBeforeMax ? "Start max hold now" : "Skip rest"}
+          </button>
+        )}
         <button
           disabled={!hydrated}
           aria-label={soundOn ? "Mute timer" : "Unmute timer"}
@@ -1078,6 +1181,12 @@ export default function HangTimer({
         </details>
       )}
 
+      {mode === "test" && (
+        <p className="small-copy timer-safety">
+          Stop if anything hurts, and step down under control. <a href="/deadhang-safety/">Read the safety guide</a>.
+        </p>
+      )}
+
       <p className="small-copy" role="status">
         {notice ||
           (awakeRequested || wakeTouched
@@ -1094,6 +1203,17 @@ export default function HangTimer({
               ? "Reset to change session settings."
               : "")}
       </p>
+
+      {mode === "test" && phase === "done" && testLogSeconds !== null && (
+        <MaxTestSave
+          key={testRunId}
+          seconds={testLogSeconds}
+          onSaved={() => {
+            onTestSaved?.();
+            if (analyticsSource) trackTrainingEvent("training_log_saved", { source: analyticsSource });
+          }}
+        />
+      )}
 
       {/* Session stats (visible after completion) */}
       {phase === "done" && mode !== "test" && (
@@ -1172,6 +1292,9 @@ export default function HangTimer({
         .circular-timer .timer-group { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .circular-timer .timer-legend { padding: 0; margin: 0 0 8px; font: 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); text-align: center; }
         .circular-timer .timer-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+        .circular-timer .timer-safety { max-width: 420px; margin: 0; }
+        .circular-timer .mt-save-wrap { width: 100%; max-width: 640px; text-align: left; }
+        .circular-timer .mt-save-wrap .tw-panel-title:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; }
         .circular-timer .timer-toggles { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; }
         .circular-timer .timer-toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; color: var(--color-text-muted); cursor: pointer; }
         .circular-timer .timer-toggle input { width: 20px; height: 20px; accent-color: var(--color-primary); }

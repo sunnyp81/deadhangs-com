@@ -3,9 +3,11 @@ import type { FormEvent } from 'react';
 import '../styles/training-workspace.css';
 import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 import { parseHoldParam } from '../lib/your-number.mjs';
+import SetupFields from './SetupFields';
 import {
+  EMPTY_SETUP_FORM,
+  ENDED_LABELS,
   ASSISTANCE_LABELS,
-  ASSISTANCE_TYPES,
   MAX_ENTRIES,
   MAX_IMPORT_BYTES,
   prepareLogImport,
@@ -16,8 +18,13 @@ import {
   MIN_SETS,
   STORAGE_KEY,
   addEntry,
-  bestByAssistance,
+  bestsBySetup,
   csvFilename,
+  filterBySetup,
+  setupFormFromEntry,
+  setupLabel,
+  setupSummary,
+  validateSetupInput,
   formatLocalDate,
   makeEntryId,
   parseIntStrict,
@@ -28,18 +35,15 @@ import {
   toLocalDateString,
   validateEntryInput,
 } from '../lib/training-log.mjs';
+import { LOG_UPDATED_EVENT, readRememberedSetup, rememberSetup } from '../lib/training-log-store';
+import type { SetupForm } from '../lib/training-log-store';
+import type { LogEntry } from '../lib/training-types';
 
 type Status = 'idle' | 'running' | 'paused' | 'done';
 type Phase = 'work' | 'rest';
 type StorageState = 'loading' | 'ready' | 'corrupt' | 'unavailable';
 
-type Entry = {
-  id: string;
-  date: string;
-  seconds: number;
-  assistance: string;
-  sets: number;
-};
+type Entry = LogEntry;
 
 const WORK_MIN = 1;
 const WORK_MAX = 600;
@@ -51,8 +55,6 @@ const SETS_MAX = 20;
 const DEFAULT_WORK = '20';
 const DEFAULT_REST = '60';
 const DEFAULT_SETS = '3';
-
-const ASSISTANCE_OPTIONS: string[] = ASSISTANCE_TYPES;
 
 function assistanceLabel(type: string) {
   return (ASSISTANCE_LABELS as Record<string, string>)[type] ?? type;
@@ -84,7 +86,7 @@ function readRawLog(): { available: boolean; raw: string | null } {
 function writeRawLog(text: string): boolean {
   try {
     window.localStorage.setItem(STORAGE_KEY, text);
-    window.dispatchEvent(new Event("deadhangs:training-log-updated"));
+    window.dispatchEvent(new Event(LOG_UPDATED_EVENT));
     return true;
   } catch {
     return false;
@@ -251,8 +253,12 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
 
   const [dateInput, setDateInput] = useState('');
   const [holdInput, setHoldInput] = useState('');
-  const [assistanceInput, setAssistanceInput] = useState<string>(ASSISTANCE_OPTIONS[0]);
+  const [setupForm, setSetupForm] = useState<SetupForm>({ ...EMPTY_SETUP_FORM } as SetupForm);
+  const [setupOpen, setSetupOpen] = useState(false);
+  const [filterKey, setFilterKey] = useState('all');
   const [logSetsInput, setLogSetsInput] = useState('1');
+  const storageStateRef = useRef<StorageState>('loading');
+  storageStateRef.current = storageState;
 
   const holdFieldRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => { registerActualFocus?.(() => holdFieldRef.current?.focus()); }, [registerActualFocus]);
@@ -267,6 +273,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     // ?hold=SECONDS prefills the form only. Nothing is saved until the user submits.
     const prefill = parseHoldParam(window.location.search);
     if (prefill) setHoldInput(prefill);
+    setSetupForm(readRememberedSetup());
     const { available, raw } = readRawLog();
     rawSnapshot.current = raw;
     if (!available) {
@@ -281,6 +288,30 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     setEntries(parsed.entries as Entry[]);
     setDroppedRows(parsed.dropped);
     setStorageState('ready');
+  }, []);
+
+  // Another island on the page (the timer's max test) or another tab may add an
+  // entry. Re-read so this view and its save guard stay current.
+  useEffect(() => {
+    function resync() {
+      if (storageStateRef.current !== 'ready') return;
+      const { available, raw } = readRawLog();
+      if (!available || raw === rawSnapshot.current) return;
+      const parsed = parseStoredLog(raw, toLocalDateString());
+      if (parsed.status === 'corrupt') return;
+      rawSnapshot.current = raw;
+      setEntries(parsed.entries as Entry[]);
+      setDroppedRows(parsed.dropped);
+    }
+    function onStorage(event: StorageEvent) {
+      if (event.key === STORAGE_KEY || event.key === null) resync();
+    }
+    window.addEventListener(LOG_UPDATED_EVENT, resync);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(LOG_UPDATED_EVENT, resync);
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
   const canWrite = storageState === 'ready';
@@ -317,25 +348,22 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
       return;
     }
     const result = validateEntryInput(
-      { date: dateInput, seconds: holdInput, assistance: assistanceInput, sets: logSetsInput },
+      { date: dateInput, seconds: holdInput, sets: logSetsInput, ...setupForm },
       toLocalDateString(),
     );
     if (!result.ok || !result.value) {
       setFormErrors(result.errors);
       return;
     }
-    const { date, seconds, assistance, sets } = result.value;
-    if (seconds === null || sets === null || !ASSISTANCE_OPTIONS.includes(assistance)) {
-      setFormErrors(['Check the hold, assistance and set values.']);
-      return;
-    }
-    const entry: Entry = { id: makeEntryId(entries), date, seconds, assistance, sets };
+    const entry = { id: makeEntryId(entries), ...result.value } as Entry;
     const added = addEntry(entries, entry);
     if (!added.ok) {
       setFormErrors([`This log holds ${MAX_ENTRIES} entries. Open “Your data” to export a CSV first, then delete some entries.`]);
       return;
     }
     if (commit(added.entries as Entry[], `Saved ${entry.seconds}s on ${formatLocalDate(entry.date)} to this device.`)) {
+      rememberSetup(setupForm);
+      setSetupForm((current) => ({ ...current, ended: '' }));
       setHoldInput('');
       onManualEntrySaved?.();
       if (analyticsSource)
@@ -437,10 +465,19 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     }
   }
 
-  const bests = useMemo(
-    () => bestByAssistance(entries) as Record<string, Entry | null>,
-    [entries],
-  );
+  const setups = useMemo(() => bestsBySetup(entries), [entries]);
+  const activeFilter = filterKey !== 'all' && setups.some((group: { key: string }) => group.key === filterKey) ? filterKey : 'all';
+  const shownEntries = useMemo(() => filterBySetup(entries, activeFilter) as Entry[], [entries, activeFilter]);
+  const formPreview = useMemo(() => {
+    const checked = validateSetupInput({ ...setupForm, ended: '' });
+    return checked.errors.length ? null : { assistance: setupForm.assistance, ...checked.value };
+  }, [setupForm]);
+
+  function copySetupFrom(entry: Entry) {
+    setSetupForm(setupFormFromEntry(entry) as SetupForm);
+    setLogStatus(`Setup copied from ${formatLocalDate(entry.date)}. Enter the hold you did and save.`);
+    holdFieldRef.current?.focus();
+  }
 
   return (
     <section className="training-workspace tw-root" aria-labelledby={`${uid}-title`}>
@@ -609,17 +646,6 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
               />
             </div>
             <div className="tw-field">
-              <label htmlFor={`${uid}-assist`}>Assistance</label>
-              <select
-                id={`${uid}-assist`} className="dh-input" value={assistanceInput}
-                onChange={(e) => setAssistanceInput(e.target.value)} disabled={!canWrite}
-              >
-                {ASSISTANCE_OPTIONS.map((type) => (
-                  <option key={type} value={type}>{assistanceLabel(type)}</option>
-                ))}
-              </select>
-            </div>
-            <div className="tw-field">
               <label htmlFor={`${uid}-logsets`}>Sets</label>
               <input
                 id={`${uid}-logsets`} className="dh-input" type="number" inputMode="numeric"
@@ -628,6 +654,17 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
               />
             </div>
           </div>
+
+          <details className="tw-setup" open={setupOpen} onToggle={(e) => setSetupOpen((e.currentTarget as HTMLDetailsElement).open)}>
+            <summary>
+              <span className="tw-setup-title">Setup, remembered for next time</span>
+              <span className="tw-setup-summary">{formPreview ? setupLabel(formPreview) : 'Check the added load'}</span>
+            </summary>
+            <div className="tw-setup-body">
+              <p className="tw-hint">Every field is optional. Bests are kept separately for each setup, so record the bar, grip, chalk, load and assistance you actually used.</p>
+              <SetupFields value={setupForm} onChange={setSetupForm} disabled={!canWrite} showEnded idPrefix={`${uid}-setup`} />
+            </div>
+          </details>
 
           {formErrors.length > 0 && (
             <ul className="tw-error" role="alert">
@@ -655,7 +692,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
             <div className="tw-field">
               <label htmlFor={uid + '-import'}>Import a DeadHangs backup or CSV</label>
               <input ref={importField} id={uid + '-import'} type="file" accept=".json,.csv,application/json,text/csv" disabled={!canWrite} onChange={e => { void readImport(e.target.files?.[0]); }} />
-              <p className="tw-hint">Up to 128 KB. Imports add to this log; existing entries stay. JSON backups preserve entry IDs. CSV duplicates are matched by date, hold, assistance and sets.</p>
+              <p className="tw-hint">Up to 128 KB. Imports add to this log; existing entries stay. JSON backups preserve entry IDs. CSV duplicates are matched by date, hold, assistance, sets and setup. Older backups and CSV files without setup columns still import.</p>
             </div>
             {readingImport && <p role="status">Checking file…</p>}
             {pendingImport && <div className="tw-warning">
@@ -668,22 +705,41 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
         <p className="tw-status" aria-live="polite">{logStatus}</p>
 
         {entries.length > 0 && (
-          <div className="tw-bests">
-            {ASSISTANCE_OPTIONS.map((type) => {
-              const best = bests[type];
-              return (
-                <div key={type} className="tw-best">
-                  <span className="dh-eyebrow">Best · {assistanceLabel(type)}</span>
-                  <span className="dh-mono tw-best-value">{best ? `${best.seconds}s` : '-'}</span>
-                  <span className="tw-hint">
-                    {best ? `on ${formatLocalDate(best.date)}` : 'no entries of this type yet'}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="tw-setup-bests">
+            <h4 className="tw-subtitle">Your best for each setup</h4>
+            <div className="tw-scroll" tabIndex={0} role="region" aria-label="Best hold for each setup">
+              <table className="tw-table">
+                <caption className="tw-visually-hidden">Best hold for each distinct setup in your own log</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Setup</th>
+                    <th scope="col">Best</th>
+                    <th scope="col">On</th>
+                    <th scope="col">Entries</th>
+                    <th scope="col"><span className="tw-visually-hidden">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {setups.map((group: { key: string; label: string; best: Entry; count: number }) => (
+                    <tr key={group.key}>
+                      <th scope="row" className="tw-setup-cell">{group.label}</th>
+                      <td className="dh-mono">{group.best.seconds}s</td>
+                      <td>{formatLocalDate(group.best.date)}</td>
+                      <td className="dh-mono">{group.count}</td>
+                      <td>
+                        <button type="button" className="tw-link" onClick={() => copySetupFrom(group.best)}>
+                          Use this setup<span className="tw-visually-hidden">: {group.label}</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <p className="tw-note tw-bests-note">
-              Bests are compared only against your own entries of the same assistance type.
-              Feet-supported holds are never stacked against unassisted ones.
+              Each best is compared only with your own entries on the same setup: bar, grip, chalk, assistance and added-load band
+              (none, up to 5 kg, 5 to 10, 10 to 20, over 20 kg; pounds are converted). A field left blank forms its own group, so
+              older entries without a setup are never mixed with ones that have one. Nothing is compared with other people.
             </p>
           </div>
         )}
@@ -696,26 +752,47 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
 
         {entries.length > 0 && (
           <>
-            <p className="tw-hint">Scroll the log horizontally on smaller screens.</p>
+            <div className="tw-field tw-filter">
+              <label htmlFor={`${uid}-filter`}>Show setup</label>
+              <select id={`${uid}-filter`} className="dh-input" value={activeFilter} onChange={(e) => setFilterKey(e.target.value)}>
+                <option value="all">All setups ({entries.length} {entries.length === 1 ? 'entry' : 'entries'})</option>
+                {setups.map((group: { key: string; label: string; count: number }) => (
+                  <option key={group.key} value={group.key}>{group.label} ({group.count})</option>
+                ))}
+              </select>
+            </div>
+            <p className="tw-hint" aria-live="polite">
+              {activeFilter === 'all' ? 'Scroll the log horizontally on smaller screens.' : `Showing ${shownEntries.length} of ${entries.length} entries for this setup. Scroll horizontally on smaller screens.`}
+            </p>
             <div className="tw-table-wrap" tabIndex={0} role="region" aria-label="Saved training sessions">
               <table className="tw-table">
-                <caption className="tw-visually-hidden">Your saved hangs, newest first</caption>
+                <caption className="tw-visually-hidden">Your saved hangs, newest first{activeFilter === 'all' ? '' : ', for one setup'}</caption>
                 <thead>
                   <tr>
                     <th scope="col">Date</th>
                     <th scope="col">Best hold</th>
                     <th scope="col">Assistance</th>
+                    <th scope="col">Setup</th>
+                    <th scope="col">Ended by</th>
                     <th scope="col">Sets</th>
-                    <th scope="col"><span className="tw-visually-hidden">Actions</span></th>
+                    <th scope="col"><span className="tw-visually-hidden">Copy setup</span></th>
+                    <th scope="col"><span className="tw-visually-hidden">Delete</span></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {entries.map((entry) => (
+                  {shownEntries.map((entry) => (
                     <tr key={entry.id}>
                       <td>{formatLocalDate(entry.date)}</td>
-                      <td className="dh-mono">{entry.seconds}s</td>
+                      <td className="dh-mono">{entry.seconds}s{entry.kind === 'test' && <span className="tw-badge">Max test</span>}</td>
                       <td>{assistanceLabel(entry.assistance)}</td>
+                      <td>{setupSummary(entry)}</td>
+                      <td>{entry.ended ? (ENDED_LABELS as Record<string, string>)[entry.ended] : '-'}</td>
                       <td className="dh-mono">{entry.sets}</td>
+                      <td>
+                        <button type="button" className="tw-link" onClick={() => copySetupFrom(entry)}>
+                          Use setup<span className="tw-visually-hidden"> from {formatLocalDate(entry.date)}</span>
+                        </button>
+                      </td>
                       <td>
                         {pendingDelete === entry.id ? (
                           <span className="tw-confirm">

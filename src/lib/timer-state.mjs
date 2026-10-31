@@ -56,3 +56,64 @@ export function nextPhase({ phase, round, rounds, mode, work, rest }) {
   if (phase === "work") return { phase: "rest", round };
   return { phase: "work", round: round + 1 };
 }
+
+/**
+ * Max-attempt (guided test) sequence: optional easy warm-up holds with a short
+ * break between them, an optional timed rest, then one open-ended count-up hold.
+ * Every number is the user's own setting; nothing here is a prescription.
+ */
+export const MAX_TEST_WARMUP_SECONDS = 10;
+export const MAX_TEST_WARMUP_BREAK_SECONDS = 20;
+export const MAX_TEST_REST_CHOICES = [0, 60, 120, 180];
+export const MAX_TEST_DEFAULTS = { warmups: 2, restSeconds: 120 };
+
+export function validMaxTestPlan(plan) {
+  return (
+    !!plan &&
+    Number.isInteger(plan.warmups) &&
+    plan.warmups >= 0 &&
+    plan.warmups <= 3 &&
+    MAX_TEST_REST_CHOICES.includes(plan.restSeconds)
+  );
+}
+
+/**
+ * The step that follows `phase` in a guided test. `round` is the warm-up number
+ * just completed (or in progress). "prep" also stands for "just started".
+ * Returns { phase, round, seconds } where seconds is 0 for the count-up phase.
+ * A final "rest" is the one with round >= warmups (the rest before the max).
+ */
+export function maxTestNext({ phase, round, warmups, restSeconds }) {
+  const toMax = () => ({ phase: "test", round: Math.max(1, warmups), seconds: 0 });
+  const toRestBeforeMax = () =>
+    restSeconds > 0
+      ? { phase: "rest", round: Math.max(1, warmups), seconds: restSeconds }
+      : toMax();
+  if (phase === "idle" || phase === "prep") {
+    return warmups > 0
+      ? { phase: "work", round: 1, seconds: MAX_TEST_WARMUP_SECONDS }
+      : toRestBeforeMax();
+  }
+  if (phase === "work") {
+    return round < warmups
+      ? { phase: "rest", round, seconds: MAX_TEST_WARMUP_BREAK_SECONDS }
+      : toRestBeforeMax();
+  }
+  if (phase === "rest") {
+    return warmups > 0 && round < warmups
+      ? { phase: "work", round: round + 1, seconds: MAX_TEST_WARMUP_SECONDS }
+      : toMax();
+  }
+  return { phase: "done", round, seconds: 0 };
+}
+
+/** True for the rest that comes right before the max hold. */
+export function isRestBeforeMax({ phase, round, warmups }) {
+  return phase === "rest" && round >= Math.max(1, warmups);
+}
+
+/** Whole seconds of a finished test that are worth logging, or null under one second. */
+export function testSecondsToLog(shownSeconds) {
+  const whole = Math.floor(shownSeconds);
+  return Number.isFinite(whole) && whole >= 1 ? Math.min(3600, whole) : null;
+}
