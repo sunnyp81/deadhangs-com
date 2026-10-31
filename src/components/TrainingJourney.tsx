@@ -5,7 +5,7 @@ import TrainingWorkspace from "./TrainingWorkspace";
 import ProgressSummary from "./ProgressSummary";
 import { clearDraft, readDraft } from "../lib/journey-draft.mjs";
 import { parseTimerParams } from "../lib/timer-preset.mjs";
-import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
+import { trackFeature, trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 import type { TimerLoad, TrainingProfile } from "../lib/training-types";
 export default function TrainingJourney() {
   const [draft, setDraft] = useState<any>(null),
@@ -26,7 +26,10 @@ export default function TrainingJourney() {
     }
     trackTrainingToolView({ source: "workspace" });
     const preset = parseTimerParams(window.location.search);
-    if (preset) setRequest({ requestId: crypto.randomUUID(), ...preset });
+    if (preset) {
+      setRequest({ requestId: crypto.randomUUID(), ...preset });
+      trackFeature("preset_link_opened");
+    }
   }, []);
   const load = useCallback((p: TrainingProfile) => {
     const requestId = crypto.randomUUID();

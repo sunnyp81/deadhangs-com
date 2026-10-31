@@ -106,6 +106,8 @@ const globalSchema = {
     import { trackAffiliateClick } from '../scripts/affiliate-tracking.js';
     document.addEventListener('click', (event) => trackAffiliateClick(event));
     document.addEventListener('auxclick', (event) => trackAffiliateClick(event));
+    import { initFeatureTracking } from '../scripts/feature-tracking.js';
+    initFeatureTracking();
   </script>
 </head>
 <body>

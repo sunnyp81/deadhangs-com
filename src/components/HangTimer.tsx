@@ -16,7 +16,7 @@ import {
 } from "../lib/timer-state.mjs";
 import MaxTestSave from "./MaxTestSave";
 import type { TimerConfig, TimerLoad, TimerRunState } from "../lib/training-types";
-import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
+import { trackFeature, trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 
 const HAPTICS_KEY = "dh-timer-haptics";
 
@@ -302,6 +302,7 @@ export default function HangTimer({
   }
 
   async function copySetupLink() {
+    trackFeature("preset_copy_link");
     const url = currentSetupUrl();
     setCopyUrl(url);
     try {
@@ -646,6 +647,7 @@ export default function HangTimer({
         () => beep(880, 0.2, "square", 0.08),
       );
       onStart?.(mode);
+      if (mode === "test") trackFeature("max_test_started", { mode });
       if (analyticsSource)
         trackTrainingEvent("training_timer_started", {
           source: analyticsSource,
@@ -879,6 +881,7 @@ export default function HangTimer({
             checked={voiceOn}
             onChange={(e) => {
               if (!e.target.checked) feedbackRef.current?.cancelSpeech();
+              else trackFeature("voice_enabled");
               setVoiceOn(e.target.checked);
             }}
           />{" "}
@@ -894,7 +897,10 @@ export default function HangTimer({
                 try {
                   window.localStorage.setItem(HAPTICS_KEY, e.target.checked ? "1" : "0");
                 } catch {}
-                if (e.target.checked) vibrateFor("hang");
+                if (e.target.checked) {
+                  vibrateFor("hang");
+                  trackFeature("haptics_enabled");
+                }
               }}
             />{" "}
             Vibrate on changes
