@@ -1,12 +1,14 @@
 ---
 import Analytics from '../components/Analytics.astro';
+import PwaHead from '../components/PwaHead.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 interface Props {
   title: string;
   description?: string;
   ogImage?: string;
+  noindex?: boolean;
 }
-const { title, description = 'Dead hang training protocols, timers, and the science behind grip strength and longevity.', ogImage } = Astro.props;
+const { title, description = 'Dead hang training protocols, timers, and the science behind grip strength and longevity.', ogImage, noindex } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://deadhangs.com');
 // og/home.png is a real 1200x630 asset in public/images/og. Never point og:image at a file that does not exist.
 const ogImageURL = new URL(ogImage || '/images/og/home.png', Astro.site || 'https://deadhangs.com').href;
@@ -19,6 +21,8 @@ const ogImageURL = new URL(ogImage || '/images/og/home.png', Astro.site || 'http
   <meta name="description" content={description} />
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <PwaHead />
+  {noindex && <meta name="robots" content="noindex, follow" />}
   <link rel="canonical" href={canonicalURL.href} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />

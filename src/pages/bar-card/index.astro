@@ -1,0 +1,53 @@
+---
+import Article from '../../layouts/Article.astro';
+import QRCode from 'qrcode';
+import '../../styles/hands-free.css';
+import { TIMER_PRESETS } from '../../lib/timer-preset.mjs';
+
+const SITE = 'https://deadhangs.com';
+const cards = await Promise.all(
+  TIMER_PRESETS.map(async (preset) => {
+    const url = SITE + preset.path;
+    const qr = await QRCode.toString(url, {
+      type: 'svg',
+      margin: 4,
+      errorCorrectionLevel: 'M',
+      color: { dark: '#000000', light: '#ffffff' },
+    });
+    return { ...preset, url, qr };
+  }),
+);
+---
+<Article
+  h1={"Bar-side timer cards"}
+  subtitle={"Print a card, put it by your bar, and scan it with your phone camera. The timer opens already set up."}
+  crumbs={[{"name":"Bar-side cards"}]}
+  title="Bar-Side Timer Cards | DeadHangs.com"
+  description="Printable cards with a QR code that opens the dead hang timer with a preset session."
+  wide
+  noindex
+>
+<div class="article-body bar-cards">
+  <div class="bc-screen-only">
+    <p>One card per preset, each on its own A5 page when printed. Scanning a card opens the timer with the settings loaded. Nothing starts until you tap Start.</p>
+    <div class="bc-actions">
+      <button type="button" class="hb-btn" id="bc-print">Print the cards</button>
+      <a class="text-link" href="/training-log/#hands-free">Back to the timer</a>
+    </div>
+  </div>
+  <div class="bc-grid">
+    {cards.map((card) => (
+      <article class="bc-card" aria-labelledby={`bc-${card.id}`}>
+        <h2 id={`bc-${card.id}`}>{card.name}</h2>
+        <div class="bc-qr" role="img" aria-label={`QR code that opens the ${card.name} timer`} set:html={card.qr} />
+        <p class="bc-scan">Scan to open the timer, then tap Start.</p>
+        <p class="bc-dose">{card.dose}. {card.rest}.{card.id === 'level-1-voice' ? ' Voice cues are on.' : ''}</p>
+        <p class="bc-stop">{card.id === 'max-test' ? 'Come down under control as your grip starts to slip. Stop if anything hurts. Test no more than once every two weeks.' : 'Stop 1 to 2 seconds before your grip fails. Stop if anything hurts.'}</p>
+        <p class="bc-fine">deadhangs.com/training-log/</p>
+        {card.id !== 'max-test' && <p class="bc-fine">The Level 1 dose is common training practice, not a tested prescription.</p>}
+      </article>
+    ))}
+  </div>
+</div>
+</Article>
+<script>document.getElementById('bc-print')?.addEventListener('click', () => window.print());</script>

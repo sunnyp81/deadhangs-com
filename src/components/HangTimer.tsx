@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
-import { browserFeedbackAdapters, createFeedbackLifecycle } from "../lib/timer-feedback.mjs";
+import { browserFeedbackAdapters, createFeedbackLifecycle, hapticKindFor, supportsVibrate, vibrateFor } from "../lib/timer-feedback.mjs";
+import { buildTimerUrl } from "../lib/timer-preset.mjs";
 import {
   MAX_TEST_DEFAULTS,
   MAX_TEST_REST_CHOICES,
@@ -16,6 +17,8 @@ import {
 import MaxTestSave from "./MaxTestSave";
 import type { TimerConfig, TimerLoad, TimerRunState } from "../lib/training-types";
 import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
+
+const HAPTICS_KEY = "dh-timer-haptics";
 
 function fmtTime(s: number) {
   const seconds = Math.max(0, Math.ceil(s));
@@ -264,8 +267,54 @@ export default function HangTimer({
   const [wakeStatus, setWakeStatus] = useState("off");
   const [wakeTouched, setWakeTouched] = useState(false);
   const feedbackRef = useRef<ReturnType<typeof createFeedbackLifecycle> | null>(null);
+  const [hapticsOn, setHapticsOn] = useState(false);
+  const [hapticsSupported, setHapticsSupported] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "manual">("idle");
+  const [copyUrl, setCopyUrl] = useState("");
+  const prevPhase = useRef<typeof phase>("idle");
 
   phaseRef.current = phase;
+
+  useEffect(() => {
+    if (!supportsVibrate()) return;
+    setHapticsSupported(true);
+    try {
+      setHapticsOn(window.localStorage.getItem(HAPTICS_KEY) === "1");
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    const previous = prevPhase.current;
+    prevPhase.current = phase;
+    if (!hapticsOn || !hapticsSupported) return;
+    const kind = hapticKindFor(previous, phase);
+    if (kind) vibrateFor(kind);
+  }, [phase]);
+
+  useEffect(() => {
+    if (copyState !== "copied") return;
+    const id = window.setTimeout(() => setCopyState("idle"), 3000);
+    return () => window.clearTimeout(id);
+  }, [copyState]);
+
+  function currentSetupUrl() {
+    return buildTimerUrl(window.location.origin, {
+      config: { mode, workSeconds: work, restSeconds: rest, rounds, prepSeconds: prep },
+      voice: voiceOn,
+      maxTest: { warmups, restSeconds: maxRest },
+    });
+  }
+
+  async function copySetupLink() {
+    const url = currentSetupUrl();
+    setCopyUrl(url);
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopyState("copied");
+    } catch {
+      setCopyState("manual");
+    }
+  }
 
   useEffect(() => {
     onRunState?.({ phase, running, mode });
@@ -520,6 +569,14 @@ export default function HangTimer({
     setRest(config.restSeconds);
     setRounds(config.rounds);
     setPrep(config.prepSeconds);
+    if (load.voice !== undefined) {
+      if (!load.voice) feedbackRef.current?.cancelSpeech();
+      setVoiceOn(load.voice);
+    }
+    if (load.maxTest) {
+      setWarmups(load.maxTest.warmups);
+      setMaxRest(load.maxTest.restSeconds);
+    }
     setT(config.mode === "test" ? 0 : config.workSeconds);
     totalRef.current = config.workSeconds;
     setPhase("idle");
@@ -833,6 +890,22 @@ export default function HangTimer({
           />{" "}
           Voice
         </label>
+        {hapticsSupported && (
+          <label className="timer-toggle">
+            <input
+              type="checkbox"
+              checked={hapticsOn}
+              onChange={(e) => {
+                setHapticsOn(e.target.checked);
+                try {
+                  window.localStorage.setItem(HAPTICS_KEY, e.target.checked ? "1" : "0");
+                } catch {}
+                if (e.target.checked) vibrateFor("hang");
+              }}
+            />{" "}
+            Vibrate on changes
+          </label>
+        )}
         <label className="timer-toggle">
           <input
             type="checkbox"
@@ -846,6 +919,27 @@ export default function HangTimer({
         </label>
 
       </div>
+      {!compact && (
+        <div className="timer-share">
+          <button type="button" className="hb-btn" disabled={!hydrated} onClick={copySetupLink}>
+            {copyState === "copied" ? (
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 8.5l3.2 3.2L13 4.8" /></svg>
+            ) : (
+              <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5" /><path d="M10.5 5.5V4a1.5 1.5 0 0 0-1.5-1.5H4A1.5 1.5 0 0 0 2.5 4v5A1.5 1.5 0 0 0 4 10.5h1.5" /></svg>
+            )}
+            {copyState === "copied" ? "Link copied" : "Copy link to this setup"}
+          </button>
+          <p className="small-copy timer-share-note" role="status">
+            {copyState === "copied" ? "Link copied. Open it on any device to load these settings." : ""}
+          </p>
+          {copyState === "manual" && (
+            <label className="timer-share-manual">
+              Copy this link yourself
+              <input readOnly value={copyUrl} onFocus={(e) => e.currentTarget.select()} />
+            </label>
+          )}
+        </div>
+      )}
     </>
   );
 
@@ -1298,6 +1392,14 @@ export default function HangTimer({
         .circular-timer .timer-toggles { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 20px; }
         .circular-timer .timer-toggle { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; color: var(--color-text-muted); cursor: pointer; }
         .circular-timer .timer-toggle input { width: 20px; height: 20px; accent-color: var(--color-primary); }
+        .circular-timer .timer-share { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
+        .circular-timer .timer-share-note { min-height: 21px; margin: 0; }
+        .circular-timer .timer-share-manual { display: flex; flex-direction: column; gap: 6px; width: 100%; max-width: 360px; font-size: 14px; color: var(--color-text-muted); text-align: left; }
+        .circular-timer .timer-share-manual input { min-height: 44px; padding: 8px 10px; background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-text-faint); border-radius: var(--radius-sm); font: 14px var(--font-body); }
+        .circular-timer .hb-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 10px 18px; background: transparent; color: var(--color-text); border: 1px solid var(--color-text-faint); border-radius: var(--radius-sm); font: 600 15px var(--font-body); cursor: pointer; transition: background-color 160ms, border-color 160ms; }
+        .circular-timer .hb-btn:hover { background: var(--color-surface-2); border-color: var(--color-text-muted); }
+        .circular-timer .hb-btn:focus-visible, .circular-timer .timer-share-manual input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+        .circular-timer .hb-btn:disabled { opacity: .5; cursor: default; }
         .circular-timer .timer-more { width: 100%; max-width: 420px; border-top: 1px solid var(--color-divider); }
         .circular-timer .timer-more summary { display: flex; align-items: center; justify-content: center; min-height: 44px; cursor: pointer; font: 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); }
         .circular-timer .timer-more-body { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 8px 0 12px; }
