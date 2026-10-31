@@ -1,0 +1,40 @@
+---
+interface Crumb { name: string; href?: string }
+interface Props {
+  h1: string;
+  subtitle?: string; // authored HTML, may hold inline links
+  crumbs: Crumb[];
+  updated?: string;
+  author?: boolean;
+}
+
+const { h1, subtitle, crumbs, updated, author = false } = Astro.props;
+const trail: Crumb[] = [{ name: 'Home', href: '/' }, ...crumbs];
+---
+<header class="article-header">
+  <nav class="article-breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      {trail.map((crumb, i) => (
+        <li>
+          {i < trail.length - 1 && crumb.href
+            ? <a href={crumb.href}>{crumb.name}</a>
+            : <span aria-current="page">{crumb.name}</span>}
+        </li>
+      ))}
+    </ol>
+  </nav>
+  <h1 class="article-h1">{h1}</h1>
+  {subtitle && <p class="article-subtitle" set:html={subtitle} />}
+  {(author || updated) && (
+    <div class="article-meta">
+      {author && (
+        <a href="/about/" class="author-link">
+          <span class="author-avatar" aria-hidden="true">DH</span>
+          <span>DeadHangs Team</span>
+        </a>
+      )}
+      {author && updated && <span class="meta-sep" aria-hidden="true">·</span>}
+      {updated && <span class="updated-date">{updated}</span>}
+    </div>
+  )}
+</header>

@@ -3,25 +3,14 @@ import Article from '../layouts/Article.astro';
 ---
 
 <Article
+  h1={"Page Not Found"}
+  subtitle={"That page does not exist, or it has moved. The most useful pages on the site are below."}
+  crumbs={[{"name":"Page Not Found"}]}
   title="Page Not Found (404) | DeadHangs.com"
   description="That page does not exist on DeadHangs.com. Try the dead hang guide, the times by age page, or the world record page."
 >
-  <div class="article-header">
-    <div class="article-breadcrumb">
-      <a href="/">Home</a><span class="sep">/</span>Page Not Found
-    </div>
-  </div>
-  <div class="article-body">
-    <Fragment set:html={`<div class="content">
-    <div class="container">
-      <header class="page-header">
-        <h1>Page Not Found</h1>
-        <p class="subtitle">That page does not exist, or it has moved. The most useful pages on the site are below.</p>
-      </header>
-    </div>
-    <article class="article">
-      <div class="container">
-        <h2>Popular Pages</h2>
+<div class="article-body">
+    <Fragment set:html={`<h2>Popular Pages</h2>
         <div class="related-grid">
           <a href="/dead-hang-time-by-age/" class="related-card">
             <h3>Dead Hang Time by Age</h3>
@@ -48,9 +37,6 @@ import Article from '../layouts/Article.astro';
             <p>4, 8 and 12 week plans for building a hanging practice.</p>
           </a>
         </div>
-        <p>If you followed a link here from another site, <a href="/contact/">let us know</a> so we can fix it.</p>
-      </div>
-    </article>
-  </div>`} />
+        <p>If you followed a link here from another site, <a href="/contact/">let us know</a> so we can fix it.</p>`} />
   </div>
 </Article>

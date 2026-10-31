@@ -1,5 +1,9 @@
 /* Article layout — inherits design tokens from global.css */
 
+:root {
+  --measure: 700px;
+}
+
 .article-main {
   padding-top: 80px;
   min-height: 100vh;
@@ -21,6 +25,21 @@
   margin-bottom: 24px;
 }
 
+.article-breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.article-breadcrumb li + li::before {
+  content: "/";
+  margin: 0 8px;
+  color: var(--color-divider);
+}
+
 .article-breadcrumb a {
   color: var(--color-text-muted);
   transition: color 160ms;
@@ -30,13 +49,7 @@
   color: var(--color-primary);
 }
 
-.article-breadcrumb .sep {
-  margin: 0 8px;
-  color: var(--color-divider);
-}
-
-.article-h1,
-.page-header h1 {
+.article-h1 {
   font-family: var(--font-display);
   font-size: clamp(36px, 5vw, 56px);
   font-weight: 700;
@@ -46,16 +59,20 @@
   color: var(--color-text);
 }
 
-.article-subtitle,
-.page-header .subtitle {
+.article-subtitle {
   font-size: 18px;
   color: var(--color-text-muted);
   line-height: 1.55;
-  max-width: 720px;
+  max-width: var(--measure);
   margin: 0 0 32px;
 }
 
-.article-meta-bar,
+.article-subtitle a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .article-meta {
   display: flex;
   align-items: center;
@@ -68,10 +85,10 @@
   letter-spacing: 0.1em;
   color: var(--color-text-muted);
   text-transform: uppercase;
+  max-width: var(--measure);
   margin-bottom: 48px;
 }
 
-.article-meta-bar .author-link,
 .article-meta .author-link {
   display: inline-flex;
   align-items: center;
@@ -79,7 +96,6 @@
   color: var(--color-text-muted);
 }
 
-.article-meta-bar .author-avatar,
 .article-meta .author-avatar {
   width: 28px;
   height: 28px;
@@ -93,12 +109,10 @@
   font-weight: 600;
 }
 
-.article-meta-bar .meta-sep,
 .article-meta .meta-sep {
   color: var(--color-divider);
 }
 
-.article-meta-bar .review-badge,
 .article-meta .review-badge {
   color: var(--color-primary);
   display: inline-flex;
@@ -141,8 +155,8 @@
 }
 
 .article-body p {
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 18px;
+  line-height: 1.6;
   color: var(--color-text-muted);
   margin: 0 0 20px;
 }
@@ -172,8 +186,8 @@
 }
 
 .article-body li {
-  font-size: 16px;
-  line-height: 1.7;
+  font-size: 18px;
+  line-height: 1.6;
   margin-bottom: 8px;
 }
 
@@ -181,11 +195,25 @@
   color: var(--color-primary);
 }
 
+/* Reading measure: prose holds one column; tables, figures, charts and tools take the full container. */
+.article-body > * {
+  max-width: var(--measure);
+}
+
+.article-body > :is(table, figure, svg, pre, .table-scroll, .visual-block, .stat-row, .related-grid, .hang-calculator, .calc-widget, .equipment-options, .print-planner, .gba-scroll),
+.article-main--wide .article-body > * {
+  max-width: none;
+}
+
+/* Tables: only a table that sits directly in prose carries the spacing; one inside .table-scroll is spaced by its wrapper. */
+.article-body :not(.table-scroll) > table {
+  margin: 24px 0;
+}
+
 /* Tables */
 .article-body table {
   width: 100%;
   border-collapse: collapse;
-  margin: 24px 0;
   font-size: 14px;
   border: 1px solid var(--color-divider);
 }
@@ -601,9 +629,13 @@
     padding: 0 20px 60px;
   }
 
-  .article-meta-bar {
+  .article-meta {
     flex-wrap: wrap;
     gap: 8px;
+  }
+
+  .article-meta .meta-sep {
+    display: none;
   }
 
   .stat-row {

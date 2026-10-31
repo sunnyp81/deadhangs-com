@@ -3,6 +3,11 @@ import Article from '../../layouts/Article.astro';
 ---
 
 <Article
+  h1={"Dead Hang Safety: When to Hang and When to Stop"}
+  subtitle={"Dead hangs are low impact and suit many people. Know the exceptions, respect the warning signs and train with care."}
+  crumbs={[{"name":"Dead Hang Safety"}]}
+  updated={"Updated October 30, 2026"}
+  author
   title="Dead Hang Safety: When to Hang and When to Stop"
   description="Dead hang safety guide covering who should hang, who should modify, pain signals, equipment checks, fall prevention and return-to-training protocols."
   canonical="https://deadhangs.com/deadhang-safety/"
@@ -55,32 +60,8 @@ import Article from '../../layouts/Article.astro';
     ]
   }</script>`}
 >
-  <div class="article-header">
-    <div class="article-breadcrumb">
-      <a href="/">Home</a><span class="sep">/</span>Dead Hang Safety
-    </div>
-  </div>
-  <div class="article-body">
-    <Fragment set:html={`<div class="content">
-        
-    <div class="container">
-      <header class="page-header">
-        <h1>Dead Hang Safety: When to Hang and When to Stop</h1>
-        <p class="subtitle">Dead hangs are low impact and suit many people. Know the exceptions, respect the warning signs and train with care.</p>
-      </header>
-    </div>
-    <article class="article">
-      <div class="article-meta">
-        <a href="/about/" class="author-link">
-          <span class="author-avatar">DH</span>
-          <span>DeadHangs Team</span>
-        </a>
-        <span class="meta-sep">·</span>
-        <span class="updated-date">Updated October 30, 2026</span>
-        
-      </div><div class="container">
-
-      <h2>Dead Hangs Suit Many People</h2>
+<div class="article-body">
+    <Fragment set:html={`<h2>Dead Hangs Suit Many People</h2>
       <p>Dead hangs are low impact and suit many people. No injury-rate data comparing dead hangs with other exercises was found, so risk is not zero: shoulder, elbow and finger pain and falls from the bar can happen. You support your own bodyweight through a static hold. No ballistic movement exists. No external load beyond gravity applies. The exercise is isometric which means your joints stay in a fixed position throughout.</p>
       <p>Many healthy adults can try short supported dead hangs. The movement needs no special athletic ability. Grip the bar, hang with straight arms and breathe.</p>
       <p>Feet-supported hangs, band-assisted hangs and shortened holds all reduce load for people who currently lack the grip strength to hold their full bodyweight. Build up gradually.</p>
@@ -256,10 +237,6 @@ import Article from '../../layouts/Article.astro';
         <h4>DeadHangs.com</h4>
         <p class="author-title">Dead hang and grip training guides</p>
         <p>DeadHangs.com is an independent publishing and tools site. Where a page makes a health claim, the source is named on that page. Training numbers without a source are practical guidance, not norms. Read the <a href="/editorial-standards/">editorial standards</a> and the <a href="/about/">about page</a>.</p>
-      </div>
-    </div>
-    </article>
-        
-  </div>`} />
+      </div>`} />
   </div>
 </Article>

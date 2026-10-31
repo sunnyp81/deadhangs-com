@@ -55,15 +55,8 @@ const xTicks = [20, 30, 40, 50, 60, 70, 80, 90];
 const compare = [30, 50, 70, 90].map((a) => rows.find((r) => r.age === a)!);
 const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
 ---
-<Article title={title} description={description} schema={schema}>
-<div class="article-header">
-  <div class="article-breadcrumb"><a href="/">Home</a><span class="sep">/</span>Grip strength by age</div>
-  <h1 class="article-h1">Grip strength by age: average kg for men and women</h1>
-  <p class="article-subtitle">This page gives hand dynamometer grip force in kg by age and sex. It is not dead hang time in seconds. For hanging times see <a href="/dead-hang-time-by-age/">dead hang time by age</a>; for training see <a href="/grip-strength/">how to build grip strength</a>.</p>
-</div>
-
+<Article h1={"Grip strength by age: average kg for men and women"} subtitle={"This page gives hand dynamometer grip force in kg by age and sex. It is not dead hang time in seconds. For hanging times see <a href=\"/dead-hang-time-by-age/\">dead hang time by age</a>; for training see <a href=\"/grip-strength/\">how to build grip strength</a>."} crumbs={[{"name":"Grip strength by age"}]} updated={"Updated October 30, 2026"} title={title} description={description} schema={schema}>
 <div class="article-body gba">
-  <p class="note">Updated October 30, 2026.</p>
   <p>The figures below come from Dodds et al. (PLOS ONE 2014), a pooled analysis of 12 British studies. It covers 60,803 grip measurements from 49,964 participants aged 4 to 90 and over. Of those participants, 26,687 were female. The data are observational. Median grip peaked at <strong>51 kg in males</strong> (ages 29 to 39) and <strong>31 kg in females</strong> (ages 26 to 42) and then fell with age.</p>
 
   <div class="stat-row" role="list">
