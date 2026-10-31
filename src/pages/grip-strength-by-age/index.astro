@@ -7,17 +7,17 @@ const description = 'Grip strength by age in kg for men and women: dynamometer c
 
 const faqs: [string, string][] = [
   ['What is the average grip strength by age?',
-   'In Dodds et al. (2014, 12 British studies, 49,964 participants), median grip peaked at 51 kg in males and 31 kg in females. The full table on this page gives the 10th, 50th and 90th centile for every five years from 20 to 90. These are dynamometer measurements of grip force, not dead hang seconds.'],
+   'Dodds et al. pooled 12 British studies (2014; 49,964 participants). Median grip peaked at 51 kg in males and 31 kg in females. The full table on this page gives the 10th, 50th and 90th centile for every five years from 20 to 90. These are dynamometer measurements of grip force, not dead hang seconds.'],
   ['What is a good grip strength for a 60 year old?',
-   'In the Dodds 2014 table, the median at age 60 is 45 kg for men (10th centile 33 kg, 90th centile 56 kg) and 27 kg for women (10th centile 18 kg, 90th centile 34 kg). A reading near the median is typical for that age in those British studies. It is not a pass mark.'],
+   'In the Dodds 2014 table the median at age 60 is 45 kg for men (10th centile 33 kg; 90th centile 56 kg) and 27 kg for women (10th centile 18 kg; 90th centile 34 kg). A reading near the median is typical for that age in those British studies. It is not a pass mark.'],
   ['What is normal grip strength for women?',
    'In Dodds 2014 (12 British studies), median grip for women is 28 kg at 20, 31 kg at 30 to 40, 27 kg at 60, 24 kg at 70 and 19 kg at 80, measured on a hand dynamometer. Women peaked at a median of 31 kg between roughly ages 26 and 42.'],
   ['What grip strength is considered weak?',
-   'The EWGSOP2 sarcopenia guideline (2019) lists low grip strength as below 27 kg for men and below 16 kg for women, referenced to Dodds 2014. This is a screening cut-off used by clinicians, not a diagnosis. Dodds found weak grip, defined as 2.5 SD or more below the sex-specific peak mean, in 23.0% of males and 26.6% of females by age 80.'],
+   'The EWGSOP2 sarcopenia guideline (2019) lists low grip strength as below 27 kg for men and below 16 kg for women. The cut-offs are referenced to Dodds 2014. This is a screening cut-off used by clinicians. It is not a diagnosis. Dodds found weak grip in 23.0% of males and 26.6% of females by age 80. Weak grip was defined as 2.5 SD or more below the sex-specific peak mean.'],
   ['Does grip strength decline with age?',
-   'Yes, in cross-sectional data. In the Dodds 2014 table the male median falls from 51 kg at age 30 to 39 kg at 70, and the female median from 31 kg to 24 kg. Cross-sectional tables compare different people at different ages, so they do not show how any one person will change.'],
+   'Yes. That holds in cross-sectional data. In the Dodds 2014 table the male median falls from 51 kg at age 30 to 39 kg at 70. The female median falls from 31 kg to 24 kg. Cross-sectional tables compare different people at different ages. They do not show how any one person will change.'],
   ['Is grip strength the same as dead hang time?',
-   'No. Grip strength here means peak squeezing force on a hand dynamometer, in kg. A dead hang is a timed hold of your bodyweight. No study cited on this page converts one into the other, so this page does not.'],
+   'No. Grip strength here means peak squeezing force on a hand dynamometer, in kg. A dead hang is a timed hold of your bodyweight. No study cited on this page converts one into the other. This page does not.'],
 ];
 
 const faqSchema = {
@@ -64,7 +64,7 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
 
 <div class="article-body gba">
   <p class="note">Updated October 30, 2026.</p>
-  <p>The figures below come from a pooled analysis of 12 British studies (Dodds et al., PLOS ONE, 2014): 60,803 grip measurements from 49,964 participants, 26,687 of them female, aged 4 to 90 and over. The data are observational. Median grip peaked at <strong>51 kg in males</strong> (ages 29 to 39) and <strong>31 kg in females</strong> (ages 26 to 42), then fell with age.</p>
+  <p>The figures below come from Dodds et al. (PLOS ONE 2014), a pooled analysis of 12 British studies. It covers 60,803 grip measurements from 49,964 participants aged 4 to 90 and over. Of those participants, 26,687 were female. The data are observational. Median grip peaked at <strong>51 kg in males</strong> (ages 29 to 39) and <strong>31 kg in females</strong> (ages 26 to 42) and then fell with age.</p>
 
   <div class="stat-row" role="list">
     <div class="stat-card" role="listitem"><div class="stat-value">51 kg</div><div class="stat-label">Peak median, males</div><div class="stat-source">Dodds 2014, ages 29 to 39</div></div>
@@ -73,7 +73,7 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
   </div>
 
   <h2 id="chart">Median grip strength by age, men and women</h2>
-  <p>The chart plots the 50th centile (median) from Table 2 of Dodds 2014 for every fifth year from 20 to 90. The shaded bands run from the 10th to the 90th centile, so about 80 in 100 people of that age and sex fell inside them.</p>
+  <p>The chart plots the 50th centile (median) from Table 2 of Dodds 2014 for every fifth year from 20 to 90. The shaded bands run from the 10th to the 90th centile. About 80 in 100 people of that age and sex fell inside them.</p>
 
   <figure class="gba-figure">
     <div class="gba-scroll" tabindex="0" role="region" aria-label="Line chart of median grip strength in kg by age, scrollable on small screens">
@@ -109,7 +109,7 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
   </figure>
 
   <h2 id="table">Grip strength norms table in kg</h2>
-  <p>This is Table 2 of Dodds 2014, as printed: model estimates at each age, in kg, with the mean and standard deviation. The centile columns show how wide normal is. At age 40, for example, the male 10th centile is 38 kg and the 90th is 63 kg. On a phone, swipe the table sideways to see the women columns.</p>
+  <p>This is Table 2 of Dodds 2014 as printed. It gives model estimates at each age in kg with the mean and standard deviation. The centile columns show how wide normal is. At age 40 the male 10th centile is 38 kg and the 90th is 63 kg. Swipe the table sideways on a phone to see the women columns.</p>
   <div class="gba-scroll gba-table" tabindex="0" role="region" aria-label="Grip strength by age table, scrollable sideways on small screens">
     <table>
       <caption>Grip strength (kg) by age and sex: 10th, 50th and 90th centile, and mean (SD). Dodds et al., PLOS ONE 2014, Table 2.</caption>
@@ -138,7 +138,7 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
   <p class="note">Read the row for your age and the column for your sex. A value near the 50th centile is typical for that age in these studies; it is not a target. Grip also varies with hand size, height and the device used.</p>
 
   <h2 id="men-vs-women">Men versus women: the sex split</h2>
-  <p>Men had a higher median than women at every age in the table. The bars below set the two medians side by side at four ages, using the same kg scale from 0 to 70.</p>
+  <p>Men had a higher median than women at every age in the table. The bars below set the two medians side by side at four ages on the same kg scale from 0 to 70.</p>
 
   <figure class="gba-figure">
     <div class="split" role="img" aria-label="Paired bars of median grip strength in kg, men and women, at ages 30, 50, 70 and 90. Values are listed in the table above.">
@@ -155,14 +155,14 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
     <figcaption class="caption">Median grip (kg) at ages 30, 50, 70 and 90, men (solid bar) and women (hatched bar). Bar length is proportional to kg on a 0 to 70 scale. Source: Dodds 2014, Table 2.</figcaption>
   </figure>
 
-  <p>Within each sex the spread is wide, and the ranges overlap: at age 40 the female 90th centile is 39 kg and the male 10th centile is 38 kg. Compare yourself with your own sex and age row, not across sexes.</p>
+  <p>Within each sex the spread is wide and the ranges overlap: at age 40 the female 90th centile is 39 kg and the male 10th centile is 38 kg. Compare yourself with your own sex and age row instead of across sexes.</p>
 
   <h2 id="decline">How grip strength changes after the peak</h2>
-  <p>In the Dodds table the male median falls from 51 kg at age 30 to 39 kg at age 70, and the female median from 31 kg to 24 kg. That is an average difference between younger and older groups measured at one time, not a measured loss within individuals. The same paper found weak grip (2.5 SD or more below the sex-specific peak mean) in 23.0% of males and 26.6% of females by age 80.</p>
-  <p>Large cohort studies have linked lower grip with higher mortality risk. In the Lancet's PURE analysis (Leong et al., 2015; 139,691 adults aged 35 to 70 in 17 countries), each 5 kg lower grip strength was associated with a 16% higher risk of death from any cause. That is an association in observational data, not proof that raising grip strength lengthens life.</p>
+  <p>In the Dodds table the male median falls from 51 kg at age 30 to 39 kg at age 70. The female median falls from 31 kg to 24 kg. That is an average difference between younger and older groups measured at one time. It is not a measured loss within individuals. The same paper found weak grip (2.5 SD or more below the sex-specific peak mean) in 23.0% of males and 26.6% of females by age 80.</p>
+  <p>Large cohort studies have linked lower grip with higher mortality risk. The Lancet's PURE analysis (Leong et al. 2015) followed 139,691 adults aged 35 to 70 in 17 countries. Each 5 kg lower grip strength was associated with a 16% higher risk of death from any cause. That is an association in observational data. It is not proof that raising grip strength lengthens life.</p>
 
   <h2 id="weak">What counts as weak grip strength</h2>
-  <p>The European consensus on sarcopenia (EWGSOP2, Cruz-Jentoft et al., Age and Ageing, 2019) lists low grip strength as <strong>below 27 kg for men and below 16 kg for women</strong>, referenced to the Dodds data. Clinicians use these as screening cut-offs. They are not a diagnosis, and a single low reading can reflect pain, fatigue, arthritis or poor technique.</p>
+  <p>The European consensus on sarcopenia (EWGSOP2; Cruz-Jentoft et al. 2019 in Age and Ageing) lists low grip strength as <strong>below 27 kg for men and below 16 kg for women</strong>. The cut-offs are referenced to the Dodds data. Clinicians use these as screening cut-offs. They are not a diagnosis. A single low reading can reflect pain, fatigue, arthritis or poor technique.</p>
 
   <figure class="gba-figure">
     <div class="ruler" role="img" aria-label="Kg scale from 0 to 70 with the EWGSOP2 low-grip cut-offs marked at 16 kg for women and 27 kg for men, and the peak medians at 31 kg for women and 51 kg for men.">
@@ -181,28 +181,28 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
     <figcaption class="caption">Grip force scale in kg. Hatched zone: below the EWGSOP2 female cut-off of 16 kg. Solid zone: between 16 kg and the male cut-off of 27 kg. Cut-offs from Cruz-Jentoft et al., Age and Ageing 2019, Table 3.</figcaption>
   </figure>
 
-  <p>If a reading is below these values and you have noticed weakness, dropping things or difficulty with daily tasks, mention it to a GP or physiotherapist. This page is not medical advice.</p>
+  <p>Mention it to a GP or physiotherapist if a reading is below these values and you have noticed weakness, dropping things or difficulty with daily tasks. This page is not medical advice.</p>
 
   <h2 id="other-datasets">Other large grip strength datasets</h2>
-  <p>Different studies use different devices and protocols, so their numbers do not line up exactly with Dodds. Three others are worth knowing:</p>
+  <p>Different studies use different devices and protocols. Their numbers do not line up exactly with Dodds. Three others are worth knowing:</p>
   <ul>
-    <li><strong>International, 2025.</strong> A systematic review of 100 observational studies covering 2,405,863 adults (51.9% female) aged 20 to 100 and over, from 69 countries and regions, tested from 2000 onward. Absolute grip peaked at ages 30 to 39: 49.7 kg in males and 29.7 kg in females (Tomkinson et al., J Sport Health Sci 2025).</li>
+    <li><strong>International, 2025.</strong> A systematic review of 100 observational studies covered 2,405,863 adults (51.9% female) aged 20 to 100 and over from 69 countries and regions tested from 2000 onward. Absolute grip peaked at ages 30 to 39: 49.7 kg in males and 29.7 kg in females (Tomkinson et al. in J Sport Health Sci 2025).</li>
     <li><strong>United States, NIH Toolbox, 2018.</strong> In 1,232 US adults aged 18 to 85, mean grip ranged from 49.7 kg (dominant hand, men aged 25 to 29) to 18.7 kg (non-dominant hand, women aged 75 to 79) (Wang et al., JOSPT 2018).</li>
     <li><strong>United States, NHANES 2011 to 2014.</strong> In 13,676 participants aged 6 to 80, mean grip ranged from 50.3 kg (dominant hand, men aged 30 to 34) to 10.0 kg (non-dominant hand, girls aged 6) (Wang et al., J Hand Ther 2019).</li>
   </ul>
-  <p>The broad pattern agrees: a peak in the 30s, and men above women at every age group. Each source is a different population, so use one table at a time rather than mixing them.</p>
+  <p>The broad pattern agrees: a peak in the 30s and men above women at every age group. Each source is a different population. Use one table at a time rather than mixing them.</p>
 
   <h2 id="how-to-test">How to test grip strength</h2>
-  <p>Clinics and research studies use a hand dynamometer. The norms above were collected that way, so only a dynamometer reading can be compared with them. A bathroom scale, a dead hang or a bar hold cannot.</p>
+  <p>Clinics and research studies use a hand dynamometer. The norms above were collected that way. Only a dynamometer reading can be compared with them. A bathroom scale, a dead hang or a bar hold cannot.</p>
   <ol>
     <li>Use a calibrated hand dynamometer and follow the manufacturer's instructions for grip width and posture.</li>
     <li>Sit in a chair with your back supported and your arm in the same position each time.</li>
     <li>Squeeze as hard as you can, without jerking, and read the peak value in kg. Allow a rest between attempts.</li>
     <li>Test both hands, make several attempts, and note the best reading for each.</li>
-    <li>Repeat at the same time of day, with the same device, if you are tracking change.</li>
+    <li>Repeat at the same time of day with the same device if you are tracking change.</li>
   </ol>
   <p>The Dodds figures use the maximum across trials and both hands, so compare your best reading, not your average. A reading from a different device or protocol may not be directly comparable.</p>
-  <p>A dead hang tests something different: how long you can support your bodyweight. Both depend on grip, but the two measures are not interchangeable. If you want the timed version, see <a href="/dead-hang-time-by-age/">dead hang time by age</a>, and for building grip see the grip strength training guide.</p>
+  <p>A dead hang tests something different: how long you can support your bodyweight. Both depend on grip, but the two measures are not interchangeable. See <a href="/dead-hang-time-by-age/">dead hang time by age</a> for the timed version and the grip strength training guide for building grip.</p>
 
   <h2 id="faq">Grip strength by age: frequently asked questions</h2>
   {faqs.map(([q, a]) => (<div class="faq"><h3>{q}</h3><p>{a}</p></div>))}
