@@ -95,50 +95,7 @@ import Article from '../../layouts/Article.astro';
         <p>Your forearm has around 20 muscles organized into two groups. The anterior compartment (flexors) closes your hand and curls the wrist inward. The posterior compartment (extensors) opens your hand and extends the wrist backward. Balanced forearm training targets both groups.</p>
 
         <div class="visual-block">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 380" width="660" height="380" style="max-width:660px;width:100%;height:auto" role="img" aria-label="Forearm anatomy diagram showing flexor and extensor muscle groups">
-            
-
-            <!-- Left forearm: Flexors (anterior) -->
-            <text x="165" y="30" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="16" font-weight="700">Flexors (Front)</text>
-            <text x="165" y="48" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Close the hand &amp; curl the wrist</text>
-
-            <!-- Forearm shape -->
-            <path d="M110 70 Q100 120 95 180 Q90 240 92 280 Q94 310 100 330 L110 340 Q140 348 170 348 L185 340 Q195 330 200 310 Q206 280 208 240 Q210 180 205 120 Q200 70 190 70 Z" fill="#0e1420" stroke="#00e5ff" stroke-width="2"/>
-
-            <!-- Muscle layers -->
-            <path d="M120 90 Q115 130 113 180 Q112 230 114 270 Q116 300 122 320 L130 328 Q145 332 160 332 L168 328 Q175 318 178 290 Q182 250 183 200 Q184 150 180 110 Q177 90 170 85 Q150 82 130 85 Z" fill="#00e5ff" opacity="0.25"/>
-
-            <!-- Labels -->
-            <text x="150" y="140" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Flexor Digitorum</text>
-            <text x="150" y="153" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Superficialis</text>
-            <text x="150" y="200" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Flexor Digitorum</text>
-            <text x="150" y="213" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Profundus</text>
-            <text x="150" y="270" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Flexor Carpi</text>
-            <text x="150" y="283" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Radialis / Ulnaris</text>
-
-            <!-- Right forearm: Extensors (posterior) -->
-            <text x="495" y="30" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="16" font-weight="700">Extensors (Back)</text>
-            <text x="495" y="48" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Open the hand &amp; extend the wrist</text>
-
-            <!-- Forearm shape -->
-            <path d="M440 70 Q430 120 425 180 Q420 240 422 280 Q424 310 430 330 L440 340 Q470 348 500 348 L515 340 Q525 330 530 310 Q536 280 538 240 Q540 180 535 120 Q530 70 520 70 Z" fill="#0e1420" stroke="#ffb020" stroke-width="2"/>
-
-            <!-- Muscle layers -->
-            <path d="M450 90 Q445 130 443 180 Q442 230 444 270 Q446 300 452 320 L460 328 Q475 332 490 332 L498 328 Q505 318 508 290 Q512 250 513 200 Q514 150 510 110 Q507 90 500 85 Q480 82 460 85 Z" fill="#ffb020" opacity="0.25"/>
-
-            <!-- Labels -->
-            <text x="480" y="140" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Extensor Digitorum</text>
-            <text x="480" y="153" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Communis</text>
-            <text x="480" y="200" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Extensor Carpi</text>
-            <text x="480" y="213" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Radialis</text>
-            <text x="480" y="270" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="10" font-weight="600">Brachioradialis</text>
-
-            <!-- Legend -->
-            <rect x="40" y="358" width="14" height="14" rx="3" fill="#00e5ff" opacity="0.3" stroke="#00e5ff" stroke-width="1"/>
-            <text x="60" y="370" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Flexors: gripping and wrist curls</text>
-            <rect x="340" y="358" width="14" height="14" rx="3" fill="#ffb020" opacity="0.3" stroke="#ffb020" stroke-width="1"/>
-            <text x="360" y="370" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Extensors: reverse curls, wrist extension</text>
-          </svg>
+          <div class="dg-comps" role="group" aria-label="Forearm anatomy diagram showing flexor and extensor muscle groups"><div class="dg-comp dg-flex"><p class="dg-title">Flexors (Front)</p><p class="dg-sub">Close the hand &amp; curl the wrist</p><div class="dg-comp-body"><svg viewBox="84 62 132 296" aria-hidden="true" focusable="false"><path d="M110 70 Q100 120 95 180 Q90 240 92 280 Q94 310 100 330 L110 340 Q140 348 170 348 L185 340 Q195 330 200 310 Q206 280 208 240 Q210 180 205 120 Q200 70 190 70 Z" fill="#0e1420" stroke="#00e5ff" stroke-width="2"/><path d="M120 90 Q115 130 113 180 Q112 230 114 270 Q116 300 122 320 L130 328 Q145 332 160 332 L168 328 Q175 318 178 290 Q182 250 183 200 Q184 150 180 110 Q177 90 170 85 Q150 82 130 85 Z" fill="#00e5ff" opacity="0.25"/></svg><ul class="dg-muscles"><li>Flexor Digitorum Superficialis</li><li>Flexor Digitorum Profundus</li><li>Flexor Carpi Radialis / Ulnaris</li></ul></div><p class="dg-legend"><span class="dg-swatch"></span>Flexors: gripping and wrist curls</p></div><div class="dg-comp dg-ext"><p class="dg-title">Extensors (Back)</p><p class="dg-sub">Open the hand &amp; extend the wrist</p><div class="dg-comp-body"><svg viewBox="414 62 132 296" aria-hidden="true" focusable="false"><path d="M440 70 Q430 120 425 180 Q420 240 422 280 Q424 310 430 330 L440 340 Q470 348 500 348 L515 340 Q525 330 530 310 Q536 280 538 240 Q540 180 535 120 Q530 70 520 70 Z" fill="#0e1420" stroke="#ffb020" stroke-width="2"/><path d="M450 90 Q445 130 443 180 Q442 230 444 270 Q446 300 452 320 L460 328 Q475 332 490 332 L498 328 Q505 318 508 290 Q512 250 513 200 Q514 150 510 110 Q507 90 500 85 Q480 82 460 85 Z" fill="#ffb020" opacity="0.25"/></svg><ul class="dg-muscles"><li>Extensor Digitorum Communis</li><li>Extensor Carpi Radialis</li><li>Brachioradialis</li></ul></div><p class="dg-legend"><span class="dg-swatch"></span>Extensors: reverse curls, wrist extension</p></div></div>
           <p class="caption">The forearm's two muscle compartments. Balanced training requires exercises for both flexors and extensors.</p>
         </div>
 

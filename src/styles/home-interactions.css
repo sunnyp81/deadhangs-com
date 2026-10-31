@@ -66,5 +66,10 @@
 .practice-graph-stage > * { flex: 1 1 auto; }
 .practice-graph-summary { min-height: 22px; }
 @media (min-width: 1000px) { .practice-graph-stage { min-height: 360px; } }
+/* Reserve the log section before it hydrates. Heights are the shortest rendered size in each width band (measured 320 to 1920, fresh and returning), so the section can only grow slightly and never leaves a gap. */
+#training-log { min-height: 860px; }
+@media (max-width: 480px) { #training-log { min-height: 1060px; } }
 .has-log #training-log { min-height: 1330px; }
-@media (max-width: 768px) { .has-log #training-log { min-height: 1650px; } }
+@media (max-width: 900px) { .has-log #training-log { min-height: 1390px; } }
+@media (max-width: 768px) { .has-log #training-log { min-height: 1340px; } }
+@media (max-width: 480px) { .has-log #training-log { min-height: 1650px; } }
