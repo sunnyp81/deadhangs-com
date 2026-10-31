@@ -1,5 +1,5 @@
 // Branded OG cards (1200x630). Run after `npm run build`: node scripts/generate-og.mjs
-// Reads each built page's <h1>, writes public/images/og/<slug>.png (+ .webp for in-page banners).
+// Reads each built page's <h1>, writes public/images/og/<slug>.png.
 import fs from 'node:fs';
 import path from 'node:path';
 import satori from 'satori';
@@ -8,7 +8,6 @@ import sharp from 'sharp';
 
 const DIST = 'dist';
 const OUT = 'public/images/og';
-const WEBP = new Set(['deadhang-guide', 'deadhang-variations', 'grip-strength', 'how-to-deadhang', 'home']);
 const C = { bg: '#080c14', surface: '#0e1420', text: '#eef2ff', muted: '#8090b0', cyan: '#00e5ff', divider: '#1c2840' };
 const f = (n) => fs.readFileSync(path.join('scripts/og-fonts', n));
 const fonts = [
@@ -66,6 +65,5 @@ for (const [slug, file] of pages) {
   const svg = await satori(card(slug, h1), { width: 1200, height: 630, fonts });
   const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
   await sharp(png).png({ palette: true, quality: 90, compressionLevel: 9 }).toFile(path.join(OUT, `${slug}.png`));
-  if (WEBP.has(slug)) await sharp(png).webp({ quality: 88 }).toFile(path.join(OUT, `${slug}.webp`));
   console.log(slug, '|', h1);
 }

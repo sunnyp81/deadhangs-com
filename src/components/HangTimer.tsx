@@ -148,8 +148,8 @@ function Seg({
         background: "var(--color-bg)",
         border: "1px solid var(--color-divider)",
         borderRadius: "var(--radius-sm)",
-        padding: 3,
-        gap: 2,
+        padding: 4,
+        gap: 4,
       }}
     >
       {options.map(([v, l]) => (

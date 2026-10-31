@@ -151,7 +151,6 @@ import '../styles/home-interactions.css';
         <SignupForm client:visible dark={true} />
       </div>
     </div>
-    <div class="dh-heavy" style="position:absolute;bottom:-80px;right:-40px;font-size:380px;color:rgba(0,0,0,0.06);line-height:0.8;pointer-events:none;letter-spacing:-0.05em;">HANG</div>
   </section>
 
   <!-- SOURCES -->
@@ -166,6 +165,9 @@ import '../styles/home-interactions.css';
   <Footer />
 
   <style>
+    /* Decorative word behind the signup copy: generated content with empty alt text, so it is not text for assistive tech or contrast checks. */
+    #signup::after { content: "HANG" / ""; position: absolute; bottom: -.2em; right: -.1em; z-index: 0; font: 900 clamp(140px, 30vw, 380px)/.8 var(--font-heavy); letter-spacing: -.05em; color: rgba(0,0,0,.06); pointer-events: none; }
+    #signup > div { position: relative; z-index: 1; }
     .stat-cell {
       background: var(--color-bg);
       padding: 32px 24px;

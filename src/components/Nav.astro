@@ -13,7 +13,8 @@ const links = [
     <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="2.5" fill="var(--color-primary)"/><rect x="9" y="5" width="2" height="6" fill="var(--color-text)"/><circle cx="10" cy="13" r="3" fill="var(--color-text)"/></svg>
     <span>deadhangs<span class="brand-dot">.com</span></span>
   </a>
-  <button class="menu-toggle" aria-controls="primary-navigation" aria-expanded="false" type="button" aria-label="Toggle navigation"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+  <button class="menu-toggle" aria-controls="primary-navigation" aria-expanded="false" type="button" aria-label="Open navigation"><span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span></button>
+  <div class="nav-scrim" hidden></div>
   <nav id="primary-navigation" aria-label="Main navigation">
     {links.map(link => <a href={link.href} aria-current={Astro.url.pathname === link.href ? 'page' : undefined}>{link.label}</a>)}
   </nav>
@@ -21,22 +22,43 @@ const links = [
 <script>
   const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle')!;
   const nav = document.querySelector<HTMLElement>('#primary-navigation')!;
-  const mobile = matchMedia('(max-width: 768px)');
-  function setOpen(open: boolean) {
-    toggle.setAttribute('aria-expanded', String(open));
-    nav.hidden = mobile.matches && !open;
-  }
+  const scrim = document.querySelector<HTMLElement>('.nav-scrim')!;
   const header = document.querySelector<HTMLElement>('.site-header')!;
+  const mobile = matchMedia('(max-width: 768px)');
+  const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
+  function setBackground(open: boolean) {
+    // Everything outside the header is inert while the sheet is open, so focus cannot leave it.
+    Array.from(document.body.children).forEach(el => {
+      if (el === header || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+      (el as HTMLElement).inert = open;
+    });
+    document.documentElement.classList.toggle('nav-open', open);
+  }
+  function setOpen(open: boolean, returnFocus = false) {
+    const active = open && mobile.matches;
+    toggle.setAttribute('aria-expanded', String(active));
+    toggle.setAttribute('aria-label', active ? 'Close navigation' : 'Open navigation');
+    nav.hidden = mobile.matches && !active;
+    scrim.hidden = !active;
+    setBackground(active);
+    if (active) nav.querySelector<HTMLElement>('a')?.focus();
+    else if (returnFocus) toggle.focus();
+  }
   function updateHeader() { header.classList.toggle('is-scrolled', window.scrollY > 20 || location.pathname !== '/'); }
   updateHeader();
   window.addEventListener('scroll', updateHeader, { passive: true });
   setOpen(false);
   mobile.addEventListener('change', () => setOpen(false));
-  toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+  toggle.addEventListener('click', () => setOpen(!isOpen(), true));
+  scrim.addEventListener('click', () => setOpen(false, true));
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
-      setOpen(false); toggle.focus();
-    }
+    if (!isOpen()) return;
+    if (event.key === 'Escape') { event.preventDefault(); setOpen(false, true); return; }
+    if (event.key !== 'Tab') return;
+    const stops = [toggle, ...Array.from(nav.querySelectorAll<HTMLElement>('a'))];
+    const first = stops[0], last = stops[stops.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   });
   nav.addEventListener('click', event => { if ((event.target as Element).closest('a')) setOpen(false); });
 </script>
