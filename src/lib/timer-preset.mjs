@@ -137,7 +137,7 @@ export const TIMER_PRESETS = [
   {
     id: "level-1-voice",
     name: "Level 1 session with voice cues",
-    summary: "The same Level 1 session, with spoken cues switched on for when you cannot look at the screen.",
+    summary: "The same Level 1 session with spoken cues switched on for when you cannot look at the screen.",
     dose: "3 hangs of 15 seconds",
     rest: "90 seconds of rest between hangs",
     settings: { config: LEVEL_1, voice: true },
