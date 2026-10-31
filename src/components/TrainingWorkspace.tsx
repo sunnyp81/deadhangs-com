@@ -548,7 +548,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
         <h3 className="tw-panel-title">Training log</h3>
         <p className="tw-lede">
           Your log entries are stored in this browser on this device only. No account, no server upload of entries.
-          Clearing your browser data removes it, and it will not appear on your other devices.
+          Clearing your browser data removes it. It will not appear on your other devices.
         </p>
 
         {storageState === 'unavailable' && (
