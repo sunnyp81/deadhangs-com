@@ -1,4 +1,6 @@
 /* Hands-free section on /training-log/ and the printable bar cards. Sans labels only; mono stays on real data. */
+.hands-free .section-dial { margin-top: 64px; }
+.hands-free .section-dial + h2 { margin-top: 0; }
 .hands-free .hf-lead { max-width: 62ch; }
 .hands-free .hf-presets { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .hands-free .hf-presets li { margin: 0; padding: 0; }

@@ -8,6 +8,7 @@ import HangCalculator from '../components/HangCalculator';
 import PracticeGraph from '../components/PracticeGraph';
 import GearFinder from '../components/GearFinder';
 import SignupForm from '../components/SignupForm';
+import DialMark from '../components/DialMark';
 import '../styles/global.css';
 import '../styles/home-interactions.css';
 ---
@@ -39,7 +40,6 @@ import '../styles/home-interactions.css';
   <section id="science" style="background:var(--color-surface);border-top:1px solid var(--color-divider);border-bottom:1px solid var(--color-divider);padding:80px 64px;">
     <div style="max-width:1200px;margin:0 auto;">
       <div class="scroll-reveal" style="margin-bottom:40px;">
-        <div class="dh-eyebrow" style="margin-bottom:12px;">· YOUR BASELINE / YOUR PROGRESS</div>
         <h2 class="dh-display" style="font-size:40px;font-weight:500;margin:0;max-width:780px;">The useful benchmark is <span style="color:var(--color-primary);">your last comparable hang.</span></h2>
         <p style="max-width:720px;color:var(--color-text-muted);margin-top:24px;">Use the same bar, grip and assistance when comparing sessions. Record what you actually held in the log. The timer only times a hold and saves nothing automatically.</p>
       </div>
@@ -52,7 +52,7 @@ import '../styles/home-interactions.css';
           { n: '02', title: 'Practice', detail: 'Choose your intervals' },
           { n: '03', title: 'Record', detail: 'Log actual hold time' },
           { n: '04', title: 'Compare', detail: 'Like-for-like sessions' },
-        ].map(item => <div class="stat-cell"><div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">{item.n}</div><div class="dh-display" style="font-weight:600;font-size:14px;margin-top:12px;">{item.title}</div><div class="dh-mono" style="font-size:11px;color:var(--color-text-faint);margin-top:4px;">{item.detail}</div></div>)}
+        ].map(item => <div class="stat-cell"><div class="dh-heavy" style="font-size:56px;color:var(--color-primary);line-height:1;">{item.n}</div><div class="dh-display" style="font-weight:600;font-size:14px;margin-top:12px;">{item.title}</div><div style="font-size:13px;color:var(--color-text-muted);margin-top:4px;">{item.detail}</div></div>)}
       </div>
     </div>
   </section>
@@ -60,25 +60,21 @@ import '../styles/home-interactions.css';
   <!-- THE CASE: three pillars -->
   <section id="protocol" style="padding:120px 64px;background:var(--color-bg);">
     <div style="max-width:1200px;margin:0 auto;">
-      <div class="dh-eyebrow" style="margin-bottom:16px;">§ II · Your practice</div>
       <h2 class="dh-heavy" style="font-size:96px;margin:0 0 80px;max-width:900px;line-height:0.95;">
         One bar.<br/><span style="color:var(--color-text-muted);">Three ways</span> to start.
       </h2>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;">
         {[
-          { n: "01", title: "Learn the setup", body: "Choose a secure bar, a comfortable grip and assistance you can control. Read the setup guide before your first session.", tag: "FOUNDATIONS", href: "/how-to-deadhang/" },
-          { n: "02", title: "Make a plan", body: "Use a 4, 8 or 12-week framework to organize practice and review your progress. Adjust the workload to your own starting point.", tag: "CONSISTENCY", href: "/training-programs/" },
-          { n: "03", title: "Find your bar", body: "Compare doorway, wall-mounted and freestanding setups. Check fit, installation requirements and the manufacturer’s load rating.", tag: "EQUIPMENT", href: "/equipment-guide/" },
+          { n: "01", title: "Learn the setup", body: "Choose a secure bar, a comfortable grip and assistance you can control. Read the setup guide before your first session.", tag: "Foundations", href: "/how-to-deadhang/" },
+          { n: "02", title: "Make a plan", body: "Use a 4, 8 or 12-week framework to organize practice and review your progress. Adjust the workload to your own starting point.", tag: "Consistency", href: "/training-programs/" },
+          { n: "03", title: "Find your bar", body: "Compare doorway, wall-mounted and freestanding setups. Check fit, installation requirements and the manufacturer’s load rating.", tag: "Equipment", href: "/equipment-guide/" },
         ].map((p, i) => (
           <div class={`scroll-reveal ${i === 1 ? 'scroll-reveal-d1' : i === 2 ? 'scroll-reveal-d2' : ''}`}>
-            <div style="position:relative;padding-top:24px;">
-              <div class="dh-mono" style={`position:absolute;top:0;left:0;font-size:12px;color:var(--color-primary);letter-spacing:.18em;`}>
-                /// {p.n}
-              </div>
+            <div style="position:relative;">
               <div class="dh-eyebrow" style="margin-bottom:12px;">{p.tag}</div>
               <h3 class="dh-display" style="font-size:34px;font-weight:600;margin:0 0 12px;">{p.title}</h3>
               <p style="font-size:16px;color:var(--color-text-muted);margin:0 0 12px;line-height:1.6;">{p.body}</p>
-              <a href={p.href} style="font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-primary);">Read more →</a>
+              <a href={p.href} style="font-size:14px;font-weight:600;color:var(--color-primary);">Read more →</a>
             </div>
           </div>
         ))}
@@ -97,7 +93,7 @@ import '../styles/home-interactions.css';
     <div style="max-width:1200px;margin:0 auto;">
       <div class="scroll-reveal">
         <div style="text-align:center;margin-bottom:48px;">
-          <div class="dh-eyebrow" style="margin-bottom:12px;">· MODULE 03 / PERSONAL PROGRESS</div>
+          <DialMark size={30} className="section-dial is-centered" />
           <h2 class="dh-display" style="font-size:44px;font-weight:600;margin:0;line-height:1.1;">
             Your numbers. Your next target.
           </h2>
@@ -113,7 +109,6 @@ import '../styles/home-interactions.css';
   <section style="padding:80px 64px;background:var(--color-surface);border-top:1px solid var(--color-divider);">
     <div style="max-width:1200px;margin:0 auto;">
       <div class="scroll-reveal" style="text-align:center;margin-bottom:40px;">
-        <div class="dh-eyebrow" style="margin-bottom:12px;">· START LEARNING</div>
         <h2 class="dh-display" style="font-size:36px;font-weight:600;margin:0;">Go deeper.</h2>
       </div>
       <div class="scroll-reveal scroll-reveal-d3 link-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">

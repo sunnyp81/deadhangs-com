@@ -12,7 +12,6 @@ export default function GearFinder() {
   const option = options.find((item) => item.id === selected)!;
   return <section className="gear-finder" aria-labelledby={`${uid}-title`}>
     <div>
-      <p className="dh-eyebrow">Equipment matcher</p>
       <h2 id={`${uid}-title`} className="dh-display">Find a bar that fits your space.</h2>
       <p>Choose the setup you are considering. The guide explains the trade-offs before you buy.</p>
       <fieldset className="gear-finder-options">

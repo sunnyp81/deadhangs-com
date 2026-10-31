@@ -7,7 +7,7 @@
 .gear-finder-options { display: flex; flex-wrap: wrap; gap: 10px 12px; margin: 28px 0 16px; }
 .practice-graph-controls fieldset, .gear-finder-options { border: 0; padding: 0; min-width: 0; }
 .practice-graph-controls fieldset { display: flex; flex-wrap: wrap; gap: 8px 12px; }
-.practice-graph-controls legend { padding: 0; margin-bottom: 10px; font: 12px var(--font-mono); color: var(--color-text-muted); letter-spacing: .12em; text-transform: uppercase; }
+.practice-graph-controls legend { padding: 0; margin-bottom: 10px; font: 13px var(--font-body); color: var(--color-text-muted); }
 .practice-graph-controls label, .gear-finder-options label { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--color-text-muted); font-size: 13px; cursor: pointer; }
 .practice-graph-controls label { padding: 0 16px 0 12px; border: 1px solid var(--color-divider); background: var(--color-surface); }
 .practice-graph-controls label:has(input:checked) { border-color: var(--color-primary); color: var(--color-text); }
@@ -30,7 +30,7 @@
 .practice-graph-empty .practice-graph-empty-title { color: var(--color-text); font: 600 20px var(--font-display); }
 .gear-finder { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr); gap: 32px; padding: clamp(20px, 4vw, 36px); }
 .gear-finder-options label { padding: 9px 12px; border: 1px solid var(--color-border); background: var(--color-surface); transition: border-color 160ms ease, color 160ms ease, transform 160ms ease; }
-.gear-finder-options legend { flex-basis: 100%; padding: 0; margin-bottom: 10px; font: 12px var(--font-mono); color: var(--color-text-muted); letter-spacing: .12em; text-transform: uppercase; }
+.gear-finder-options legend { flex-basis: 100%; padding: 0; margin-bottom: 10px; font: 13px var(--font-body); color: var(--color-text-muted); }
 .gear-finder-options label:hover, .gear-finder-options label.is-selected { border-color: var(--color-primary); color: var(--color-text); transform: translateY(-1px); }
 .gear-finder-result { border-left: 1px solid var(--color-divider); padding-left: 32px; }
 .gear-finder-result > p:not(.dh-eyebrow):not(.small-copy) { color: var(--color-text-muted); line-height: 1.6; }
@@ -74,5 +74,5 @@
 @media (max-width: 768px) { .has-log #training-log { min-height: 1340px; } }
 @media (max-width: 480px) { .has-log #training-log { min-height: 1650px; } }
 .practice-graph-controls .practice-graph-setup { display: flex; flex-direction: column; gap: 10px; min-width: min(100%, 260px); max-width: 100%; }
-.practice-graph-controls .practice-graph-setup label { display: block; min-height: 0; font: 12px var(--font-mono); color: var(--color-text-muted); letter-spacing: .12em; text-transform: uppercase; }
+.practice-graph-controls .practice-graph-setup label { display: block; min-height: 0; font: 13px var(--font-body); color: var(--color-text-muted); }
 .practice-graph-controls .practice-graph-setup select { min-height: 44px; max-width: 100%; }

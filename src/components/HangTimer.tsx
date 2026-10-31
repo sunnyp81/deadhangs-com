@@ -99,11 +99,9 @@ function Stepper({
     >
       <span
         style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 10,
-          letterSpacing: ".14em",
+          fontFamily: "var(--font-body)",
+          fontSize: 12,
           color: "var(--color-text-muted)",
-          textTransform: "uppercase" as const,
         }}
       >
         {label}
@@ -184,10 +182,8 @@ function Seg({
               v === value
                 ? "var(--color-text-inverse)"
                 : "var(--color-text-muted)",
-            fontFamily: "var(--font-mono)",
-            fontSize: 11,
-            letterSpacing: ".1em",
-            textTransform: "uppercase" as const,
+            fontFamily: "var(--font-body)",
+            fontSize: 12,
             cursor: "pointer",
             fontWeight: 600,
             transition: "background-color 160ms cubic-bezier(0.16,1,0.3,1), color 160ms cubic-bezier(0.16,1,0.3,1)",
@@ -708,20 +704,20 @@ export default function HangTimer({
   const phaseLabel =
     mode === "test"
       ? {
-          idle: "READY",
-          prep: "GET READY",
-          work: `WARM-UP ${round}/${warmups}`,
-          rest: restBeforeMax ? "REST BEFORE MAX" : "REST",
-          test: "MAX HOLD",
-          done: "COMPLETE",
+          idle: "Ready",
+          prep: "Get ready",
+          work: `Warm-up ${round}/${warmups}`,
+          rest: restBeforeMax ? "Rest before max" : "Rest",
+          test: "Max hold",
+          done: "Complete",
         }[phase]
       : {
-          idle: "READY",
-          prep: "GET READY",
-          work: "HANG",
+          idle: "Ready",
+          prep: "Get ready",
+          work: "Hang",
           rest: "REST",
-          test: "TEST",
-          done: "COMPLETE",
+          test: "Test",
+          done: "Complete",
         }[phase];
   const phaseColor =
     phase === "rest"
@@ -856,13 +852,11 @@ export default function HangTimer({
     <>
       <div
         style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: 11,
-          letterSpacing: ".1em",
+          fontFamily: "var(--font-body)",
+          fontSize: 12,
           color: "var(--color-text-faint)",
           textAlign: "center",
           maxWidth: 360,
-          textTransform: "uppercase" as const,
           width: "100%",
         }}
       >
@@ -968,11 +962,9 @@ export default function HangTimer({
       >
         <div
           style={{
-            fontFamily: "var(--font-mono)",
+            fontFamily: "var(--font-body)",
             fontSize: 13,
-            letterSpacing: ".12em",
             fontWeight: 700,
-            textTransform: "uppercase" as const,
             color: phaseColor,
             transition: "color 300ms",
             animation:
@@ -982,7 +974,7 @@ export default function HangTimer({
           }}
           aria-live="polite"
         >
-          {mode === "test" ? phaseLabel : `${phaseLabel} · ROUND ${round}/${rounds}`}
+          {mode === "test" ? phaseLabel : `${phaseLabel} · Round ${round}/${rounds}`}
         </div>
         {mode !== "test" && <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
           {Array.from({ length: rounds }, (_, i) => (
@@ -1151,12 +1143,10 @@ export default function HangTimer({
           </div>
           <div
             style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 10,
-              letterSpacing: ".18em",
+              fontFamily: "var(--font-body)",
+              fontSize: 12,
               color: "var(--color-text-faint)",
               marginTop: 8,
-              textTransform: "uppercase" as const,
             }}
           >
             {mode === "test" && phase === "work"
@@ -1384,7 +1374,7 @@ export default function HangTimer({
           .today-session .circular-timer .timer-side .timer-settings { grid-template-columns: 1fr !important; max-width: 360px !important; }
         }
         .circular-timer .timer-group { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .circular-timer .timer-legend { padding: 0; margin: 0 0 8px; font: 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); text-align: center; }
+        .circular-timer .timer-legend { padding: 0; margin: 0 0 8px; font: 500 14px var(--font-body); color: var(--color-text-muted); text-align: center; }
         .circular-timer .timer-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
         .circular-timer .timer-safety { max-width: 420px; margin: 0; }
         .circular-timer .mt-save-wrap { width: 100%; max-width: 640px; text-align: left; }
@@ -1401,7 +1391,7 @@ export default function HangTimer({
         .circular-timer .hb-btn:focus-visible, .circular-timer .timer-share-manual input:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
         .circular-timer .hb-btn:disabled { opacity: .5; cursor: default; }
         .circular-timer .timer-more { width: 100%; max-width: 420px; border-top: 1px solid var(--color-divider); }
-        .circular-timer .timer-more summary { display: flex; align-items: center; justify-content: center; min-height: 44px; cursor: pointer; font: 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); }
+        .circular-timer .timer-more summary { display: flex; align-items: center; justify-content: center; min-height: 44px; cursor: pointer; font: 500 14px var(--font-body); color: var(--color-text-muted); }
         .circular-timer .timer-more-body { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 8px 0 12px; }
         @keyframes pulseGlow {
           0%, 100% { opacity: 0.6; transform: scale(1); }
