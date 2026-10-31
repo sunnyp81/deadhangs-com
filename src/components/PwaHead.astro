@@ -1,0 +1,14 @@
+---
+// Manifest, theme colour, iOS home screen icon and service worker registration.
+// The worker file only exists in production builds, so it is only registered there.
+---
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#080c14" />
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+<script>
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+    });
+  }
+</script>

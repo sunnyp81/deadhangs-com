@@ -41,7 +41,14 @@ export function normalizeLegacyTimerConfig(x) {
   };
 }
 export function validTimerLoad(load) {
-  return !!load && typeof load.requestId === "string" && load.requestId.length > 0 && validTimerConfig(load.config);
+  return (
+    !!load &&
+    typeof load.requestId === "string" &&
+    load.requestId.length > 0 &&
+    validTimerConfig(load.config) &&
+    (load.voice === undefined || typeof load.voice === "boolean") &&
+    (load.maxTest === undefined || validMaxTestPlan(load.maxTest))
+  );
 }
 export function activeTestElapsed(accumulatedSeconds, runStartMs, nowMs) {
   const activeSeconds =

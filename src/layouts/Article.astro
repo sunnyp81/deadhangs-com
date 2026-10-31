@@ -1,5 +1,6 @@
 ---
 import Analytics from '../components/Analytics.astro';
+import PwaHead from '../components/PwaHead.astro';
 import CookieConsent from '../components/CookieConsent.astro';
 import fs from 'node:fs';
 import Nav from '../components/Nav.astro';
@@ -25,9 +26,10 @@ interface Props {
   updated?: string;
   author?: boolean;
   wide?: boolean;
+  noindex?: boolean;
 }
 
-const { title, description, datePublished, dateModified, schema, canonical, ogImage, h1, subtitle, crumbs, updated, author, wide } = Astro.props;
+const { title, description, datePublished, dateModified, schema, canonical, ogImage, h1, subtitle, crumbs, updated, author, wide, noindex } = Astro.props;
 const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site || 'https://deadhangs.com').href;
 
 const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, '');
@@ -80,6 +82,8 @@ const globalSchema = {
   <meta name="description" content={description} />
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <PwaHead />
+  {noindex && <meta name="robots" content="noindex, follow" />}
   <link rel="canonical" href={canonicalURL} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />

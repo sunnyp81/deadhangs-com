@@ -31,6 +31,8 @@ export type TimerConfig = {
 export type TimerLoad = {
   requestId: string;
   config: TimerConfig;
+  voice?: boolean;
+  maxTest?: { warmups: number; restSeconds: number };
 };
 
 export type TimerRunState = {

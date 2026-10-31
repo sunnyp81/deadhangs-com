@@ -123,3 +123,38 @@ export function createFeedbackLifecycle(adapters = browserFeedbackAdapters(), on
     },
   };
 }
+
+/** Vibration patterns in milliseconds. Short, distinct and well under a second. */
+export const HAPTIC_PATTERNS = {
+  hang: [200],
+  rest: [90, 70, 90],
+  finish: [300, 120, 300, 120, 300],
+};
+
+const BUSY_PHASES = ["prep", "work", "rest", "test"];
+
+/**
+ * Which pattern a change from one timer phase to the next should play, or null.
+ * Starting from idle or done is the user's own tap, so it stays silent.
+ */
+export function hapticKindFor(prev, next) {
+  if (!BUSY_PHASES.includes(prev)) return null;
+  if (next === "done") return "finish";
+  if (next === "rest") return "rest";
+  if (next === "work" || next === "test") return "hang";
+  return null;
+}
+
+export function supportsVibrate(nav = globalThis.navigator) {
+  return typeof nav?.vibrate === "function";
+}
+
+/** Plays a pattern when the browser can. Returns whether a call was made. */
+export function vibrateFor(kind, nav = globalThis.navigator) {
+  const pattern = HAPTIC_PATTERNS[kind];
+  if (!pattern || !supportsVibrate(nav)) return false;
+  return safeCall(() => {
+    nav.vibrate(pattern);
+    return true;
+  }) === true;
+}
