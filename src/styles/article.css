@@ -826,3 +826,21 @@
   .dg-lplot { margin-inline: 14px; }
   .article-body .dg-lane { margin-left: -14px; }
 }
+
+/* Starting ladder and stop rules: HTML text beside line drawings, stacked on narrow screens. */
+.article-body .sl-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.article-body .sl-steps > li { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 16px; align-items: start; margin: 0; padding: 12px; background: rgba(0, 229, 255, .04); border: 1px solid var(--color-border); border-radius: 6px; }
+.sl-fig svg { display: block; width: 100%; height: auto; }
+.article-body .sl-text p { margin: 0 0 8px; font-size: 15px; line-height: 1.5; color: var(--color-text); }
+.article-body .sl-text p:last-child { margin-bottom: 0; }
+.article-body .sl-text .sl-name { font: 700 17px/1.3 var(--font-display); }
+.sl-n { display: inline-block; margin-right: 8px; font: 700 12px/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--color-primary); }
+.sl-k { display: block; font: 400 12px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-muted); }
+.article-body .stop-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.article-body .stop-list > li { display: grid; gap: 2px; margin: 0; padding: 10px 14px; background: var(--color-surface-2); border-left: 4px solid var(--color-warn); border-radius: 0 6px 6px 0; }
+.stop-list strong { font: 700 16px/1.3 var(--font-display); color: var(--color-text); }
+.stop-list strong::before { content: "Stop: "; font: 700 12px/1.3 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--color-warn); }
+.stop-list span { font-size: 15px; line-height: 1.45; color: #b4c0da; }
+@media (max-width: 640px) {
+  .article-body .sl-steps > li { grid-template-columns: 76px minmax(0, 1fr); gap: 10px; padding: 10px; }
+}
