@@ -60,7 +60,7 @@ function targetLine(seconds, sex) {
     sex,
     position: p,
     label: rel,
-    text: `Attia's suggested target of ${target} s for a very strong 40-year-old ${men ? 'man' : 'woman'}.`,
+    text: `Attia's suggested target of at least ${target} s for a very strong 40-year-old ${men ? 'man' : 'woman'}.`,
     source: 'The Peter Attia Drive #329 (Dec 2024). A podcast target for very strong people, not measured data.',
   };
 }
