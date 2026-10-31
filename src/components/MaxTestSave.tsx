@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import "../styles/training-workspace.css";
 import SetupFields from "./SetupFields";
 import { EMPTY_SETUP_FORM } from "../lib/training-log.mjs";
+import { setupHasTags, trackFeature } from "../scripts/training-events.js";
 import { readRememberedSetup, saveNewEntry } from "../lib/training-log-store";
 import type { SetupForm } from "../lib/training-log-store";
 
@@ -32,6 +33,8 @@ export default function MaxTestSave({ seconds, onSaved }: { seconds: number; onS
       return;
     }
     setSaved(true);
+    trackFeature("max_test_saved");
+    if (setupHasTags(setup)) trackFeature("setup_saved_with_tags");
     setMessage("Saved to this device as a max test. It now appears in your log and graph.");
     onSaved?.();
   }

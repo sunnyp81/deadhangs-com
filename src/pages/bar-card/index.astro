@@ -50,4 +50,10 @@ const cards = await Promise.all(
   </div>
 </div>
 </Article>
-<script>document.getElementById('bc-print')?.addEventListener('click', () => window.print());</script>
+<script>
+  import { trackFeature } from '../../scripts/training-events.js';
+  document.getElementById('bc-print')?.addEventListener('click', () => {
+    trackFeature('bar_card_print');
+    window.print();
+  });
+</script>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import DialMark from "./DialMark";
+import { trackFeature } from "../scripts/training-events.js";
 import { describeHold, parseAge, parseHold } from "../lib/your-number.mjs";
 
 type Described = ReturnType<typeof describeHold>;
@@ -30,6 +31,7 @@ export default function YourNumberCard() {
     }
     setError("");
     setShown({ seconds: h.seconds!, out: describeHold(h.seconds!, { sex, age: a.age }) });
+    trackFeature("your_number_compared");
   }
 
   return (
@@ -114,7 +116,7 @@ export default function YourNumberCard() {
             <p className="small-copy">These are different groups, so this is a rough comparison and not a ranking.</p>
             <p className="yn-next">
               <strong>Next step:</strong>{" "}
-              <a className="text-link" href={shown.out.logHref}>
+              <a className="text-link" href={shown.out.logHref} onClick={() => trackFeature("your_number_log_link")}>
                 Log this hold in the training log
               </a>{" "}
               (the time is prefilled and nothing is saved until you save it there).

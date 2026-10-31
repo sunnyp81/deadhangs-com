@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import '../styles/training-workspace.css';
-import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
+import { setupHasTags, trackFeature, trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 import { parseHoldParam } from '../lib/your-number.mjs';
 import SetupFields from './SetupFields';
 import {
@@ -363,6 +363,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     }
     if (commit(added.entries as Entry[], `Saved ${entry.seconds}s on ${formatLocalDate(entry.date)} to this device.`)) {
       rememberSetup(setupForm);
+      if (setupHasTags(setupForm)) trackFeature("setup_saved_with_tags");
       setSetupForm((current) => ({ ...current, ended: '' }));
       setHoldInput('');
       onManualEntrySaved?.();
@@ -410,6 +411,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     setLogStatus('CSV download requested. Check your browser downloads.');
+    trackFeature('csv_export');
   }
 
   function exportRecovery() {
@@ -434,6 +436,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     document.body.appendChild(link); link.click(); link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     setLogStatus('Backup download requested. You can import this file on another device.');
+    trackFeature('backup_export');
   }
 
   async function readImport(file?: File) {
@@ -462,6 +465,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     }
     if (commit(pendingImport.entries, 'Imported ' + pendingImport.added + ' entries; skipped ' + pendingImport.skipped + ' duplicates.')) {
       setPendingImport(null); if (importField.current) importField.current.value = '';
+      trackFeature('backup_import');
     }
   }
 
@@ -729,7 +733,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
                       <td>{formatLocalDate(group.best.date)}</td>
                       <td className="dh-mono">{group.count}</td>
                       <td>
-                        <button type="button" className="tw-link" onClick={() => copySetupFrom(group.best)}>
+                        <button type="button" className="tw-link" onClick={() => { trackFeature('setup_best_use'); copySetupFrom(group.best); }}>
                           Use this setup<span className="tw-visually-hidden">: {group.label}</span>
                         </button>
                       </td>
