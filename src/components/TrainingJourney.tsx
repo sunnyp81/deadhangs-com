@@ -13,11 +13,13 @@ export default function TrainingJourney() {
     [request, setRequest] = useState<TimerLoad | null>(null),
     [loadResult, setLoadResult] = useState<{ requestId: string; accepted: boolean } | null>(null),
     [entries, setEntries] = useState<any[]>([]),
+    [planOpen, setPlanOpen] = useState(false),
     holdRef = useRef<() => void>(() => {});
   useEffect(() => {
     const d = readDraft();
     if (d.ok) {
       setDraft(d.draft);
+      setPlanOpen(true);
     } else if (d.state !== "empty") {
       setDraftNotice(d.error || "Calculator handoff could not be read.");
     }
@@ -60,25 +62,17 @@ export default function TrainingJourney() {
   }, []);
   return (
     <div className="training-journey">
-      <GoalSetup
-        draft={draft}
-        onDraftConsumed={() => {
-          clearDraft();
-          setDraft(null);
-        }}
-        onProfileChange={setProfile}
-        onLoad={load}
-        loadResult={loadResult}
-        onSaved={trackGoalSaved}
-      />
-      {draftNotice && <p className="tw-note" role="status">{draftNotice}</p>}
-      <HangTimer
-        loadRequest={request}
-        onLoadResult={handleLoadResult}
-        onStart={trackTimerStarted}
-        onFinished={trackTimerFinished}
-        onResultReady={focusActualHold}
-      />
+      <section className="today-session" aria-labelledby="today-session-title">
+        <h2 id="today-session-title">Today&rsquo;s session</h2>
+        {draftNotice && <p className="tw-note" role="status">{draftNotice}</p>}
+        <HangTimer
+          loadRequest={request}
+          onLoadResult={handleLoadResult}
+          onStart={trackTimerStarted}
+          onFinished={trackTimerFinished}
+          onResultReady={focusActualHold}
+        />
+      </section>
       <TrainingWorkspace
         showTimer={false}
         onEntriesChange={setEntries}
@@ -87,6 +81,24 @@ export default function TrainingJourney() {
           holdRef.current = fn;
         }}
       />
+      <details
+        className="plan-disclosure"
+        open={planOpen}
+        onToggle={(event) => setPlanOpen((event.currentTarget as HTMLDetailsElement).open)}
+      >
+        <summary>Plan future sessions</summary>
+        <GoalSetup
+          draft={draft}
+          onDraftConsumed={() => {
+            clearDraft();
+            setDraft(null);
+          }}
+          onProfileChange={setProfile}
+          onLoad={load}
+          loadResult={loadResult}
+          onSaved={trackGoalSaved}
+        />
+      </details>
       <ProgressSummary entries={entries} profile={profile} />
     </div>
   );

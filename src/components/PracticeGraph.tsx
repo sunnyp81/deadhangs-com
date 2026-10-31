@@ -17,7 +17,7 @@ function readEntries(): Entry[] {
 export default function PracticeGraph() {
   const uid = useId();
   const [entries, setEntries] = useState<Entry[]>([]);
-  const [windowDays, setWindowDays] = useState<30 | 90>(90);
+    const [windowDays, setWindowDays] = useState<30 | 90>(90);
   const [assistance, setAssistance] = useState<Assistance>("unassisted");
   const [progress, setProgress] = useState(0);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -80,6 +80,8 @@ export default function PracticeGraph() {
   const ticks = Array.from({ length: 4 }, (_, index) => Math.round((chart.min + ((chart.max - chart.min) * index) / 3) / 5) * 5);
   const dateTicks = daily.filter((_, index) => index === 0 || index === daily.length - 1 || index % Math.max(1, Math.ceil((daily.length - 1) / 3)) === 0);
 
+  const noEntries = entries.length === 0;
+
   return (
     <section className="practice-graph" aria-labelledby={`${uid}-title`}>
       <div className="practice-graph-heading">
@@ -90,7 +92,7 @@ export default function PracticeGraph() {
         </div>
         <a className="text-link" href="/training-log/">Open full log →</a>
       </div>
-      <div className="practice-graph-controls">
+      {!noEntries && <div className="practice-graph-controls">
         <fieldset>
           <legend>Assistance</legend>
           {(["unassisted", "feet-supported"] as const).map((value) => (
@@ -109,11 +111,11 @@ export default function PracticeGraph() {
             </label>
           ))}
         </fieldset>
-      </div>
+      </div>}
       {daily.length ? (
         <>
           <div className="practice-graph-canvas" role="group" aria-label={`${windowDays}-day ${label} hold-time graph`}>
-            <svg viewBox={`0 0 ${chart.width} ${chart.height}`} role="img" aria-labelledby={`${uid}-svg-title ${uid}-svg-desc`}>
+            <svg viewBox={`0 0 ${chart.width} ${chart.height}`} role="group" aria-labelledby={`${uid}-svg-title ${uid}-svg-desc`}>
               <title id={`${uid}-svg-title`}>Your {label} hold trend</title>
               <desc id={`${uid}-svg-desc`}>Daily best dead-hang holds in seconds from your on-device training log.</desc>
               <defs>
@@ -144,9 +146,19 @@ export default function PracticeGraph() {
         </>
       ) : (
         <div className="practice-graph-empty">
-          <svg viewBox="0 0 920 180" aria-hidden="true"><path d="M34,136 C190,124 220,94 390,102 S670,54 886,40" /><circle cx="34" cy="136" r="4" /><circle cx="886" cy="40" r="4" /></svg>
-          <p>No {label} holds in the last {windowDays} days yet.</p>
-          <a href="/training-log/" className="dh-btn">Record your first hold</a>
+          {noEntries ? (
+            <>
+              <p className="practice-graph-empty-title">Your first recorded hold starts this chart.</p>
+              <p>Nothing is drawn until you save a real hold in your log. Entries stay on this device.</p>
+              <a href="/training-log/" className="dh-btn">Record a hold</a>
+            </>
+          ) : (
+            <>
+              <p className="practice-graph-empty-title">No {label} holds in the last {windowDays} days.</p>
+              <p>Try the other assistance type or the 90-day window, or record a new hold.</p>
+              <a href="/training-log/" className="dh-btn">Record a hold</a>
+            </>
+          )}
         </div>
       )}
     </section>
