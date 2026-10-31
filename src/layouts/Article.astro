@@ -4,6 +4,7 @@ import CookieConsent from '../components/CookieConsent.astro';
 import fs from 'node:fs';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import ArticleHeader from '../components/ArticleHeader.astro';
 import '../styles/global.css';
 import '../styles/article.css';
 
@@ -18,27 +19,34 @@ interface Props {
   schema?: string;
   canonical?: string;
   ogImage?: string;
+  h1?: string;
+  subtitle?: string;
+  crumbs?: { name: string; href?: string }[];
+  updated?: string;
+  author?: boolean;
+  wide?: boolean;
 }
 
-const { title, description, datePublished, dateModified, schema, canonical, ogImage } = Astro.props;
+const { title, description, datePublished, dateModified, schema, canonical, ogImage, h1, subtitle, crumbs, updated, author, wide } = Astro.props;
 const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site || 'https://deadhangs.com').href;
 
 const slug = Astro.url.pathname.replace(/^\/+|\/+$/g, '');
 const ownBanner = BANNERS.has(`${slug}.png`) ? `/images/og/${slug}.png` : null;
 const ogImageURL = new URL(ogImage || ownBanner || '/images/og/home.png', Astro.site || 'https://deadhangs.com').href;
 
-const segments = Astro.url.pathname.split('/').filter(Boolean);
-const breadcrumbItems = [
-  { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://deadhangs.com/" }
-];
-segments.forEach((seg, i) => {
-  breadcrumbItems.push({
-    "@type": "ListItem",
-    "position": i + 2,
-    "name": seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-    "item": `https://deadhangs.com/${segments.slice(0, i + 1).join('/')}/`
-  });
-});
+// One trail feeds both the visible breadcrumb and the BreadcrumbList JSON-LD.
+const trail = crumbs
+  ? [{ name: 'Home', href: '/' }, ...crumbs]
+  : [{ name: 'Home', href: '/' }, ...Astro.url.pathname.split('/').filter(Boolean).map((seg, i, all) => ({
+      name: seg.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      href: `/${all.slice(0, i + 1).join('/')}/`
+    }))];
+const breadcrumbItems = trail.map((crumb, i) => ({
+  "@type": "ListItem",
+  "position": i + 1,
+  "name": crumb.name,
+  "item": new URL(crumb.href || Astro.url.pathname, 'https://deadhangs.com').href
+}));
 
 const globalSchema = {
   "@context": "https://schema.org",
@@ -98,9 +106,9 @@ const globalSchema = {
 </head>
 <body>
   <Nav />
-  <main id="main-content" class="article-main">
+  <main id="main-content" class={wide ? 'article-main article-main--wide' : 'article-main'}>
+    {h1 && <ArticleHeader h1={h1} subtitle={subtitle} crumbs={crumbs ?? []} updated={updated} author={author} />}
     <slot />
-
   </main>
   <Footer />
   <script>

@@ -40,14 +40,8 @@ const schema = '<script type="application/ld+json">' + JSON.stringify(schemaArti
 // Horizontal bar chart geometry (viewBox 480 x 480)
 const scale = 18; // px per second, max 15 s = 270 px
 ---
-<Article title={title} description={description} schema={schema}>
-<div class="article-header">
-  <div class="article-breadcrumb"><a href="/">Home</a><span class="sep">/</span>Flexed arm hang</div>
-  <h1 class="article-h1">Flexed arm hang: what the official norms say</h1>
-  <p class="article-subtitle">The flexed arm hang is a bent-arm, chin-over-bar hold. It is not a dead hang. Its times and its norms belong to a different test.</p>
-</div>
+<Article h1={"Flexed arm hang: what the official norms say"} subtitle={"The flexed arm hang is a bent-arm, chin-over-bar hold. It is not a dead hang. Its times and its norms belong to a different test."} crumbs={[{"name":"Flexed arm hang"}]} updated={"Updated October 30, 2026"} title={title} description={description} schema={schema}>
 <div class="article-body">
-<p class="source-note">Updated October 30, 2026.</p>
 <p>The flexed arm hang is a test where you hold your chin above a bar with your elbows bent for as long as you can. A dead hang keeps the arms straight and the body below the bar. That difference matters when you compare numbers.</p>
 
 <p>This page gives the official school fitness minimums for the flexed arm hang, shows how the test is run and explains what a dead hang sample can and cannot be compared with. Every figure below has its source under it. Start with <a href="/dead-hang-time-by-age/">dead hang time by age</a> for straight-arm times.</p>
