@@ -81,3 +81,48 @@ test("test mode ends explicitly and never becomes an interval completion", () =>
     round: 1,
   });
 });
+
+import {
+  MAX_TEST_DEFAULTS,
+  isRestBeforeMax,
+  maxTestNext,
+  testSecondsToLog,
+  validMaxTestPlan,
+} from "../src/lib/timer-state.mjs";
+
+function walk(plan) {
+  const steps = [];
+  let cur = { phase: "prep", round: 1 };
+  for (let i = 0; i < 20 && cur.phase !== "test"; i += 1) {
+    cur = maxTestNext({ ...plan, ...cur });
+    steps.push(`${cur.phase}${cur.phase === "test" ? "" : `:${cur.round}:${cur.seconds}`}`);
+  }
+  return steps;
+}
+
+test("guided max test runs warm-ups, a timed rest, then one count-up hold", () => {
+  assert.deepEqual(walk(MAX_TEST_DEFAULTS), ["work:1:10", "rest:1:20", "work:2:10", "rest:2:120", "test"]);
+  assert.equal(isRestBeforeMax({ phase: "rest", round: 2, warmups: 2 }), true);
+  assert.equal(isRestBeforeMax({ phase: "rest", round: 1, warmups: 2 }), false);
+  assert.equal(isRestBeforeMax({ phase: "work", round: 2, warmups: 2 }), false);
+  assert.deepEqual(maxTestNext({ phase: "test", round: 2, warmups: 2, restSeconds: 120 }), { phase: "done", round: 2, seconds: 0 });
+});
+
+test("guided max test can skip warm-ups or the rest, down to a plain count-up", () => {
+  assert.deepEqual(walk({ warmups: 0, restSeconds: 60 }), ["rest:1:60", "test"]);
+  assert.deepEqual(walk({ warmups: 1, restSeconds: 0 }), ["work:1:10", "test"]);
+  assert.deepEqual(walk({ warmups: 0, restSeconds: 0 }), ["test"]);
+  assert.equal(isRestBeforeMax({ phase: "rest", round: 1, warmups: 0 }), true);
+});
+
+test("max test plan validation and loggable seconds", () => {
+  assert.equal(validMaxTestPlan(MAX_TEST_DEFAULTS), true);
+  for (const bad of [null, { warmups: 4, restSeconds: 60 }, { warmups: -1, restSeconds: 60 }, { warmups: 1, restSeconds: 90 }, { warmups: 1.5, restSeconds: 60 }]) {
+    assert.equal(validMaxTestPlan(bad), false);
+  }
+  assert.equal(testSecondsToLog(0.9), null);
+  assert.equal(testSecondsToLog(1), 1);
+  assert.equal(testSecondsToLog(83.7), 83);
+  assert.equal(testSecondsToLog(99999), 3600);
+  assert.equal(testSecondsToLog(Number.NaN), null);
+});

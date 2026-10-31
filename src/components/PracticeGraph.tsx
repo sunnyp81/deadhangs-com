@@ -1,8 +1,9 @@
 import { useEffect, useId, useMemo, useState } from "react";
-import { parseStoredLog, STORAGE_KEY } from "../lib/training-log.mjs";
+import { filterBySetup, listSetups, parseStoredLog, STORAGE_KEY } from "../lib/training-log.mjs";
 import { progressFor } from "../lib/training-progress.mjs";
+import type { LogEntry } from "../lib/training-types";
 
-type Entry = { id: string; date: string; seconds: number; assistance: "unassisted" | "feet-supported"; sets: number };
+type Entry = LogEntry;
 type Assistance = Entry["assistance"];
 
 function readEntries(): Entry[] {
@@ -19,8 +20,12 @@ export default function PracticeGraph() {
   const [entries, setEntries] = useState<Entry[]>([]);
     const [windowDays, setWindowDays] = useState<30 | 90>(90);
   const [assistance, setAssistance] = useState<Assistance>("unassisted");
+  const [setupKey, setSetupKey] = useState("all");
   const [progress, setProgress] = useState(0);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const setups = useMemo(() => listSetups(entries, assistance) as { key: string; label: string; count: number }[], [entries, assistance]);
+  const activeSetup = setupKey !== "all" && setups.some((group) => group.key === setupKey) ? setupKey : "all";
+  const activeSetupLabel = setups.find((group) => group.key === activeSetup)?.label;
 
   useEffect(() => {
     const update = () => setEntries(readEntries());
@@ -52,11 +57,11 @@ export default function PracticeGraph() {
     };
     frame = window.requestAnimationFrame(reveal);
     return () => window.cancelAnimationFrame(frame);
-  }, [windowDays, assistance, entries.length]);
+  }, [windowDays, assistance, activeSetup, entries.length]);
 
   const daily = useMemo(
-    () => progressFor(entries, assistance, null, new Date(), windowDays).selectedWindow,
-    [entries, assistance, windowDays],
+    () => progressFor(filterBySetup(entries, activeSetup), assistance, null, new Date(), windowDays).selectedWindow,
+    [entries, assistance, windowDays, activeSetup],
   );
   const chart = useMemo(() => {
     const width = 920, height = 290, pad = { left: 46, right: 22, top: 18, bottom: 42 };
@@ -88,7 +93,7 @@ export default function PracticeGraph() {
         <div>
           <p className="dh-eyebrow">Live from your training log</p>
           <h2 id={`${uid}-title`} className="dh-display">Your practice trend.</h2>
-          <p>Daily bests only. Compare the same assistance type before drawing a conclusion.</p>
+          <p>Daily bests only. Filter by setup to compare like with like, and only against your own holds.</p>
         </div>
         <a className="text-link" href="/training-log/">Open full log →</a>
       </div>
@@ -111,11 +116,18 @@ export default function PracticeGraph() {
             </label>
           ))}
         </fieldset>
+        <div className="practice-graph-setup">
+          <label htmlFor={`${uid}-setup`}>Setup</label>
+          <select id={`${uid}-setup`} className="dh-input" value={activeSetup} onChange={(event) => setSetupKey(event.target.value)}>
+            <option value="all">All {label} setups</option>
+            {setups.map((group) => <option key={group.key} value={group.key}>{group.label} ({group.count})</option>)}
+          </select>
+        </div>
       </div>
       <div className="practice-graph-stage">
       {daily.length ? (
         <>
-          <div className="practice-graph-canvas" role="group" aria-label={`${windowDays}-day ${label} hold-time graph`}>
+          <div className="practice-graph-canvas" role="group" aria-label={`${windowDays}-day ${label} hold-time graph${activeSetupLabel ? `, ${activeSetupLabel}` : ""}`}>
             <svg viewBox={`0 0 ${chart.width} ${chart.height}`} role="group" aria-labelledby={`${uid}-svg-title ${uid}-svg-desc`}>
               <title id={`${uid}-svg-title`}>Your {label} hold trend</title>
               <desc id={`${uid}-svg-desc`}>Daily best dead-hang holds in seconds from your on-device training log.</desc>
@@ -154,8 +166,8 @@ export default function PracticeGraph() {
             </>
           ) : (
             <>
-              <p className="practice-graph-empty-title">No {label} holds in the last {windowDays} days.</p>
-              <p>Try the other assistance type or the 90-day window, or record a new hold.</p>
+              <p className="practice-graph-empty-title">No {label} holds{activeSetupLabel ? " on this setup" : ""} in the last {windowDays} days.</p>
+              <p>Try another setup, the other assistance type or the 90-day window, or record a new hold.</p>
               <a href="/training-log/" className="dh-btn">Record a hold</a>
             </>
           )}

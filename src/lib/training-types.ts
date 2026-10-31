@@ -38,3 +38,18 @@ export type TimerRunState = {
   running: boolean;
   mode: TimerConfig["mode"];
 };
+
+export type LogEntry = {
+  id: string;
+  date: string;
+  seconds: number;
+  assistance: "unassisted" | "feet-supported";
+  sets: number;
+  kind?: "test";
+  bar?: string;
+  grip?: string;
+  chalk?: boolean;
+  load?: number;
+  loadUnit?: "kg" | "lb";
+  ended?: string;
+};

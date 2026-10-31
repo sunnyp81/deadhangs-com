@@ -71,6 +71,7 @@ export default function TrainingJourney() {
           onStart={trackTimerStarted}
           onFinished={trackTimerFinished}
           onResultReady={focusActualHold}
+          onTestSaved={trackManualEntrySaved}
         />
       </section>
       <TrainingWorkspace

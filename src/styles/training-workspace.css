@@ -147,3 +147,20 @@
   .today-session .circular-timer, .today-session .circular-timer .timer-main, .today-session .circular-timer .timer-layout { gap: 8px !important; }
   .today-session { padding: 12px 8px 16px; }
 }
+
+/* Setup-aware log */
+.training-workspace .tw-setup { border-top: 1px solid var(--color-divider); }
+.training-workspace .tw-setup > summary { display: flex; flex-direction: column; justify-content: center; gap: 2px; min-height: 44px; padding: 6px 0; cursor: pointer; }
+.training-workspace .tw-setup-title { font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-text-muted); }
+.training-workspace .tw-setup-summary { font-size: 14px; color: var(--color-text); overflow-wrap: anywhere; }
+.training-workspace .tw-setup-body { display: flex; flex-direction: column; gap: 12px; padding: 8px 0 4px; }
+.training-workspace .tw-setup-body .tw-hint { margin: 0; }
+.training-workspace .tw-load-row { display: grid; grid-template-columns: minmax(0, 1fr) 84px; gap: 8px; }
+.training-workspace .tw-subtitle { margin: 0 0 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-muted); }
+.training-workspace .tw-setup-bests { display: flex; flex-direction: column; }
+.training-workspace .tw-scroll { position: relative; overflow: auto; max-height: 300px; border: 1px solid var(--color-divider); border-radius: var(--radius-sm); }
+.training-workspace .tw-scroll .tw-table thead th { position: sticky; top: 0; background: var(--color-surface); }
+.training-workspace .tw-table th.tw-setup-cell { min-width: 230px; max-width: 360px; font-family: inherit; font-size: 13px; letter-spacing: normal; text-transform: none; font-weight: 400; color: var(--color-text); white-space: normal; }
+.training-workspace .tw-badge { display: inline-block; margin-left: 8px; padding: 1px 6px; border: 1px solid var(--color-primary); border-radius: 3px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-primary); vertical-align: middle; }
+.training-workspace .tw-filter { max-width: 520px; }
+.training-workspace .tw-filter .dh-input, .training-workspace .tw-setup-grid .dh-input { min-height: 44px; }
