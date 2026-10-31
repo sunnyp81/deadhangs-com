@@ -2,6 +2,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react';
 import '../styles/training-workspace.css';
 import { trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
+import { parseHoldParam } from '../lib/your-number.mjs';
 import {
   ASSISTANCE_LABELS,
   ASSISTANCE_TYPES,
@@ -263,6 +264,9 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
   useEffect(() => {
     setToday(toLocalDateString());
     setDateInput(toLocalDateString());
+    // ?hold=SECONDS prefills the form only. Nothing is saved until the user submits.
+    const prefill = parseHoldParam(window.location.search);
+    if (prefill) setHoldInput(prefill);
     const { available, raw } = readRawLog();
     rawSnapshot.current = raw;
     if (!available) {

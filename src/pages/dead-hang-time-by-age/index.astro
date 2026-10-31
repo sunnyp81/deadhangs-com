@@ -1,15 +1,16 @@
 ---
 import Article from '../../layouts/Article.astro';
+import YourNumberCard from '../../components/YourNumberCard';
 const faqs = [["What is a good dead hang time?","A useful starting point is a controlled hold you can repeat without pain. Use 10, 30, 60 or 120 seconds as personal milestones if they suit you. They are not population averages. Compare repeat tests under the same conditions."],["How long should a 40-year-old be able to dead hang?","The sources cited here do not establish a required time for a 40-year-old. Training experience, bodyweight, grip, bar and assistance all affect the task. Record your own baseline instead of treating an age table as a pass or fail."],["Is a two-minute dead hang good?","Two minutes is Peter Attia's target for a very strong 40-year-old man. This site cannot assign it a verified population percentile. It is not necessary to reach two minutes before a session counts as useful practice."],["Does dead hang time decrease with age?","Handgrip-force studies show age-related differences across groups. They do not tell us a fixed number of hanging seconds lost per decade. Your own repeated measurements are more useful than subtracting seconds from an invented age norm."],["What is a good dead hang time for a woman?","No single women’s pass time is supported by the sources on this page. Record the same grip and assistance over time. Population handgrip-force differences cannot be converted directly into a timed-hang ranking."],["How long can the average person hang from a bar?","We cannot verify one population average from the studies cited here. A bar hang measures a different task from the dynamometer tests used in the referenced grip-strength research. The main measured timed-hang sample is a 2025 study of 25 young athletes and is summarized on this page."]];
 const extraFaqs = [
 ["What is the average dead hang time?","No large population study of dead hang time exists. One 2025 study of 25 trained recreational athletes aged about 20 measured men at 64 seconds on average and women at 48 seconds. Treat these as one measured sample and not a norm."],
 ["Is a 1-minute dead hang good?","A one-minute dead hang is close to the 64-second average of the men in one 2025 study of trained recreational athletes aged about 20 and above the 48-second average of the women. It is below Peter Attia's two-minute target for a very strong 40-year-old man. These are different groups. Treat it as a rough comparison."],
-["How long should I dead hang each day?","General practice is 2 to 4 hangs per session at a controlled effort with 60 to 90 seconds of rest between hangs. This is common training practice and not trial evidence. Stop if you feel sharp pain."],
+["How long should I dead hang each day?","Common training practice for a Level 1 session is 3 hangs of 15 seconds on about 3 non-consecutive days a week, stopping 1 to 2 seconds before your grip gives out. This is common training practice and not trial evidence. Stop if you feel sharp pain."],
 ["What dead hang time does Peter Attia suggest for a strong 40-year-old?","He said on The Peter Attia Drive (episode 329, December 2024) that a very strong 40-year-old man should be able to dead hang for at least two minutes and a very strong 40-year-old woman for at least 90 seconds. He said to subtract about 10 seconds per decade. It is his target for very strong people and not an average or measured data."],
 ["What is an elite dead hang time?","No measured threshold for elite exists. Attia's two minutes for a very strong 40-year-old man is a target for strong people and not a population figure. The Guinness World Record for the dead hang position is 80 minutes 41 seconds. Kenta Adachi of Japan set it on 18 November 2022."]
 ];
 const allFaqs = [...faqs, ...extraFaqs];
-const dateModified = '2026-10-30';
+const dateModified = '2026-10-31';
 const faqSchema = {"@context":"https://schema.org","@type":"FAQPage","mainEntity":allFaqs.map(([q,a])=>({"@type":"Question","name":q,"acceptedAnswer":{"@type":"Answer","text":a}}))};
 const articleSchema = {"@context":"https://schema.org","@type":"Article","headline":"Dead Hang Times by Age Chart: Men & Women","description":"Measured dead hang times, expert targets and what they do and do not mean, with sources.","dateModified":dateModified,"mainEntityOfPage":"https://deadhangs.com/dead-hang-time-by-age/","author":{"@id":"https://deadhangs.com/#organization"},"publisher":{"@id":"https://deadhangs.com/#organization"},"citation":[
 {"@type":"ScholarlyArticle","name":"Impact of 6-Week Combined Gym and Climbing Training on Handgrip Strength and Arm Size: GRIP-6 Study","url":"https://doi.org/10.3390/jfmk10040427"},
@@ -45,11 +46,20 @@ const jsonLd = [faqSchema, articleSchema].map(o=>'<script type="application/ld+j
 .article-body .ng-record .ng-label{margin:0;color:var(--color-text-muted);flex:1 1 240px}
 .article-body .ng-record .ng-source{margin-top:8px}
 @media (max-width:480px){.article-body .ng-cards{gap:8px}.article-body .ng-card{padding:12px}.article-body .ng-measured .ng-value{font-size:30px}.article-body .ng-target .ng-value{font-size:17px}}
+.article-body .yn-title{margin:0 0 16px;font-size:20px}
+.article-body .yn-lines{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:12px}
+.article-body .yn-lines li{padding:12px 14px;border:1px solid var(--color-border);background:var(--color-bg)}
+.article-body .yn-chip{display:inline-block;margin-right:6px;padding:2px 8px;border:1px solid var(--color-text-muted);font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text)}
+.article-body .yn-text{display:block;color:var(--color-text);line-height:1.5}
+.article-body .yn-source{display:block;margin-top:4px;font-size:13px;line-height:1.5;color:var(--color-text-muted)}
+.article-body .yn-next{margin:12px 0 0}
+.article-body .yn-card{max-width:none}
 </style>
 <Article h1={"Dead hang time by age: what does your result mean?"} subtitle={"Your age alone does not set a required hang time. Most research cited here measures handgrip force; the two timed-hang samples below are small and young. Use your own repeatable baseline and treat training milestones as goals and not population rankings."} crumbs={[{"name":"Times by age"}]} title="Dead Hang Times by Age Chart: Men & Women" description="Understand dead hang times by age, the limits of published benchmarks and how to compare your own holds. Practical milestones without invented percentiles." schema={jsonLd}>
 <div class="article-body">
 <div class="callout" id="short-answer"><p><strong>Short answer</strong></p><p>A useful starting point is a controlled hold you can repeat without pain. No large study has measured dead hang time across the population and there is no verified average. The main measured sample is 25 recreational athletes aged about 20 (GRIP-6, 2025): men held 64.0 seconds and women 48.4 seconds on average with wide variation.</p></div>
 <div class="button-row"><a class="dh-btn" href="/dead-hang-calculator/">Compare my hold</a></div>
+<section aria-label="Your number"><YourNumberCard client:load /><noscript><p>The interactive card needs JavaScript. Compare your hold with the labelled groups below by hand.</p></noscript></section>
 <div class="evidence-note"><p><strong>Benchmark correction, 11 September 2026.</strong> Earlier versions of this page presented age-specific seconds and percentiles as established norms. We could not substantiate those claims from the cited sources. They have been removed. This page now separates published grip-strength evidence from personal training goals.</p></div>
 <div class="ng" role="group" aria-label="Reference figures with sources, in three groups">
 <div class="ng-group ng-measured" role="group" aria-labelledby="ng-m">
@@ -76,7 +86,7 @@ const jsonLd = [faqSchema, articleSchema].map(o=>'<script type="application/ld+j
 <p class="ng-source">Source: Guinness World Records</p>
 </div>
 </div>
-<p class="bya-updated">Updated 30 October 2026. The GRIP-6 sample is young and trained. Attia's numbers are a podcast target for very strong people. Neither is a population average.</p>
+<p class="bya-updated">Updated 31 October 2026. The GRIP-6 sample is young and trained. Attia's numbers are a podcast target for very strong people. Neither is a population average.</p>
 <h2 id="average-times">Dead hang times by age: what the chart can tell you</h2>
 <p>An age chart is only as useful as the test behind it. The same person can record different hang times on different bars or with different assistance. Keep the testing conditions consistent before interpreting a change.</p>
 <p class="table-cue">Scroll horizontally on a smaller screen.</p><div class="table-scroll" role="region" tabindex="0" aria-label="Age and hang-time interpretation"><table><thead><tr><th scope="col">Age group</th><th scope="col">What to use</th><th scope="col">What not to infer</th></tr></thead><tbody>{[['Adults under 40','Your own baseline with a consistent grip and bar.','An exact percentile from a generic internet seconds chart.'],['Adults 40 to 59','Comparable holds and a record of assistance used.','A fixed decline in hanging seconds each decade.'],['Adults 60 and over','A controlled, suitable variation and individual advice where needed.','A required unassisted hold or a lifespan prediction.']].map(([age,use,avoid])=><tr><th scope="row">{age}</th><td>{use}</td><td>{avoid}</td></tr>)}</tbody></table></div>
@@ -124,13 +134,8 @@ const jsonLd = [faqSchema, articleSchema].map(o=>'<script type="application/ld+j
 <h2 id="improve">Turn your baseline into a routine</h2>
 <p>Choose manageable holds and enough rest to maintain control. Record what you actually held instead of saving the timer setting as a result.</p><p>The training plans organize practice and review points without promising a particular gain.</p>
 <h2 id="how-long-per-session">How long should you dead hang in a session?</h2>
-<p>Most people do 2 to 4 hangs per session. Each is held at a controlled effort with 60 to 90 seconds of rest between hangs. Most also train on three or more days a week. This is common training practice on this site and not the result of a trial. Beginners often start with 10 to 20 second holds.</p>
-<p class="table-cue">Scroll horizontally on a smaller screen.</p><div class="table-scroll" role="region" tabindex="0" aria-label="General session guidance by level"><table><caption>General practice and not research. Based on this site's frequency and program guides.</caption><thead><tr><th scope="col">Level</th><th scope="col">Days per week</th><th scope="col">Hangs per session</th><th scope="col">Each hang</th><th scope="col">Rest between</th></tr></thead><tbody>
-<tr><th scope="row">Beginner</th><td>3</td><td>3</td><td>10 to 20 s</td><td>60 to 90 s</td></tr>
-<tr><th scope="row">Intermediate</th><td>4 to 5</td><td>3 to 4</td><td>20 to 45 s</td><td>60 to 90 s</td></tr>
-<tr><th scope="row">Advanced</th><td>5 to 7</td><td>3 to 4</td><td>30 to 60 s</td><td>60 to 90 s</td></tr>
-</tbody></table></div>
-<p>Stop a hang before your grip gives out unexpectedly. Stop if you feel sharp pain. See <a href="/deadhang-frequency/">how often to dead hang</a> for the reasoning. The training programs give week-by-week plans. This is not medical advice.</p>
+<p>Common training practice for a Level 1 session is 3 hangs of 15 seconds on about 3 non-consecutive days a week, stopping 1 to 2 seconds before your grip gives out. This is common training practice and not a tested prescription. Stop if you feel sharp pain. This is not medical advice.</p>
+<p>Rest, progression and how to add sessions are covered in <a href="/deadhang-frequency/">how often to dead hang</a>.</p>
 <h2 id="faq">Common questions about hang time</h2>{allFaqs.map(([q,a])=><details class="answer"><summary>{q}</summary><p>{a}</p></details>)}
 <h2 id="sources">Sources and method</h2><p>The hang times come from the GRIP-6 study (Chomiuk et al. 2025). Dodds et al. (2014) supplies the grip-force figures. They measure squeeze force in kilograms and not hanging time. The personal-goal examples on this page are arithmetic and editorial milestones and not research-derived training prescriptions.</p><p>The <a href="/editorial-standards/">editorial standards</a> explain how we distinguish research and interpretation from equipment advice.</p>
 <h3 id="figure-sources">Sources for the figures on this page</h3>
