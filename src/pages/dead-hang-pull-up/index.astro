@@ -1,0 +1,107 @@
+---
+import Article from '../../layouts/Article.astro';
+import { hangFigureSvg } from '../../lib/hang-figure.js';
+import '../../styles/figures.css';
+
+const title = 'Dead Hang Pull-Up: How to Start a Pull-Up From a Full Hang';
+const description = 'A dead hang pull-up starts with straight arms and ends with the chin over the bar. See how to do one, why it feels harder than a bent-arm start and how hangs lead to a first pull-up.';
+
+const faqs = [
+  ['What is a dead hang pull-up?', 'A dead hang pull-up is a pull-up that starts from a full hang with straight arms and returns to that hang after every rep. Starting each rep from a bent-arm position makes the range of motion shorter and changes the exercise.'],
+  ['Should I start a pull-up from a dead hang?', 'For a full-range pull-up, yes. Start from a straight-arm hang with the shoulders pulled down, and lower back to that hang between reps. If you cannot do that yet, treat the full hang as the goal and build toward it with scapular pulls, negatives and assisted reps.'],
+  ['Why is a pull-up from a dead hang so hard?', 'The first part of the rep has to start from straight arms with the shoulders set, and nothing in the movement helps you. Many people find reps with slightly bent arms easier because they skip that start. This page does not give a number for how much harder it is.'],
+  ['Do dead hangs help you do a pull-up?', 'Hanging builds grip endurance and teaches the starting position, so it is a common first step. Hanging alone does not train the pulling motion. Pair hangs with scapular pulls and negatives. Many coaches use about 30 seconds as a rough readiness cue for negatives. It is a rule of thumb and not a tested threshold.'],
+  ['How long should I dead hang before trying pull-ups?', 'No study gives a required time. One coaching article suggests building to an active hang of 10 to 20 seconds before adding reps. Treat that as common training practice and not a tested prescription.'],
+  ['Is a passive or an active hang better before a pull-up?', 'Use the active hang for pull-up work. In an active hang you pull the shoulders down away from the ears. A passive hang with the shoulders by the ears is a stretch and does not set up the pull.'],
+  ['Can I do a pull-up without a dead hang first?', 'Yes. Bent-arm and partial-range pull-ups are valid training and are often used while building strength or when a shoulder limits range. They are a different exercise from a full-range rep, so label them that way in your log.'],
+];
+
+const schemaArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  author: { '@type': 'Organization', name: 'DeadHangs.com', url: 'https://deadhangs.com' },
+  publisher: { '@type': 'Organization', name: 'DeadHangs.com' },
+  mainEntityOfPage: 'https://deadhangs.com/dead-hang-pull-up/',
+  datePublished: '2026-11-01',
+  dateModified: '2026-11-01',
+};
+const schemaFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
+const schema = '<script type="application/ld+json">' + JSON.stringify(schemaArticle) + '</script><script type="application/ld+json">' + JSON.stringify(schemaFaq) + '</script>';
+---
+<Article h1={"Dead hang pull-up: starting from a full hang"} subtitle={"A dead hang pull-up starts with straight arms and ends with the chin over the bar. If you cannot do one yet, hangs are the first step toward it."} crumbs={[{"name":"Dead hang pull-up"}]} updated={"Updated November 1, 2026"} author title={title} description={description} schema={schema}>
+<div class="article-body">
+<p>A dead hang pull-up is a pull-up that begins from a full hang with straight arms. You pull until the chin clears the bar, then lower back to the same straight-arm hang. If you can't do one, you can still train toward it with hangs, scapular pulls and slow lowering.</p>
+
+<div class="callout">
+<h2 id="at-a-glance">At a glance</h2>
+<ol>
+<li><strong>Start:</strong> Hang with straight arms, then pull the shoulders down away from your ears before the arms bend.</li>
+<li><strong>Finish:</strong> Chin over the bar, then lower under control back to the straight-arm hang.</li>
+<li><strong>Why it feels hard:</strong> Reps that start with bent arms skip the hardest part, so the full rep feels like a different exercise.</li>
+<li><strong>Can't do one yet:</strong> Move through the active hang, scapular pulls, slow lowering and band-assisted reps, covered below.</li>
+<li><strong>Hold times:</strong> The <a href="/deadhang-progressions/">dead hang progression ladder</a> has the hold targets. They are practical targets, not norms.</li>
+</ol>
+</div>
+
+<div class="visual-block">
+<div class="dg-figs" role="img" aria-label="Two hangs from a bar. In the passive dead hang the arms are straight and the shoulders rise toward the ears. In the active hang the arms stay straight and the shoulders are pulled down.">
+<div><Fragment set:html={hangFigureSvg({ pose: 'dead-hang', hl: 'grip' })} /><p>Dead hang: arms straight</p></div>
+<div><Fragment set:html={hangFigureSvg({ pose: 'active', hl: 'shoulders' })} /><p>Active hang: shoulders set</p></div>
+</div>
+<p class="caption">Figure 1. Schematic only. The pull-up starts from the second position.</p>
+</div>
+
+<h2 id="what-it-is">What a pull-up from a dead hang means</h2>
+<p>The phrase has two common meanings. The first is the strict rep: every pull-up begins and ends in a full hang. The second is the route to a first pull-up, where hanging is one of the steps. This page covers both. It does not repeat the six-level hold ladder, which lives on the <a href="/deadhang-progressions/">dead hang progressions</a> page.</p>
+<p>A coaching article from BULLBAR says that skipping the full hang "turns the pull-up into a partial range-of-motion exercise" and "changes the stimulus." It also treats the dead hang as "a goal, not a starting point" for people with limited mobility. Bent-arm and partial reps are valid training. Just log them as a different exercise.</p>
+
+<h2 id="how-to">How to do a dead hang pull-up</h2>
+<ol>
+<li>Grip the bar with an overhand grip about shoulder width, thumbs around the bar.</li>
+<li>Hang with your arms straight and your feet off the floor.</li>
+<li>Pull your shoulders down away from your ears. This is the active hang.</li>
+<li>Pull your elbows down toward your sides until your chin clears the bar.</li>
+<li>Lower under control until your arms are straight again, then reset the shoulders before the next rep.</li>
+</ol>
+<p>The same BULLBAR article describes the passive hang as "a stretch, not a strength position" and recommends the active version for working sets. Some lifters let the shoulders rise at the bottom of each rep. Others reset to the active hang every time. Either way, finish each rep from a straight-arm hang if you want it to count as a full-range pull-up.</p>
+
+<h2 id="why-hard">Why it feels harder than a bent-arm start</h2>
+<p>A rep that starts with bent arms removes the first part of the movement. The full rep begins from a stretched position with nothing helping you, and it needs a straight-arm grip you can hold for the whole set. Many people can manage a few bent-arm reps long before they can lift out of a full hang. This page does not put a number on the gap.</p>
+
+<h2 id="route">The route to a first dead hang pull-up</h2>
+<p>If you can't do a full rep yet, work through these steps in order. Move on when the current step feels controlled and pain free. The doses below are common training practice, not a tested prescription.</p>
+
+<div class="visual-block">
+<div class="dg-figs" role="img" aria-label="Two positions on the way to a pull-up. In the scapular pull the arms stay straight and the shoulders lift the body slightly. At the top of a pull-up the elbows are bent and the chin is above the bar.">
+<div><Fragment set:html={hangFigureSvg({ pose: 'scapular-pull', hl: 'shoulders' })} /><p>Scapular pull: arms straight</p></div>
+<div><Fragment set:html={hangFigureSvg({ pose: 'flexed', hl: 'arms' })} /><p>Top position: chin over bar</p></div>
+</div>
+<p class="caption">Figure 2. Schematic only. Scapular pulls train the start. The top position is where negatives begin.</p>
+</div>
+
+<ol>
+<li><strong>Dead hang.</strong> Build a steady hang first. The <a href="/deadhang-progressions/">progression ladder</a> gives practical hold targets by level.</li>
+<li><strong>Active hang.</strong> Add the shoulder pull-down. BULLBAR suggests building to 10 to 20 seconds of active hang before adding reps. Many coaches use about 30 seconds of hanging as a rough readiness cue for negatives. That is a rule of thumb and not a tested threshold.</li>
+<li><strong>Scapular pulls.</strong> Keep the arms straight and lift your body a short way by moving only the shoulder blades. This trains the start of the rep.</li>
+<li><strong>Negatives.</strong> Start with your chin over the bar, using a box or a jump, and lower yourself slowly to a straight-arm hang. Rest, then repeat.</li>
+<li><strong>Band-assisted reps.</strong> A loop band under your feet or knees takes part of your weight. Record the band you used so you can see your progress. The <a href="/beginner-deadhang/">beginner dead hang guide</a> covers assisted setups.</li>
+</ol>
+<p>Stop a set when your form drops, not when your grip gives out. If you feel sharp shoulder, elbow or neck pain, stop and see a clinician. The <a href="/deadhang-safety/">dead hang safety guide</a> and the <a href="/shoulder-health/">shoulder health page</a> cover what to watch for.</p>
+
+<h2 id="gear">What you need</h2>
+<p>You need a bar that holds your weight with room to hang below it. A doorway bar works for most people. See the <a href="/doorway-bars/">doorway bar guide</a> for setup and safety checks, or <a href="https://www.amazon.com/s?k=pull+up+bar&tag=deadhangs-20" rel="nofollow sponsored noopener noreferrer">browse pull-up bars on Amazon</a> (affiliate link). Check the current price and the weight rating before you buy.</p>
+
+<h2 id="faq">Dead hang pull-up FAQ</h2>
+{faqs.map(([q, a]) => <div class="faq"><h3>{q}</h3><p>{a}</p></div>)}
+
+<h2 id="sources">Sources and method</h2>
+<p>The quotes on the full hang, the active hang and the 10 to 20 second suggestion come from one source: BULLBAR, "Is It Necessary to Dead Hang at the Bottom of a Pull-Up?", dated May 11, 2026, no author listed. <a href="https://bullbarfit.com/blogs/q-as/is-it-necessary-to-dead-hang-at-the-bottom-of-a-pull-up" rel="nofollow noopener">bullbarfit.com</a>, read November 1, 2026. It is a coaching opinion piece and not a trial. No study was found that tests how long a hang is needed before a first pull-up. The 30 second cue is a coaching convention.</p>
+<p>Read the <a href="/editorial-standards/">editorial standards</a> for how this site separates sourced figures from interpretation.</p>
+</div>
+</Article>
