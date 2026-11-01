@@ -37,31 +37,12 @@
 @media (max-width: 720px) { .practice-graph-heading, .gear-finder { grid-template-columns: 1fr; display: grid; } .practice-graph-heading .text-link { justify-self: start; } .gear-finder-result { border-left: 0; border-top: 1px solid var(--color-divider); padding: 24px 0 0; } }
 @media (prefers-reduced-motion: reduce) { .practice-graph-line, .practice-graph-area, .practice-graph-point, .gear-finder-options label { transition: none; } }
 
-.home-hero { padding: 108px 64px 56px; background: var(--color-bg); }
-.home-hero-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(320px, 440px); gap: 64px; align-items: start; justify-content: space-between; }
-.home-hero-copy { padding-top: 56px; }
-.home-hero-title { margin: 0; font-size: clamp(64px, 9vw, 132px); color: var(--color-text); text-align: left; text-transform: uppercase; }
-.home-hero-title span { display: block; color: var(--color-primary); }
-.home-hero-lede { margin: 28px 0 0; max-width: 24ch; font-size: clamp(20px, 2.2vw, 28px); font-weight: 500; line-height: 1.3; color: var(--color-text); text-wrap: balance; }
 .home-hero-timer { padding: 20px 16px 8px; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: var(--radius-md); }
 .hero-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .hero-safety { margin: 0; text-align: center; font-size: 13px; color: var(--color-text-muted); }
 .hero-safety .text-link { padding-block: 8px; }
 .hero-defaults { margin: 12px 0 0; text-align: center; }
-@media (max-width: 1023px) {
-  .home-hero-inner { grid-template-columns: 1fr; gap: 24px; justify-content: stretch; }
-  .home-hero-copy { padding-top: 0; }
-  .home-hero-title span { display: inline; }
-  .home-hero-lede { max-width: 40ch; margin-top: 16px; }
-  .home-hero-timer-wrap { max-width: 480px; width: 100%; margin-inline: auto; }
-}
-@media (max-width: 768px) {
-  .home-hero { padding: 84px 20px 32px; }
-  .home-hero-title { font-size: clamp(40px, 11.5vw, 72px); }
-  .home-hero-lede { font-size: 17px; margin-top: 10px; }
-  .home-hero-inner { gap: 16px; }
-  .home-hero-timer { padding: 12px 8px 0; }
-}
+@media (max-width: 768px) { .home-hero-timer { padding: 12px 8px 0; } }
 .practice-graph-stage { display: flex; flex-direction: column; min-height: 280px; }
 .practice-graph-stage > * { flex: 1 1 auto; }
 .practice-graph-summary { min-height: 22px; }
