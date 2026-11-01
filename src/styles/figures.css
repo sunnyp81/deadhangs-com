@@ -1,0 +1,97 @@
+/* One figure system: body in text colour, bar in the bar colour, cyan only for the part a figure teaches, amber only for a warning. */
+.hf, .hf-icon, .hf-draw {
+  --hf-body: var(--color-text);
+  --hf-bar: var(--color-text-muted);
+  --hf-hl: var(--color-primary);
+  --hf-warn: var(--color-warn);
+  --hf-stroke: 2.5px;
+}
+
+.hf { display: block; width: 100%; max-width: var(--hf-max, 150px); height: auto; margin-inline: auto; overflow: visible; }
+.hf :is(.hf-limb, .hf-head, .hf-hand, .hf-prop, .hf-cue) { fill: none; stroke: var(--hf-body); stroke-width: var(--hf-stroke); stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.hf .hf-prop { stroke: var(--hf-bar); }
+.hf .hf-bar { fill: var(--hf-bar); stroke: none; }
+.hf .hf-dot { fill: var(--hf-hl); stroke: none; }
+.hf .hf-hl, .hf .hf-hl :is(.hf-limb, .hf-hand) { stroke: var(--hf-hl); }
+.hf[data-tone="warn"] .hf-hl, .hf[data-tone="warn"] .hf-hl :is(.hf-limb, .hf-hand) { stroke: var(--hf-warn); }
+.hf .hf-cue { stroke: var(--hf-hl); }
+.visual-block .hf { max-width: var(--hf-max, 150px); }
+
+/* Ladder, step cards and comparison figures */
+.sl-fig { padding: 6px 4px 2px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; align-self: start; }
+.sl-fig .hf { --hf-max: 100%; }
+.dg-figs .hf { --hf-max: 190px; }
+.dg-figs > div { display: flex; flex-direction: column; align-items: center; }
+
+.dg-panels .hf-card { display: grid; grid-template-rows: auto auto 1fr; justify-items: center; gap: 8px; padding: 12px 8px 14px; background: var(--color-surface); border: 1.5px solid var(--color-border); border-radius: 6px; text-align: center; }
+.hf-card .hf { --hf-max: 112px; }
+.hf-card .hf-card-title { margin: 0; font: 700 15px/1.25 var(--font-display); color: var(--color-text); }
+.hf-card .hf-card-num { margin-right: 8px; color: var(--color-primary); }
+.hf-card .hf-card-lines { margin: 0; display: grid; gap: 1px; align-content: start; font: 400 13px/1.3 var(--font-body); color: var(--color-text-muted); }
+.hf-card .hf-card-lines.is-main { color: var(--color-text); }
+.hf-card .hf-card-pair { position: relative; width: min(100%, 112px); height: 18px; margin: 0; font: 400 13px/1.3 var(--font-body); color: var(--color-text-muted); }
+.hf-card .hf-card-pair span { position: absolute; top: 0; transform: translateX(-50%); }
+.hf-card .hf-card-pair span:first-child { left: 28.3%; }
+.hf-card .hf-card-pair span:last-child { left: 71.7%; }
+.hf-card .hf-card-chip { margin: 0; padding: 2px 12px; border: 2px solid var(--color-primary); border-radius: 999px; font: 700 13px/1.4 var(--font-mono); letter-spacing: .04em; color: var(--color-primary); }
+.hf-card .hf-card-best { width: 100%; margin: 0; padding: 8px; border: 1.5px solid var(--color-border); border-radius: 4px; font: 400 13px/1.3 var(--font-body); color: var(--color-text); }
+.hf-card .hf-card-best b { display: block; margin-bottom: 2px; color: var(--color-primary); }
+.hf-card .hf-card-tag { margin: 0; padding: 2px 12px; border-radius: 999px; background: var(--color-primary); color: var(--color-text-inverse); font: 700 12px/1.5 var(--font-body); }
+.hf-card .hf-draw { width: 100%; max-width: 112px; height: auto; display: block; }
+.hf-card .hf-draw :is(.hf-limb, .hf-hand, .hf-prop, .hf-motion) { fill: none; stroke: var(--hf-body); stroke-width: var(--hf-stroke); stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.hf-card .hf-draw .hf-prop { stroke: var(--hf-bar); }
+.hf-card .hf-draw .hf-hl { stroke: var(--hf-hl); }
+.hf-card .hf-draw .hf-hand-fill { fill: var(--hf-hl); fill-opacity: .35; }
+.hf-card .hf-draw .hf-arrowhead { fill: var(--hf-hl); stroke: var(--hf-hl); stroke-width: var(--hf-stroke); stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+
+/* Demo loops */
+.hf-loop { display: grid; gap: 12px; justify-items: center; max-width: 440px; margin-inline: auto; }
+.hf-stage { display: grid; width: 100%; justify-items: center; padding: 8px 0; }
+.hf-stage > * { grid-area: 1 / 1; }
+.hf-live { visibility: hidden; width: 100%; }
+.hf-live .hf { --hf-max: 180px; }
+.hf-loop.is-live .hf-live { visibility: visible; }
+.hf-loop.is-live .hf-still { visibility: hidden; }
+.hf-still { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; align-items: start; }
+.hf-still-fig { margin: 0; display: grid; justify-items: center; gap: 6px; }
+.hf-still-fig .hf { --hf-max: 120px; }
+.hf-still-fig figcaption { font: 400 13px/1.3 var(--font-body); color: var(--color-text-muted); text-align: center; }
+.hf-controls { display: grid; justify-items: center; gap: 8px; text-align: center; }
+.article-body .hf-loop-cap { margin: 0; font-size: 14px; line-height: 1.4; color: var(--color-text-muted); }
+.hf-toggle { min-height: 44px; min-width: 44px; padding: 8px 18px; border: 1px solid var(--color-text-faint); border-radius: 6px; background: transparent; color: var(--color-text); font: 600 14px/1.2 var(--font-body); cursor: pointer; transition: background-color 160ms, border-color 160ms; }
+.hf-toggle:hover { background: var(--color-surface-2); border-color: var(--color-text-muted); }
+.hf-toggle:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+.hf-toggle[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hf-loop .hf-live, .hf-loop .hf-toggle { display: none; }
+  .hf-loop.is-live .hf-still { visibility: visible; }
+}
+
+/* Video slot */
+.demo-video { margin: 32px auto; max-width: 420px; }
+.demo-video-frame { position: relative; aspect-ratio: var(--dv-ratio, 9 / 16); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; }
+.demo-video-frame video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.demo-video .hf-toggle { position: absolute; right: 8px; bottom: 8px; background: rgba(8, 12, 20, .82); }
+.demo-video-cap { margin: 8px 0 0; font: 400 14px/1.4 var(--font-body); color: var(--color-text-muted); }
+
+/* Benefit wheel icons: same stroke and colours as the figures */
+.hf-icon { width: 28px; height: 25px; flex: none; }
+.hf-icon :is(path, line, circle, rect, polyline) { fill: none; stroke: var(--hf-body); stroke-width: var(--hf-stroke); stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.hf-icon .hf-hl { stroke: var(--hf-hl); }
+.hf-icon .hf-fill { fill: var(--hf-hl); fill-opacity: .35; stroke: none; }
+
+/* Benefits anatomy diagram: restyled only, shapes untouched */
+#dh-anatomy .body-outline { stroke: var(--color-text); stroke-width: var(--hf-stroke, 2.5px); stroke-dasharray: none; vector-effect: non-scaling-stroke; }
+#dh-anatomy .hf-bar { fill: var(--color-text-muted); stroke: none; }
+#dh-anatomy .hf-midline { fill: none; stroke: var(--color-text-faint); stroke-width: 1px; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+#dh-anatomy .hf-stabilizer { fill: none; stroke: var(--color-primary); stroke-width: var(--hf-stroke, 2.5px); stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
+#dh-anatomy .leader-line { stroke: var(--color-text-faint); stroke-width: 1.5px; vector-effect: non-scaling-stroke; }
+
+/* Forearm anatomy: same outline, same highlight on both views */
+.dg-comp-body svg .hf-outline { fill: var(--color-surface); stroke: var(--color-text); stroke-width: 2.5px; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.dg-comp-body svg .hf-muscle { fill: var(--color-primary); fill-opacity: .25; stroke: none; }
+
+@media (max-width: 640px) {
+  .hf-still { gap: 8px; }
+  .hf-still-fig .hf { --hf-max: 100%; }
+}

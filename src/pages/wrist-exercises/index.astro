@@ -1,5 +1,6 @@
 ---
 import Article from '../../layouts/Article.astro';
+import '../../styles/figures.css';
 ---
 
 <Article
@@ -151,38 +152,10 @@ import Article from '../../layouts/Article.astro';
 
         <div class="visual-block">
           <div class="dg-panels dg-4" role="img" aria-label="Four wrist warm-up exercises with arrows showing movement: wrist circles, prayer stretch, reverse prayer stretch and tabletop wrist rocks">
-<svg class="dg-panel" viewBox="0.5 0.5 161 223" aria-hidden="true" focusable="false">
-<rect x="2" y="2" width="158" height="220" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="81" y="30" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Wrist Circles</text>
-<circle cx="81" cy="108" r="36" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-dasharray="7 5"/>
-<circle cx="81" cy="108" r="6" fill="#00e5ff" fill-opacity="0.45"/>
-<polygon points="101,74 119,82 105,94" fill="#00e5ff"/>
-<text x="81" y="200" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="13">15 each way</text>
-</svg>
-<svg class="dg-panel" viewBox="166.5 0.5 161 223" aria-hidden="true" focusable="false">
-<rect x="168" y="2" width="158" height="220" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="247" y="30" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Prayer Stretch</text>
-<path d="M233 150 L233 76 Q247 62 261 76 L261 150" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round"/>
-<line x1="247" y1="94" x2="247" y2="140" stroke="#8090b0" stroke-width="2" stroke-dasharray="3 4"/>
-<polyline points="242,132 247,141 252,132" fill="none" stroke="#8090b0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="247" y="200" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="13">Hold 20-30s</text>
-</svg>
-<svg class="dg-panel" viewBox="332.5 0.5 161 223" aria-hidden="true" focusable="false">
-<rect x="334" y="2" width="158" height="220" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="413" y="30" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Reverse Prayer</text>
-<path d="M399 76 L399 146 Q413 160 427 146 L427 76" fill="none" stroke="#00e5ff" stroke-width="2.5" stroke-linecap="round"/>
-<line x1="413" y1="130" x2="413" y2="86" stroke="#8090b0" stroke-width="2" stroke-dasharray="3 4"/>
-<polyline points="408,94 413,85 418,94" fill="none" stroke="#8090b0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="413" y="200" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="13">Hold 20-30s</text>
-</svg>
-<svg class="dg-panel" viewBox="498.5 0.5 161 223" aria-hidden="true" focusable="false">
-<rect x="500" y="2" width="158" height="220" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="579" y="30" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Wrist Rocks</text>
-<line x1="520" y1="124" x2="638" y2="124" stroke="#2a3a54" stroke-width="2"/>
-<rect x="553" y="100" width="52" height="22" rx="7" fill="#00e5ff" fill-opacity="0.35" stroke="#00e5ff" stroke-width="1.5"/>
-<g fill="none" stroke="#8090b0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="545" y1="86" x2="527" y2="86"/><polyline points="532,81 527,86 532,91"/><line x1="613" y1="86" x2="631" y2="86"/><polyline points="626,81 631,86 626,91"/></g>
-<text x="579" y="200" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="13">10 each direction</text>
-</svg>
+<div class="hf-card"><p class="hf-card-title">Wrist Circles</p><svg class="hf-draw" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><circle class="hf-motion hf-hl" cx="60" cy="50" r="36" stroke-dasharray="7 5"/><circle class="hf-hand hf-hl hf-hand-fill" cx="60" cy="50" r="6"/><polygon class="hf-hl hf-arrowhead" points="80,16 98,24 84,36"/></svg><p class="hf-card-lines"><span>15 each way</span></p></div>
+<div class="hf-card"><p class="hf-card-title">Prayer Stretch</p><svg class="hf-draw" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><path class="hf-limb" d="M46 94L46 20Q60 6 74 20L74 94"/><line class="hf-limb hf-hl" x1="60" y1="38" x2="60" y2="84"/><polyline class="hf-limb hf-hl" points="55,76 60,85 65,76"/></svg><p class="hf-card-lines"><span>Hold 20-30s</span></p></div>
+<div class="hf-card"><p class="hf-card-title">Reverse Prayer</p><svg class="hf-draw" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><path class="hf-limb" d="M46 8L46 78Q60 92 74 78L74 8"/><line class="hf-limb hf-hl" x1="60" y1="62" x2="60" y2="18"/><polyline class="hf-limb hf-hl" points="55,26 60,17 65,26"/></svg><p class="hf-card-lines"><span>Hold 20-30s</span></p></div>
+<div class="hf-card"><p class="hf-card-title">Wrist Rocks</p><svg class="hf-draw" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><line class="hf-prop" x1="1" y1="69" x2="119" y2="69"/><rect class="hf-hand hf-hl hf-hand-fill" x="34" y="45" width="52" height="22" rx="7"/><g class="hf-hl"><line class="hf-limb" x1="26" y1="31" x2="8" y2="31"/><polyline class="hf-limb" points="13,26 8,31 13,36"/><line class="hf-limb" x1="94" y1="31" x2="112" y2="31"/><polyline class="hf-limb" points="107,26 112,31 107,36"/></g></svg><p class="hf-card-lines"><span>10 each direction</span></p></div>
 </div>
 <p class="dg-note">Do all four before every dead hang session (3-5 minutes in total)</p>
           <p class="caption">Four wrist warm-up exercises that many people do before hanging.</p>

@@ -1,5 +1,8 @@
 ---
 import Article from '../../layouts/Article.astro';
+import DemoLoopInit from '../../components/DemoLoopInit.astro';
+import { hangFigureSvg, demoLoopHtml } from '../../lib/hang-figure.js';
+import '../../styles/figures.css';
 ---
 
 <Article
@@ -127,55 +130,10 @@ import Article from '../../layouts/Article.astro';
 
         <div class="visual-block">
           <div class="dg-panels dg-4" role="img" aria-label="Four steps of a dead hang: grip the bar at shoulder width, set the shoulders down and back, lift the feet off the platform, then hang for 10 to 60 seconds with arms straight and core braced">
-<svg class="dg-panel" viewBox="1.5 1.5 153 207" aria-hidden="true" focusable="false">
-<rect x="3" y="3" width="150" height="204" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="17" y="26" text-anchor="start" fill="#00e5ff" font-family="JetBrains Mono, ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="1">01</text>
-<text x="86" y="26" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Grip the bar</text>
-<rect x="25" y="47" width="106" height="7" rx="3.5" fill="#2a3a54"/>
-<rect x="44" y="43" width="12" height="15" rx="4" fill="#00e5ff"/>
-<rect x="100" y="43" width="12" height="15" rx="4" fill="#00e5ff"/>
-<line x1="50" y1="80" x2="106" y2="80" stroke="#8090b0" stroke-width="1.5" stroke-dasharray="4 3"/>
-<line x1="50" y1="74" x2="50" y2="86" stroke="#8090b0" stroke-width="1.5"/>
-<line x1="106" y1="74" x2="106" y2="86" stroke="#8090b0" stroke-width="1.5"/>
-<text x="78" y="172" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Shoulder width</text>
-<text x="78" y="187" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Overhand, thumbs</text>
-<text x="78" y="202" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">wrapped around</text>
-</svg>
-<svg class="dg-panel" viewBox="169.5 1.5 153 207" aria-hidden="true" focusable="false">
-<rect x="171" y="3" width="150" height="204" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="185" y="26" text-anchor="start" fill="#00e5ff" font-family="JetBrains Mono, ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="1">02</text>
-<text x="254" y="26" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Set shoulders</text>
-<rect x="193" y="47" width="106" height="7" rx="3.5" fill="#2a3a54"/>
-<g stroke="#eef2ff" stroke-width="2.5" stroke-linecap="round" fill="none"><line x1="234" y1="52" x2="240" y2="86"/><line x1="258" y1="52" x2="252" y2="86"/><line x1="246" y1="94" x2="246" y2="108"/></g>
-<circle cx="246" cy="88" r="7" fill="#00e5ff"/>
-<g stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="216" y1="78" x2="216" y2="100"/><polyline points="211,94 216,100 221,94"/></g>
-<g stroke="#00e5ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><line x1="276" y1="78" x2="276" y2="100"/><polyline points="271,94 276,100 281,94"/></g>
-<text x="246" y="184" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Pull shoulders</text>
-<text x="246" y="199" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">down and back</text>
-</svg>
-<svg class="dg-panel" viewBox="337.5 1.5 153 207" aria-hidden="true" focusable="false">
-<rect x="339" y="3" width="150" height="204" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="353" y="26" text-anchor="start" fill="#00e5ff" font-family="JetBrains Mono, ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="1">03</text>
-<text x="422" y="26" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Lift feet</text>
-<rect x="361" y="47" width="106" height="7" rx="3.5" fill="#2a3a54"/>
-<g stroke="#eef2ff" stroke-width="2.5" stroke-linecap="round" fill="none"><line x1="402" y1="52" x2="408" y2="86"/><line x1="426" y1="52" x2="420" y2="86"/><line x1="414" y1="94" x2="414" y2="118"/><line x1="414" y1="118" x2="405" y2="142"/><line x1="414" y1="118" x2="423" y2="142"/></g>
-<circle cx="414" cy="88" r="7" fill="#00e5ff"/>
-<rect x="386" y="150" width="56" height="12" rx="3" fill="none" stroke="#8090b0" stroke-width="1.5" stroke-dasharray="4 3"/>
-<text x="414" y="184" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Step off</text>
-<text x="414" y="199" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">the platform</text>
-</svg>
-<svg class="dg-panel" viewBox="505.5 1.5 153 207" aria-hidden="true" focusable="false">
-<rect x="507" y="3" width="150" height="204" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="521" y="26" text-anchor="start" fill="#00e5ff" font-family="JetBrains Mono, ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="1">04</text>
-<text x="590" y="26" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Hang</text>
-<rect x="529" y="47" width="106" height="7" rx="3.5" fill="#2a3a54"/>
-<g stroke="#eef2ff" stroke-width="2.5" stroke-linecap="round" fill="none"><line x1="570" y1="52" x2="576" y2="86"/><line x1="594" y1="52" x2="588" y2="86"/><line x1="582" y1="94" x2="582" y2="118"/><line x1="582" y1="118" x2="573" y2="142"/><line x1="582" y1="118" x2="591" y2="142"/></g>
-<circle cx="582" cy="88" r="7" fill="#00e5ff"/>
-<rect x="541" y="148" width="82" height="24" rx="12" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
-<text x="582" y="164.5" text-anchor="middle" fill="#00e5ff" font-family="JetBrains Mono, ui-monospace, monospace" font-size="12" font-weight="700" letter-spacing="1">10-60 SEC</text>
-<text x="582" y="184" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Arms straight</text>
-<text x="582" y="199" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Core braced</text>
-</svg>
+<div class="hf-card"><p class="hf-card-title"><span class="hf-card-num">01</span>Grip the bar</p>${hangFigureSvg({ pose: 'supported', hl: 'grip' })}<p class="hf-card-lines"><span>Shoulder width</span><span>Overhand, thumbs wrapped around</span></p></div>
+<div class="hf-card"><p class="hf-card-title"><span class="hf-card-num">02</span>Set shoulders</p>${hangFigureSvg({ pose: 'active' })}<p class="hf-card-lines"><span>Pull shoulders down and back</span></p></div>
+<div class="hf-card"><p class="hf-card-title"><span class="hf-card-num">03</span>Lift feet</p>${hangFigureSvg({ pose: 'dead-hang', box: true, hl: 'legs' })}<p class="hf-card-lines"><span>Step off the platform</span></p></div>
+<div class="hf-card"><p class="hf-card-title"><span class="hf-card-num">04</span>Hang</p>${hangFigureSvg({ pose: 'dead-hang', hl: 'arms' })}<p class="hf-card-chip">10-60 SEC</p><p class="hf-card-lines"><span>Arms straight</span><span>Core braced</span></p></div>
 </div>
           <p class="caption">Dead hang setup: grip, shoulders, lift off, hold.</p>
         </div>
@@ -194,6 +152,10 @@ import Article from '../../layouts/Article.astro';
         <h3>Step 4: Set Your Body Position</h3>
         <p>Let your shoulders relax for a passive hang. Pull your shoulders down and back for an active hang. Tuck your pelvis slightly to flatten your lower back. Bring your legs together and point your toes downward. Engage your core just enough to prevent swinging.</p>
 
+        <div class="visual-block">
+          ${demoLoopHtml('passive-to-active', { caption: 'Passive hang to active hang: the shoulders pull down and the chest lifts.' })}
+        </div>
+
         <h3>Step 5: Breathe and Hold</h3>
         <p>Breathe slowly and do not hold your breath. Hold for about 10 to 20 seconds to start. Stop one or two seconds before your grip gives out. Step onto the platform to dismount rather than dropping.</p>
 
@@ -201,64 +163,9 @@ import Article from '../../layouts/Article.astro';
 
         <div class="visual-block">
           <div class="dg-panels dg-3" role="img" aria-label="Three dead hang grips seen from above: overhand with palms facing away, underhand with palms facing you, and mixed with one hand each way">
-<svg class="dg-panel" viewBox="0.5 0.5 203 259" aria-hidden="true" focusable="false">
-<rect x="2" y="2" width="200" height="256" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="102" y="28" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Overhand (Pronated)</text>
-<rect x="18" y="62" width="168" height="10" rx="5" fill="#2a3a54"/>
-<rect x="52" y="48" width="36" height="38" rx="8" fill="#141c2c" stroke="#00e5ff" stroke-width="1.5"/>
-<line x1="60" y1="54" x2="60" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="67" y1="54" x2="67" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="74" y1="54" x2="74" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="81" y1="54" x2="81" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<rect x="116" y="48" width="36" height="38" rx="8" fill="#141c2c" stroke="#00e5ff" stroke-width="1.5"/>
-<line x1="124" y1="54" x2="124" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="131" y1="54" x2="131" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="138" y1="54" x2="138" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="145" y1="54" x2="145" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<text x="102" y="128" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="13">Palms face away from you</text>
-<text x="102" y="146" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="13">Knuckles on top</text>
-<rect x="14" y="170" width="176" height="46" rx="4" fill="none" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="102" y="186" text-anchor="middle" fill="#00e5ff" font-family="Inter Tight, Inter, system-ui, sans-serif" font-size="12" font-weight="700">Best for</text>
-<text x="102" y="204" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Grip strength and pull-up prep</text>
-<rect x="62" y="228" width="80" height="20" rx="10" fill="#00e5ff"/>
-<text x="102" y="242" text-anchor="middle" fill="#080c14" font-family="Inter Tight, system-ui, sans-serif" font-size="11" font-weight="700">Standard grip</text>
-</svg>
-<svg class="dg-panel" viewBox="228.5 0.5 203 259" aria-hidden="true" focusable="false">
-<rect x="230" y="2" width="200" height="256" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="330" y="28" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Underhand (Supinated)</text>
-<rect x="246" y="62" width="168" height="10" rx="5" fill="#2a3a54"/>
-<rect x="280" y="48" width="36" height="38" rx="8" fill="#141c2c" stroke="#00e5ff" stroke-width="1.5"/>
-<path d="M287 68 Q298 73 309 68" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<path d="M287 76 Q298 81 309 76" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<rect x="344" y="48" width="36" height="38" rx="8" fill="#141c2c" stroke="#00e5ff" stroke-width="1.5"/>
-<path d="M351 68 Q362 73 373 68" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<path d="M351 76 Q362 81 373 76" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<text x="330" y="128" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="13">Palms face toward you</text>
-<text x="330" y="146" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="13">Palms on top</text>
-<rect x="242" y="170" width="176" height="46" rx="4" fill="none" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="330" y="186" text-anchor="middle" fill="#00e5ff" font-family="Inter Tight, Inter, system-ui, sans-serif" font-size="12" font-weight="700">Best for</text>
-<text x="330" y="204" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Bicep engagement and wrist relief</text>
-</svg>
-<svg class="dg-panel" viewBox="456.5 0.5 203 259" aria-hidden="true" focusable="false">
-<rect x="458" y="2" width="200" height="256" rx="6" fill="#0e1420" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="558" y="28" text-anchor="middle" fill="#eef2ff" font-family="Space Grotesk, system-ui, sans-serif" font-size="14" font-weight="700">Mixed (Alternating)</text>
-<rect x="474" y="62" width="168" height="10" rx="5" fill="#2a3a54"/>
-<rect x="508" y="48" width="36" height="38" rx="8" fill="#141c2c" stroke="#00e5ff" stroke-width="1.5"/>
-<line x1="516" y1="54" x2="516" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="523" y1="54" x2="523" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="530" y1="54" x2="530" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="537" y1="54" x2="537" y2="64" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<rect x="572" y="48" width="36" height="38" rx="8" fill="#141c2c" stroke="#00e5ff" stroke-width="1.5"/>
-<path d="M579 68 Q590 73 601 68" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<path d="M579 76 Q590 81 601 76" fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
-<text x="526" y="102" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, Inter, system-ui, sans-serif" font-size="12">Over</text>
-<text x="590" y="102" text-anchor="middle" fill="#8090b0" font-family="Inter Tight, Inter, system-ui, sans-serif" font-size="12">Under</text>
-<text x="558" y="128" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="13">One hand each way</text>
-<text x="558" y="146" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="13">Alternate between sets</text>
-<rect x="470" y="170" width="176" height="46" rx="4" fill="none" stroke="#2a3a54" stroke-width="1.5"/>
-<text x="558" y="186" text-anchor="middle" fill="#00e5ff" font-family="Inter Tight, Inter, system-ui, sans-serif" font-size="12" font-weight="700">Best for</text>
-<text x="558" y="204" text-anchor="middle" fill="#eef2ff" font-family="Inter Tight, system-ui, sans-serif" font-size="12">Anti-rotation and core stability</text>
-</svg>
+<div class="hf-card"><p class="hf-card-title">Overhand (Pronated)</p>${hangFigureSvg({ pose: 'overhand' })}<p class="hf-card-lines is-main"><span>Palms face away from you</span><span>Knuckles on top</span></p><p class="hf-card-best"><b>Best for</b>Grip strength and pull-up prep</p><p class="hf-card-tag">Standard grip</p></div>
+<div class="hf-card"><p class="hf-card-title">Underhand (Supinated)</p>${hangFigureSvg({ pose: 'underhand' })}<p class="hf-card-lines is-main"><span>Palms face toward you</span><span>Palms on top</span></p><p class="hf-card-best"><b>Best for</b>Bicep engagement and wrist relief</p></div>
+<div class="hf-card"><p class="hf-card-title">Mixed (Alternating)</p>${hangFigureSvg({ pose: 'mixed' })}<p class="hf-card-pair"><span>Over</span><span>Under</span></p><p class="hf-card-lines is-main"><span>One hand each way</span><span>Alternate between sets</span></p><p class="hf-card-best"><b>Best for</b>Anti-rotation and core stability</p></div>
 </div>
           <p class="caption">Three grip types compared: overhand, underhand and mixed.</p>
         </div>
@@ -376,5 +283,6 @@ import Article from '../../layouts/Article.astro';
         <p class="author-title">Dead hang and grip training guides</p>
         <p>DeadHangs.com is an independent publishing and tools site. Where a page makes a health claim, the source is named on that page. Training numbers without a source are practical guidance, not norms. Read the <a href="/editorial-standards/">editorial standards</a> and the <a href="/about/">about page</a>.</p>
       </div>`} />
+    <DemoLoopInit />
   </div>
 </Article>
