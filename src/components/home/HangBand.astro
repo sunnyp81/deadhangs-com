@@ -1,0 +1,35 @@
+---
+const words = ['Grip', 'Hang', 'Breathe', 'Step down'];
+const row = (n: number) => Array.from({ length: n }, () => words).flat();
+---
+<div class="hb-band" aria-hidden="true">
+  <div class="hb-row hb-row-a">{row(4).map((w) => <span data-w={w}></span>)}</div>
+  <div class="hb-row hb-row-b">{row(4).map((w) => <span data-w={w}></span>)}</div>
+</div>
+
+<style is:global>
+  .hb-band { --hb: 0; position: relative; overflow: hidden; padding: 40px 0; background: var(--color-bg); border-top: 1px solid var(--color-divider); pointer-events: none; user-select: none; }
+  .hb-row { display: flex; gap: .3em; width: max-content; white-space: nowrap; font: 900 clamp(64px, 11vw, 168px)/.95 var(--font-heavy); letter-spacing: -.02em; text-transform: uppercase; will-change: transform; }
+  .hb-row span { display: inline-flex; align-items: center; gap: .3em; }
+  .hb-row span::before { content: attr(data-w) / ""; }
+  .hb-row span::after { content: "·" / ""; color: var(--color-primary); -webkit-text-stroke: 0; }
+  .hb-row-a { color: transparent; -webkit-text-stroke: 1.5px var(--color-border); transform: translateX(calc(-6% - var(--hb) * 24%)); }
+  .hb-row-b { color: var(--color-surface-offset-2); transform: translateX(calc(-30% + var(--hb) * 24%)); }
+  @media (prefers-reduced-motion: reduce) { .hb-row-a, .hb-row-b { transform: translateX(-10%); } }
+</style>
+
+<script>
+  const band = document.querySelector<HTMLElement>('.hb-band');
+  if (band && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let queued = 0;
+    const update = () => {
+      queued = 0;
+      const r = band.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+      band.style.setProperty('--hb', p.toFixed(4));
+    };
+    window.addEventListener('scroll', () => { if (!queued) queued = requestAnimationFrame(update); }, { passive: true });
+    update();
+  }
+</script>
