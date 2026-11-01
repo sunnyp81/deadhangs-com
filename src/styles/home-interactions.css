@@ -57,3 +57,27 @@
 .practice-graph-controls .practice-graph-setup { display: flex; flex-direction: column; gap: 10px; min-width: min(100%, 260px); max-width: 100%; }
 .practice-graph-controls .practice-graph-setup label { display: block; min-height: 0; font: 13px var(--font-body); color: var(--color-text-muted); }
 .practice-graph-controls .practice-graph-setup select { min-height: 44px; max-width: 100%; }
+
+/* Empty practice chart: a blank grid that draws in when it scrolls into view, with the first-hold point waiting at day 1. */
+.practice-graph-empty.pg-blank { position: relative; overflow: hidden; align-content: center; padding: clamp(24px, 4vw, 48px) clamp(24px, 4vw, 48px) 64px clamp(56px, 9vw, 120px); border-style: solid; border-color: var(--color-divider); background: radial-gradient(120% 90% at 0% 100%, color-mix(in srgb, var(--color-primary) 9%, transparent), transparent 60%), var(--color-surface); }
+.pg-blank-grid { position: absolute; left: clamp(28px, 5vw, 64px); right: 24px; top: 32px; bottom: 40px; pointer-events: none; }
+.pg-blank-grid span { position: absolute; left: 0; right: 0; height: 0; border-top: 1px dashed var(--color-divider); transform-origin: left; }
+.pg-blank-grid .pg-blank-axis { top: auto; bottom: 0; border-top: 2px solid var(--color-border); }
+.pg-blank-day { position: absolute; left: clamp(28px, 5vw, 64px); bottom: 14px; font: 10px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--color-text-faint); }
+.pg-blank-dot { position: absolute; left: calc(clamp(28px, 5vw, 64px) - 7px); bottom: 33px; z-index: 1; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--color-primary); background: var(--color-bg); }
+.pg-blank-dot span { position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--color-primary); opacity: 0; }
+.pg-blank-copy { position: relative; display: grid; gap: 12px; justify-items: start; max-width: 52ch; padding: 20px 24px; margin-left: -24px; background: var(--color-surface); border: 1px solid var(--color-divider); }
+.pg-blank-copy .practice-graph-empty-title { font-size: clamp(22px, 2.4vw, 30px); line-height: 1.15; }
+@media (prefers-reduced-motion: no-preference) {
+  .pg-blank .pg-blank-grid span { transform: scaleX(0); transition: transform 900ms cubic-bezier(.16,1,.3,1) var(--d, 0ms); }
+  .pg-blank .pg-blank-grid .pg-blank-axis { transition-delay: 0ms; transition-duration: 700ms; }
+  .pg-blank .pg-blank-dot { transform: scale(0); transition: transform 500ms cubic-bezier(.34,1.56,.64,1) 700ms; }
+  .pg-blank .pg-blank-copy { transform: translateY(18px); transition: transform 800ms cubic-bezier(.16,1,.3,1) 250ms; }
+  .pg-blank.is-in .pg-blank-grid span, .pg-blank.is-in .pg-blank-dot, .pg-blank.is-in .pg-blank-copy { transform: none; }
+  .pg-blank.is-in .pg-blank-dot span { animation: pg-ping 1.8s cubic-bezier(.16,1,.3,1) 1.2s 3; }
+}
+@keyframes pg-ping { from { transform: scale(1); opacity: .8; } to { transform: scale(3.2); opacity: 0; } }
+@media (max-width: 720px) { .practice-graph-empty.pg-blank { padding: 24px 16px 64px 40px; } .pg-blank-copy { margin-left: -12px; padding: 16px; } .pg-blank-grid { left: 22px; right: 12px; } .pg-blank-day { left: 22px; } .pg-blank-dot { left: 15px; } }
+.hm .practice-graph-controls[aria-hidden="true"] { display: none; }
+.hm .practice-graph-controls[aria-hidden="true"] + .practice-graph-stage { margin-top: 28px; }
+html.has-log .hm .practice-graph-controls[aria-hidden="true"] { display: flex; }
