@@ -1,0 +1,155 @@
+---
+import { hangFigureSvg } from '../../lib/hang-figure.js';
+import '../../styles/figures.css';
+
+const steps = [
+  { title: 'Grip the bar', body: 'Take an overhand grip at shoulder width and wrap your thumbs around the bar. Squeeze the bar firmly before you lift off.', fig: hangFigureSvg({ pose: 'supported', hl: 'grip' }) },
+  { title: 'Set your shoulders', body: 'Pull the shoulder blades down and back while keeping the arms straight. This is the active hang position.', fig: hangFigureSvg({ pose: 'active' }) },
+  { title: 'Lift your feet', body: 'Step off the platform and let the bar take your full bodyweight. You should not need to jump to reach the bar.', fig: hangFigureSvg({ pose: 'dead-hang', box: true, hl: 'legs' }) },
+  { title: 'Hang and breathe', body: 'Straighten your arms completely and brace your core. Breathe slowly and do not hold your breath.', fig: hangFigureSvg({ pose: 'dead-hang', hl: 'arms' }) },
+  { title: 'Step down early', body: 'Stop 1 to 2 seconds before your grip fails and step down under control. Stop if anything hurts.', fig: hangFigureSvg({ pose: 'step-down', hl: 'legs' }) },
+];
+const n = steps.length;
+const pad = (i: number) => String(i + 1).padStart(2, '0');
+---
+<section id="one-hang" class="oh" data-step="0" style={`--oh-n:${n}`}>
+  <div class="oh-wrap">
+    <header class="oh-head">
+      <div class="dh-eyebrow">· Module 02 / Form</div>
+      <h2 class="dh-heavy oh-title">One hang.<br /><span class="oh-title-muted">Five moves.</span></h2>
+      <p class="oh-intro">Every hold you time on this site starts with the same setup. Scroll through it once before your first session.</p>
+    </header>
+
+    <div class="oh-grid">
+      <ol class="oh-steps">
+        {steps.map((s, i) => (
+          <li class="oh-step" data-i={i}>
+            <div class="oh-inline-fig" set:html={s.fig} />
+            <div class="oh-copy">
+              <span class="oh-num dh-mono" aria-hidden="true">{pad(i)} / {pad(n - 1)}</span>
+              <h3 class="dh-display oh-step-title">{s.title}</h3>
+              <p class="oh-step-body">{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="oh-stage" aria-hidden="true">
+        <div class="oh-stage-inner">
+          <svg class="oh-ring" viewBox="0 0 200 200">
+            <circle class="oh-ring-track" cx="100" cy="100" r="92" />
+            <circle class="oh-ring-fill" cx="100" cy="100" r="92" pathLength="100" />
+            {Array.from({ length: n }, (_, i) => {
+              const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+              return <circle class="oh-tick" data-i={i} cx={(100 + 92 * Math.cos(a)).toFixed(2)} cy={(100 + 92 * Math.sin(a)).toFixed(2)} r="4" />;
+            })}
+          </svg>
+          <div class="oh-figs">
+            {steps.map((s, i) => <div class="oh-fig" data-i={i} set:html={s.fig} />)}
+          </div>
+        </div>
+        <div class="oh-readout dh-mono">
+          {steps.map((s, i) => <span class="oh-readout-item" data-i={i}><b>{pad(i)}</b> {s.title}</span>)}
+        </div>
+      </div>
+    </div>
+
+    <a href="/how-to-deadhang/" class="hm-more oh-more">Read the full how-to guide →</a>
+  </div>
+</section>
+
+<style is:global>
+  .oh { position: relative; padding: 120px 64px 96px; background: var(--color-bg); border-top: 1px solid var(--color-divider); --oh-p: 0; }
+  .oh-wrap { max-width: 1200px; margin: 0 auto; }
+  .oh-head { max-width: 760px; margin-bottom: 56px; }
+  .oh-head .dh-eyebrow { margin-bottom: 16px; }
+  .oh-title { font-size: clamp(56px, 7.5vw, 112px); line-height: .92; margin: 0 0 24px; }
+  .oh-title-muted { color: var(--color-primary); }
+  .oh-intro { font-size: 18px; color: var(--color-text-muted); margin: 0; max-width: 56ch; }
+
+  .oh-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+  .oh-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+  .oh-step { display: grid; gap: 12px; align-content: start; padding: 16px; background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 6px; }
+  .oh-inline-fig .hf { --hf-max: 120px; }
+  .oh-num { display: block; font-size: 11px; letter-spacing: .18em; color: var(--color-primary); margin-bottom: 8px; }
+  .oh-step-title { font-size: 22px; font-weight: 600; margin: 0 0 8px; }
+  .oh-step-body { margin: 0; color: var(--color-text-muted); font-size: 15px; line-height: 1.6; }
+  .oh-stage { display: none; }
+  .oh-more { margin-top: 32px; }
+
+  /* Live scroll sequence: enabled by script only when motion is allowed. */
+  .oh.oh-live .oh-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; }
+  .oh.oh-live .oh-steps { display: block; }
+  .oh.oh-live .oh-step { min-height: 72vh; display: flex; align-items: center; padding: 0; background: none; border: 0; }
+  .oh.oh-live .oh-step:last-child { min-height: 60vh; }
+  .oh.oh-live .oh-inline-fig { display: none; }
+  .oh.oh-live .oh-copy { max-width: 440px; padding-left: 24px; border-left: 2px solid var(--color-divider); transition: border-color 300ms cubic-bezier(.16,1,.3,1); }
+  .oh.oh-live .oh-step-title { font-size: clamp(28px, 3vw, 40px); transition: color 300ms cubic-bezier(.16,1,.3,1); color: var(--color-text-muted); }
+  .oh.oh-live .oh-step-body { font-size: 17px; }
+  .oh.oh-live .oh-step.is-on .oh-copy { border-left-color: var(--color-primary); }
+  .oh.oh-live .oh-step.is-on .oh-step-title { color: var(--color-text); }
+
+  .oh.oh-live .oh-stage { display: grid; position: sticky; top: max(96px, calc(50vh - 260px)); align-self: start; justify-items: center; gap: 20px; }
+  .oh-stage-inner { position: relative; width: min(100%, 440px); aspect-ratio: 1; }
+  .oh-ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(0deg); }
+  .oh-ring-track { fill: none; stroke: var(--color-divider); stroke-width: 2; }
+  .oh-ring-fill { fill: none; stroke: var(--color-primary); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--oh-p) * 100); transform: rotate(-90deg); transform-origin: 100px 100px; }
+  .oh-tick { fill: var(--color-bg); stroke: var(--color-border); stroke-width: 2; transition: fill 300ms, stroke 300ms; }
+  .oh-figs { position: absolute; inset: 14% 20%; display: grid; }
+  .oh-fig { grid-area: 1 / 1; display: grid; place-items: center; opacity: 0; transform: translateY(12px) scale(.96); transition: opacity 420ms cubic-bezier(.16,1,.3,1), transform 520ms cubic-bezier(.16,1,.3,1); }
+  .oh-fig .hf { --hf-max: 100%; max-height: 100%; width: auto; height: 100%; --hf-stroke: 3px; }
+  .oh-readout { position: relative; height: 1.6em; width: 100%; text-align: center; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--color-text-muted); }
+  .oh-readout b { color: var(--color-primary); font-weight: 400; margin-right: 8px; }
+  .oh-readout-item { position: absolute; inset: 0; opacity: 0; transform: translateY(8px); transition: opacity 300ms, transform 300ms cubic-bezier(.16,1,.3,1); }
+
+  .oh[data-step="0"] .oh-fig[data-i="0"], .oh[data-step="1"] .oh-fig[data-i="1"], .oh[data-step="2"] .oh-fig[data-i="2"], .oh[data-step="3"] .oh-fig[data-i="3"], .oh[data-step="4"] .oh-fig[data-i="4"],
+  .oh[data-step="0"] .oh-readout-item[data-i="0"], .oh[data-step="1"] .oh-readout-item[data-i="1"], .oh[data-step="2"] .oh-readout-item[data-i="2"], .oh[data-step="3"] .oh-readout-item[data-i="3"], .oh[data-step="4"] .oh-readout-item[data-i="4"] { opacity: 1; transform: none; }
+  .oh[data-step="0"] .oh-tick[data-i="0"],
+  .oh[data-step="1"] .oh-tick:is([data-i="0"], [data-i="1"]),
+  .oh[data-step="2"] .oh-tick:is([data-i="0"], [data-i="1"], [data-i="2"]),
+  .oh[data-step="3"] .oh-tick:not([data-i="4"]),
+  .oh[data-step="4"] .oh-tick { fill: var(--color-primary); stroke: var(--color-primary); }
+
+  @media (max-width: 860px) {
+    .oh { padding: 80px 20px 64px; }
+    .oh.oh-live .oh-grid { grid-template-columns: 1fr; gap: 0; }
+    .oh.oh-live .oh-stage { order: -1; top: 64px; z-index: 1; padding: 8px 0 20px; background: linear-gradient(var(--color-bg) 85%, transparent); }
+    .oh-stage-inner { width: min(46vw, 190px); }
+    .oh-readout { display: none; }
+    .oh.oh-live .oh-step { min-height: 52vh; align-items: flex-start; padding-top: 4vh; }
+    .oh.oh-live .oh-step:last-child { min-height: 36vh; }
+    .oh.oh-live .oh-step-title { font-size: 28px; }
+    .oh.oh-live .oh-copy { position: relative; z-index: 0; }
+    .oh-title { font-size: clamp(48px, 14vw, 72px); }
+  }
+</style>
+
+<script>
+  const sec = document.getElementById('one-hang');
+  if (sec && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    sec.classList.add('oh-live');
+    const steps = Array.from(sec.querySelectorAll<HTMLElement>('.oh-step'));
+    let queued = 0;
+    let current = -1;
+    const update = () => {
+      queued = 0;
+      const vh = window.innerHeight;
+      const line = vh * (window.innerWidth <= 860 ? 0.62 : 0.55);
+      let idx = 0;
+      steps.forEach((el, i) => { if (el.getBoundingClientRect().top < line) idx = i; });
+      const sr = steps[idx].getBoundingClientRect();
+      const within = Math.min(1, Math.max(0, (line - sr.top) / Math.max(1, sr.height)));
+      if (idx !== current) {
+        current = idx;
+        sec.dataset.step = String(idx);
+        steps.forEach((el, i) => el.classList.toggle('is-on', i === idx));
+      }
+      const p = steps[0].getBoundingClientRect().top >= line ? 0 : Math.min(1, (idx + within) / steps.length);
+      sec.style.setProperty('--oh-p', p.toFixed(4));
+    };
+    const onScroll = () => { if (!queued) queued = requestAnimationFrame(update); };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  }
+</script>
