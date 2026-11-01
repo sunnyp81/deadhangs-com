@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { filterBySetup, listSetups, parseStoredLog, STORAGE_KEY } from "../lib/training-log.mjs";
 import { progressFor } from "../lib/training-progress.mjs";
 import type { LogEntry } from "../lib/training-types";
@@ -86,6 +86,16 @@ export default function PracticeGraph() {
   const dateTicks = daily.filter((_, index) => index === 0 || index === daily.length - 1 || index % Math.max(1, Math.ceil((daily.length - 1) / 3)) === 0);
 
   const noEntries = entries.length === 0;
+  const blankRef = useRef<HTMLDivElement>(null);
+  const [blankIn, setBlankIn] = useState(false);
+  useEffect(() => {
+    const el = blankRef.current;
+    if (!el) return;
+    if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setBlankIn(true); return; }
+    const io = new IntersectionObserver((items) => { if (items.some((i) => i.isIntersecting)) { setBlankIn(true); io.disconnect(); } }, { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [noEntries]);
 
   return (
     <section className="practice-graph" aria-labelledby={`${uid}-title`}>
@@ -156,12 +166,20 @@ export default function PracticeGraph() {
           </div>
         </>
       ) : (
-        <div className="practice-graph-empty">
+        <div className={`practice-graph-empty${noEntries ? " pg-blank" : ""}${noEntries && blankIn ? " is-in" : ""}`} ref={noEntries ? blankRef : undefined}>
           {noEntries ? (
             <>
-              <p className="practice-graph-empty-title">Your first recorded hold starts this chart.</p>
-              <p>Nothing is drawn until you save a real hold in your log. Entries stay on this device.</p>
-              <a href="/training-log/" className="dh-btn">Record a hold</a>
+              <div className="pg-blank-grid" aria-hidden="true">
+                {[0, 1, 2, 3].map((i) => <span key={i} style={{ ["--d" as any]: `${i * 90}ms`, top: `${i * 25}%` }} />)}
+                <span className="pg-blank-axis" />
+              </div>
+              <span className="pg-blank-day" aria-hidden="true">Day 1</span>
+              <span className="pg-blank-dot" aria-hidden="true"><span /></span>
+              <div className="pg-blank-copy">
+                <p className="practice-graph-empty-title">Your first recorded hold starts this chart.</p>
+                <p>Nothing is drawn until you save a real hold in your log. Entries stay on this device.</p>
+                <a href="/training-log/" className="dh-btn">Record a hold</a>
+              </div>
             </>
           ) : (
             <>
