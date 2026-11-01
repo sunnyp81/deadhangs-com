@@ -34,7 +34,7 @@ const articleSchema = {
   publisher: { '@type': 'Organization', name: 'DeadHangs.com' },
   mainEntityOfPage: 'https://deadhangs.com/grip-strength-by-age/',
   datePublished: '2026-10-19',
-  dateModified: '2026-10-30',
+  dateModified: '2026-11-01',
 };
 const schema =
   '<script type="application/ld+json">' + JSON.stringify(articleSchema) + '</script>' +
@@ -55,7 +55,7 @@ const xTicks = [20, 30, 40, 50, 60, 70, 80, 90];
 const compare = [30, 50, 70, 90].map((a) => rows.find((r) => r.age === a)!);
 const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
 ---
-<Article h1={"Grip strength by age: average kg for men and women"} subtitle={"This page gives hand dynamometer grip force in kg by age and sex. It is not dead hang time in seconds. For hanging times see <a href=\"/dead-hang-time-by-age/\">dead hang time by age</a>; for training see <a href=\"/grip-strength/\">how to build grip strength</a>."} crumbs={[{"name":"Grip strength by age"}]} updated={"Updated October 30, 2026"} title={title} description={description} schema={schema}>
+<Article h1={"Grip strength by age: average kg for men and women"} subtitle={"This page gives hand dynamometer grip force in kg by age and sex. It is not dead hang time in seconds. For hanging times see <a href=\"/dead-hang-time-by-age/\">dead hang time by age</a>; for training see <a href=\"/grip-strength/\">how to build grip strength</a>."} crumbs={[{"name":"Grip strength by age"}]} updated={"Updated November 1, 2026"} title={title} description={description} schema={schema}>
 <div class="article-body gba">
   <p>The figures below come from Dodds et al. (PLOS ONE 2014), a pooled analysis of 12 British studies. It covers 60,803 grip measurements from 49,964 participants aged 4 to 90 and over. Of those participants, 26,687 were female. The data are observational. Median grip peaked at <strong>51 kg in males</strong> (ages 29 to 39) and <strong>31 kg in females</strong> (ages 26 to 42) and then fell with age.</p>
 
@@ -185,7 +185,8 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
   </ul>
   <p>The broad pattern agrees: a peak in the 30s and men above women at every age group. Each source is a different population. Use one table at a time rather than mixing them.</p>
 
-  <h2 id="how-to-test">How to test grip strength</h2>
+  <h2 id="how-to-test">Grip strength test: how to do it and what counts as weak</h2>
+  <p>A grip strength test is a hand dynamometer reading in kg. Two cut-offs on this page tell you what counts as weak: <strong>below 27 kg for men and below 16 kg for women</strong> (EWGSOP2 2019, see <a href="#weak">what counts as weak grip strength</a>). They are screening cut-offs, not a diagnosis, and a single low reading can reflect pain, fatigue or poor technique.</p>
   <p>Clinics and research studies use a hand dynamometer. The norms above were collected that way. Only a dynamometer reading can be compared with them. A bathroom scale, a dead hang or a bar hold cannot.</p>
   <ol>
     <li>Use a calibrated hand dynamometer and follow the manufacturer's instructions for grip width and posture.</li>
@@ -193,7 +194,9 @@ const pct = (kg: number) => ((kg / KMAX) * 100).toFixed(1);
     <li>Squeeze as hard as you can, without jerking, and read the peak value in kg. Allow a rest between attempts.</li>
     <li>Test both hands, make several attempts, and note the best reading for each.</li>
     <li>Repeat at the same time of day with the same device if you are tracking change.</li>
+    <li>Compare your best reading with the row for your age and sex in the <a href="#table">table above</a>, and with the 27 kg and 16 kg cut-offs.</li>
   </ol>
+  <p>Need a device? <a href="https://www.amazon.com/s?k=hand+grip+dynamometer&tag=deadhangs-20" rel="nofollow sponsored">Browse hand dynamometers on Amazon</a> (affiliate link: DeadHangs.com earns from qualifying purchases). Check that the listing gives readings in kg, and note that different devices may not read identically.</p>
   <p>The Dodds figures use the maximum across trials and both hands, so compare your best reading, not your average. A reading from a different device or protocol may not be directly comparable.</p>
   <p>A dead hang tests something different: how long you can support your bodyweight. Both depend on grip, but the two measures are not interchangeable. See <a href="/dead-hang-time-by-age/">dead hang time by age</a> for the timed version and the grip strength training guide for building grip.</p>
 
