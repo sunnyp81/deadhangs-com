@@ -1,5 +1,8 @@
 ---
 import Article from '../../layouts/Article.astro';
+import DemoLoopInit from '../../components/DemoLoopInit.astro';
+import { demoLoopHtml } from '../../lib/hang-figure.js';
+import '../../styles/figures.css';
 ---
 
 <Article
@@ -161,6 +164,9 @@ import Article from '../../layouts/Article.astro';
         <li>Do not continue that session.</li>
         <li>Seek medical advice if it recurs or persists.</li>
       </ol>
+      <div class="visual-block">
+        ${demoLoopHtml('step-down', { caption: 'Controlled step-down: feet to the box first, then let go of the bar.' })}
+      </div>
       <p>Seek urgent help for chest pain, loss of hand control or a suspected dislocation after a fall.</p>
 
       <h2>Equipment Safety</h2>
@@ -248,5 +254,6 @@ import Article from '../../layouts/Article.astro';
         <p class="author-title">Dead hang and grip training guides</p>
         <p>DeadHangs.com is an independent publishing and tools site. Where a page makes a health claim, the source is named on that page. Training numbers without a source are practical guidance, not norms. Read the <a href="/editorial-standards/">editorial standards</a> and the <a href="/about/">about page</a>.</p>
       </div>`} />
+    <DemoLoopInit />
   </div>
 </Article>

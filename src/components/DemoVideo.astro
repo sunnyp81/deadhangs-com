@@ -1,0 +1,31 @@
+---
+// A short silent clip. Not used on any page yet: it renders nothing without a real src.
+// Put videoObjectSchema({...}) from src/lib/video-object.js into the page's `schema` prop for the head JSON-LD.
+import { videoTypeFor } from '../lib/video-object.js';
+import '../styles/figures.css';
+
+interface Props {
+  src?: string | string[]; // mp4 and/or webm, in preference order
+  poster?: string;
+  caption?: string;
+  duration?: number; // seconds
+  ratio?: string; // CSS aspect-ratio, default vertical 9 / 16
+}
+const { src, poster, caption, duration, ratio = '9 / 16' } = Astro.props;
+const sources = (Array.isArray(src) ? src : src ? [src] : []).filter(Boolean);
+---
+{sources.length > 0 && (
+  <figure class="demo-video" data-demo-video data-duration={duration}>
+    <div class="demo-video-frame" style={`--dv-ratio:${ratio}`}>
+      <video muted loop playsinline preload="none" poster={poster} aria-label={caption}>
+        {sources.map((s) => <source src={s} type={videoTypeFor(s)} />)}
+      </video>
+      <button type="button" class="hf-toggle" aria-pressed="false" hidden>Pause video</button>
+    </div>
+    {caption && <figcaption class="demo-video-cap">{caption}</figcaption>}
+  </figure>
+)}
+<script>
+  import { initDemoVideos } from '../scripts/demo-video.js';
+  initDemoVideos();
+</script>
