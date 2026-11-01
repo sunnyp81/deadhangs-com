@@ -3,8 +3,8 @@
 @import "./experience.css";
 
 @theme {
-  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-heavy: "Archivo Black", "Space Grotesk", ui-sans-serif, sans-serif;
+  --font-display: "Barlow Semi Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-heavy: "Archivo Black", "Barlow Semi Condensed", ui-sans-serif, sans-serif;
   --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "JetBrains Mono Fallback", ui-monospace, "SF Mono", Menlo, monospace;
 
@@ -68,7 +68,7 @@ a { color: inherit; text-decoration: none; }
 
 .dh-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.005em;
   font-weight: 700;
 }
 

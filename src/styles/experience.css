@@ -103,7 +103,7 @@ body:has(#cookie-banner:not([hidden])) { padding-bottom: 96px; }
 /* Compact fixed header; links in the body face. */
 .site-header { position:fixed; inset:0 0 auto; z-index:50; display:flex; align-items:center; justify-content:space-between; padding:16px 32px; border-bottom:1px solid transparent; background:transparent; transition:background 200ms,border-color 200ms; }
 .site-header.is-scrolled { background:rgba(8,12,20,.97); border-color:var(--color-divider); backdrop-filter:blur(16px); }
-.site-brand { display:inline-flex; align-items:center; gap:8px; font:700 16px var(--font-display); letter-spacing:-.03em; min-height:44px; }
+.site-brand { display:inline-flex; align-items:center; gap:8px; font:700 17px var(--font-display); letter-spacing:0; min-height:44px; }
 .brand-dot { color:var(--color-primary); }
 #primary-navigation { display:flex; align-items:center; gap:28px; }
 #primary-navigation a { font:11px var(--font-mono); letter-spacing:.1em; text-transform:uppercase; color:var(--color-text-muted); padding:14px 0; }

@@ -51,7 +51,7 @@
   font-family: var(--font-display);
   font-size: clamp(36px, 5vw, 56px);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.005em;
   line-height: 1.1;
   margin: 0 0 24px;
   color: var(--color-text);
@@ -163,7 +163,7 @@
   font-family: var(--font-display);
   font-size: clamp(28px, 3.5vw, 36px);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.005em;
   line-height: 1.15;
   margin: 64px 0 20px;
   color: var(--color-text);
@@ -174,7 +174,7 @@
   font-family: var(--font-display);
   font-size: 22px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.005em;
   line-height: 1.25;
   margin: 40px 0 16px;
   color: var(--color-text);
