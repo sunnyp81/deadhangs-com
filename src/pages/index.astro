@@ -14,6 +14,9 @@ import { hangFigureSvg } from '../lib/hang-figure.js';
 import '../styles/figures.css';
 
 const heroFig = hangFigureSvg({ pose: 'dead-hang', hl: 'grip' });
+const endFigs = [hangFigureSvg({ pose: 'dead-hang', box: true }), hangFigureSvg({ pose: 'step-down' })];
+const hangLetters = (word: string, start: number) => [...word].map((ch, k) => ({ ch, i: start + k }));
+const endWords = [hangLetters('START', 0), hangLetters('HANGING.', 5)];
 const pillarFigs = [
   hangFigureSvg({ pose: 'supported', hl: 'grip' }),
   hangFigureSvg({ pose: 'dead-hang', sets: 3, hl: 'arms' }),
@@ -192,9 +195,14 @@ import '../styles/home-interactions.css';
   <!-- CTA / SIGNUP -->
   <section id="signup" style="padding:120px 64px;background:var(--color-primary);color:var(--color-text-inverse);position:relative;overflow:hidden;">
     <div style="max-width:1100px;margin:0 auto;">
-      <h2 class="dh-heavy" style="font-size:clamp(64px,9vw,140px);margin:0;line-height:0.92;">
-        START<br/>HANGING.
-      </h2>
+      <div class="sg-head">
+        <span class="sg-bar" aria-hidden="true"></span>
+        <h2 class="dh-heavy sg-title" style="font-size:clamp(64px,9vw,140px);margin:0;line-height:0.92;">
+          <span class="hero-sr">Start hanging.</span>
+          <span aria-hidden="true">{endWords.map((w) => <span class="sg-word">{w.map((l) => <span class="sg-l" style={`--k:${l.i}`}>{l.ch}</span>)}</span>)}</span>
+        </h2>
+        <div class="sg-fig" aria-hidden="true"><div class="sg-fig-a" set:html={endFigs[0]} /><div class="sg-fig-b" set:html={endFigs[1]} /></div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-top:56px;align-items:end;">
         <p class="dh-display" style="font-size:22px;font-weight:500;margin:0;line-height:1.4;max-width:540px;">
           Start with the free printable session planner. Choose your intervals, record your holds and review your progress. Email updates are optional.
@@ -219,6 +227,23 @@ import '../styles/home-interactions.css';
     /* Decorative word behind the signup copy: generated content with empty alt text, so it is not text for assistive tech or contrast checks. */
     #signup::after { content: "HANG" / ""; position: absolute; bottom: -.2em; right: -.1em; z-index: 0; font: 900 clamp(140px, 30vw, 380px)/.8 var(--font-heavy); letter-spacing: -.05em; color: rgba(0,0,0,.06); pointer-events: none; }
     #signup > div { position: relative; z-index: 1; }
+    /* Closing bookend: letters hang from a bar and the figure steps down. */
+    .sg-head { position: relative; padding-top: 28px; }
+    .sg-bar { position: absolute; top: 0; left: 0; width: min(100%, 760px); height: 6px; border-radius: 3px; background: var(--color-text-inverse); transform-origin: left; }
+    .sg-word { display: block; white-space: nowrap; }
+    .sg-l { display: inline-block; transform-origin: 50% -.2em; }
+    .sg-fig { position: absolute; right: 0; top: 0; width: clamp(80px, 8vw, 112px); aspect-ratio: 120 / 176; display: none; }
+    .sg-fig > div { position: absolute; inset: 0; }
+    .sg-fig-b { opacity: 0; }
+    @media (min-width: 900px) { .sg-fig { display: block; } }
+    #signup.sg-armed .sg-bar { transform: scaleX(0); }
+    #signup.sg-armed .sg-l { transform: translateY(-.35em) rotate(calc((var(--k) - 6) * 2.4deg)); }
+    #signup.sg-armed .sg-fig-b { opacity: 0; }
+    #signup.sg-armed.is-in .sg-bar { transform: none; transition: transform 900ms cubic-bezier(.16,1,.3,1); }
+    #signup.sg-armed.is-in .sg-l { transform: none; transition: transform 1100ms cubic-bezier(.34,1.56,.64,1); transition-delay: calc(300ms + var(--k) * 45ms); }
+    #signup.sg-armed.is-in .sg-fig-a { opacity: 0; transition: opacity 500ms ease 1900ms; }
+    #signup.sg-armed.is-in .sg-fig-b { opacity: 1; transition: opacity 500ms ease 1900ms; }
+    @media (max-width: 768px) { .sg-head { padding-top: 20px; } }
     .stat-cell {
       background: var(--color-bg);
       padding: 32px 24px;
@@ -229,6 +254,7 @@ import '../styles/home-interactions.css';
   </style>
 
   <style is:global>
+    #signup .sg-fig .hf { --hf-body: var(--color-text-inverse); --hf-bar: var(--color-text-inverse); --hf-hl: var(--color-text-inverse); --hf-max: 100%; --hf-stroke: 3px; height: 100%; width: 100%; }
     /* Homepage label system: mono uppercase chrome, as Sunny chose it. */
     .hm .dh-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
     .hm .dh-btn, body:has(main.hm) .site-header .dh-btn { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
@@ -325,6 +351,15 @@ import '../styles/home-interactions.css';
     }
   </style>
   <script>
+    const signup = document.getElementById('signup');
+    if (signup && 'IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const r = signup.getBoundingClientRect();
+      if (r.top > window.innerHeight) {
+        signup.classList.add('sg-armed');
+        const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { signup.classList.add('is-in'); io.disconnect(); } }, { threshold: 0.3 });
+        io.observe(signup);
+      }
+    }
     const hero = document.getElementById('hero');
     if (hero && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
       let queued = 0;
