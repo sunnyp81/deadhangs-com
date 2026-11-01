@@ -27,9 +27,9 @@ export default function GearFinder() {
       <p>{option.copy}</p>
       <div className="button-row">
         <a className="dh-btn" href={option.href}>Read the guide</a>
-        <a className="text-link" href={`https://www.amazon.co.uk/s?k=${encodeURIComponent(option.amazon)}&tag=deadhangs-21`} rel="nofollow sponsored noopener noreferrer" target="_blank">Browse Amazon UK ↗</a>
+        <a className="text-link" href={`https://www.amazon.com/s?k=${encodeURIComponent(option.amazon)}&tag=deadhangs-20`} rel="nofollow sponsored noopener noreferrer" target="_blank">Browse Amazon ↗</a>
       </div>
-      <p className="small-copy">Affiliate link to Amazon UK. DeadHangs.com earns a commission if you buy. Opens a new tab. Always check the bar’s instructions and load rating.</p>
+      <p className="small-copy">Affiliate link to Amazon. DeadHangs.com earns a commission if you buy. Opens a new tab. Always check the bar’s instructions and load rating.</p>
     </div>
   </section>;
 }
