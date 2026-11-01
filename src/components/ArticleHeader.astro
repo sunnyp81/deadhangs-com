@@ -1,4 +1,5 @@
 ---
+import HeaderTimer from './HeaderTimer';
 interface Crumb { name: string; href?: string }
 interface Props {
   h1: string;
@@ -6,9 +7,10 @@ interface Props {
   crumbs: Crumb[];
   updated?: string;
   author?: boolean;
+  headerTimer?: boolean;
 }
 
-const { h1, subtitle, crumbs, updated, author = false } = Astro.props;
+const { h1, subtitle, crumbs, updated, author = false, headerTimer = false } = Astro.props;
 const trail: Crumb[] = [{ name: 'Home', href: '/' }, ...crumbs];
 ---
 <header class="article-header">
@@ -23,8 +25,18 @@ const trail: Crumb[] = [{ name: 'Home', href: '/' }, ...crumbs];
       ))}
     </ol>
   </nav>
-  <h1 class="article-h1">{h1}</h1>
-  {subtitle && <p class="article-subtitle" set:html={subtitle} />}
+  {headerTimer ? (
+    <div class="article-header-grid">
+      <h1 class="article-h1">{h1}</h1>
+      {subtitle && <p class="article-subtitle" set:html={subtitle} />}
+      <div class="article-header-timer"><HeaderTimer client:idle /></div>
+    </div>
+  ) : (
+    <>
+      <h1 class="article-h1">{h1}</h1>
+      {subtitle && <p class="article-subtitle" set:html={subtitle} />}
+    </>
+  )}
   {(author || updated) && (
     <div class="article-meta">
       {author && (
