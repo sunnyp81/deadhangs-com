@@ -4,12 +4,13 @@ import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 import pwaServiceWorker from './scripts/pwa-sw.mjs';
+import externalLinksNewTab from './scripts/external-links.mjs';
 
 export default defineConfig({
   // Preserve Astro 6 spacing between inline elements after the security upgrade.
   compressHTML: true,
   site: 'https://deadhangs.com',
-  integrations: [react(), sitemap({ filter: (page) => !page.includes('/bar-card/') }), pwaServiceWorker()],
+  integrations: [react(), sitemap({ filter: (page) => !page.includes('/bar-card/') }), externalLinksNewTab(), pwaServiceWorker()],
   vite: {
     plugins: [tailwindcss()],
   },
