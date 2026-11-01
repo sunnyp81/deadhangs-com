@@ -250,7 +250,7 @@ test('toCsv emits fixed headers and one row per entry', () => {
   const lines = csv.trim().split('\r\n');
   assert.equal(lines[0], CSV_FIELDS.join(','));
   assert.equal(lines.length, 3);
-  assert.equal(lines[1], '2026-03-01,40,unassisted,3,hold,,,,,,');
+  assert.equal(lines[1], '2026-03-01,40,unassisted,3,hold,,,,,,,');
 });
 
 test('toCsv ignores extra object fields and neutralises formula injection', () => {

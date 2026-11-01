@@ -81,6 +81,21 @@ export default function SetupFields({
         </div>
         <span id={`${id}-load-hint`} className="tw-hint">Weight added on top of you, up to {MAX_LOAD}. Leave blank for none.</span>
       </div>
+      <div className="tw-field">
+        <label htmlFor={`${id}-bw`}>Body weight (optional)</label>
+        <div className="tw-load-row">
+          <input
+            id={`${id}-bw`} className="dh-input" type="text" inputMode="decimal" autoComplete="off"
+            value={value.bodyweight ?? ""} disabled={disabled} placeholder="Not recorded" maxLength={5}
+            aria-describedby={`${id}-bw-hint`}
+            onChange={(e) => set({ bodyweight: e.target.value })}
+          />
+          <select aria-label="Body weight unit" className="dh-input" value={value.bodyweightUnit ?? "kg"} disabled={disabled} onChange={(e) => set({ bodyweightUnit: e.target.value })}>
+            {LOAD_UNITS.map((unit: string) => <option key={unit} value={unit}>{unit}</option>)}
+          </select>
+        </div>
+        <span id={`${id}-bw-hint`} className="tw-hint">Saved in kg on this device only, so entries compare like for like. Not remembered for next time.</span>
+      </div>
       {showEnded && (
         <div className="tw-field">
           <label htmlFor={`${id}-ended`}>What ended the hold (optional)</label>
