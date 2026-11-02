@@ -4,7 +4,7 @@ import { hangFigureSvg } from '../../lib/hang-figure.js';
 import '../../styles/figures.css';
 
 const title = 'Flexed Arm Hang: Official Norms by Age and Sex';
-const description = 'The flexed arm hang is a bent-arm, chin-over-bar test, not a dead hang. See the FitnessGram minimums by age and sex, how it is run and how it differs.';
+const description = 'FitnessGram flexed arm hang minimums: 2 seconds at age 5, up to 15 for boys 14 and over and 8 for girls 13 and over. A bent-arm hold, not a dead hang.';
 
 const norms = [
   ['5', 2, 2], ['6', 2, 2], ['7', 3, 3], ['8', 3, 3], ['9', 4, 4], ['10', 4, 4], ['11', 6, 6],
@@ -30,7 +30,7 @@ const schemaArticle = {
   publisher: { '@type': 'Organization', name: 'DeadHangs.com' },
   mainEntityOfPage: 'https://deadhangs.com/flexed-arm-hang/',
   datePublished: '2026-10-19',
-  dateModified: '2026-10-30',
+  dateModified: '2026-11-01',
 };
 const schemaFaq = {
   '@context': 'https://schema.org',
@@ -42,14 +42,18 @@ const schema = '<script type="application/ld+json">' + JSON.stringify(schemaArti
 // Horizontal bar chart geometry (viewBox 480 x 480)
 const scale = 18; // px per second, max 15 s = 270 px
 ---
-<Article h1={"Flexed arm hang: what the official norms say"} subtitle={"The flexed arm hang is a bent-arm, chin-over-bar hold. It is not a dead hang. Its times and its norms belong to a different test."} crumbs={[{"name":"Flexed arm hang"}]} updated={"Updated October 30, 2026"} title={title} description={description} schema={schema}>
+<Article h1={"Flexed arm hang: what the official norms say"} subtitle={"The flexed arm hang is a bent-arm, chin-over-bar hold. It is not a dead hang. Its times and its norms belong to a different test."} crumbs={[{"name":"Flexed arm hang"}]} updated={"Updated November 1, 2026"} title={title} description={description} schema={schema}>
 <div class="article-body">
 <p>The flexed arm hang is a test where you hold your chin above a bar with your elbows bent for as long as you can. A dead hang keeps the arms straight and the body below the bar. That difference matters when you compare numbers.</p>
 
-<p>This page gives the official school fitness minimums for the flexed arm hang, shows how the test is run and explains what a dead hang sample can and cannot be compared with. Every figure below has its source under it. Start with <a href="/dead-hang-time-by-age/">dead hang time by age</a> for straight-arm times.</p>
-
-<h2 id="what-it-is">What the flexed arm hang measures</h2>
-<p>FitnessGram offers the flexed arm hang as one of three options for upper body strength and endurance. The other two are the 90 degree push-up and the modified pull-up. The child is held with the chin above the bar and then supports that position unaided while gripping the bar throughout. The bent elbows make the position look more like the top of a pull-up than a hang.</p>
+<div class="callout">
+<h2 id="glance" style="margin-top:0">At a glance</h2>
+<ol class="stop-steps">
+<li><strong>Test:</strong> hold your chin above the bar with bent elbows for as long as you can.</li>
+<li><strong>Minimums:</strong> 2 seconds at age 5, rising to 15 seconds for boys aged 14 and over and 8 seconds for girls aged 13 and over.</li>
+<li><strong>Not a dead hang:</strong> a dead hang keeps the arms straight, so the times cannot be swapped. See <a href="/dead-hang-time-by-age/">dead hang time by age</a> for straight-arm times.</li>
+</ol>
+</div>
 
 <h2 id="norms">Flexed arm hang norms by age and sex</h2>
 <p>The table lists the Healthy Fitness Zone minimum in seconds. A score at or above the number meets the zone. The document says the zones "represent minimum levels of fitness that offer protection against the diseases that result from sedentary living." These are the 2010 Cooper Institute standards as published for the 2011-12 California test. Check the current FitnessGram standards before using them for a present-day assessment.</p>
@@ -76,6 +80,9 @@ const scale = 18; // px per second, max 15 s = 270 px
 </div>
 
 <p>Two patterns stand out. The minimums are identical for boys and girls up to age 11. The boys' minimum climbs from age 12 to 15 seconds by age 14. The girls' minimum levels off at 8 seconds from age 13. The table does not describe an average child and it does not describe an adult. It stops at "17+".</p>
+
+<h2 id="what-it-is">What the flexed arm hang measures</h2>
+<p>FitnessGram offers the flexed arm hang as one of three options for upper body strength and endurance. The other two are the 90 degree push-up and the modified pull-up. The child is held with the chin above the bar and then supports that position unaided while gripping the bar throughout. The bent elbows make the position look more like the top of a pull-up than a hang.</p>
 
 <h2 id="protocol">How the test is run</h2>
 <p>The PhenX Toolkit summarizes the FitnessGram protocol for the flexed arm hang. It states that its descriptions are paraphrased from the FitnessGram/ActivityGram Test Administration Manual and that the complete protocols are in that manual. The summary reads: "The instructor helps the child grasp the bar with palms facing outwards and lifts the child so the child is positioned with his or her chin above the bar. Then the child will hang independently in this position for as long as possible. Once the child is in position with chin above the bar, a stopwatch is used to determine how long the child retains the position."</p>

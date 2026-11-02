@@ -1,7 +1,85 @@
 ---
 import Article from '../../layouts/Article.astro';
 
+const title = 'How to Run a Dead Hang Max Test: Start, End and Rest Rules';
+const description = 'Warm up for 2 to 3 minutes, rest, then hang once with straight arms until your grip starts to slip. Retest no more than once every two weeks, same setup each time.';
+const faqs = [
+  ['How often should I run a dead hang max test?', 'No more than once every two weeks. Frequent maximal tests are tiring and make progress hard to read. Between tests, train with the sessions you normally use and stop a second or two before your grip gives out.'],
+  ['How long should I rest before the max hold?', 'The timer rests for 2 minutes after the warm-up holds by default, and you can choose no rest, 1, 2 or 3 minutes. Pick one rest length and keep it for every test so the results stay comparable.'],
+  ['When does the clock stop in a dead hang max test?', 'The clock stops when your feet touch the ground, your hands leave the bar, your elbows bend or you step down. In the timer you tap stop, check the time and save it only if it matches your actual hold.'],
+  ['Is there a good score for a dead hang max test?', 'No validated standard exists for timed dead hangs, so this page gives none. Compare each test with your own earlier tests under the same setup.'],
+];
+const schemaArticle = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description,
+  author: { '@type': 'Organization', name: 'DeadHangs.com', url: 'https://deadhangs.com' },
+  publisher: { '@type': 'Organization', name: 'DeadHangs.com' },
+  mainEntityOfPage: 'https://deadhangs.com/dead-hang-standards/',
+  datePublished: '2026-03-03',
+  dateModified: '2026-11-01',
+};
+const schemaFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
+const schema = '<script type="application/ld+json">' + JSON.stringify(schemaArticle) + '</script><script type="application/ld+json">' + JSON.stringify(schemaFaq) + '</script>';
 ---
-<Article h1={"Dead hang standards: make the test repeatable."} subtitle={"A useful standard starts with consistent testing. Keep the same bar, grip and assistance before comparing two hang times."} crumbs={[{"name":"Dead hang standards: make the test repeatable."}]} updated={"Updated October 30, 2026"} title="Dead Hang Standards: A Repeatable Test & Personal Benchmarks" description="Set consistent dead hang test conditions, record assistance and compare your own holds. Understand why timed hangs are not population health percentiles.">
-<div class="article-body"><h2 id="test-protocol">Use the same test conditions</h2><p>There are no validated population standards for timed dead hangs, so compare each hold with your own earlier holds under the same conditions. A personal comparison needs a repeatable task. Choose a comfortable setup that you can leave under control. An assisted hold and an unassisted hold belong in separate records.</p><ol><li>Check the bar's fitting and load instructions. Arrange a stable step and a clear landing space.</li><li>Record the bar, grip position and assistance. Note chalk or other changes on the paper planner.</li><li>Start timing when you begin the chosen hold. Stop timing when you end it or change the agreed support.</li><li>Step down before you lose control. Stop if the movement causes pain.</li><li>Record actual seconds and completed sets. Use the same conditions at the next comparison.</li></ol><p>The <a href="/training-log/">dead hang timer and log</a> keeps assisted and unassisted best holds separate.</p><h2 id="five-levels">Choose personal benchmarks</h2><p>Beginner, intermediate and elite labels need a defined population and protocol to mean anything precise. No validated dataset exists for timed dead hangs.</p><p>Round-number goals such as 10, 30 or 60 seconds can help organize practice. They are personal milestones rather than verified performance levels. Choose a manageable next goal instead of treating a label as a requirement.</p><h2 id="male-standards">Do men and women have different dead hang standards?</h2><p id="female-standards">No validated timed dead hang standards exist for either sex. Age and sex appear in published handgrip-force reference data. A dynamometer measures squeezing force. It does not measure how long someone supports their bodyweight from a bar. Force percentiles cannot be converted directly into hanging seconds.</p><p>The <a href="/dead-hang-time-by-age/">dead hang times by age page</a> explains why force data cannot be converted into hang time.</p><h2 id="bodyweight">Record conditions that change the task</h2><p>Bodyweight, grip, bar diameter and assistance can affect the task you perform. Record a material change before interpreting a new best. This page does not apply a bodyweight multiplier because we have not validated one for these timed hangs.</p><h2 id="longevity">Keep training records separate from health scores</h2><p>A longer hold is a performance result. It is not an individual mortality estimate or a diagnostic test. Observational handgrip research does not make a particular hanging duration a longevity threshold.</p><p><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0113637">Dodds et al. (2014)</a> describe the handgrip-force tests behind their reference data.</p><h2 id="sport-standards">Follow the rules of the actual event</h2><p>A gym challenge, climbing assessment or official record attempt can use different equipment and rules. Obtain the organizer's current protocol before comparing your result with that event. A personal log entry is not an independently verified competition result.</p><h2 id="improve">Review your own change</h2><p>Compare holds performed with the same assistance. Keep a lower result in the record rather than deleting an inconvenient day. Control and consistency matter alongside a best time.</p><p>The <a href="/dead-hang-calculator/">personal hang calculator</a> shows the difference between two holds and your progress toward a target.</p><h2 id="faq">Does every adult need a 60-second hang?</h2><p>No. No source establishes 60 seconds as a requirement for adults. Choose an appropriate variation and seek individual guidance if an injury or condition affects overhead exercise.</p></div>
+<Article h1={"How to run a dead hang max test"} subtitle={"Warm up, rest, then hang once until your grip starts to slip. Use the same setup and rest every time, and test no more than once every two weeks."} crumbs={[{"name":"Dead hang max test"}]} updated={"Updated November 1, 2026"} title={title} description={description} schema={schema}>
+<div class="article-body">
+<div class="callout">
+<h2 id="glance" style="margin-top:0">At a glance</h2>
+<ol class="stop-steps">
+<li><strong>Warm up:</strong> 2 to 3 minutes of arm circles, wrist circles, band pull-aparts and one or two short easy hangs.</li>
+<li><strong>Rest:</strong> 2 minutes after the warm-up holds is the timer default. Keep the same rest every test.</li>
+<li><strong>Start:</strong> straight arms, feet off the ground, clock running from the moment your feet leave.</li>
+<li><strong>End:</strong> a foot touches down, your hands leave the bar, your elbows bend or you step down under control.</li>
+<li><strong>Retest:</strong> no more than once every two weeks, on the same bar, grip and assistance.</li>
+</ol>
+<p><a class="dh-btn" href="/training-log/?mode=max&amp;warmups=2&amp;rest=120&amp;prep=5">Open the timer in max test mode</a></p>
+</div>
+
+<p>This is the protocol the timer follows in max test mode. It is a practical method for comparing your own holds, not a published standard. No validated population standards exist for timed dead hangs, so a result means something only against your own earlier tests.</p>
+
+<h2 id="setup">Set up the test</h2>
+<p>Use a securely fitted bar and a stable step so you can get on and off under control. Choose the setup you want to track and keep it for every test.</p>
+<ul>
+<li>Bar: the same bar each time. Bar thickness changes how hard the hold is.</li>
+<li>Grip: overhand at shoulder width with thumbs wrapped, unless you are testing another grip on purpose.</li>
+<li>Assistance: unassisted, or the same foot support or loop band each time. Record the assist you used so tests stay comparable.</li>
+<li>Chalk: note whether you used it. Use chalk if sweat, not fatigue, ends your hang.</li>
+<li>Condition: test fresh, with at least one rest day after a hard session, at a similar time of day.</li>
+</ul>
+
+<h2 id="warm-up">Warm up</h2>
+<p>Spend 2 to 3 minutes on arm circles, wrist circles, band pull-aparts and one or two short easy hangs. A warm-up helps you feel ready; evidence that it prevents injury is limited.</p>
+<p>In max test mode the timer adds easy warm-up holds of 10 seconds with 20 seconds between them. The default is two holds, and you can choose none to three. They are easy holds, not attempts.</p>
+
+<h2 id="rest">Rest before the max hold</h2>
+<p>After the warm-up holds the timer rests before the max hold. The default is 2 minutes, and you can choose no rest, 1, 2 or 3 minutes. Pick one length and keep it. A different rest changes the result as much as a different bar.</p>
+
+<h2 id="start-end">Start and end rules</h2>
+<ol>
+<li><strong>Start:</strong> take the bar with straight arms and step off so both feet are clear of the ground. In max test mode the count-up begins at the cue, so have your hands on the bar before it. Start the clock as your feet leave the ground.</li>
+<li><strong>During the hold:</strong> keep your arms straight and your thumbs wrapped. Stay still without swinging. The hold counts up with no target.</li>
+<li><strong>The clock stops when:</strong> a foot touches the ground, your hands leave the bar, your elbows bend, or you step down.</li>
+<li><strong>End the hold yourself:</strong> come down under control as your grip starts to slip. Do not hang to failure or drop. Stop at once if anything hurts.</li>
+<li><strong>Record the time:</strong> read the time, then save it only if it matches your actual hold. The timer stops by itself at 60 minutes.</li>
+</ol>
+<p>These end rules are this site's own, written so two tests on the same bar are comparable. A gym challenge, climbing assessment or record attempt can use different rules. Get the organizer's current protocol before comparing your result with that event.</p>
+
+<h2 id="retest">How often to retest</h2>
+<p>Test no more than once every two weeks. Frequent maximal tests are tiring and make progress hard to read. Do not test every day.</p>
+<p>Between tests, train with your normal sessions. Start with 3 sessions a week on non-consecutive days, and see the <a href="/deadhang-frequency/">dead hang frequency guide</a> for how to add more. These numbers are common training practice, not a tested prescription.</p>
+<p>Change only one thing between tests. If you change the bar, grip or assistance, treat the next result as a new baseline, not as an improvement or a drop.</p>
+
+<h2 id="record">Save and compare</h2>
+<p>The <a href="/training-log/">timer and training log</a> prefills the measured time after a max test, lets you correct it and stores the bar, grip and assistance with it. Tests appear in your log with a Max test badge, and the log keeps assisted and unassisted best holds separate. Entries stay in this browser on this device.</p>
+<p>To compare a result with your own target, use the <a href="/dead-hang-calculator/">dead hang calculator</a>. For what published research can and cannot say about hang times, see <a href="/dead-hang-time-by-age/">dead hang times by age</a>.</p>
+
+<h2 id="faq">Dead hang max test FAQ</h2>
+{faqs.map(([q, a]) => <div class="faq"><h3>{q}</h3><p>{a}</p></div>)}
+</div>
 </Article>
