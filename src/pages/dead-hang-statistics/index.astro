@@ -3,6 +3,8 @@ import Article from '../../layouts/Article.astro';
 import data from './_data.json';
 
 const { hang, flex, fg, grip, rec, trends, vol, derived } = data;
+const T = Object.fromEntries(trends.map(([y, v]) => [String(y).slice(0, 4), v]));
+const TR21 = T['2021'], TR22 = T['2022'], TR23 = T['2023'], TR24 = T['2024'], TR25 = T['2025'], TR26 = T['2026'];
 
 const title = 'Dead Hang Statistics: Hang Times, Records and Grip Research';
 const description = 'Measured dead hang times, Guinness hanging records, grip strength and mortality research, and search interest, with sources and a CSV download.';
@@ -14,7 +16,7 @@ const pct = (v: number, max: number) => Math.min(100, (v / max) * 100).toFixed(1
 
 const faqs: [string, string][] = [
   ['What is the average dead hang time?',
-   'No population average has been published. The best-documented sample is GRIP-6: 25 recreational athletes with a mean age of 20.4 held a passive bar hang for a mean of 64.0 seconds (11 men) and 48.4 seconds (14 women) before training. Other small samples report 76.8 to 95.4 seconds under different protocols.'],
+   'We found no published population average. One documented sample is GRIP-6: 25 recreational athletes with a mean age of 20.4 held a passive bar hang for a mean of 64.0 seconds (11 men) and 48.4 seconds (14 women) before training. Other small samples report 76.8 to 107.6 seconds under different protocols.'],
   ['What is the dead hang world record?',
    'Guinness lists Kenta Adachi of Japan at 80 minutes 41 seconds for the longest dead hang position, set on November 18, 2022. He also holds a separate title, hanging from a bar, at 4 hours 30 minutes 18 seconds from December 26, 2025. The two titles are different categories.'],
   ['Who holds the dead hang record for the oldest woman?',
@@ -22,7 +24,7 @@ const faqs: [string, string][] = [
   ['Is grip strength linked to how long people live?',
    'In large observational studies, lower grip strength was associated with a higher risk of death. In the PURE study, each 5 kg lower grip was associated with a hazard ratio of 1.16 for all-cause death. These are associations. They do not show that raising grip strength lengthens life.'],
   ['How many people search for dead hangs?',
-   'Google Ads estimates about 18,100 US and 4,400 UK searches a month for "dead hang". Google Trends shows US interest in the term rising from an index of 17 in 2021 to 60 in 2026 to October. Both are estimates of relative or rounded demand, not counts of people.'],
+   `Google Ads estimates about 18,100 US and 4,400 UK searches a month for "dead hang". Google Trends shows US interest in the term rising from an index of ${TR22} in 2022 to ${TR26} in January to October 2026. Both are estimates of relative or rounded demand, not counts of people.`],
   ['How do I cite this page?',
    'Cite the page title, DeadHangs.com, the update date and the URL, and name the original study for any figure you quote. Each row in the CSV carries its source link. A ready-to-copy citation sits in the "How to cite this page" section.'],
 ];
@@ -63,7 +65,7 @@ const schema =
 const chartRows = [
   { label: 'GRIP-6 women', v: 48.4 },
   { label: 'GRIP-6 men', v: 64.0 },
-  { label: 'Climbers, before event', v: 76.8 },
+  { label: 'Climbers, porch edge', v: 76.8 },
   { label: 'Drury, standard bar', v: 95.4 },
   { label: 'Drury, Tri-Bar', v: 107.6 },
 ];
@@ -77,11 +79,11 @@ const volMax = 18100;
   <div class="callout" id="glance">
     <h2 style="margin-top:0">At a glance</h2>
     <ol class="stop-steps">
-      <li><strong>No population norm exists.</strong> The measured bar-hang samples we found are small: 11 men averaged 64.0 s and 14 women 48.4 s in GRIP-6 (mean age 20.4).</li>
-      <li><strong>Protocols differ.</strong> Straight-arm hang means run from 48.4 s to 107.6 s across samples of 11 to 35 people under different rules, so no single "average" can be quoted.</li>
+      <li><strong>We found no population norm.</strong> The measured bar-hang samples are small: 11 men averaged 64.0 s and 14 women 48.4 s in GRIP-6 (whole-sample mean age 20.4).</li>
+      <li><strong>Protocols differ.</strong> Hang-to-failure means run from 48.4 s to 107.6 s across samples of 11 to 35 people under different rules, so no single "average" can be quoted.</li>
       <li><strong>The record is 80 min 41 s.</strong> Kenta Adachi, November 18, 2022, Guinness dead hang position, {fmt(derived.adachi_dh)} seconds.</li>
       <li><strong>Grip links to mortality, as association.</strong> Each 5 kg lower grip came with a 1.16 hazard ratio for all-cause death in PURE (139,691 adults).</li>
-      <li><strong>Interest has grown.</strong> US Google Trends index for "dead hang" rose from 17 (2021) to 60 (2026 to October).</li>
+      <li><strong>Interest has grown.</strong> US Google Trends index for "dead hang" rose from {TR22} (2022) to {TR26} (January to October 2026).</li>
     </ol>
     <p><a class="dh-btn" href="/data/dead-hang-statistics.csv" download>Download the CSV ({data.csv_rows} rows)</a></p>
   </div>
@@ -93,12 +95,12 @@ const volMax = 18100;
   </div>
 
   <h2 id="hang-times">How long can people hang from a bar? Measured samples</h2>
-  <p>Published bar-hang samples are few and small. The table lists every straight-arm hang dataset with a reported mean that we could open: GRIP-6 (25 people, mean age 20.4), a 2004 sample of 32 men, and 35 climbers measured before a 24-hour event. None is a population norm.</p>
+  <p>Published bar-hang samples are few and small. The table lists every hang-to-failure dataset with a reported mean in seconds that we could open: GRIP-6 (25 people, mean age 20.4, passive bar hang), a 2004 sample of 32 men (straight-arm bar hang), and 35 climbers measured before a 24-hour event (porch-edge hang, not a bar). None is a population norm.</p>
 
   <p class="table-cue">Scroll horizontally on a smaller screen.</p>
-  <div class="table-scroll" role="region" tabindex="0" aria-label="Measured straight-arm hang time datasets">
+  <div class="table-scroll" role="region" tabindex="0" aria-label="Measured hang-to-failure datasets">
     <table>
-      <caption>Straight-arm hang time datasets: sample, protocol and result. Seconds are means unless noted. Source links open the original paper.</caption>
+      <caption>Hang-to-failure datasets: sample, protocol and result. Seconds are means unless noted. Source links open the original paper.</caption>
       <thead><tr><th scope="col">Dataset</th><th scope="col">Sample</th><th scope="col">Age</th><th scope="col">Protocol</th><th scope="col">Result</th><th scope="col">Source</th></tr></thead>
       <tbody>
         {hang.map((h) => (
@@ -116,22 +118,22 @@ const volMax = 18100;
   </div>
 
   <figure class="dhs-fig">
-    <div class="dhs-bars" role="img" aria-label="Bar chart of mean straight-arm hang time in seconds: GRIP-6 women 48.4, GRIP-6 men 64.0, climbers before a 24-hour event 76.8, Drury standard bar 95.4, Drury Tri-Bar 107.6. The protocols differ, so the bars are not directly comparable.">
+    <div class="dhs-bars" role="img" aria-label="Bar chart of mean hang-to-failure time in seconds: GRIP-6 women 48.4, GRIP-6 men 64.0, climbers (porch-edge hang) before a 24-hour event 76.8, Drury standard bar 95.4, Drury Tri-Bar 107.6. The protocols differ, so the bars are not directly comparable.">
       {chartRows.map((r) => (
         <div class="dhs-row"><div class="dhs-label">{r.label}</div><div class="dhs-track"><div class="dhs-bar" style={`width:${pct(r.v, CMAX)}%`}><span>{r.v} s</span></div></div></div>
       ))}
     </div>
-    <figcaption class="caption">Mean straight-arm hang time (seconds) in the samples above, on a 0 to 120 s scale. The bars come from different people, bars and rules, so they show the spread between studies, not a ranking. Sources: Chomiuk et al. 2025, Yu et al. 2023, Drury et al. 2004.</figcaption>
+    <figcaption class="caption">Mean hang-to-failure time (seconds) in the samples above, on a 0 to 120 s scale. The bars come from different people, bars and rules, so they show the spread between studies, not a ranking. Sources: Chomiuk et al. 2025, Yu et al. 2023, Drury et al. 2004.</figcaption>
   </figure>
 
-  <p class="note">Spread is large inside every sample: the standard deviation is 29 to 35 seconds in GRIP-6 and the climbers, about half the mean. The GRIP-6 paper prints the whole-sample before SD as 3.2 s, which does not fit its subgroup SDs, so this page reports no whole-sample before SD. In GRIP-6 the mean rose from 55.3 s to 60.9 s over 6 weeks of gym and climbing training (change 5.6 s, 95% CI 4.0 to 7.3). The same climbers averaged 76.8 s before and 38.1 s within an hour after 24 hours of climbing, a fatigue measurement.</p>
+  <p class="note">Spread is large inside every sample: the standard deviation is 29 to 35 seconds in GRIP-6 and 33 seconds in the climbers, roughly 40 to 60% of the mean. The GRIP-6 paper prints the whole-sample before SD as 3.2 s, which does not fit its subgroup SDs, so this page reports no whole-sample before SD. In GRIP-6 the mean rose from 55.3 s to 60.9 s over 6 weeks of gym and climbing training (change 5.6 s, 95% CI 4.0 to 7.3). The same climbers averaged 76.8 s before and 38.1 s within an hour after 24 hours of climbing, a fatigue measurement.</p>
 
   <h2 id="published-targets">Where do published hang-time targets fit?</h2>
-  <p>Published hang-time targets from fitness sites and podcasts are opinions, not measurements. They disagree by up to threefold and name no sample of people hanging. The comparison table lives on one page so the numbers are kept in one place.</p>
+  <p>Published hang-time targets from fitness sites and podcasts are opinions, not measurements. They disagree with each other and name no sample of people hanging. The comparison table lives on one page so the numbers are kept in one place.</p>
   <p>See the <a href="/dead-hang-time-by-age/#published-targets">comparison of published hang-time targets</a> on the dead hang time by age page.</p>
 
   <h2 id="flexed">What are the bent-arm and flexed-arm hang numbers?</h2>
-  <p>A flexed-arm or bent-arm hang is a chin-over-bar hold with bent elbows. It is a different test from a dead hang, so its times must never be read as dead hang times. The two sources here are 88 university students and the FitnessGram school minimums.</p>
+  <p>A flexed-arm or bent-arm hang is held with the elbows bent, not the arms straight. It is a different test from a dead hang, so its times must never be read as dead hang times. The two sources here are 88 university students and the FitnessGram school minimums.</p>
   <p class="table-cue">Scroll horizontally on a smaller screen.</p>
   <div class="table-scroll" role="region" tabindex="0" aria-label="Bent-arm and flexed-arm hang datasets">
     <table>
@@ -196,27 +198,25 @@ const volMax = 18100;
       </tbody>
     </table>
   </div>
-  <p>The dead hang position record went from 13:52 (2018) to 16:03 (2020) to 80:41 (2022). Adachi's 4,841 seconds is {derived.ratio_adachi_riise} times Riise's {derived.riise} seconds. His bar-hanging title, {fmt(derived.adachi_bar)} seconds, is {derived.ratio_bar_vs_dh} times his dead hang position time. Guinness says records change daily and are not always published online at once, and the public pages do not state the rules of each title. See the <a href="/dead-hang-world-record/">dead hang world record page</a> for the categories.</p>
-  <p class="note">Guinness page text for the female "dead hang position" title shows Judis at 80 years 353 days (November 11, 2024) on a May 2025 archive copy. The March 2026 news article gives her age as 81 and Esselstyn's first result as 2 minutes 52 seconds. We use the record-page figures where a page exists and the news article otherwise. We found no Guinness page for a female longest-duration dead hang position.</p>
+  <p>The dead hang position record went from 13:52 (2018) to 16:03 (2020) to 80:41 (2022). Adachi's 4,841 seconds is {derived.ratio_adachi_riise} times Riise's {derived.riise} seconds. His bar-hanging title, {fmt(derived.adachi_bar)} seconds, is {derived.ratio_bar_vs_dh} times his dead hang position time. Guinness says records change daily and are not always published online at once, and the record pages mostly do not state the rules of each title (the oldest-woman page states a 2-minute minimum). See the <a href="/dead-hang-world-record/">dead hang world record page</a> for the categories.</p>
+  <p class="note">Guinness page text for the oldest-person (female) dead hang title shows Judis at 80 years 353 days (November 11, 2024) on a May 2025 archive copy. The March 31, 2026 news article gives her age as 81 and Esselstyn's first result as 2 minutes 52 seconds. We use the record-page figures where a page exists and the news article otherwise. We found no Guinness page for a female longest-duration dead hang position, so the female longest-duration title listed is hanging from a bar.</p>
 
   <h2 id="search">How much do people search for dead hangs?</h2>
-  <p>US Google Trends interest in "dead hang" rose from an index of 17 in 2021 to 60 in 2026 to October, about {derived.trends_ratio} times higher and 50% above 2025. Google Ads estimates 18,100 US and 4,400 UK searches a month. Both measures are estimates, and they measure different things.</p>
+  <p>US Google Trends interest in "dead hang" rose from an index of {TR22} in 2022 to {TR26} in January to October 2026, about {derived.trends_ratio} times higher and more than 50% above the same months of 2025. The 2021 figure covers only November and December. Trends values shift by a point or two between pulls (a second pull on November 2 gave about 59 for 2026). Google Ads estimates 18,100 US and 4,400 UK searches a month. Both measures are estimates, and they measure different things.</p>
 
   <figure class="dhs-fig">
-    <div class="dhs-bars" role="img" aria-label="Bar chart of the yearly average Google Trends index for dead hang in the US: 2021 17, 2022 22, 2023 26, 2024 26, 2025 40, 2026 to October 60.">
+    <div class="dhs-bars" role="img" aria-label={`Bar chart of the yearly average Google Trends index for dead hang in the US: 2021 (November to December only) ${TR21}, 2022 ${TR22}, 2023 ${TR23}, 2024 ${TR24}, 2025 ${TR25}, 2026 January to October ${TR26}.`}>
       {trends.map(([y, v]) => (
         <div class="dhs-row"><div class="dhs-label">{y}</div><div class="dhs-track"><div class="dhs-bar dhs-bar-b" style={`width:${pct(v as number, trendMax)}%`}><span>{v}</span></div></div></div>
       ))}
     </div>
-    <figcaption class="caption">Google Trends relative interest in "dead hang", US, web search, yearly average of monthly index values (0 to 100 within the query set). Pulled November 1, 2026 for November 1, 2021 to October 31, 2026 via DataForSEO. The 2026 figure covers January to October. Relative interest, not search volume.</figcaption>
+    <figcaption class="caption">Google Trends relative interest in "dead hang", US, web search, yearly average of monthly index values (0 to 100 within the query set). Pulled November 1, 2026 for November 1, 2021 to October 31, 2026 via DataForSEO. The 2021 figure covers November and December only, and 2026 covers January to October. Relative interest, not search volume.</figcaption>
   </figure>
-
-  <p>Monthly averages across the five years are flat at 32 to 37 from January to October, then 28 in November and 27 in December. We see a mild summer high (May to July) and no January spike.</p>
 
   <p class="table-cue">Scroll horizontally on a smaller screen.</p>
   <div class="table-scroll" role="region" tabindex="0" aria-label="Estimated monthly search volume, US and UK">
     <table>
-      <caption>Estimated monthly searches (Google Ads, last 12 months to October 2026, pulled November 1, 2026 via DataForSEO). Estimates: Google rounds volumes and merges close variants.</caption>
+      <caption>Estimated monthly searches (Google Ads, October 2025 to September 2026, pulled November 1, 2026 via DataForSEO). Estimates: Google rounds volumes and merges close variants.</caption>
       <thead><tr><th scope="col">Search term</th><th scope="col">US per month</th><th scope="col">UK per month</th></tr></thead>
       <tbody>
         {vol.map(([k, us, uk]) => (
@@ -241,7 +241,7 @@ const volMax = 18100;
   <p>Every figure comes from a source we opened: the PubMed or PMC record for studies, the Guinness record page or news article, or a Wayback copy of a Guinness page. Search figures are our own pulls from DataForSEO on November 1, 2026. Derived numbers are shown with their arithmetic.</p>
   <ul>
     <li>Studies were found by Europe PMC searches (October to November 2026) for "bar hang", "dead hang", "hang test", "static hang", "flexed arm hang" and "bent arm hang". We kept samples that report a mean hang time in seconds with a described protocol.</li>
-    <li>Hangboard and finger-edge hangs in climbers are excluded: they load the fingers on an edge, not the whole hand on a bar.</li>
+    <li>Hangboard and small-edge finger hangs are excluded. The climbers' porch-edge hang (Yu et al.) is kept because it is a timed hang to failure with feet off the ground, and it is labelled as an edge hang, not a bar hang.</li>
     <li>Two other papers with a bar-hang test (Brazilian highway police, 2020; Special Olympics athletes, 2012) give percentages or no seconds in their abstracts and have no open full text, so they are not included.</li>
     <li>Guinness figures were read from the record pages on November 2, 2026, and from archived copies for earlier holders.</li>
     <li>Search volume is a Google Ads estimate. Google Trends is an index of relative interest. Neither counts people.</li>
@@ -266,7 +266,7 @@ const volMax = 18100;
       <li>Chomiuk T et al. Impact of 6-week combined gym and climbing training on handgrip strength and arm size: GRIP-6 study. J Funct Morphol Kinesiol 2025. <a href="https://doi.org/10.3390/jfmk10040427" rel="noopener">doi.org/10.3390/jfmk10040427</a></li>
       <li>Drury DG, Faggiono H, Stuempfle KJ. An investigation of the tri-bar gripping system on isometric muscular endurance. J Strength Cond Res 2004;18(4):782-786. <a href="https://doi.org/10.1519/R-13883.1" rel="noopener">doi.org/10.1519/R-13883.1</a></li>
       <li>Yu E et al. Change in grip strength, hang time, and knot tying speed after 24 hours of endurance rock climbing. Front Sports Act Living 2023. <a href="https://doi.org/10.3389/fspor.2023.1224581" rel="noopener">doi.org/10.3389/fspor.2023.1224581</a></li>
-      <li>Cluster analysis as an effective tool for identifying physical fitness in students. Front Physiol 2025. <a href="https://doi.org/10.3389/fphys.2025.1634125" rel="noopener">doi.org/10.3389/fphys.2025.1634125</a></li>
+      <li>Cepková A et al. Cluster analysis as an effective tool for identifying physical fitness in students. Front Physiol 2025;16:1634125. <a href="https://doi.org/10.3389/fphys.2025.1634125" rel="noopener">doi.org/10.3389/fphys.2025.1634125</a></li>
       <li>California Department of Education. 2011-12 Physical Fitness Test: FITNESSGRAM Healthy Fitness Zones. September 2011 (copy hosted by Transylvania County Schools). <a href="https://transylvania.schoolboard.net/sites/nc.transylvania.schoolboard.net/files/FitnessGram%20Healthy%20Fitness%20Zones.pdf" rel="noopener">PDF</a></li>
       <li>Leong DP et al. Prognostic value of grip strength: findings from the PURE study. Lancet 2015;386(9990):266-273. <a href="https://doi.org/10.1016/S0140-6736(14)62000-6" rel="noopener">doi.org/10.1016/S0140-6736(14)62000-6</a></li>
       <li>Celis-Morales CA et al. Associations of grip strength with cardiovascular, respiratory, and cancer outcomes and all cause mortality. BMJ 2018;361:k1651. <a href="https://doi.org/10.1136/bmj.k1651" rel="noopener">doi.org/10.1136/bmj.k1651</a></li>

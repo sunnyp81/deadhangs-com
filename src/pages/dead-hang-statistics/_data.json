@@ -4,33 +4,33 @@
    "id": "H-01",
    "dataset": "GRIP-6, men",
    "n": "11",
-   "age": "Mean 20.4 (whole sample, SD 1.7)",
+   "age": "Mean 20.2 (SD 1.2); whole sample 20.4 (SD 1.7)",
    "sex": "Men",
    "protocol": "Passive bar hang, overhand, shoulder width, legs off the ground, straight arms, until the person dropped. Mean of 3 trials, 3 min rest. Before 6 weeks of training.",
    "value": "64.0",
    "spread": "SD 35.3",
    "unit": "s",
    "result": "Mean 64.0 s (SD 35.3); 69.4 s (SD 33.7) after 6 weeks of training",
-   "period": "Recruited 2025 (paper published 2025)",
+   "period": "Measured January to February 2022 (paper published 2025)",
    "source": "Chomiuk et al., J Funct Morphol Kinesiol 2025, Table 2",
    "url": "https://doi.org/10.3390/jfmk10040427",
-   "line": "In the GRIP-6 study, 11 healthy recreational-athlete men with a mean age of 20.4 held a passive bar hang for a mean of 64.0 seconds (SD 35.3) before training."
+   "line": "In the GRIP-6 study, 11 healthy recreational-athlete men with a mean age of 20.2 held a passive bar hang for a mean of 64.0 seconds (SD 35.3) before training."
   },
   {
    "id": "H-02",
    "dataset": "GRIP-6, women",
    "n": "14",
-   "age": "Mean 20.4 (whole sample, SD 1.7)",
+   "age": "Mean 20.6 (SD 2.0); whole sample 20.4 (SD 1.7)",
    "sex": "Women",
    "protocol": "Same as men. Before 6 weeks of training.",
    "value": "48.4",
    "spread": "SD 29.1",
    "unit": "s",
    "result": "Mean 48.4 s (SD 29.1); 54.3 s (SD 28.7) after 6 weeks of training",
-   "period": "2025",
+   "period": "Measured January to February 2022 (paper published 2025)",
    "source": "Chomiuk et al., J Funct Morphol Kinesiol 2025, Table 2",
    "url": "https://doi.org/10.3390/jfmk10040427",
-   "line": "In the GRIP-6 study, 14 healthy recreational-athlete women with a mean age of 20.4 held a passive bar hang for a mean of 48.4 seconds (SD 29.1) before training."
+   "line": "In the GRIP-6 study, 14 healthy recreational-athlete women with a mean age of 20.6 held a passive bar hang for a mean of 48.4 seconds (SD 29.1) before training."
   },
   {
    "id": "H-03",
@@ -43,7 +43,7 @@
    "spread": "Change +5.6 s (95% CI 4.0 to 7.3)",
    "unit": "s",
    "result": "Mean 55.3 s before and 60.9 s after (+5.6 s, 95% CI 4.0 to 7.3)",
-   "period": "2025",
+   "period": "Measured January to February 2022 (paper published 2025)",
    "source": "Chomiuk et al., J Funct Morphol Kinesiol 2025, Table 2",
    "url": "https://doi.org/10.3390/jfmk10040427",
    "line": "The same 25 GRIP-6 participants improved their mean bar hang from 55.3 seconds to 60.9 seconds after 6 weeks of gym and climbing training (change 5.6 s, 95% CI 4.0 to 7.3)."
@@ -66,11 +66,11 @@
   },
   {
    "id": "H-05",
-   "dataset": "Yu 2023, climbers before a 24-hour event",
+   "dataset": "Yu 2023, climbers, porch-edge hang, before a 24-hour event",
    "n": "35 with paired hang data (36 climbers analyzed)",
    "age": "21 to 40, mean 29.4",
    "sex": "21 men, 15 women",
-   "protocol": "Static hang to failure from the edge of an elevated wooden porch, feet off the ground, own hand spacing. Measured at registration, before a 24-hour climbing competition.",
+   "protocol": "Static hang to failure from the edge of an elevated wooden porch, feet off the ground. Hand spacing and body position self-selected; most hung on bent fingers. An edge hang, not a bar hang; arm position not stated. Measured at registration, before a 24-hour climbing competition.",
    "value": "76.8",
    "spread": "SD 32.6",
    "unit": "s",
@@ -78,7 +78,7 @@
    "period": "Competition measurements, paper published 2023",
    "source": "Yu et al., Front Sports Act Living 2023",
    "url": "https://doi.org/10.3389/fspor.2023.1224581",
-   "line": "In 36 recreational to elite climbers, the mean static hang before a 24-hour climbing event was 76.8 seconds (SD 32.6), falling to 38.1 seconds afterward."
+   "line": "In 36 recreational to elite climbers (35 with paired hang data), the mean static hang to failure from a porch edge before a 24-hour climbing event was 76.8 seconds (SD 32.6), falling to 38.1 seconds afterward."
   }
  ],
  "flex": [
@@ -88,15 +88,15 @@
    "n": "88",
    "age": "Mean 20.1 (SD 1.6)",
    "sex": "Men",
-   "protocol": "UNIFITTEST 6-60 bent-arm hang. Students without regular organized sport. Bent-arm, not a dead hang.",
+   "protocol": "UNIFITTEST 6-60 bent-arm hang (protocol not described in the paper). Male students without regular organized sport, years 1 to 3 of bachelor study. Bent-arm, not a dead hang.",
    "value": "44.85",
    "spread": "SD 30.64; range 0 to 111 s",
    "unit": "s",
    "result": "Mean 44.85 s (SD 30.64), range 0 to 111 s",
    "period": "Academic year 2023/24",
-   "source": "Cluster analysis of student fitness, Front Physiol 2025",
+   "source": "Cepková et al., Front Physiol 2025;16:1634125, Table 2",
    "url": "https://doi.org/10.3389/fphys.2025.1634125",
-   "line": "In 88 male university students (mean age 20.1) at the Slovak University of Technology, the mean bent-arm hang was 44.85 seconds (SD 30.64), with a range of 0 to 111 seconds."
+   "line": "In 88 male university students (mean age 20.1) at the Slovak University of Technology in Bratislava, the mean bent-arm hang was 44.85 seconds (SD 30.64), with a range of 0 to 111 seconds."
   },
   {
    "id": "F-02",
@@ -104,7 +104,7 @@
    "n": "Criterion standard, not a sample",
    "age": "5 to 17+",
    "sex": "Boys",
-   "protocol": "Flexed-arm hang, chin over bar, up to a maximum of 90 s. Score must be at or above the value to reach the Healthy Fitness Zone.",
+   "protocol": "Flexed-arm hang, scored in seconds up to a maximum of 90 s. Score must be at or above the value to reach the Healthy Fitness Zone.",
    "value": "15",
    "spread": "2 s at age 5; 15 s from age 14",
    "unit": "s",
@@ -112,7 +112,7 @@
    "period": "2010 Cooper Institute zones, CDE 2011-12 table",
    "source": "California Department of Education, FITNESSGRAM Healthy Fitness Zones, September 2011",
    "url": "https://transylvania.schoolboard.net/sites/nc.transylvania.schoolboard.net/files/FitnessGram%20Healthy%20Fitness%20Zones.pdf",
-   "line": "The FitnessGram Healthy Fitness Zone minimum for the flexed-arm hang is 2 seconds for a 5-year-old boy and 15 seconds from age 14."
+   "line": "In the 2011-12 California Physical Fitness Test table (2010 Cooper Institute zones), the flexed-arm hang minimum for the Healthy Fitness Zone was 2 seconds for a 5-year-old boy and 15 seconds from age 14."
   },
   {
    "id": "F-03",
@@ -128,7 +128,7 @@
    "period": "2010 Cooper Institute zones, CDE 2011-12 table",
    "source": "California Department of Education, FITNESSGRAM Healthy Fitness Zones, September 2011",
    "url": "https://transylvania.schoolboard.net/sites/nc.transylvania.schoolboard.net/files/FitnessGram%20Healthy%20Fitness%20Zones.pdf",
-   "line": "The FitnessGram Healthy Fitness Zone minimum for the flexed-arm hang is 2 seconds for a 5-year-old girl and 8 seconds from age 13."
+   "line": "In the 2011-12 California Physical Fitness Test table (2010 Cooper Institute zones), the flexed-arm hang minimum for the Healthy Fitness Zone was 2 seconds for a 5-year-old girl and 8 seconds from age 13."
   }
  ],
  "fg": {
@@ -206,7 +206,7 @@
    "id": "G-03",
    "measure": "Peak median grip, UK",
    "value": "51 kg men (ages 29 to 39); 31 kg women (ages 26 to 42)",
-   "sample": "60,803 observations from 49,964 participants (26,687 female), 12 general-population studies in Great Britain, ages 4 to 90; maximum of trials across both hands",
+   "sample": "60,803 observations from 49,964 participants (26,687 female), 12 general-population studies in Great Britain, ages 4 to 90; maximum of up to six trials per person, both hands (two studies supplied dominant hand only)",
    "period": "Pooled cross-sectional",
    "source": "Dodds et al., PLOS ONE 2014;9(12):e113637",
    "url": "https://doi.org/10.1371/journal.pone.0113637",
@@ -308,7 +308,7 @@
    "result": "2:52 (age 90 years 231 days)",
    "seconds": 172,
    "where": "USA",
-   "source": "Guinness World Records news, March 2026",
+   "source": "Guinness World Records news, March 31, 2026",
    "url": "https://www.guinnessworldrecords.com/news/2026/3/determined-90-year-old-grandma-breaks-record-for-oldest-woman-to-hold-a-dead-hang",
    "line": "Ann Crile Esselstyn was 90 years 231 days old when she held a dead hang for 2 minutes 52 seconds on March 6, 2026, beating the 2024 title."
   },
@@ -341,12 +341,12 @@
  ],
  "trends": [
   [
-   "2021",
+   "2021 (Nov to Dec only)",
    17
   ],
   [
    "2022",
-   22
+   23
   ],
   [
    "2023",
@@ -358,11 +358,11 @@
   ],
   [
    "2025",
-   40
+   41
   ],
   [
-   "2026 (to October)",
-   60
+   "2026 (Jan to Oct)",
+   61
   ]
  ],
  "vol": [
@@ -421,8 +421,8 @@
   "esselstyn_sep": 223,
   "ratio_adachi_riise": 5.03,
   "ratio_bar_vs_dh": 3.35,
-  "trends_ratio": 3.53,
-  "trends_vs_2025": 50
+  "trends_ratio": 2.7,
+  "trends_vs_2025": 56
  },
  "csv_rows": 78
 }
