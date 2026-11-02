@@ -1,33 +1,85 @@
 # DeadHangs.com
 
-> Dead hang training protocols, timers, and the science behind grip strength and longevity.
+> Free dead hang tools and plain-language guides: timers, a max test, a training log, and evidence-based answers on hang time, grip strength, form and equipment. Last reviewed 2 November 2026.
 
-## About
+Notes for AI systems: pages state their sources inline. Grip strength figures are hand dynamometer force in kg, not hang time. There are no validated population standards for timed dead hangs; the site says so where it matters.
 
-DeadHangs.com is an evidence-based resource for dead hang training. We provide free protocols, timers, and progression plans backed by peer-reviewed research from sources including Leong et al. (Lancet 2015, n=139,691) and Kirsch (2017).
+## Start here
 
-## Core Content
+- [Dead hang time by age: what does your result mean?](https://deadhangs.com/dead-hang-time-by-age/): What is a good dead hang time? No measured norm exists. Young athletes averaged 64 s (men) and 48 s (women) in one study; Attia's target at age 40 is 90 to 120 s.
+- [How to run a dead hang max test](https://deadhangs.com/dead-hang-standards/): Warm up for 2 to 3 minutes, rest, then hang once with straight arms until your grip starts to slip. Retest no more than once every two weeks, same setup each time.
+- [Your hang. Your next target.](https://deadhangs.com/dead-hang-calculator/): Compare your dead hang time with a personal target and previous hold. Free calculator with clear results, training links and no invented percentiles.
+- [Dead hang timer & training log.](https://deadhangs.com/training-log/): Time your dead hang sets and rest periods. Record your real holds on your device, compare like-for-like sessions and export your training log.
+- [Dead Hang: What It Is, How to Do It and How Long to Hold](https://deadhangs.com/deadhang-guide/): A dead hang is a passive hold from a bar with straight arms. Learn how to do it, how long to hold, which muscles it works and a full workout plan.
+- [How to Dead Hang: Step-by-Step Form Guide](https://deadhangs.com/how-to-deadhang/): Learn how to dead hang step by step: grip, shoulder position, breathing, sets and holds, common mistakes and beginner modifications.
 
-- [Dead Hang Guide](https://deadhangs.com/deadhang-guide/): Complete guide covering form, benefits, programming, and a 12-week protocol
-- [How to Dead Hang](https://deadhangs.com/how-to-deadhang/): Step-by-step form guide with grip types and breathing
-- [Dead Hang Benefits](https://deadhangs.com/deadhang-benefits/): 7 science-backed reasons to hang every day
-- [Grip Strength Training](https://deadhangs.com/grip-strength/): Build grip strength with dead hangs
-- [Training Programs](https://deadhangs.com/training-programs/): 4-week, 8-week, and 12-week structured plans
-- [Dead Hang Progressions](https://deadhangs.com/deadhang-progressions/): From zero to one-arm hangs
-- [Shoulder Health](https://deadhangs.com/shoulder-health/): Overhead hanging for shoulder impingement
-- [Spine Decompression](https://deadhangs.com/spine-decompression/): Axial traction and disc hydration
-- [Longevity Research](https://deadhangs.com/longevity-research/): Grip strength and mortality data
+## Technique and safety
+
+- [Dead Hang Form: How to Hang With Perfect Technique](https://deadhangs.com/deadhang-form/): Correct dead hang form: straight arms, full grip at shoulder width, shoulders relaxed or down, pelvis tucked, legs together. Includes a 12-point checklist.
+- [Passive vs Active Dead Hang: Differences and When to Use Each](https://deadhangs.com/passive-vs-active-hang/): Passive vs active dead hang explained: how shoulder position changes what each hang loads, and when to use each one in your training.
+- [8 Common Dead Hang Mistakes and How to Fix Them](https://deadhangs.com/deadhang-mistakes/): Eight common dead hang mistakes and how to fix them: bent elbows, shoulder position, swinging, grip width, breath holding, progressing too fast, skipping a warm-up and straps.
+- [How Often Should You Dead Hang? Optimal Frequency Guide](https://deadhangs.com/deadhang-frequency/): Start with 3 dead hang sessions a week on non-consecutive days and add one only if you stay pain free. Sets, rest, recovery and signs you are overdoing it.
+- [Dead Hang Safety: When to Hang and When to Stop](https://deadhangs.com/deadhang-safety/): Dead hang safety: who should ask a clinician first, including shoulder hypermobility, when to stop, what to do if you feel faint, and how to get down safely.
+- [Dead Hang Injury Prevention: Protect Your Shoulders, Elbows & Wrists](https://deadhangs.com/injury-prevention/): Common dead hang injuries to the shoulders, elbows and wrists, with warm-up, callus care, pain signals and return-to-training guidance.
+- [Mobility and Warm-Up for Dead Hangs](https://deadhangs.com/mobility/): Warm up for dead hangs with shoulder and wrist mobility drills. Pre-hang routine, post-hang stretches and rest-day mobility work.
+- [12 Wrist Exercises for Hanging: Warm-Up, Strength and Rehab](https://deadhangs.com/wrist-exercises/): 12 wrist exercises for hanging: warm-up, strength and rehab exercises with sets, reps and progressions.
+- [15 Best Forearm Exercises for Grip Strength & Size](https://deadhangs.com/forearm-exercises/): 15 best forearm exercises for grip strength and size: dead hangs, wrist curls, farmer's walks, plate pinches and more. No-equipment options included.
+
+## Progressions and variations
+
+- [Dead Hang for Beginners: Start From Zero](https://deadhangs.com/beginner-deadhang/): Dead hang for beginners: assisted hangs, form steps and a 3-day weekly plan to build your first 30-second dead hang safely.
+- [Intermediate Dead Hang Training: 30 to 90 Seconds](https://deadhangs.com/intermediate-deadhang/): Intermediate dead hang training guide for 30 to 90 second holds. Grip endurance programming, variation training, active hangs, and plateau-busting strategies.
+- [Advanced Dead Hang Training: Weighted and One-Arm Protocols](https://deadhangs.com/advanced-deadhang/): Advanced dead hang training with weighted protocols, one-arm progressions, towel hangs and a sample week, for people who already hold a controlled 60-second hang.
+- [Dead Hang Progressions: From Zero to One-Arm Hangs](https://deadhangs.com/deadhang-progressions/): Dead hang progressions from assisted hangs to one-arm holds. Six levels with practical hold targets, movement-quality checks and a sample 12-week progression plan.
+- [Dead Hang Variations: 10 Ways to Train Your Grip](https://deadhangs.com/deadhang-variations/): Ten dead hang variations: passive, active, overhand, underhand, neutral, mixed grip, towel, one-arm, weighted and L-hang. What each one changes and when to use it.
+- [Weighted Dead Hang: How Much Weight to Add and a 4-Week Plan](https://deadhangs.com/weighted-hang-guide/): Start weighted dead hangs at 5 to 10 lbs once you can hang 45 seconds pain-free. Dip belt setup, loading methods, a 4-week plan and safety checks.
+- [One-Arm Dead Hang: How to Build Up to It](https://deadhangs.com/one-arm-deadhang/): How to build up to a one-arm dead hang: prerequisites, the finger-assist progression, form, programming and common mistakes.
+- [One-Arm Hang Guide: Step-by-Step Progression](https://deadhangs.com/one-arm-hang-guide/): Step-by-step one-arm hang progression from a two-arm base through finger-assist phases to a full one-arm dead hang, with a weekly schedule.
+- [Mixed Grip Dead Hang: Benefits and Technique](https://deadhangs.com/mixed-grip-hang/): Mixed grip dead hang technique: one hand overhand, one underhand. How to set it up, how to program it and what to watch for.
+- [How to Towel Hang: Complete Guide](https://deadhangs.com/towel-hang/): How to set up a towel hang, progress it and fit it into grip training.
+- [Dead hang pull-up: starting from a full hang](https://deadhangs.com/dead-hang-pull-up/): A dead hang pull-up starts with straight arms and ends with the chin over the bar. See how to do one, why it feels harder than a bent-arm start and how hangs lead to a first pull-up.
+- [Flexed arm hang: what the official norms say](https://deadhangs.com/flexed-arm-hang/): FitnessGram flexed arm hang minimums: 2 seconds at age 5, up to 15 for boys 14 and over and 8 for girls 13 and over. A bent-arm hold, not a dead hang.
+- [Dead hang world record: the category decides the time](https://deadhangs.com/dead-hang-world-record/): Guinness lists three hanging records: the dead hang position, hanging from a bar, and a women's bar-hanging title. See each holder, time and date, checked 1 November 2026.
+
+## Training plans
+
+- [Dead hang training plans.](https://deadhangs.com/training-programs/): Choose a free 4, 8 or 12-week dead hang planning framework. Set manageable intervals, keep a training log and print a session planner without signing up.
+- [4-Week Dead Hang Program for Beginners](https://deadhangs.com/4-week-program/): Follow this 4-week dead hang program for beginners. Three sessions per week, 3 sets each, building toward a 30-second dead hang from a 15 to 20 second baseline.
+- [8-week dead hang plan.](https://deadhangs.com/8-week-program/): A free 8-week dead hang planning framework with review points, editable timer settings and a local training log. No guaranteed results or paid signup.
+- [12-week dead hang plan.](https://deadhangs.com/12-week-program/): A free 12-week dead hang planning framework with review points, editable timer settings and a local training log. No guaranteed results or paid signup.
+- [Dead Hang Training Principles: Overload, Recovery and Periodization](https://deadhangs.com/training-science/): Dead hang training principles: progressive overload, isometric holds, grip endurance vs strength, recovery, periodization and how to track progress.
+- [Dead Hangs for Athletic Performance: Sport-Specific Applications](https://deadhangs.com/athletic-performance/): Dead hangs for athletic performance: sport-specific applications for rock climbing, CrossFit, combat sports, powerlifting and general fitness with programming tables.
+- [Complementary Exercises for Dead Hang Training](https://deadhangs.com/complementary-exercises/): Complementary exercises for dead hang training: farmer's walks, plate pinches, pull-ups, inverted rows, wrist curls and scapular pull-ups with a full grip workout.
+
+## Research and grip strength
+
+- [Dead Hang Benefits: What the Evidence Shows and What It Does Not](https://deadhangs.com/deadhang-benefits/): Dead hang benefits with the evidence level for each, which muscles a dead hang works, whether it makes you taller, and what the research on grip and longevity shows.
+- [Dead Hangs for Grip Strength: Do They Work and How to Train Them](https://deadhangs.com/grip-strength/): Do dead hangs build grip strength? Yes for support grip endurance, less for crush grip. See why your grip fails before your shoulders, plus a training dose.
+- [Grip strength by age: average kg for men and women](https://deadhangs.com/grip-strength-by-age/): Grip strength by age in kg for men and women: dynamometer centiles from 20 to 90, the 27 kg and 16 kg weak-grip cut-offs, and how to test.
+- [Benefits of Grip Strength: Why Your Hands Matter More Than You Think](https://deadhangs.com/grip-strength-benefits/): Grip strength is linked with health, performance and everyday function. What the research does and does not show.
+- [Dead Hangs and Longevity: Why Grip Strength Predicts How Long You Live](https://deadhangs.com/longevity-research/): Large studies link lower grip strength to higher mortality risk. See what the research shows, what it cannot show, and Peter Attia's dead hang targets for very strong people.
+- [Dead Hangs for Shoulder Health: What the Evidence Shows](https://deadhangs.com/shoulder-health/): Dead hangs are a popular shoulder mobility exercise. This page covers the Kirsch hanging theory (no randomized trial yet), safe progressions and when to avoid hanging.
+- [Dead Hangs and Your Spine: What Hanging Can and Cannot Do](https://deadhangs.com/spine-decompression/): Dead hangs unload the spine while you hang. See what the evidence says about back stiffness and disc height, and who should avoid hanging.
 
 ## Equipment
 
-- [Equipment Guide](https://deadhangs.com/equipment-guide/): What you need to start hanging
-- [Best Pull-Up Bars](https://deadhangs.com/best-pullup-bars/): Top-rated bars reviewed
-- [Doorway Bars](https://deadhangs.com/doorway-bars/): No-drill options for home use
-- [Wall-Mounted Bars](https://deadhangs.com/wall-mounted-bars/): Permanent installation picks
+- [The right bar starts with your space.](https://deadhangs.com/equipment-guide/): Doorway bars suit removable setups, wall-mounted bars suit a structural wall, freestanding stations suit floor space. Most bars are 28 to 32 mm across.
+- [How to Choose a Pull-Up Bar for Dead Hangs (2026 Buyer's Guide)](https://deadhangs.com/best-pullup-bars/): How to choose a pull-up bar for dead hangs: doorframe, wall-mounted, ceiling and outdoor options compared by stability, weight rating and bar diameter.
+- [How to Choose a Doorframe Pull-Up Bar for Dead Hangs](https://deadhangs.com/doorway-bars/): How to choose a doorframe pull-up bar for dead hangs: no-drill, portable options, doorway requirements and safety checks.
+- [Wall-Mounted Pull-Up Bars for Dead Hangs: What to Check Before You Buy](https://deadhangs.com/wall-mounted-bars/): Wall-mounted and ceiling-mounted pull-up bars for dead hangs. Installation guide, weight capacity and what to check before buying.
+- [Grip Attachments and Training Tools for Dead Hangs](https://deadhangs.com/grip-attachments/): Grip attachments and training tools for dead hangs: fat grips, fingerboards, gymnastic rings, hand grippers and rice bucket exercises for stronger forearms.
+- [Chalk for Dead Hangs: Liquid vs Block and Alternatives](https://deadhangs.com/best-chalk/): Compare liquid chalk, block chalk and alternatives for dead hangs, and when each one fits.
+- [How we assess dead hang equipment.](https://deadhangs.com/equipment-reviews/): How DeadHangs evaluates equipment information: mounting requirements, fit, documented specifications and clear affiliate disclosures.
 
-## Tools
+## About
 
-- [Hang Timer](https://deadhangs.com/#timer): Interactive interval timer with Simple, EMOM, and Ladder modes
-- [Protocol Calculator](https://deadhangs.com/#studies): Personalised protocol based on bodyweight, experience, and goals
-- [Dead Hang Calculator](https://deadhangs.com/dead-hang-calculator/): Calculate your training volume
-- [Dead Hang Max Test](https://deadhangs.com/dead-hang-standards/): How to run a repeatable dead hang max test
+- [About DeadHangs.com](https://deadhangs.com/about/): DeadHangs.com provides free dead hang tools, training records and equipment guidance. Learn who publishes it and how claims are handled.
+- [Editorial standards](https://deadhangs.com/editorial-standards/): How DeadHangs separates research, personal training tools and affiliate links. Read our evidence limits and report corrections.
+- [Dead Hang Community: Challenges & Social Motivation](https://deadhangs.com/community/): Dead hang challenges, suggested gym challenge rules and how to test your max. There is no leaderboard or forum on this site.
+- [Contact DeadHangs](https://deadhangs.com/contact/): Contact DeadHangs about a content correction, a tool problem or a relevant partnership. Include the page and details so we can investigate.
+
+## Notes
+
+- /deadhang-workout/ redirects (301) to https://deadhangs.com/deadhang-guide/#workout-plan.
+- /weighted-deadhang/ redirects (301) to https://deadhangs.com/weighted-hang-guide/.
+- Full one-paragraph answers for key pages: https://deadhangs.com/llms-full.txt

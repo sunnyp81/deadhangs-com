@@ -48,12 +48,28 @@ const breadcrumbItems = trail.map((crumb, i) => ({
   "@type": "ListItem",
   "position": i + 1,
   "name": crumb.name,
-  "item": {
-    "@type": "WebPage",
-    "@id": new URL(crumb.href || Astro.url.pathname, 'https://deadhangs.com').href,
-    "name": crumb.name
-  }
+  "item": new URL(crumb.href || Astro.url.pathname, 'https://deadhangs.com').href
 }));
+
+// Normalise page-supplied Article JSON-LD so every Article points at the one site Organization by @id.
+const ORG_ID = 'https://deadhangs.com/#organization';
+const pageUrl = new URL(Astro.url.pathname, 'https://deadhangs.com').href;
+const normaliseSchema = (html?: string) => (html || '').replace(/(<script type="application\/ld\+json">)([\s\S]*?)(<\/script>)/g, (whole, open, body, close) => {
+  try {
+    const data = JSON.parse(body);
+    if (data && ['Article', 'BlogPosting', 'TechArticle'].includes(data['@type'])) {
+      data['@id'] = data['@id'] || `${pageUrl}#article`;
+      data.author = { '@id': ORG_ID };
+      data.publisher = { '@id': ORG_ID };
+      data.isPartOf = { '@id': 'https://deadhangs.com/#website' };
+      data.image = data.image || ogImageURL;
+      return open + JSON.stringify(data) + close;
+    }
+  } catch {}
+  return whole;
+});
+const pageSchema = normaliseSchema(schema);
+const isNotFound = Astro.url.pathname.startsWith('/404');
 
 const globalSchema = {
   "@context": "https://schema.org",
@@ -88,8 +104,8 @@ const globalSchema = {
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <PwaHead />
-  {noindex && <meta name="robots" content="noindex, follow" />}
-  <link rel="canonical" href={canonicalURL} />
+  {(noindex || isNotFound) && <meta name="robots" content="noindex, follow" />}
+  {!isNotFound && <link rel="canonical" href={canonicalURL} />}
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="article" />
@@ -103,7 +119,7 @@ const globalSchema = {
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImageURL} />
   <script type="application/ld+json" set:html={JSON.stringify(globalSchema)} />
-  {schema && <Fragment set:html={schema} />}
+  {pageSchema && <Fragment set:html={pageSchema} />}
   <link rel="preload" href="/fonts/barlow-semi-condensed-700.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin />
   <Analytics />
