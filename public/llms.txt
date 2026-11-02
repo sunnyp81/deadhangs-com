@@ -30,4 +30,4 @@ DeadHangs.com is an evidence-based resource for dead hang training. We provide f
 - [Hang Timer](https://deadhangs.com/#timer): Interactive interval timer with Simple, EMOM, and Ladder modes
 - [Protocol Calculator](https://deadhangs.com/#studies): Personalised protocol based on bodyweight, experience, and goals
 - [Dead Hang Calculator](https://deadhangs.com/dead-hang-calculator/): Calculate your training volume
-- [Dead Hang Standards](https://deadhangs.com/dead-hang-standards/): Benchmarks by age and sex
+- [Dead Hang Max Test](https://deadhangs.com/dead-hang-standards/): How to run a repeatable dead hang max test
