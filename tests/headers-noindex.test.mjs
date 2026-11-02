@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, existsSync } from "node:fs";
 
-const src = readFileSync(new URL("../public/_headers", import.meta.url), "utf8");
+const src = readFileSync(new URL("../public/_headers", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 const blocks = src.split(/\n\s*\n/).map((b) => {
   const [rule, ...headers] = b.trim().split("\n");
   return { rule: rule.trim(), headers: headers.map((h) => h.trim()) };
@@ -31,7 +31,7 @@ test("X-Frame-Options DENY still applies to /* and is detached only under /embed
 });
 
 test("built dist/_headers keeps the same framing rules", { skip: !existsSync(new URL("../dist/_headers", import.meta.url)) }, () => {
-  const dist = readFileSync(new URL("../dist/_headers", import.meta.url), "utf8");
+  const dist = readFileSync(new URL("../dist/_headers", import.meta.url), "utf8").replace(/\r\n/g, "\n");
   assert.match(dist, /^\/\*\n\s+X-Frame-Options: DENY/m);
   assert.match(dist, /\/embed\/\*\n\s+! X-Frame-Options\n\s+Content-Security-Policy: frame-ancestors \*/);
 });
