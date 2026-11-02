@@ -1,21 +1,30 @@
 ---
 import Article from '../../layouts/Article.astro';
+const faqs = [
+  { q: "Are dead hangs good for shoulder impingement?", a: "Orthopedic surgeon John M. Kirsch proposed overhead hanging for shoulder impingement in a self-published book (5th ed. 2019). No published randomized trial has tested it (Europe PMC search, October 2026). If you try short holds then stop when you feel sharp pain and see a clinician if it persists." },
+  { q: "Why does my shoulder hurt or pinch when I dead hang?", a: "A pinch, catch or ache has several possible causes and cannot be diagnosed from a description. Keep your feet on the ground to reduce the load, and stop if the pain is sharp or lasts after the session. See a physiotherapist or physician if it keeps happening." },
+  { q: "Should I do passive or active hangs for shoulder health?", a: "A passive hang stretches the shoulder with the muscles relaxed. An active hang asks the shoulder blade muscles to work. Many people start passive and add active hangs once a 30 second passive hold feels comfortable. A physiotherapist can set the pace if you are recovering from an injury." },
+  { q: "Can dead hangs help a rotator cuff injury?", a: "Dead hangs have not been tested as a treatment for rotator cuff injury. Partial tears need a clinician's assessment before any overhead hanging. Full-thickness tears require medical evaluation first. Ask a physician or physiotherapist before hanging with a diagnosed rotator cuff injury." },
+];
+const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const faqSchema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) });
+const faqHtml = faqs.map((f) => `<div class="faq"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("\n");
 ---
 
 <Article
-  h1={"Dead Hangs for Shoulder Health: What the Evidence Shows"}
+  h1={"Dead Hangs for Shoulder Pain: What the Evidence Shows"}
   subtitle={"Overhead hanging stretches the shoulder and can be scaled to how much load you tolerate. It is not a proven treatment for impingement or rotator cuff problems."}
   crumbs={[{"name":"Benefits","href":"/deadhang-benefits/"},{"name":"Shoulder Health"}]}
-  updated={"Updated October 30, 2026"}
+  updated={"Updated November 2, 2026"}
   author
-  title="Dead Hangs for Shoulder Health: What the Evidence Shows"
-  description="Dead hangs are a popular shoulder mobility exercise. This page covers the Kirsch hanging theory (no randomized trial yet), safe progressions and when to avoid hanging."
+  title="Dead Hangs for Shoulder Pain: What the Evidence Shows"
+  description="Dead hangs are a popular shoulder mobility exercise, but no trial tests them for shoulder pain. See the Kirsch hanging theory, which hang to try first and when to avoid hanging."
   canonical="https://deadhangs.com/shoulder-health/"
   schema={`<script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Dead Hangs for Shoulder Health: What the Evidence Shows",
-    "description": "Dead hangs are a popular shoulder mobility exercise. This page covers the Kirsch hanging theory (no randomized trial yet), safe progressions and when to avoid hanging.",
+    "headline": "Dead Hangs for Shoulder Pain: What the Evidence Shows",
+    "description": "Dead hangs are a popular shoulder mobility exercise, but no trial tests them for shoulder pain. See the Kirsch hanging theory, which hang to try first and when to avoid hanging.",
     "author": {
       "@type": "Organization",
       "name": "DeadHangs.com",
@@ -27,58 +36,37 @@ import Article from '../../layouts/Article.astro';
     },
     "mainEntityOfPage": "https://deadhangs.com/shoulder-health/",
     "datePublished": "2026-03-03",
-    "dateModified": "2026-10-30"
+    "dateModified": "2026-11-02"
   }</script>
-<script type="application/ld+json">{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Are dead hangs good for shoulder impingement?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Orthopedic surgeon John M. Kirsch proposed overhead hanging for shoulder impingement in a self-published book (5th ed. 2019). No published randomized trial has tested it (Europe PMC search, October 2026). If you try short holds then stop when you feel sharp pain and see a clinician if it persists."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Should I do passive or active hangs for shoulder health?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "A passive hang stretches the shoulder with the muscles relaxed. An active hang asks the shoulder blade muscles to work. Many people start passive and add active hangs once a 30 second passive hold feels comfortable. A physiotherapist can set the pace if you are recovering from an injury."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can dead hangs help a rotator cuff injury?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Dead hangs have not been tested as a treatment for rotator cuff injury. Partial tears need a clinician's assessment before any overhead hanging. Full-thickness tears require medical evaluation first. Ask a physician or physiotherapist before hanging with a diagnosed rotator cuff injury."
-        }
-      }
-    ]
-  }</script>`}
+<script type="application/ld+json">${faqSchema}</script>`}
 >
 <div class="article-body">
-    <Fragment set:html={`<h2>What Dead Hangs Do for the Shoulder</h2>
-        <p>A dead hang puts the shoulder in full flexion with the arm overhead and the joint capsule stretched under bodyweight. Hanging is thought to widen the subacromial space. This is the gap under the acromion bone where the rotator cuff tendons pass. No trial found for this page has measured that gap during a hang.</p>
-        <p>The inferior shoulder capsule can tighten in people who rarely raise their arms overhead, which is common with desk work, driving and phone use. Hanging stretches the inferior capsule. No study has shown that this changes how the humeral head sits in the glenoid socket.</p>
-        <p>Overhead hanging may also stretch the pectoralis minor. This chest muscle shortens when the shoulders round forward. Overhead range varies from person to person. A hang is one way to practice reaching overhead.</p>
+    <div class="callout">
+      <h2 id="glance" style="margin-top:0">At a glance</h2>
+      <ol class="stop-steps">
+        <li><strong>Evidence:</strong> no randomized trial has tested dead hangs for impingement or rotator cuff problems (Europe PMC search, October 2026).</li>
+        <li><strong>Source of the idea:</strong> surgeon John M. Kirsch proposed overhead hanging in a self-published book. It is a hypothesis.</li>
+        <li><strong>Which hang first:</strong> many people start with a passive hang and keep their feet on the ground to share the load.</li>
+        <li><strong>Stop</strong> for sharp, catching or electrical pain. Ask a clinician first with an injury, surgery or an unstable shoulder.</li>
+      </ol>
+    </div>
+    <Fragment set:html={`<h2>Are dead hangs good for the shoulders?</h2>
+        <p>Dead hangs are a popular shoulder mobility exercise, but no trial shows they treat shoulder pain. A hang takes the arm overhead and loads the shoulder with your body weight. Hanging is thought to widen the subacromial space, the gap under the acromion where the rotator cuff tendons pass. No trial found for this page has measured that gap during a hang.</p>
+        <p>No study has shown that hanging changes how the humeral head sits in the shoulder socket. Overhead range varies from person to person. A hang is one way to practice reaching overhead.</p>
 
-        <h2>The Kirsch Hanging Theory</h2>
+        <h2>What is the Kirsch hanging theory?</h2>
         <p>Orthopedic surgeon John M. Kirsch proposed overhead hanging for shoulder impingement in his self-published book "Shoulder Pain? The Solution &amp; Prevention" (5th ed. 2019). No published randomized trial has tested it (Europe PMC search, October 2026).</p>
         <p>Kirsch proposed that the coracoacromial arch remodels under sustained tensile load. He proposed that the acromion gradually changes shape under the pull of the deltoid and supraspinatus during a hang. He suggested this remodeling increases the subacromial space. This is his hypothesis rather than established science.</p>
 
-        <h2>Dead Hangs for Shoulder Impingement</h2>
-        <p>Shoulder impingement occurs when the supraspinatus tendon is pinched between the humeral head and the acromion. Arm elevation narrows this space. Pain shows up as a sharp catch during overhead movements and an ache at rest.</p>
+        <h2>Can dead hangs help shoulder impingement?</h2>
+        <p>No trial has tested dead hangs for shoulder impingement. Impingement is a label for shoulder pain with overhead movement, often attributed to tendon irritation under the acromion. Its causes are debated. Pain can show up as a catch during overhead movements and an ache at rest.</p>
         <p>Three mechanisms have been proposed for how hanging might help impingement. One is distraction of the humeral head away from the acromion. Another is stretch of the tight inferior capsule. The third is gradual remodeling of the acromion in Kirsch's hypothesis. None has been confirmed in a trial.</p>
         <p>Some people with impingement pain who try hanging start with 5 to 10 second holds with the feet on the ground to take part of the bodyweight. Ask a clinician before hanging with impingement. This is common training practice, not a tested prescription. Some dull aching can occur in the first few sessions. Sharp or worsening pain means the load is too high. Reduce the duration or the bodyweight you carry. See a physiotherapist if symptoms increase despite modifications.</p>
 
-        <h2>Dead Hangs and the Rotator Cuff</h2>
-        <p>The rotator cuff comprises four muscles: supraspinatus, infraspinatus, teres minor and subscapularis. No trial has tested whether a dead hang repairs or strengthens a rotator cuff tendon.</p>
+        <h2>Can dead hangs help a rotator cuff injury?</h2>
+        <p>Dead hangs have not been tested as a treatment for rotator cuff injury. The rotator cuff comprises four muscles: supraspinatus, infraspinatus, teres minor and subscapularis. No trial has tested whether a dead hang repairs or strengthens a rotator cuff tendon.</p>
         <p>Tendinopathy means chronic tendon pain and degeneration. Isometric loading is used for tendon pain. It has not been shown to be better than other exercise. It has not been tested for dead hangs.</p>
-        <p>Partial tears need a clinician's assessment before any overhead hanging. Large or full-thickness tears can worsen with overhead traction. Medical imaging determines tear size and guides the decision.</p>
+        <p>Partial tears need a clinician's assessment before any overhead hanging. Large or full-thickness tears need medical assessment before any overhead hanging. Imaging shows tear size and guides the decision.</p>
 
         <div class="callout">
           <h3>Medical Guidance Required</h3>
@@ -87,42 +75,55 @@ import Article from '../../layouts/Article.astro';
 
         <p>Many people start with <a href="/passive-vs-active-hang/">passive hangs</a>. These load the arm mostly through passive tissues. Active hangs with the shoulder blades pulled down ask the shoulder muscles to work. Some people add them once passive hangs are pain free.</p>
 
-        <h2>Shoulder Mobility Routine</h2>
+        <h2>Which mobility drills do people pair with dead hangs?</h2>
         <p>A hang pairs well with mobility drills that target the muscle groups limiting overhead range. This four-exercise routine is common training practice. It is not a tested prescription.</p>
 
         <h3>Dead Hang (Primary)</h3>
-        <p>Perform 3 to 4 sets of 15 to 30 seconds. Relax the shoulders and breathe. A passive hang stretches the capsule, lats and pectoralis minor. Rest 60 seconds between sets.</p>
+        <p>Perform 3 to 4 sets of 15 to 30 seconds. Relax the shoulders and breathe. A passive hang is a stretch for the shoulders and lats. Rest 60 seconds between sets.</p>
 
         <h3>Wall Slides</h3>
-        <p>Stand with your back flat against a wall. Place your arms in a "goalpost" position with elbows at 90 degrees. Slide your arms up the wall until they straighten overhead. Return to the start position. Perform 10 to 15 repetitions. Wall slides train scapular upward rotation and serratus anterior activation.</p>
+        <p>Stand with your back flat against a wall. Place your arms in a "goalpost" position with elbows at 90 degrees. Slide your arms up the wall until they straighten overhead. Return to the start position. Perform 10 to 15 repetitions. Wall slides are a common overhead mobility drill.</p>
 
         <h3>Band Pull-Aparts</h3>
-        <p>Hold a resistance band at chest height with straight arms. Pull the band apart by squeezing your shoulder blades together. Return slowly. Perform 15 to 20 repetitions. Band pull-aparts work the rhomboids and posterior deltoids. These muscles counterbalance tight anterior muscles.</p>
+        <p>Hold a resistance band at chest height with straight arms. Pull the band apart by squeezing your shoulder blades together. Return slowly. Perform 15 to 20 repetitions. Band pull-aparts are a common upper back exercise.</p>
 
         <h3>External Rotation</h3>
-        <p>Hold a light resistance band with your elbow pinned to your side at 90 degrees. Rotate your forearm outward against the band's resistance. Control the return. Perform 15 repetitions per side. External rotation targets the infraspinatus and teres minor.</p>
+        <p>Hold a light resistance band with your elbow pinned to your side at 90 degrees. Rotate your forearm outward against the band's resistance. Control the return. Perform 15 repetitions per side. External rotation is a common rotator cuff exercise.</p>
 
-        <h2>Active vs Passive Hang for Shoulders</h2>
-        <p>A passive dead hang lets the shoulder muscles relax. Bodyweight then stretches the joint capsule, ligaments and surrounding muscles. A passive hang suits mobility work. An active dead hang pulls the shoulder blades down and back without bending the elbows, which engages the lower trapezius, serratus anterior and rotator cuff stabilizers.</p>
+        <h2>Which hang should you try first for shoulder problems?</h2>
+        <p>There is no tested rule for which hang suits which shoulder. The table lists common starting points by situation. It is common practice, not a tested prescription, and it does not replace a clinician.</p>
+        <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Which hang to start with by situation" tabindex="0"><table>
+          <caption>Common starting points by situation</caption>
+          <thead><tr><th scope="col">Situation</th><th scope="col">Common starting point</th></tr></thead>
+          <tbody>
+            <tr><td>New to hanging, no shoulder pain</td><td>Passive hang with feet on the ground sharing the load, short holds.</td></tr>
+            <tr><td>Shoulder pinches or catches when you go into the hang</td><td>Release, keep your feet on the ground or use a band, and see a physiotherapist if it keeps happening.</td></tr>
+            <tr><td>Loose or hypermobile shoulders</td><td>Some people find an active hang feels more controlled than a relaxed one. Ask a physiotherapist to set the pace.</td></tr>
+            <tr><td>Diagnosed tear, instability or recent surgery</td><td>Clinician first. Follow your surgeon's timeline.</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2>Should you do passive or active hangs for shoulder health?</h2>
+        <p>A passive dead hang lets the shoulder muscles relax, and an active dead hang pulls the shoulder blades down and back without bending the elbows. Many people start passive for mobility work and add active hangs later. No trial compares the two for shoulder pain.</p>
         <p>A common approach is to start with passive hangs until overhead range feels comfortable and pain free. Add active hangs once you can hold about 30 seconds passively without discomfort. The passive vs active hang guide in the Related Guides below compares the two in full.</p>
 
-        <h2>When to Avoid Hanging</h2>
-        <p>Hanging is not suitable for every shoulder. Avoid it in these situations. Ask a clinician before you start.</p>
+        <h2>When should you avoid dead hangs for the shoulder?</h2>
+        <p>Avoid dead hangs with a fresh rotator cuff or labral tear, soon after shoulder surgery, with an unstable shoulder, and whenever a hang causes sharp pain. Ask a clinician before you start with any of these.</p>
 
         <h3>Acute Tears</h3>
-        <p>A fresh rotator cuff or labral tear needs rest and medical assessment. Hanging places traction force directly through the injured tissue. Wait for your physician to clear overhead loading before attempting any dead hang variation.</p>
+        <p>A fresh rotator cuff or labral tear needs rest and medical assessment. Hanging loads the shoulder with your body weight, which may aggravate a fresh injury. Wait for your physician to clear overhead loading before attempting any dead hang variation.</p>
 
         <h3>Post-Surgical</h3>
-        <p>Shoulder surgery repairs or reconstructs damaged structures. Follow your surgeon's rehabilitation timeline. Hanging too early risks re-tearing the repair.</p>
+        <p>Shoulder surgery repairs or reconstructs damaged structures. Follow your surgeon's rehabilitation timeline. Hanging too early may stress the repair.</p>
 
         <h3>Unstable Shoulder</h3>
-        <p>Recurrent shoulder dislocations indicate ligament laxity. Hanging stretches the capsule and ligaments further. This can increase instability rather than reduce it. Strengthening exercises under physiotherapy guidance take priority over stretching for unstable shoulders.</p>
+        <p>Recurrent shoulder dislocations can go with loose ligaments. Hanging may add stretch to an already loose joint, so ask a physiotherapist before hanging with an unstable shoulder.</p>
 
         <h3>Severe Pain During a Hang</h3>
         <p>Sharp, catching or electrical pain during a dead hang is a signal to stop. Release the bar and reduce the load by keeping your feet on the ground. Get a clinical assessment if the pain persists at any load.</p>
 
-        <h2>Shoulder-Safe Dead Hang Progression</h2>
-        <p>This four-stage shoulder progression runs from a wall hang to a full dead hang. The durations and frequencies are common training practice. They are not a tested prescription. Move to the next stage only when you complete the current one pain free.</p>
+        <h2>What is a gentle dead hang progression for the shoulder?</h2>
+        <p>A gentle progression runs in four stages from a wall hang to a full dead hang, moving on only when the current stage is pain free. This four-stage shoulder progression The durations and frequencies are common training practice. They are not a tested prescription. Move to the next stage only when you complete the current one pain free.</p>
 
         <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Scrollable comparison table" tabindex="0"><table>
           <thead>
@@ -166,25 +167,11 @@ import Article from '../../layouts/Article.astro';
           </tbody>
         </table></div>
 
-        <p>A band-assisted hang uses a resistance band looped over the bar with your foot or knee in the band. Thicker bands take more of your weight. This reduces the traction force through the shoulder. Check the band's rated assistance and record the assist you used so later hangs stay comparable.</p>
+        <p>A band-assisted hang uses a resistance band looped over the bar with your foot or knee in the band. Thicker bands take more of your weight. This reduces the load on the shoulder. Check the band's rated assistance and record the assist you used so later hangs stay comparable.</p>
         <p>People with existing shoulder issues may need longer on each stage. A physiotherapist can set the pace.</p>
 
-        <h2>Frequently Asked Questions</h2>
-
-        <div class="faq">
-          <h3>Are dead hangs good for shoulder impingement?</h3>
-          <p>Orthopedic surgeon John M. Kirsch proposed overhead hanging for shoulder impingement in a self-published book (5th ed. 2019). No published randomized trial has tested it (Europe PMC search, October 2026). If you try short holds then stop when you feel sharp pain and see a clinician if it persists.</p>
-        </div>
-
-        <div class="faq">
-          <h3>Should I do passive or active hangs for shoulder health?</h3>
-          <p>A passive hang stretches the shoulder with the muscles relaxed. An active hang asks the shoulder blade muscles to work. Many people start passive and add active hangs once a 30 second passive hold feels comfortable. A physiotherapist can set the pace if you are recovering from an injury.</p>
-        </div>
-
-        <div class="faq">
-          <h3>Can dead hangs help a rotator cuff injury?</h3>
-          <p>Dead hangs have not been tested as a treatment for rotator cuff injury. Partial tears need a clinician's assessment before any overhead hanging. Full-thickness tears require medical evaluation first. Ask a physician or physiotherapist before hanging with a diagnosed rotator cuff injury.</p>
-        </div>
+        <h2 id="faq">Frequently Asked Questions</h2>
+        ${faqHtml}
 
         <h2>Related Guides</h2>
         <div class="related-grid">

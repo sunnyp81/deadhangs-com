@@ -1,21 +1,31 @@
 ---
 import Article from '../../layouts/Article.astro';
+const faqs = [
+  { q: "How does grip strength relate to longevity?", a: "Large cohort studies link lower grip strength to a higher risk of death. In the 2015 Lancet PURE study of 139,691 adults, each 5 kg lower grip was associated with a 16% higher all-cause mortality risk. A 2018 UK Biobank study of 502,293 people found the same direction. These are associations, not proof that improving grip lengthens life." },
+  { q: "What is a good dead hang time for longevity?", a: "There is no trial-tested longevity target. On his podcast (The Drive, AMA #329, December 2024) Peter Attia said a 'very strong' 40-year-old man should manage at least two minutes and a 'very strong' 40-year-old woman at least 90 seconds. He said to subtract about 10 seconds per decade. This is his target for very strong people and not an average." },
+  { q: "Does dead hanging make you live longer?", a: "No study has shown that dead hanging lengthens life. The mortality studies on this page measured grip strength and not hang time. The authors of the Lancet study say further research is needed to test whether improving strength reduces mortality." },
+  { q: "Is Peter Attia's 2-minute dead hang benchmark realistic?", a: "It is a podcast target for very strong 40-year-olds, not a measured norm. No study tests it. Measured group averages were 48.4 to 95.4 seconds in recreational athletes and moderately trained men. Missing the target is not a health diagnosis. Compare your hang with your own earlier results instead." },
+  { q: "Is grip strength a cause or a marker?", a: "The studies cannot say. Grip may reflect overall health, muscle mass or activity, and observational data cannot separate those. No trial shows that training grip changes mortality. Treat grip as one signal, and ask a clinician about any concern." },
+];
+const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const faqSchema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) });
+const faqHtml = faqs.map((f) => `<div class="faq"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("\n");
 ---
 
 <Article
-  h1={"Dead Hangs and Longevity: Why Grip Strength Predicts How Long You Live"}
-  subtitle={"Stronger grip is associated with lower mortality risk in large cohort studies. No trial shows that hanging lengthens life. Peter Attia's dead hang targets are aimed at very strong people."}
+  h1={"Dead Hang Longevity: What the Grip Strength Research Shows"}
+  subtitle={"Stronger grip is associated with lower mortality risk in large cohort studies. No trial shows that hanging lengthens life. Peter Attia's dead hang targets are a podcast statement for very strong people."}
   crumbs={[{"name":"Benefits","href":"/deadhang-benefits/"},{"name":"Longevity Research"}]}
-  updated={"Updated October 30, 2026"}
+  updated={"Updated November 2, 2026"}
   author
-  title="Dead Hangs and Longevity: Why Grip Strength Predicts How Long You Live"
-  description="Large studies link lower grip strength to higher mortality risk. See what the research shows, what it cannot show, and Peter Attia's dead hang targets for very strong people."
+  title="Dead Hang Longevity: What the Grip Strength Research Shows"
+  description="Large studies link lower grip strength to higher mortality risk. Read what the research shows, what it cannot show, and where Peter Attia's dead hang targets come from."
   canonical="https://deadhangs.com/longevity-research/"
   schema={`<script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Dead Hangs and Longevity: Why Grip Strength Predicts How Long You Live",
-    "description": "Large studies link lower grip strength to higher mortality risk. See what the research shows, what it cannot show, and Peter Attia's dead hang targets for very strong people.",
+    "headline": "Dead Hang Longevity: What the Grip Strength Research Shows",
+    "description": "Large studies link lower grip strength to higher mortality risk. Read what the research shows, what it cannot show, and where Peter Attia's dead hang targets come from.",
     "author": {
       "@type": "Organization",
       "name": "DeadHangs.com",
@@ -27,46 +37,26 @@ import Article from '../../layouts/Article.astro';
     },
     "mainEntityOfPage": "https://deadhangs.com/longevity-research/",
     "datePublished": "2026-03-03",
-    "dateModified": "2026-10-30"
+    "dateModified": "2026-11-02"
   }</script>
-<script type="application/ld+json">{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How does grip strength predict longevity?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "A 2015 Lancet study of 139,691 adults in 17 countries found that each 5 kg lower grip strength was associated with a 16% higher risk of death from any cause. A 2018 BMJ study of 502,293 UK Biobank participants reported the same direction of association. These are observational studies. They show a link and do not show that improving grip lengthens life."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "What is a good dead hang time for longevity?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "There is no trial-tested longevity target. On his podcast (The Drive, AMA #329, December 2024) Peter Attia said a 'very strong' 40-year-old man should manage at least two minutes and a 'very strong' 40-year-old woman at least 90 seconds. He said to subtract about 10 seconds per decade. This is his target for very strong people and not an average."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Does dead hanging make you live longer?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No study has shown that dead hanging lengthens life. The mortality studies on this page measured grip strength and not hang time. The authors of the Lancet study say further research is needed to test whether improving strength reduces mortality."
-        }
-      }
-    ]
-  }</script>`}
+<script type="application/ld+json">${faqSchema}</script>`}
 >
 <div class="article-body">
-    <Fragment set:html={`<h2>Dead Hang Longevity: What the Research Shows</h2>
-        <p>Dead hang longevity claims rest on grip strength research and not on dead hang trials. Large studies link lower grip strength to a higher risk of death. A dead hang is one way to test grip. This page separates what the studies measured from what they did not.</p>
+    <div class="callout">
+      <h2 id="glance" style="margin-top:0">At a glance</h2>
+      <ol class="stop-steps">
+        <li><strong>Link, not proof:</strong> in the PURE study, each 5 kg lower grip was associated with a 16% higher risk of death from any cause (Leong et al., Lancet 2015).</li>
+        <li><strong>Grip, not hang time:</strong> the mortality studies measured squeeze force. None measured how long people could hang.</li>
+        <li><strong>No trial:</strong> nothing shown here tests whether hanging or grip training lengthens life.</li>
+        <li><strong>The 2-minute target:</strong> Peter Attia's figure is a podcast target for very strong 40-year-olds, not measured data.</li>
+      </ol>
+    </div>
+    <Fragment set:html={`<h2>Does dead hang time predict how long you live?</h2>
+        <p>No study shows that dead hang time predicts lifespan. Dead hang longevity claims rest on grip strength research, where large studies link lower grip strength to a higher risk of death. A dead hang is one way to test grip. This page separates what the studies measured from what they did not.</p>
         <p>Every figure below comes from observational data. Observational studies show that two things travel together. They cannot show that raising one changes the other. The <a href="/dead-hang-calculator/">dead hang calculator</a> can log a baseline hold to compare with your own later holds.</p>
 
-        <h2>Grip Strength and Mortality: The Lancet Study</h2>
-        <p>The Lancet study (PURE) analyzed 139,691 adults aged 35 to 70 in 17 countries over a median of four years. There were 3,379 deaths (2%). Each 5 kg lower grip strength was associated with a 16% higher risk of death from any cause (HR 1.16, 95% CI 1.13 to 1.20). The same difference in grip was associated with a 17% higher risk of cardiovascular death and a 17% higher risk of non-cardiovascular death. Grip strength was a stronger predictor of all-cause and cardiovascular mortality than systolic blood pressure.</p>
+        <h2>What did the Lancet grip strength study find?</h2>
+        <p>The Lancet PURE study linked each 5 kg lower grip strength to a 16% higher risk of death from any cause in 139,691 adults. It was an observational study, so it shows a link and not a cause. The study analyzed 139,691 adults aged 35 to 70 in 17 countries over a median of four years. There were 3,379 deaths (2%). The hazard ratio per 5 kg lower grip was 1.16 (95% CI 1.13 to 1.20). The same difference in grip was associated with a 17% higher risk of cardiovascular death and a 17% higher risk of non-cardiovascular death. Grip strength was a stronger predictor of all-cause and cardiovascular mortality than systolic blood pressure.</p>
 
         <figure class="callout" style="margin:1.5rem 0">
           <div class="dg-hbars" role="img" aria-label="Higher risk associated with each 5 kg lower grip strength. Bar chart from Leong et al., Lancet 2015: all-cause death 16 percent, cardiovascular death 17 percent, non-cardiovascular death 17 percent, stroke 9 percent, myocardial infarction 7 percent."><div class="dg-hrow"><p>All-cause death</p><div class="dg-hline"><i style="--v:68.6;--c:#00e5ff"></i><b>16%</b></div></div><div class="dg-hrow"><p>Cardiovascular death</p><div class="dg-hline"><i style="--v:72.9;--c:#00e5ff"></i><b>17%</b></div></div><div class="dg-hrow"><p>Non-cardiovascular death</p><div class="dg-hline"><i style="--v:72.9;--c:#00e5ff"></i><b>17%</b></div></div><div class="dg-hrow"><p>Stroke</p><div class="dg-hline"><i style="--v:38.6;--c:#40b8ff"></i><b>9%</b></div></div><div class="dg-hrow"><p>Heart attack (MI)</p><div class="dg-hline"><i style="--v:30.0;--c:#40b8ff"></i><b>7%</b></div></div></div>
@@ -75,13 +65,13 @@ import Article from '../../layouts/Article.astro';
 
         <p>The Lancet study authors say further research is needed to test whether improving strength reduces mortality. For measured grip force at each age, see <a href="/grip-strength-by-age/">grip strength by age</a> (Leong et al., <em>The Lancet</em> 2015;386:266-273, <a href="https://doi.org/10.1016/S0140-6736(14)62000-6" rel="nofollow noopener">doi:10.1016/S0140-6736(14)62000-6</a>).</p>
 
-        <h2>A Second, Larger Cohort: UK Biobank</h2>
-        <p>A 2018 BMJ analysis of 502,293 UK Biobank participants aged 40 to 69 (54% women) recorded 13,322 deaths over a mean of 7.1 years. Per 5 kg lower grip the all-cause mortality hazard ratio was 1.20 in women and 1.16 in men. The cardiovascular hazard ratio was 1.19 in women and 1.22 in men.</p>
+        <h2>Do other large studies agree on grip strength and mortality?</h2>
+        <p>Yes, in direction. A second cohort, UK Biobank, also linked lower grip strength to higher mortality risk. A 2018 BMJ analysis of 502,293 UK Biobank participants aged 40 to 69 (54% women) recorded 13,322 deaths over a mean of 7.1 years. Per 5 kg lower grip the all-cause mortality hazard ratio was 1.20 in women and 1.16 in men. The cardiovascular hazard ratio was 1.19 in women and 1.22 in men.</p>
 
         <p>Source: Celis-Morales et al., <em>BMJ</em> 2018;361:k1651, <a href="https://doi.org/10.1136/bmj.k1651" rel="nofollow noopener">doi:10.1136/bmj.k1651</a>.</p>
 
-        <h2>Grip, Brain and Aging Markers</h2>
-        <p>Grip has also been linked with brain and cellular aging measures. The table gives each finding with its design to show the strength of each claim.</p>
+        <h2>Is grip strength linked to brain health or aging?</h2>
+        <p>Grip strength has been linked with cognitive and cellular aging measures in observational studies. These links do not show cause. The table gives each finding with its design to show the strength of each claim.</p>
 
         <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Grip strength research findings" tabindex="0"><table>
           <thead>
@@ -112,34 +102,37 @@ import Article from '../../layouts/Article.astro';
 
         <p>The Firth study is cross-sectional and cannot say which came first. A 2019 narrative review on grip strength as a biomarker in older adults (Bohannon, <em>Clinical Interventions in Aging</em>) describes grip strength as "largely consistent as an explanator of concurrent overall strength, upper limb function, bone mineral density, fractures, falls, malnutrition, cognitive impairment, depression, sleep problems, diabetes, multimorbidity, and quality of life" and says routine use "can be recommended as a stand-alone measurement".</p>
 
-        <h2>Peter Attia's Dead Hang Targets</h2>
-        <p>On his podcast (The Drive, AMA #329, December 2024) Peter Attia said a 'very strong' 40-year-old man should be able to dead hang for at least two minutes and a 'very strong' 40-year-old woman for at least 90 seconds. Attia said to subtract about 10 seconds per decade.</p>
+        <h2>Where does the 2-minute dead hang target come from?</h2>
+        <p>The two-minute target comes from Peter Attia's podcast, not from a dead hang study. On his podcast (The Drive, AMA #329, December 2024) Peter Attia said a 'very strong' 40-year-old man should be able to dead hang for at least two minutes and a 'very strong' 40-year-old woman for at least 90 seconds. Attia said to subtract about 10 seconds per decade.</p>
         <p>Attia's targets are an aspiration for very strong people. They are not an average and not a rule for all men in their 40s. They are a podcast statement, not a research result, and no study cited here tests it. Compare your own time with measured samples on the <a href="/dead-hang-time-by-age/">dead hang time by age</a> page.</p>
 
-        <h2>What the Research Does Not Show</h2>
+        <h3>Do dead hang sources agree?</h3>
+        <p>Dead hang numbers online come from different kinds of source and are not interchangeable. The table labels each one by origin.</p>
+        <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Where dead hang numbers come from" tabindex="0"><table>
+          <caption>Where each dead hang or grip number comes from</caption>
+          <thead><tr><th scope="col">Source</th><th scope="col">What it is</th><th scope="col">Number</th><th scope="col">Status</th></tr></thead>
+          <tbody>
+            <tr><td>Peter Attia, The Drive #329</td><td>Podcast statement about very strong people</td><td>2 min (men) and 90 s (women) at 40, minus about 10 s per decade</td><td>Target, not data</td></tr>
+            <tr><td><a href="https://doi.org/10.3390/jfmk10040427" rel="noopener">Chomiuk et al. 2025 (GRIP-6)</a></td><td>11 men and 14 women, mean age 20.4</td><td>Men 64.0 s, women 48.4 s</td><td>Measured, small, young</td></tr>
+            <tr><td>Drury et al. 2004</td><td>32 moderately trained men</td><td>95.4 s on a standard bar</td><td>Measured, men only</td></tr>
+            <tr><td>Dodds et al. 2014</td><td>12 British studies, 49,964 people</td><td>Peak median grip 51 kg (men 29 to 39), 31 kg (women 26 to 42)</td><td>Force in kg, not hang time</td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Why do some people doubt the 2-minute benchmark?</h3>
+        <p>Sceptics note that the target is a podcast statement with no study behind it. Forum threads include strong lifters who report missing it. Those are anecdotes, not data. Some replies describe grip as a proxy for training and not a cause of health.</p>
+
+        <h2>What does the research not show?</h2>
+        <p>The grip strength research does not show that hanging, or any grip training, lengthens life. It also gives no hang time that predicts lifespan. The limits below apply to every study on this page.</p>
         <ul>
           <li>No trial on this page tests whether hanging, or any grip training, lengthens life.</li>
           <li>The mortality studies measured grip strength and not hang time. They give no hang time that predicts lifespan.</li>
           <li>Observational data cannot rule out other explanations such as overall health or activity level.</li>
         </ul>
-        <p>One reasonable reading is that grip is a cheap marker of general strength and health. A weak grip is worth noticing.</p>
+        <p>One common reading is that grip is a marker of general strength and health and not a cause. Ask a clinician if you are worried about your own strength.</p>
 
-        <h2>Frequently Asked Questions</h2>
-
-        <div class="faq">
-          <h3>How does grip strength predict longevity?</h3>
-          <p>A 2015 Lancet study of 139,691 adults in 17 countries found that each 5 kg lower grip strength was associated with a 16% higher risk of death from any cause. A 2018 BMJ study of 502,293 UK Biobank participants reported the same direction of association. These are observational studies. They show a link and do not show that improving grip lengthens life.</p>
-        </div>
-
-        <div class="faq">
-          <h3>What is a good dead hang time for longevity?</h3>
-          <p>There is no trial-tested longevity target. On his podcast (The Drive, AMA #329, December 2024) Peter Attia said a 'very strong' 40-year-old man should manage at least two minutes and a 'very strong' 40-year-old woman at least 90 seconds. He said to subtract about 10 seconds per decade. This is his target for very strong people and not an average.</p>
-        </div>
-
-        <div class="faq">
-          <h3>Does dead hanging make you live longer?</h3>
-          <p>No study has shown that dead hanging lengthens life. The mortality studies on this page measured grip strength and not hang time. The authors of the Lancet study say further research is needed to test whether improving strength reduces mortality.</p>
-        </div>
+        <h2 id="faq">Frequently Asked Questions</h2>
+        ${faqHtml}
 
         <h2>Related Guides</h2>
         <div class="related-grid">

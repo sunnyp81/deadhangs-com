@@ -1,21 +1,32 @@
 ---
 import Article from '../../layouts/Article.astro';
+const faqs = [
+  { q: "Does a dead hang decompress the spine?", a: "A dead hang takes your body weight through your arms, so the spine carries less compressive load while you hang. No study has measured disc height or pressure during a bodyweight hang, and a Cochrane review found traction gives little or no benefit for low back pain." },
+  { q: "Can dead hangs help sciatica?", a: "No trial has tested dead hangs for sciatica. Some people online report relief and others report more pain, and those accounts are not evidence. Radiating leg pain, weakness or numbness needs a clinician's assessment. Stop hanging if it increases symptoms." },
+  { q: "Why does my lower back hurt when I dead hang?", a: "A description cannot show the cause. Reports include aching, a pull, tingling and popping. Sharp, shooting or lasting pain means stop. Keep your feet on the ground to reduce the load, and see a clinician if the pain keeps coming back." },
+  { q: "How long should I dead hang for back stiffness?", a: "Common practice is 15 to 30 second hangs for 3 to 4 sets, on 3 non-consecutive days a week. This is common training practice and not a tested prescription. No trial has tested a dose for back stiffness. Stop if symptoms worsen, and see a clinician if stiffness has not eased." },
+  { q: "Can dead hangs help a herniated disc?", a: "No evidence shows that dead hangs help a herniated disc. Some people report that hanging aggravates their disc problem. See a physician or physiotherapist before hanging with a diagnosed herniation." },
+  { q: "Are dead hangs better than inversion tables for back pain?", a: "No head-to-head trial was found. Dead hangs and inversion tables both apply traction by different methods. People with high blood pressure or eye conditions should ask a clinician before inverting. Inversion tables may suit people who cannot grip a bar." },
+];
+const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const faqSchema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) });
+const faqHtml = faqs.map((f) => `<div class="faq"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("\n");
 ---
 
 <Article
-  h1={"Dead Hangs and Your Spine: What Hanging Can and Cannot Do"}
-  subtitle={"Hanging unloads the spine while you hang. No trial shows that dead hangs treat back pain or repair discs. Some conditions need medical advice first."}
+  h1={"Dead Hang Spinal Decompression: What It Can and Cannot Do"}
+  subtitle={"Hanging unloads the spine while you hang. No trial shows that dead hangs treat back pain, sciatica or discs. Some conditions need medical advice first."}
   crumbs={[{"name":"Benefits","href":"/deadhang-benefits/"},{"name":"Spinal Decompression"}]}
-  updated={"Updated October 30, 2026"}
+  updated={"Updated November 2, 2026"}
   author
-  title="Dead Hangs and Your Spine: What Hanging Can and Cannot Do"
-  description="Dead hangs unload the spine while you hang. See what the evidence says about back stiffness and disc height, and who should avoid hanging."
+  title="Dead Hang Spinal Decompression: What It Can and Cannot Do"
+  description="Does a dead hang decompress the spine? Read what the evidence says about back stiffness, sciatica and disc height, and who should check with a clinician first."
   canonical="https://deadhangs.com/spine-decompression/"
   schema={`<script type="application/ld+json">{
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Dead Hangs and Your Spine: What Hanging Can and Cannot Do",
-    "description": "Dead hangs unload the spine while you hang. See what the evidence says about back stiffness and disc height, and who should avoid hanging.",
+    "headline": "Dead Hang Spinal Decompression: What It Can and Cannot Do",
+    "description": "Does a dead hang decompress the spine? Read what the evidence says about back stiffness, sciatica and disc height, and who should check with a clinician first.",
     "author": {
       "@type": "Organization",
       "name": "DeadHangs.com",
@@ -27,51 +38,31 @@ import Article from '../../layouts/Article.astro';
     },
     "mainEntityOfPage": "https://deadhangs.com/spine-decompression/",
     "datePublished": "2026-03-03",
-    "dateModified": "2026-10-30"
+    "dateModified": "2026-11-02"
   }</script>
-<script type="application/ld+json">{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "How long should I dead hang for back stiffness?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Common practice is 15 to 30 second hangs for 3 to 4 sets. This adds up to about 60 to 90 seconds of hanging per session on 3 non-consecutive days a week. This is common training practice and not a tested prescription. No trial has tested a dose for back stiffness. Stop if symptoms worsen. See a clinician if stiffness has not eased."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can dead hangs help a herniated disc?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No evidence shows that dead hangs help a herniated disc. See a physician or physiotherapist before hanging with a diagnosed herniation."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Are dead hangs better than inversion tables for back pain?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Dead hangs and inversion tables both apply traction by different methods. No head-to-head trial was found. People with high blood pressure or eye conditions should ask a clinician before inverting. Inversion tables may suit people who cannot grip a bar."
-        }
-      }
-    ]
-  }</script>`}
+<script type="application/ld+json">${faqSchema}</script>`}
 >
 <div class="article-body">
-    <Fragment set:html={`<h2>What Hanging Does to the Spine</h2>
-        <p>Hanging from a bar removes the compressive load that standing and sitting place on the spine while you hang. People are a little shorter in the evening than in the morning. A hang is one way to take load off the spine during the day.</p>
-        <p>With a grip on the bar, gravity pulls the torso, pelvis and legs downward. This creates traction along the spinal column. The intervertebral discs act as shock absorbers between the vertebrae. They lose and regain fluid with changes in load.</p>
-        <p>No study has measured disc height or disc pressure during a bodyweight dead hang. No study has shown that a hang changes disc shape or height in a lasting way.</p>
+    <div class="callout">
+      <h2 id="glance" style="margin-top:0">At a glance</h2>
+      <ol class="stop-steps">
+        <li><strong>Decompress?</strong> You hang from your arms, so the spine carries less compressive load while you hang. No study has measured disc height or pressure during a bodyweight hang.</li>
+        <li><strong>Back pain:</strong> a Cochrane review (Wegner 2013) found traction gives little or no benefit for low back pain.</li>
+        <li><strong>What people report:</strong> some online accounts describe relief and others describe pain. Neither is trial evidence.</li>
+        <li><strong>Stop and get advice</strong> for sharp or radiating pain, leg weakness, numbness or faintness, and before hanging with a diagnosed disc problem.</li>
+      </ol>
+      <p>Common practice is short hangs on 3 non-consecutive days a week. This is common training practice, not a tested prescription.</p>
+    </div>
+    <Fragment set:html={`<h2>Does a dead hang decompress the spine?</h2>
+        <p>A dead hang takes your body weight through your arms, so the spine carries less compressive load while you hang. No study has measured disc height or disc pressure during a bodyweight hang, and none shows a lasting change. "Decompression" is a popular label, not a tested result.</p>
+        <p>Clinicians use the word traction for pulling force along the spine. A dead hang is a form of traction that is uncontrolled and uses your own body weight.</p>
 
-        <h2>What the Research on Spinal Traction Shows</h2>
-        <p>Clinical traction applies axial force to separate vertebrae under controlled conditions. It can widen the spaces between vertebrae while the force is applied. A dead hang uses your own bodyweight as the load. This is a different and uncontrolled intervention.</p>
-        <p>A Cochrane review of traction for low back pain (Wegner et al. 2013) found that traction has little or no effect on pain, function or return to work. No study shows a lasting effect from dead hangs on the spine.</p>
+        <h2>What does the research on spinal traction show?</h2>
+        <p>A Cochrane review of traction for low back pain (Wegner et al. 2013) found little or no effect on pain, function or return to work. Clinical traction applies a controlled force under supervision. A dead hang uses your own body weight, so those results do not transfer directly. No study shows a lasting effect from dead hangs on the spine.</p>
 
-        <h2>Dead Hangs and Lower Back Stiffness</h2>
-        <p>Most adults have low back pain at some point. Estimates vary with how it is defined. Some people find short hangs ease stiffness. Relief is not guaranteed. No trial gives a dose or a timeline for hanging and back stiffness.</p>
+        <h2>Can dead hangs help lower back stiffness?</h2>
+        <p>Some people find short hangs ease lower back stiffness, but relief is not guaranteed and no trial has tested it. Common practice is 15 to 30 second hangs, 3 to 4 sets, on 3 non-consecutive days a week. This is common training practice, not a tested prescription.</p>
+        <p>Most adults have low back pain at some point. Estimates vary with how it is defined.</p>
 
         <div class="callout">
           <h3>Common Hang Routine for Back Stiffness</h3>
@@ -86,8 +77,9 @@ import Article from '../../layouts/Article.astro';
 
         <p>This back stiffness routine is common training practice, not a tested prescription. Comfortable short hangs are easier to repeat than long ones.</p>
 
-        <h2>Dead Hangs and Herniated Discs</h2>
-        <p>Disc herniations range from mild bulges to severe extrusions that compress nerve roots. No evidence shows that dead hangs help a herniated disc. Some people find that traction aggravates their specific disc problem.</p>
+        <h2>Can dead hangs help sciatica or a herniated disc?</h2>
+        <p>No trial has tested dead hangs for sciatica or a herniated disc. Online accounts range from quick relief to flared pain, and neither counts as evidence. Ask a physician or physiotherapist before hanging with a diagnosed herniation.</p>
+        <p>Disc herniations range from mild bulges to severe extrusions that compress nerve roots. No evidence shows that dead hangs help a herniated disc. Some people report that hanging aggravates their disc problem.</p>
         <p>Severe herniations with significant nerve compression are a contraindication for dead hangs. Symptoms like leg weakness, numbness or loss of bladder control need immediate medical attention.</p>
 
         <div class="callout">
@@ -97,8 +89,22 @@ import Article from '../../layouts/Article.astro';
 
         <p>If your clinician approves hanging then keep your feet on the ground so the bar carries only part of your weight. Monitor symptoms during and after each session. Any increase in radiating leg pain means you should stop and reassess with your provider.</p>
 
-        <h2>Hang Dosage for Back Stiffness</h2>
-        <p>Comfortable short hangs are easier to repeat than long ones. Consistency matters more than duration. The table shows example dosage by level. It is common training practice, not a tested prescription.</p>
+        <h2>What do people report about dead hangs and back pain?</h2>
+        <p>Forum accounts of dead hangs and back pain point in both directions. They are individual stories and not evidence of what hanging does. The table sets common reports beside what is actually known.</p>
+        <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Reports about dead hangs and back pain compared with evidence" tabindex="0"><table>
+          <caption>What people report and what is known</caption>
+          <thead><tr><th scope="col">What people report</th><th scope="col">What is known</th><th scope="col">What to do</th></tr></thead>
+          <tbody>
+            <tr><td>Relief after a few hangs, including sciatica-type pain</td><td>Individual accounts. No trial of dead hangs for back pain or sciatica.</td><td>Treat it as one person's experience, not a treatment.</td></tr>
+            <tr><td>Pain, tingling or a pull in the back after hanging</td><td>Also reported, and not predicted by any study.</td><td>Stop if pain is sharp, radiating or lasts after the session.</td></tr>
+            <tr><td>Back feels like it needs to pop, or pops</td><td>A description cannot show the cause.</td><td>See a clinician if it hurts.</td></tr>
+            <tr><td>Feeling faint while hanging</td><td>Reported in forum posts. The cause cannot be established from them.</td><td>Lower yourself, and see a doctor if it recurs.</td></tr>
+            <tr><td>Traction eases back pain</td><td>A Cochrane review found little or no benefit for low back pain.</td><td>Do not rely on hanging as treatment.</td></tr>
+          </tbody>
+        </table></div>
+
+        <h2>How long should you dead hang for back stiffness?</h2>
+        <p>Short, comfortable hangs are easier to repeat than long ones. The table shows example dosage by level. It is common training practice, not a tested prescription.</p>
 
         <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Scrollable comparison table" tabindex="0"><table>
           <caption>Example hang dosage by level (practical guidance, not trial-tested)</caption>
@@ -134,23 +140,23 @@ import Article from '../../layouts/Article.astro';
 
         <p>Accumulating 60 to 90 seconds of total hang time per session is a common target. Split it into sets that match your grip capacity. Grip strength often limits hang duration first. A <a href="/doorway-bars/">doorway pull-up bar</a> at home makes it easy to fit a hang into the day.</p>
 
-        <h2>Complementary Stretches</h2>
-        <p>Dead hangs unload the spine along its length. Many people pair them with stretches for the muscles around the hips and lower back. These muscles can contribute to a feeling of tightness.</p>
+        <h2>Which stretches do people pair with dead hangs?</h2>
+        <p>Many people pair dead hangs with stretches for the hips and lower back, such as cat-cow, child's pose, a hip flexor stretch and a knee-to-chest stretch. These are common practice and are not tested as a treatment for back pain.</p>
 
         <h3>Cat-Cow</h3>
-        <p>Start on hands and knees. Arch your back upward like an angry cat. Hold 2 to 3 seconds. Drop your belly toward the floor and lift your head. Hold 2 to 3 seconds. Alternate for 10 to 15 repetitions. Cat-cow moves the thoracic and lumbar segments through flexion and extension.</p>
+        <p>Start on hands and knees. Arch your back upward like an angry cat. Hold 2 to 3 seconds. Drop your belly toward the floor and lift your head. Hold 2 to 3 seconds. Alternate for 10 to 15 repetitions. Cat-cow is a common gentle mobility drill.</p>
 
         <h3>Child's Pose</h3>
-        <p>Kneel and sit your hips back toward your heels. Extend your arms forward along the floor. Hold for 30 to 60 seconds. Child's pose stretches the lumbar erectors and latissimus dorsi. Many people do it right after their hang sets.</p>
+        <p>Kneel and sit your hips back toward your heels. Extend your arms forward along the floor. Hold for 30 to 60 seconds. Many people do child's pose right after their hang sets.</p>
 
         <h3>Hip Flexor Stretch</h3>
-        <p>Tight hip flexors can pull the lumbar spine into extra arching. Kneel on one knee with the other foot forward. Push your hips forward until you feel a stretch in the front of the rear hip. Hold 30 to 45 seconds per side.</p>
+        <p>Some people feel tightness at the front of the hip. Kneel on one knee with the other foot forward. Push your hips forward until you feel a stretch in the front of the rear hip. Hold 30 to 45 seconds per side.</p>
 
         <h3>Knee-to-Chest Stretch</h3>
-        <p>Lie on your back. Pull one knee toward your chest with both hands. Hold 20 to 30 seconds per side. The knee-to-chest stretch works the gluteals and lower back muscles.</p>
+        <p>Lie on your back. Pull one knee toward your chest with both hands. Hold 20 to 30 seconds per side. Keep the movement gentle and stop if it hurts.</p>
 
-        <h2>When Dead Hangs Won't Help</h2>
-        <p>Dead hangs are not appropriate for every back condition. Certain conditions need different treatment. Hanging can make an existing problem worse.</p>
+        <h2>When should you avoid dead hangs with a back problem?</h2>
+        <p>Avoid dead hangs during acute back pain, with a severe herniation, with spinal stenosis unless a clinician agrees, and after spinal surgery until your surgeon clears you. Hanging may make an existing problem worse, and symptoms such as saddle numbness need urgent care.</p>
 
         <h3>Acute Injury</h3>
         <p>Do not hang during a flare-up of acute back pain. Wait for it to settle and ask a clinician if unsure.</p>
@@ -162,12 +168,12 @@ import Article from '../../layouts/Article.astro';
         <p>Spinal stenosis narrows the spinal canal through bony changes. Stenosis symptoms often ease in forward bending and worsen in backward bending. Ask your clinician whether hanging suits your stenosis.</p>
 
         <h3>Post-Surgical</h3>
-        <p>Spinal surgery changes the structure of the operated segments. Hanging applies traction through the surgical site. Follow your surgeon's timeline for returning to hanging.</p>
+        <p>Ask your surgeon whether hanging is allowed. Follow your surgeon's timeline for returning to hanging.</p>
 
         <p>The <a href="/deadhang-safety/">dead hang safety guide</a> covers more precautions for people with existing conditions.</p>
 
-        <h2>Getting Started Safely</h2>
-        <p>Going straight to a full dead hang puts sudden traction through an unprepared spine. Building up in stages gives tissues time to adapt. The stages below are common training practice. They are not a tested prescription.</p>
+        <h2>How do you start dead hangs safely with a stiff back?</h2>
+        <p>Many people build up in stages, starting with feet on the ground, instead of going straight to a full hang. The four stages below are common training practice, not a tested prescription. Stop at any sign of sharp pain.</p>
 
         <div class="callout">
           <h3>Gradual Progression for Back Stiffness</h3>
@@ -182,22 +188,8 @@ import Article from '../../layouts/Article.astro';
         <p>Stop at any sign of sharp pain. Some dull aching or mild discomfort can occur while adapting. Sharp, shooting or radiating pain means the load is too high. Reduce the weight your arms carry or the duration and try again.</p>
         <p>The <a href="/how-to-deadhang/">dead hang form guide</a> covers grip placement and breathing.</p>
 
-        <h2>Frequently Asked Questions</h2>
-
-        <div class="faq">
-          <h3>How long should I dead hang for back stiffness?</h3>
-          <p>Common practice is 15 to 30 second hangs for 3 to 4 sets. This adds up to about 60 to 90 seconds of hanging per session on 3 non-consecutive days a week. This is common training practice and not a tested prescription. No trial has tested a dose for back stiffness. Stop if symptoms worsen. See a clinician if stiffness has not eased.</p>
-        </div>
-
-        <div class="faq">
-          <h3>Can dead hangs help a herniated disc?</h3>
-          <p>No evidence shows that dead hangs help a herniated disc. See a physician or physiotherapist before hanging with a diagnosed herniation.</p>
-        </div>
-
-        <div class="faq">
-          <h3>Are dead hangs better than inversion tables for back pain?</h3>
-          <p>Dead hangs and inversion tables both apply traction by different methods. No head-to-head trial was found. People with high blood pressure or eye conditions should ask a clinician before inverting. Inversion tables may suit people who cannot grip a bar.</p>
-        </div>
+        <h2 id="faq">Frequently Asked Questions</h2>
+        ${faqHtml}
 
         <h2>Related Guides</h2>
         <div class="related-grid">
