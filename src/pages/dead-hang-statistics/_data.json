@@ -1,0 +1,428 @@
+{
+ "hang": [
+  {
+   "id": "H-01",
+   "dataset": "GRIP-6, men",
+   "n": "11",
+   "age": "Mean 20.4 (whole sample, SD 1.7)",
+   "sex": "Men",
+   "protocol": "Passive bar hang, overhand, shoulder width, legs off the ground, straight arms, until the person dropped. Mean of 3 trials, 3 min rest. Before 6 weeks of training.",
+   "value": "64.0",
+   "spread": "SD 35.3",
+   "unit": "s",
+   "result": "Mean 64.0 s (SD 35.3); 69.4 s (SD 33.7) after 6 weeks of training",
+   "period": "Recruited 2025 (paper published 2025)",
+   "source": "Chomiuk et al., J Funct Morphol Kinesiol 2025, Table 2",
+   "url": "https://doi.org/10.3390/jfmk10040427",
+   "line": "In the GRIP-6 study, 11 healthy recreational-athlete men with a mean age of 20.4 held a passive bar hang for a mean of 64.0 seconds (SD 35.3) before training."
+  },
+  {
+   "id": "H-02",
+   "dataset": "GRIP-6, women",
+   "n": "14",
+   "age": "Mean 20.4 (whole sample, SD 1.7)",
+   "sex": "Women",
+   "protocol": "Same as men. Before 6 weeks of training.",
+   "value": "48.4",
+   "spread": "SD 29.1",
+   "unit": "s",
+   "result": "Mean 48.4 s (SD 29.1); 54.3 s (SD 28.7) after 6 weeks of training",
+   "period": "2025",
+   "source": "Chomiuk et al., J Funct Morphol Kinesiol 2025, Table 2",
+   "url": "https://doi.org/10.3390/jfmk10040427",
+   "line": "In the GRIP-6 study, 14 healthy recreational-athlete women with a mean age of 20.4 held a passive bar hang for a mean of 48.4 seconds (SD 29.1) before training."
+  },
+  {
+   "id": "H-03",
+   "dataset": "GRIP-6, all participants",
+   "n": "25",
+   "age": "Mean 20.4 (SD 1.7)",
+   "sex": "11 men, 14 women (56% women)",
+   "protocol": "Same as above. Before and after 6 weeks of combined gym and climbing training.",
+   "value": "55.3",
+   "spread": "Change +5.6 s (95% CI 4.0 to 7.3)",
+   "unit": "s",
+   "result": "Mean 55.3 s before and 60.9 s after (+5.6 s, 95% CI 4.0 to 7.3)",
+   "period": "2025",
+   "source": "Chomiuk et al., J Funct Morphol Kinesiol 2025, Table 2",
+   "url": "https://doi.org/10.3390/jfmk10040427",
+   "line": "The same 25 GRIP-6 participants improved their mean bar hang from 55.3 seconds to 60.9 seconds after 6 weeks of gym and climbing training (change 5.6 s, 95% CI 4.0 to 7.3)."
+  },
+  {
+   "id": "H-04",
+   "dataset": "Drury 2004, standard Olympic bar",
+   "n": "32",
+   "age": "Not stated in the abstract",
+   "sex": "Men",
+   "protocol": "Straight-arm hang from a standard Olympic bar attached to the top of a power rack. Moderately trained, free of upper-body injury. Each person also hung from a triangular Tri-Bar.",
+   "value": "95.4",
+   "spread": "SD not in abstract",
+   "unit": "s",
+   "result": "Mean 95.4 s on the standard bar; 107.6 s on the Tri-Bar (p = 0.015)",
+   "period": "Published 2004",
+   "source": "Drury, Faggiono and Stuempfle, J Strength Cond Res 2004;18(4):782-786",
+   "url": "https://doi.org/10.1519/R-13883.1",
+   "line": "In a 2004 study of 32 moderately trained men, the mean straight-arm hang from a standard Olympic bar was 95.4 seconds, against 107.6 seconds on a triangular Tri-Bar."
+  },
+  {
+   "id": "H-05",
+   "dataset": "Yu 2023, climbers before a 24-hour event",
+   "n": "35 with paired hang data (36 climbers analyzed)",
+   "age": "21 to 40, mean 29.4",
+   "sex": "21 men, 15 women",
+   "protocol": "Static hang to failure from the edge of an elevated wooden porch, feet off the ground, own hand spacing. Measured at registration, before a 24-hour climbing competition.",
+   "value": "76.8",
+   "spread": "SD 32.6",
+   "unit": "s",
+   "result": "Mean 76.8 s (SD 32.6) before; 38.1 s (SD 24.9) within an hour after the event",
+   "period": "Competition measurements, paper published 2023",
+   "source": "Yu et al., Front Sports Act Living 2023",
+   "url": "https://doi.org/10.3389/fspor.2023.1224581",
+   "line": "In 36 recreational to elite climbers, the mean static hang before a 24-hour climbing event was 76.8 seconds (SD 32.6), falling to 38.1 seconds afterward."
+  }
+ ],
+ "flex": [
+  {
+   "id": "F-01",
+   "dataset": "Bent-arm hang, university students",
+   "n": "88",
+   "age": "Mean 20.1 (SD 1.6)",
+   "sex": "Men",
+   "protocol": "UNIFITTEST 6-60 bent-arm hang. Students without regular organized sport. Bent-arm, not a dead hang.",
+   "value": "44.85",
+   "spread": "SD 30.64; range 0 to 111 s",
+   "unit": "s",
+   "result": "Mean 44.85 s (SD 30.64), range 0 to 111 s",
+   "period": "Academic year 2023/24",
+   "source": "Cluster analysis of student fitness, Front Physiol 2025",
+   "url": "https://doi.org/10.3389/fphys.2025.1634125",
+   "line": "In 88 male university students (mean age 20.1) at the Slovak University of Technology, the mean bent-arm hang was 44.85 seconds (SD 30.64), with a range of 0 to 111 seconds."
+  },
+  {
+   "id": "F-02",
+   "dataset": "FitnessGram minimum, boys",
+   "n": "Criterion standard, not a sample",
+   "age": "5 to 17+",
+   "sex": "Boys",
+   "protocol": "Flexed-arm hang, chin over bar, up to a maximum of 90 s. Score must be at or above the value to reach the Healthy Fitness Zone.",
+   "value": "15",
+   "spread": "2 s at age 5; 15 s from age 14",
+   "unit": "s",
+   "result": "At least 2 s at age 5, rising to at least 15 s from age 14",
+   "period": "2010 Cooper Institute zones, CDE 2011-12 table",
+   "source": "California Department of Education, FITNESSGRAM Healthy Fitness Zones, September 2011",
+   "url": "https://transylvania.schoolboard.net/sites/nc.transylvania.schoolboard.net/files/FitnessGram%20Healthy%20Fitness%20Zones.pdf",
+   "line": "The FitnessGram Healthy Fitness Zone minimum for the flexed-arm hang is 2 seconds for a 5-year-old boy and 15 seconds from age 14."
+  },
+  {
+   "id": "F-03",
+   "dataset": "FitnessGram minimum, girls",
+   "n": "Criterion standard, not a sample",
+   "age": "5 to 17+",
+   "sex": "Girls",
+   "protocol": "Same as boys.",
+   "value": "8",
+   "spread": "2 s at age 5; 8 s from age 13",
+   "unit": "s",
+   "result": "At least 2 s at age 5, rising to at least 8 s from age 13",
+   "period": "2010 Cooper Institute zones, CDE 2011-12 table",
+   "source": "California Department of Education, FITNESSGRAM Healthy Fitness Zones, September 2011",
+   "url": "https://transylvania.schoolboard.net/sites/nc.transylvania.schoolboard.net/files/FitnessGram%20Healthy%20Fitness%20Zones.pdf",
+   "line": "The FitnessGram Healthy Fitness Zone minimum for the flexed-arm hang is 2 seconds for a 5-year-old girl and 8 seconds from age 13."
+  }
+ ],
+ "fg": {
+  "ages": [
+   "5",
+   "6",
+   "7",
+   "8",
+   "9",
+   "10",
+   "11",
+   "12",
+   "13",
+   "14",
+   "15",
+   "16",
+   "17",
+   "17+"
+  ],
+  "boys": [
+   2,
+   2,
+   3,
+   3,
+   4,
+   4,
+   6,
+   10,
+   12,
+   15,
+   15,
+   15,
+   15,
+   15
+  ],
+  "girls": [
+   2,
+   2,
+   3,
+   3,
+   4,
+   4,
+   6,
+   7,
+   8,
+   8,
+   8,
+   8,
+   8,
+   8
+  ]
+ },
+ "grip": [
+  {
+   "id": "G-01",
+   "measure": "All-cause mortality, per 5 kg lower grip",
+   "value": "HR 1.16 (95% CI 1.13 to 1.20)",
+   "sample": "139,691 adults aged 35 to 70 analyzed (142,861 enrolled), 17 countries; 3,379 deaths (2%); median follow-up 4.0 years; Jamar dynamometer",
+   "period": "Enrolled Jan 2003 to Dec 2009",
+   "source": "Leong et al. (PURE), Lancet 2015;386:266-273",
+   "url": "https://doi.org/10.1016/S0140-6736(14)62000-6",
+   "line": "In the PURE study, each 5 kg lower grip strength was associated with a 16% higher hazard of all-cause death (HR 1.16, 95% CI 1.13 to 1.20) among 139,691 adults in 17 countries."
+  },
+  {
+   "id": "G-02",
+   "measure": "All-cause mortality, per 5 kg lower grip: women / men",
+   "value": "HR 1.20 (1.17 to 1.23) women; 1.16 (1.15 to 1.17) men",
+   "sample": "502,293 participants aged 40 to 69 (54% women); 13,322 deaths (2.7%); mean follow-up 7.1 years",
+   "period": "UK Biobank, follow-up mean 7.1 years",
+   "source": "Celis-Morales et al., BMJ 2018;361:k1651",
+   "url": "https://doi.org/10.1136/bmj.k1651",
+   "line": "In UK Biobank, each 5 kg lower grip strength was associated with a hazard ratio for all-cause death of 1.20 in women and 1.16 in men (502,293 participants aged 40 to 69)."
+  },
+  {
+   "id": "G-03",
+   "measure": "Peak median grip, UK",
+   "value": "51 kg men (ages 29 to 39); 31 kg women (ages 26 to 42)",
+   "sample": "60,803 observations from 49,964 participants (26,687 female), 12 general-population studies in Great Britain, ages 4 to 90; maximum of trials across both hands",
+   "period": "Pooled cross-sectional",
+   "source": "Dodds et al., PLOS ONE 2014;9(12):e113637",
+   "url": "https://doi.org/10.1371/journal.pone.0113637",
+   "line": "Pooled British data from 49,964 participants put peak median grip strength at 51 kg for men aged 29 to 39 and 31 kg for women aged 26 to 42."
+  },
+  {
+   "id": "G-04",
+   "measure": "Weak grip prevalence at age 80",
+   "value": "23% men; 27% women",
+   "sample": "Same pooled sample; weak grip defined as 2.5 SD or more below the sex-specific peak mean",
+   "period": "Pooled cross-sectional",
+   "source": "Dodds et al., PLOS ONE 2014;9(12):e113637",
+   "url": "https://doi.org/10.1371/journal.pone.0113637",
+   "line": "By age 80, 23% of men and 27% of women in the pooled British data had weak grip, defined as 2.5 SD or more below the sex-specific peak mean."
+  },
+  {
+   "id": "G-05",
+   "measure": "Sarcopenia low-strength cut-off",
+   "value": "Below 27 kg men; below 16 kg women",
+   "sample": "Consensus cut-off referenced to Dodds 2014 (T-score of -2.5 or lower)",
+   "period": "Published 2019",
+   "source": "Cruz-Jentoft et al. (EWGSOP2), Age Ageing 2019;48:16-31, Table 3",
+   "url": "https://doi.org/10.1093/ageing/afy169",
+   "line": "The EWGSOP2 consensus lists low grip strength as below 27 kg for men and below 16 kg for women, referenced to the 2014 British norms."
+  }
+ ],
+ "rec": [
+  {
+   "id": "R-01",
+   "date": "2018-04-14",
+   "datelabel": "April 14, 2018",
+   "title": "Dead hang position",
+   "holder": "Tazio Gavioli (Italy)",
+   "result": "13:52",
+   "seconds": 832,
+   "where": "Cavezzo, Modena, Italy",
+   "source": "Guinness World Records news, June 11, 2021",
+   "url": "https://www.guinnessworldrecords.com/news/2021/6/norwegian-man-achieves-gruelling-16-minute-dead-hang-for-new-record-663582",
+   "line": "Tazio Gavioli of Italy held the dead hang position for 13 minutes 52 seconds on April 14, 2018, the record Guinness reports Harald Riise later beat."
+  },
+  {
+   "id": "R-02",
+   "date": "2020-11-07",
+   "datelabel": "November 7, 2020",
+   "title": "Dead hang position",
+   "holder": "Harald Riise (Norway)",
+   "result": "16:03",
+   "seconds": 963,
+   "where": "Baerum, Viken, Norway",
+   "source": "Guinness record page 118967, Wayback copy of May 28, 2022",
+   "url": "https://web.archive.org/web/20220528183017/https://www.guinnessworldrecords.com/world-records/118967-longest-duration-in-the-dead-hang-position",
+   "line": "Harald Riise of Norway held the dead hang position for 16 minutes 3 seconds on November 7, 2020."
+  },
+  {
+   "id": "R-03",
+   "date": "2022-11-18",
+   "datelabel": "November 18, 2022",
+   "title": "Dead hang position (male)",
+   "holder": "Kenta Adachi (Japan)",
+   "result": "80:41",
+   "seconds": 4841,
+   "where": "Shunan, Yamaguchi, Japan",
+   "source": "Guinness record page 118967",
+   "url": "https://www.guinnessworldrecords.com/world-records/118967-longest-duration-in-the-dead-hang-position",
+   "line": "Kenta Adachi of Japan holds the Guinness record for the longest dead hang position at 80 minutes 41 seconds (4,841 seconds), set on November 18, 2022."
+  },
+  {
+   "id": "R-04",
+   "date": "2024-11-11",
+   "datelabel": "November 11, 2024",
+   "title": "Oldest person, dead hang position (female)",
+   "holder": "Annie Judis (USA, b. Nov 23, 1943)",
+   "result": "About 2:00 (age 80 years 353 days)",
+   "seconds": 120,
+   "where": "Beverly Hills, California, USA",
+   "source": "Guinness record page 771587, Wayback copy of May 6, 2025",
+   "url": "https://web.archive.org/web/20250506202031/https://www.guinnessworldrecords.com/world-records/771587-oldest-person-to-hold-the-dead-hang-position-female",
+   "line": "Annie Judis was 80 years 353 days old when she hung for 2 minutes on November 11, 2024 to set the Guinness oldest-woman dead hang record."
+  },
+  {
+   "id": "R-05",
+   "date": "2025-12-26",
+   "datelabel": "December 26, 2025",
+   "title": "Hanging from a bar (male)",
+   "holder": "Kenta Adachi (Japan)",
+   "result": "4:30:18",
+   "seconds": 16218,
+   "where": "Yamaguchi, Japan",
+   "source": "Guinness record page 780102",
+   "url": "https://www.guinnessworldrecords.com/world-records/780102-longest-duration-hanging-from-a-bar-male",
+   "line": "Kenta Adachi holds a separate Guinness title for hanging from a bar at 4 hours 30 minutes 18 seconds (16,218 seconds), set on December 26, 2025."
+  },
+  {
+   "id": "R-06",
+   "date": "2026-03-06",
+   "datelabel": "March 6, 2026",
+   "title": "Oldest person, dead hang position (female)",
+   "holder": "Ann Crile Esselstyn (USA)",
+   "result": "2:52 (age 90 years 231 days)",
+   "seconds": 172,
+   "where": "USA",
+   "source": "Guinness World Records news, March 2026",
+   "url": "https://www.guinnessworldrecords.com/news/2026/3/determined-90-year-old-grandma-breaks-record-for-oldest-woman-to-hold-a-dead-hang",
+   "line": "Ann Crile Esselstyn was 90 years 231 days old when she held a dead hang for 2 minutes 52 seconds on March 6, 2026, beating the 2024 title."
+  },
+  {
+   "id": "R-07",
+   "date": "2026-07-11",
+   "datelabel": "July 11, 2026",
+   "title": "Hanging from a bar (female)",
+   "holder": "Stefanie Millinger (Austria)",
+   "result": "53:51",
+   "seconds": 3231,
+   "where": "Salzburg, Austria",
+   "source": "Guinness record page 785984",
+   "url": "https://www.guinnessworldrecords.com/world-records/785984-longest-duration-hanging-from-a-bar-female",
+   "line": "Stefanie Millinger of Austria holds the Guinness title for the longest duration hanging from a bar (female) at 53 minutes 51 seconds (3,231 seconds), set on July 11, 2026."
+  },
+  {
+   "id": "R-08",
+   "date": "2026-09-07",
+   "datelabel": "September 7, 2026",
+   "title": "Oldest person, dead hang position (female)",
+   "holder": "Ann Crile Esselstyn (USA, b. Jul 18, 1935)",
+   "result": "3:43 (age 91 years 51 days)",
+   "seconds": 223,
+   "where": "Cleveland, Ohio, USA",
+   "source": "Guinness record page 771587",
+   "url": "https://www.guinnessworldrecords.com/world-records/771587-oldest-person-to-hold-the-dead-hang-position-female",
+   "line": "Ann Crile Esselstyn was 91 years 51 days old when she held a dead hang for 3 minutes 43 seconds on September 7, 2026, the current Guinness oldest-woman record."
+  }
+ ],
+ "trends": [
+  [
+   "2021",
+   17
+  ],
+  [
+   "2022",
+   22
+  ],
+  [
+   "2023",
+   26
+  ],
+  [
+   "2024",
+   26
+  ],
+  [
+   "2025",
+   40
+  ],
+  [
+   "2026 (to October)",
+   60
+  ]
+ ],
+ "vol": [
+  [
+   "dead hang",
+   18100,
+   4400
+  ],
+  [
+   "dead hang benefits",
+   3600,
+   880
+  ],
+  [
+   "dead hang world record",
+   480,
+   170
+  ],
+  [
+   "dead hang time by age",
+   1000,
+   260
+  ],
+  [
+   "average dead hang time",
+   320,
+   110
+  ],
+  [
+   "good dead hang time",
+   210,
+   70
+  ],
+  [
+   "flexed arm hang",
+   1300,
+   50
+  ],
+  [
+   "grip strength test",
+   6600,
+   3600
+  ],
+  [
+   "average grip strength",
+   2400,
+   390
+  ]
+ ],
+ "derived": {
+  "adachi_dh": 4841,
+  "riise": 963,
+  "gavioli": 832,
+  "adachi_bar": 16218,
+  "millinger": 3231,
+  "esselstyn_sep": 223,
+  "ratio_adachi_riise": 5.03,
+  "ratio_bar_vs_dh": 3.35,
+  "trends_ratio": 3.53,
+  "trends_vs_2025": 50
+ },
+ "csv_rows": 78
+}
