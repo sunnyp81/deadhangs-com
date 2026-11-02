@@ -1,25 +1,60 @@
 ---
 import Article from '../../layouts/Article.astro';
 import HangCalculator from '../../components/HangCalculator';
-const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Dead Hang Calculator', url: 'https://deadhangs.com/dead-hang-calculator/', applicationCategory: 'SportsApplication', dateModified: '2026-10-30', operatingSystem: 'Any', description: 'Compare a dead hang with your own target and previous hold. No population percentile is calculated.', offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' } };
+const faqs = [
+  { q: 'What is a good dead hang time?', a: 'There is no established norm. In one small 2025 study of 25 recreational athletes aged about 20, mean hangs were 64.0 seconds for men and 48.4 seconds for women. Your own history is the most useful comparison. The age guide lists the measured samples and what they cannot show.' },
+  { q: 'Is 60 seconds a required standard?', a: "No. It is simply the calculator's editable example target. Set a target that fits your experience and current ability." },
+  { q: 'Is the two-minute dead hang target a standard?', a: 'No. Peter Attia gave it on a podcast as a target for very strong 40-year-olds: two minutes for men and 90 seconds for women. It is not measured data. You can enter it as your own target if you want it.' },
+  { q: 'Does a longer hang predict how long I will live?', a: 'No individual lifespan can be calculated from this result. Observational research on handgrip strength does not establish that adding seconds to a hang will extend life.' },
+  { q: 'Can I compare an assisted hold with an unassisted hold?', a: 'Keep them separate. Supporting some weight with your feet changes the task. Record the assistance you used so later results stay comparable. The training log separates these categories.' },
+];
+const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Dead Hang Calculator', url: 'https://deadhangs.com/dead-hang-calculator/', applicationCategory: 'SportsApplication', dateModified: '2026-11-02', operatingSystem: 'Any', description: 'Compare a dead hang with your own target and previous hold. No population percentile is calculated.', offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' } };
+const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) };
 ---
-<Article h1={"Your hang. Your next target."} subtitle={"Compare a dead hang with your own target and previous result. Get a useful number without ranking you against the population."} crumbs={[{"name":"Calculator"}]} updated={"Updated October 30, 2026"} title="Dead Hang Calculator: Compare Your Time & Track Progress" description="Compare your dead hang time with a personal target and previous hold. Free calculator with clear results, training links and no invented percentiles." schema={'<script type="application/ld+json">' + JSON.stringify(schema) + '</script>'}>
+<Article h1={"Dead Hang Calculator"} subtitle={"Enter your hold and a target to see your percent of goal and your change since last time. Every number comes from your own entries."} crumbs={[{"name":"Calculator"}]} updated={"Updated November 2, 2026"} title="Dead Hang Calculator: Compare Your Hold With Your Target" description="Free dead hang calculator: enter your hold time and a target to see percent of goal and change since your last hold. No made-up percentiles by age." schema={'<script type="application/ld+json">' + JSON.stringify(schema) + '</script><script type="application/ld+json">' + JSON.stringify(faqSchema) + '</script>'}>
 <div class="article-body">
     <section aria-label="Dead hang calculator"><HangCalculator client:load /><noscript><p>The interactive calculator needs JavaScript. Calculate your target progress by dividing your hold time by your target, then multiplying by 100.</p></noscript></section>
-    <h2 id="reading-results">How the comparison works</h2>
-    <p>A 30-second hold against a 60-second target is 50% of your goal. If your previous hold was 20 seconds, the same result is an improvement of 10 seconds or 50%. These percentages describe your own entries.</p>
+    <div class="callout">
+      <h2 id="glance" style="margin-top:0">At a glance</h2>
+      <ol class="stop-steps">
+        <li><strong>Enter:</strong> your hold in seconds and a target you choose. Add a previous hold to see the change.</li>
+        <li><strong>Read:</strong> the result is a percent of your own target, not a ranking against other people.</li>
+        <li><strong>No percentile:</strong> no research cited here measures dead hang percentiles by age and sex.</li>
+        <li><strong>Compare fairly:</strong> same bar, same grip and the same amount of foot support each time.</li>
+      </ol>
+    </div>
+    <h2 id="reading-results">How does the dead hang calculator work?</h2>
+    <p>The dead hang calculator divides your hold time by a target you choose and shows the result as a percent of that target. If you add a previous hold, it also shows the change in seconds and in percent. Every figure comes from your own entries and not from a population.</p>
+    <p>A 30-second hold against a 60-second target is 50% of your goal. If your previous hold was 20 seconds, the same result is an improvement of 10 seconds or 50%.</p>
     <p>The hold can be zero. The target and the previous hold must be above zero because each is a divisor. The calculator does not save your inputs. If you choose to continue to the timer, the target and hold are held temporarily in this browser to pre-fill the setup.</p>
-    <h2 id="standards">Can this calculate a percentile by age?</h2>
-    <p>No. The research cited by this site does not establish population dead-hang percentiles by age and sex. Dodds and colleagues measured handgrip force with dynamometers. A timed bodyweight hang is a different test.</p>
-    <p><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0113637">Read the Dodds et al. study and its methods</a>. The <a href="/dead-hang-time-by-age/">age guide</a> explains what can and cannot be inferred from these measurements.</p>
-    <h2 id="factors">Keep repeat tests comparable</h2>
-    <p>Use the same bar, grip position and assistance. Record a feet-supported hold separately from an unassisted one. Note a change of equipment before comparing results. Stop if a hold causes pain and step down under control.</p>
-    <h2 id="improve">Turn a result into a routine</h2>
-    <p>Choose a manageable session rather than testing a maximum every time. The free workspace has editable hang and rest intervals plus a log stored on your device.</p>
+    <h2 id="standards">Can a dead hang calculator give a percentile by age?</h2>
+    <p>No. The research cited by this site does not establish dead hang percentiles by age and sex. Dodds and colleagues measured handgrip force with dynamometers, which is a different test from a timed bodyweight hang. This calculator therefore compares you only with your own target and past holds.</p>
+    <p><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0113637">Read the Dodds et al. study and its methods</a>.</p>
+    <h2 id="reference-points">What can you compare your dead hang with?</h2>
+    <p>Three published or spoken reference points exist, and none is a norm. Two are small measured samples of fit people. The third is a podcast target for very strong people. The <a href="/dead-hang-time-by-age/">dead hang time by age guide</a> explains what these samples can and cannot show.</p>
+    <p class="table-cue">Scroll the table horizontally on smaller screens.</p>
+    <div class="table-scroll" role="region" aria-label="Dead hang reference points" tabindex="0"><table>
+      <caption>Dead hang reference points and where each comes from</caption>
+      <thead><tr><th scope="col">Source</th><th scope="col">Who or what</th><th scope="col">Time</th><th scope="col">Status</th></tr></thead>
+      <tbody>
+        <tr><td>Chomiuk et al. 2025 (GRIP-6)</td><td>11 men and 14 women, recreational athletes, mean age 20.4</td><td>Men 64.0 s, women 48.4 s (mean of three trials)</td><td>Measured, small, young sample</td></tr>
+        <tr><td>Drury et al. 2004</td><td>32 moderately trained men</td><td>95.4 s on a standard bar</td><td>Measured, men only</td></tr>
+        <tr><td>Peter Attia, The Drive #329 (Dec 2024)</td><td>Very strong 40-year-olds</td><td>Men 2 min, women 90 s, minus about 10 s per decade</td><td>Podcast target, not data</td></tr>
+      </tbody>
+    </table></div>
+    <h2 id="factors">How do you keep repeat dead hang tests comparable?</h2>
+    <p>Repeat tests are comparable when the bar, grip and assistance stay the same. Change one thing and your result no longer means the same as the last one.</p>
+    <ol>
+      <li>Use the same bar and the same grip position.</li>
+      <li>Record a feet-supported hold separately from an unassisted one.</li>
+      <li>Note any change of equipment before comparing results.</li>
+      <li>Stop if a hold causes pain and step down under control.</li>
+    </ol>
+    <h2 id="improve">What should you do with a result?</h2>
+    <p>Use the result to set the next target, not to judge yourself. Choose a manageable session rather than testing a maximum every time. The free workspace has editable hang and rest intervals plus a log stored on your device.</p>
     <div class="button-row"><a class="dh-btn" href="/training-log/">Open dead hang timer & log</a><a class="text-link" href="/training-programs/">Choose a training plan</a></div>
-    <h2 id="faq">Calculator questions</h2>
-    <details class="answer"><summary>Is 60 seconds a required standard?</summary><p>No. It is simply the calculator's editable example target. Set a target that fits your experience and current ability.</p></details>
-    <details class="answer"><summary>Does a longer hang predict how long I will live?</summary><p>No individual lifespan can be calculated from this result. Observational research on handgrip strength does not establish that adding seconds to a hang will extend life.</p></details>
-    <details class="answer"><summary>Can I compare an assisted hold with an unassisted hold?</summary><p>Keep them separate. Supporting some weight with your feet changes the task. The training log separates these categories.</p></details>
+    <h2 id="faq">Dead hang calculator questions</h2>
+    {faqs.map((f) => (<details class="answer"><summary>{f.q}</summary><p>{f.a}</p></details>))}
+    <p>For the research behind the grip and lifespan question, see <a href="/longevity-research/">dead hangs and longevity</a>.</p>
   </div>
 </Article>

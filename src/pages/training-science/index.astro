@@ -1,12 +1,22 @@
 ---
 import Article from '../../layouts/Article.astro';
+const faqs = [
+  { q: "Is there scientific research on dead hang training?", a: "Very little. Most guidance here comes from general strength training practice. The GRIP-6 study (Chomiuk et al. 2025) measured 25 recreational athletes and found mean hangs of 55.3 seconds before and 60.9 seconds after six weeks of training. That is one small study, not a prediction for you." },
+  { q: "Do dead hangs strengthen tendons?", a: "Sustained loading is a plausible stimulus for tendon adaptation. No study has tested dead hangs on finger flexor or rotator cuff tendons. This is untested." },
+  { q: "How often should I deload during dead hang training?", a: "A lighter week about every fourth week is a common coaching convention. It is not a tested rule. A common approach is to cut total hang time per session by about half and keep the same number of sessions." },
+  { q: "Is it better to train grip endurance or grip strength with dead hangs?", a: "Training both grip endurance and grip strength benefits many people. Long bodyweight holds emphasize endurance and short heavy holds emphasize peak force. This comes from general strength training principles and not from dead hang studies." },
+  { q: "How do I know if I am overtraining my grip?", a: "Flat or declining max hold times over two or more consecutive weeks can be a sign of overtraining. Other signs include persistent forearm tightness, dull elbow ache and reduced grip strength in daily tasks. Persistent symptoms need a clinician, not only a deload." },
+];
+const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const faqSchema = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) });
+const faqHtml = faqs.map((f) => `<div class="faq"><h3>${esc(f.q)}</h3><p>${esc(f.a)}</p></div>`).join("\n");
 ---
 
 <Article
   h1={"Dead Hang Training Principles: Overload, Recovery and Periodization"}
   subtitle={"Practical principles for programming dead hangs: overload, recovery and periodization. Most of it is general strength training practice. It is not dead hang research."}
   crumbs={[{"name":"Training Science"}]}
-  updated={"Updated October 30, 2026"}
+  updated={"Updated November 2, 2026"}
   author
   title="Dead Hang Training Principles: Overload, Recovery and Periodization"
   description="Dead hang training principles: progressive overload, isometric holds, grip endurance vs strength, recovery, periodization and how to track progress."
@@ -27,50 +37,24 @@ import Article from '../../layouts/Article.astro';
     },
     "mainEntityOfPage": "https://deadhangs.com/training-science/",
     "datePublished": "2026-03-03",
-    "dateModified": "2026-10-30"
+    "dateModified": "2026-11-02"
   }</script>
-<script type="application/ld+json">{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Do dead hangs strengthen tendons?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Sustained loading is a plausible stimulus for tendon adaptation. No study has tested dead hangs on finger flexor or rotator cuff tendons. This is untested."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How often should I deload during dead hang training?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "A lighter week about every fourth week is a common coaching convention. It is not a tested rule. A common approach is to cut total hang time per session by about half and keep the same number of sessions."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is it better to train grip endurance or grip strength with dead hangs?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Training both grip endurance and grip strength benefits many people. Long bodyweight holds emphasize endurance and short heavy holds emphasize peak force. This comes from general strength training principles and not from dead hang studies."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I know if I am overtraining my grip?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Flat or declining max hold times over two or more consecutive weeks can be a sign of overtraining. Other signs include persistent forearm tightness, dull elbow ache and reduced grip strength in daily tasks. Persistent symptoms need a clinician, not only a deload."
-        }
-      }
-    ]
-  }</script>`}
+<script type="application/ld+json">${faqSchema}</script>`}
 >
 <div class="article-body">
-    <Fragment set:html={`<h2>Progressive Overload for Dead Hangs</h2>
-      <p>Progressive overload is the general strength training principle that adaptation needs a gradually rising demand. Dead hangs follow this principle in the same way as barbell training. The doses on this page are common training practice. They are not a tested prescription.</p>
+    <div class="callout">
+      <h2 id="glance" style="margin-top:0">At a glance</h2>
+      <ol class="stop-steps">
+        <li><strong>Source of the advice:</strong> most of this page is general strength training practice. It is not dead hang research.</li>
+        <li><strong>Overload:</strong> change one variable at a time: duration, load, rest or grip.</li>
+        <li><strong>Frequency:</strong> start with 3 sessions a week on non-consecutive days, with at least one rest day between hard sessions.</li>
+        <li><strong>Deload:</strong> a lighter week about every fourth week is a coaching convention, not a tested rule.</li>
+        <li><strong>Track:</strong> best hold, total hang time per session and any added load.</li>
+      </ol>
+      <p>These numbers are common training practice, not a tested prescription.</p>
+    </div>
+    <Fragment set:html={`<h2>How do you apply progressive overload to dead hangs?</h2>
+      <p>Progressive overload for dead hangs means raising one demand at a time: hold duration, added load, shorter rest or a harder grip. It is a general strength training principle, not a dead hang finding. The doses on this page are common training practice, not a tested prescription.</p>
       <p>Four variables control overload in dead hang training. Increase one of them and the body must meet the new demand.</p>
       <ul>
         <li><strong>Duration:</strong> Add about 5 seconds to your target hold once you complete every set cleanly and roughly once a week. This is the simplest progression method for beginners.</li>
@@ -81,10 +65,9 @@ import Article from '../../layouts/Article.astro';
       <p>Change one variable at a time. Changing duration, load and rest together asks for too much at once. A common approach is one variable per training block.</p>
       <p>The <a href="/deadhang-progressions/">dead hang progression ladder</a> structures these variables into steps from beginner to advanced.</p>
 
-      <h2>How Isometric Holds Work</h2>
-      <p>A dead hang is an isometric exercise. The muscles produce force without changing length. The forearm flexors work continuously to keep the grip closed. The shoulder stabilizers hold position against gravity.</p>
-      <p>Four ideas from general strength training apply to isometric holds. None of them has been tested in dead hang studies.</p>
-      <ul>
+      <h2>Is a dead hang an isometric exercise?</h2>
+      <p>A dead hang is an isometric exercise because you hold a position while the muscles produce force without moving the joints. Your grip muscles work continuously to keep the hand closed on the bar. The four ideas below come from general strength training and none has been tested in dead hang studies.</p>
+            <ul>
         <li><strong>Tendon loading:</strong> Isometric loading is used for tendon pain. It has not been shown to be better than other exercise. It has not been tested for dead hangs.</li>
         <li><strong>Neural adaptation:</strong> Early gains in beginners are commonly attributed to neural adaptation. This has not been measured for dead hangs.</li>
         <li><strong>Angle-specific strength:</strong> Isometric strength gains are largest near the joint angle trained. Dead hangs hold the arm overhead with the elbow straight.</li>
@@ -92,8 +75,8 @@ import Article from '../../layouts/Article.astro';
       </ul>
       <p>Hang time is a practical and repeatable measure of grip endurance. It needs no equipment beyond a bar and a timer.</p>
 
-      <h2>Grip Endurance vs Grip Strength</h2>
-      <p>Grip endurance and grip strength are different capacities that call for different training methods. Short heavy holds emphasize peak force and long bodyweight holds emphasize endurance. This comes from general strength training principles and not from dead hang studies.</p>
+      <h2>Is it better to train grip endurance or grip strength?</h2>
+      <p>Grip endurance and grip strength are different capacities, and many people train both. Long bodyweight holds emphasize endurance and short heavy holds emphasize peak force. This comes from general strength training principles and not from dead hang studies.</p>
 
       <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Scrollable comparison table" tabindex="0"><table class="data-table">
         <thead>
@@ -120,16 +103,23 @@ import Article from '../../layouts/Article.astro';
         </tbody>
       </table></div>
 
-      <p>Bodyweight dead hangs mainly train grip endurance. The forearm muscles sustain moderate force over a longer time. The adaptation is better fatigue resistance. Weighted dead hangs mainly train peak grip force. The forearm muscles work near their limit for a short time.</p>
+      <p>Bodyweight dead hangs mainly train grip endurance. The forearm muscles sustain moderate force over a longer time. The expected adaptation is better fatigue resistance. Weighted dead hangs mainly train peak grip force. The forearm muscles work near their limit for a short time.</p>
       <p>Many people benefit from both qualities. The <a href="/training-programs/">training programs</a> show one way to balance them.</p>
 
-      <h2>Recovery and Adaptation</h2>
-      <p>Training creates the stimulus. The body adapts during recovery. Dead hang performance improves between sessions rather than during them.</p>
-      <p>Recovery times vary from person to person. Soreness and tendon irritation are better guides than a fixed clock. A simple rule is to leave at least one rest day between hard sessions.</p>
-      <p>Regular sleep supports recovery.</p>
+      <h2>How much recovery do dead hangs need?</h2>
+      <p>Dead hangs need at least one rest day between hard sessions. Recovery times vary from person to person, and soreness or tendon irritation are better guides than a fixed clock. Strength training theory holds that adaptation happens between sessions, though this has not been tested for dead hangs.</p>
 
-      <h2>Periodization for Dead Hangs</h2>
-      <p>Periodization organizes training into phases to manage fatigue and avoid plateaus. Three models apply to dead hang programming.</p>
+      <h2>What is periodization for dead hangs?</h2>
+      <p>Periodization organizes training into phases to manage fatigue and avoid plateaus. Three models are common in strength training and can be applied to dead hang programming. None has been tested for dead hangs.</p>
+      <p class="table-cue">Scroll the table horizontally on smaller screens.</p><div class="table-scroll" role="region" aria-label="Periodization models compared" tabindex="0"><table class="data-table">
+        <caption>Three periodization models applied to dead hangs</caption>
+        <thead><tr><th scope="col">Model</th><th scope="col">How it works</th><th scope="col">Often used by</th></tr></thead>
+        <tbody>
+          <tr><td>Linear</td><td>Add about 5 seconds to your target hold once every set is clean</td><td>Beginners who have not plateaued</td></tr>
+          <tr><td>Undulating</td><td>Alternate heavy and light sessions within the week</td><td>Intermediate trainees who want varied stimulus</td></tr>
+          <tr><td>Block</td><td>Spend 3 to 4 weeks on one focus, then change focus</td><td>Advanced trainees with a specific goal</td></tr>
+        </tbody>
+      </table></div>
 
       <h3>Linear Periodization</h3>
       <p>Add a fixed amount of hang time each week. Start at your current hold and add about 5 seconds once you complete every set cleanly. Run this until progress stalls. Linear progression suits beginners who have not yet plateaued.</p>
@@ -140,7 +130,7 @@ import Article from '../../layouts/Article.astro';
       <h3>Block Periodization</h3>
       <p>Dedicate 3 to 4 week blocks to a single training focus. Block 1 builds endurance with bodyweight hangs, block 2 develops strength with weighted hangs, and block 3 combines both. Repeat the cycle. Some advanced trainees with specific goals use this structure.</p>
 
-      <h2>The Role of Frequency</h2>
+      <h2>How often should you dead hang?</h2>
       <p>Start with 3 sessions a week on non-consecutive days. Add a session only if you stay pain free. Some experienced people hang lightly most days.</p>
 
       <div class="callout">
@@ -153,8 +143,8 @@ import Article from '../../layouts/Article.astro';
 
       <p>Some experienced people hang lightly on most days. They cut back if hold times fall or the elbows ache. The <a href="/deadhang-frequency/">training frequency</a> page covers frequency in more detail.</p>
 
-      <h2>Deload Protocols</h2>
-      <p>A deload is a planned reduction in training volume. A lighter week about every fourth week is a common coaching convention. It is not a tested rule. Cut volume sooner if elbow or finger pain appears.</p>
+      <h2>How often should you deload dead hang training?</h2>
+      <p>A deload is a planned reduction in training volume, and a lighter week about every fourth week is a common coaching convention. It is not a tested rule. Cut volume sooner if elbow or finger pain appears.</p>
       <ul>
         <li><strong>Volume reduction:</strong> Cut total hang time per session by about half such as from 4 sets to 2 sets. Drop complementary exercises.</li>
         <li><strong>Keep the session count:</strong> Keep the same number of sessions and do less in each one.</li>
@@ -162,8 +152,8 @@ import Article from '../../layouts/Article.astro';
       </ul>
       <p>Persistent symptoms need a clinician, not only a deload.</p>
 
-      <h2>Tracking and Measuring Progress</h2>
-      <p>Three numbers are enough to track dead hang development.</p>
+      <h2>How do you track dead hang progress?</h2>
+      <p>Three numbers are enough to track dead hang progress: your best hold, your total hang time per session and any added load. Record them after every session and compare like with like. The <a href="/dead-hang-calculator/">dead hang calculator</a> turns two holds into a percent change.</p>
       <ul>
         <li><strong>Best hold time:</strong> Your longest single bodyweight hang that ends a second or two before your grip gives out. Test it every 2 weeks under the same conditions (same bar, same grip width, rested state). This is the primary measure.</li>
         <li><strong>Total hang time per session:</strong> The sum of all hold durations in one session. This tracks training volume. A session with four holds of 30, 25, 22 and 18 seconds produces 95 seconds of total hang time.</li>
@@ -172,29 +162,10 @@ import Article from '../../layouts/Article.astro';
       <p>Record these numbers after every session in a notebook, spreadsheet or training app, and review them weekly to spot trends. A rising trend suggests the programming is working.</p>
       <p>Flat or declining numbers over two or more weeks are a prompt to review the plan. Options include a deload, a different periodization model, more recovery time or a change of training program.</p>
 
-      <h2>Frequently Asked Questions</h2>
+      <h2 id="faq">Frequently Asked Questions</h2>
+        ${faqHtml}
 
-        <div class="faq">
-          <h3>Do dead hangs strengthen tendons?</h3>
-          <p>Sustained loading is a plausible stimulus for tendon adaptation. No study has tested dead hangs on finger flexor or rotator cuff tendons. This is untested.</p>
-        </div>
-
-        <div class="faq">
-          <h3>How often should I deload during dead hang training?</h3>
-          <p>A lighter week about every fourth week is a common coaching convention. It is not a tested rule. A common approach is to cut total hang time per session by about half and keep the same number of sessions.</p>
-        </div>
-
-        <div class="faq">
-          <h3>Is it better to train grip endurance or grip strength with dead hangs?</h3>
-          <p>Training both grip endurance and grip strength benefits many people. Long bodyweight holds emphasize endurance and short heavy holds emphasize peak force. This comes from general strength training principles and not from dead hang studies.</p>
-        </div>
-
-        <div class="faq">
-          <h3>How do I know if I am overtraining my grip?</h3>
-          <p>Flat or declining max hold times over two or more consecutive weeks can be a sign of overtraining. Other signs include persistent forearm tightness, dull elbow ache and reduced grip strength in daily tasks. Persistent symptoms need a clinician, not only a deload.</p>
-        </div>
-
-      <h2>Related Guides</h2>
+        <h2>Related Guides</h2>
       <div class="related-grid">
         <a href="/training-programs/" class="related-card">
           <h3>Training Programs</h3>
