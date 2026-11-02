@@ -210,8 +210,10 @@ export default function HangTimer({
   feedbackAdapters,
   analyticsSource,
   compact = false,
+  embed = false,
 }: {
   compact?: boolean;
+  embed?: boolean;
   initialWork?: number;
   initialRest?: number;
   rounds?: number;
@@ -272,7 +274,7 @@ export default function HangTimer({
   phaseRef.current = phase;
 
   useEffect(() => {
-    if (!supportsVibrate()) return;
+    if (embed || !supportsVibrate()) return;
     setHapticsSupported(true);
     try {
       setHapticsOn(window.localStorage.getItem(HAPTICS_KEY) === "1");
@@ -761,7 +763,7 @@ export default function HangTimer({
             ["simple", "Simple"],
             ["emom", "EMOM"],
             ["ladder", "Ladder"],
-            ["test", "Max test"],
+            ...(embed ? [] : [["test", "Max test"] as [string, string]]),
           ]}
         />
       </fieldset>

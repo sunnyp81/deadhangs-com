@@ -4,6 +4,11 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
 
+/embed/*
+  ! X-Frame-Options
+  Content-Security-Policy: frame-ancestors *
+  X-Robots-Tag: noindex
+
 /sw.js
   Cache-Control: no-cache, max-age=0
   Service-Worker-Allowed: /
