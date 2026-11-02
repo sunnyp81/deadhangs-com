@@ -24,6 +24,7 @@ import {
   setupFormFromEntry,
   setupLabel,
   setupSummary,
+  bodyweightText,
   validateSetupInput,
   formatLocalDate,
   makeEntryId,
@@ -364,7 +365,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     if (commit(added.entries as Entry[], `Saved ${entry.seconds}s on ${formatLocalDate(entry.date)} to this device.`)) {
       rememberSetup(setupForm);
       if (setupHasTags(setupForm)) trackFeature("setup_saved_with_tags");
-      setSetupForm((current) => ({ ...current, ended: '' }));
+      setSetupForm((current) => ({ ...current, ended: '', bodyweight: '' }));
       setHoldInput('');
       onManualEntrySaved?.();
       if (analyticsSource)
@@ -664,7 +665,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
           <details className="tw-setup" open={setupOpen} onToggle={(e) => setSetupOpen((e.currentTarget as HTMLDetailsElement).open)}>
             <summary>
               <span className="tw-setup-title">Setup, remembered for next time</span>
-              <span className="tw-setup-summary">{formPreview ? setupLabel(formPreview) : 'Check the added load'}</span>
+              <span className="tw-setup-summary">{formPreview ? setupLabel(formPreview) : 'Check the load or body weight'}</span>
             </summary>
             <div className="tw-setup-body">
               <p className="tw-hint">Every field is optional. Bests are kept separately for each setup, so record the bar, grip, chalk, load and assistance you actually used.</p>
@@ -779,6 +780,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
                     <th scope="col">Best hold</th>
                     <th scope="col">Assistance</th>
                     <th scope="col">Setup</th>
+                    <th scope="col">Body weight</th>
                     <th scope="col">Ended by</th>
                     <th scope="col">Sets</th>
                     <th scope="col"><span className="tw-visually-hidden">Copy setup</span></th>
@@ -792,6 +794,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
                       <td className="dh-mono">{entry.seconds}s{entry.kind === 'test' && <span className="tw-badge">Max test</span>}</td>
                       <td>{assistanceLabel(entry.assistance)}</td>
                       <td>{setupSummary(entry)}</td>
+                      <td>{bodyweightText(entry) || '-'}</td>
                       <td>{entry.ended ? (ENDED_LABELS as Record<string, string>)[entry.ended] : '-'}</td>
                       <td className="dh-mono">{entry.sets}</td>
                       <td>

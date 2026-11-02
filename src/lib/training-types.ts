@@ -54,4 +54,6 @@ export type LogEntry = {
   load?: number;
   loadUnit?: "kg" | "lb";
   ended?: string;
+  /** Optional body weight, always kg with one decimal place. */
+  bodyweightKg?: number;
 };

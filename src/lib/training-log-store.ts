@@ -18,6 +18,8 @@ export type SetupForm = {
   load: string;
   loadUnit: string;
   ended: string;
+  bodyweight?: string;
+  bodyweightUnit?: string;
 };
 
 export const LOG_UPDATED_EVENT = "deadhangs:training-log-updated";

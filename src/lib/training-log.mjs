@@ -9,7 +9,7 @@
  *   { id, date: 'YYYY-MM-DD', seconds: int, assistance, sets: int,
  *     // optional, absent on older entries and never required:
  *     kind?: 'test', bar?, grip?, chalk?: boolean, load?: number, loadUnit?: 'kg'|'lb', ended? }
- * `load` is optional added load on the body, not body weight. No names, emails,
+ * `load` is optional added load on the body, not body weight. `bodyweightKg` is optional body weight, always kg, 20 to 300 with one decimal. No names, emails,
  * ages or any other identifier is accepted.
  */
 
@@ -51,6 +51,10 @@ export const LOAD_UNITS = ['kg', 'lb'];
 export const MAX_LOAD = 500;
 export const KG_PER_LB = 0.45359237;
 export const KINDS = ['test'];
+
+/** Optional body weight, stored in kg with one decimal place whatever unit was typed. */
+export const MIN_BODYWEIGHT_KG = 20;
+export const MAX_BODYWEIGHT_KG = 300;
 
 export const MIN_SECONDS = 1;
 export const MAX_SECONDS = 3600;
@@ -119,6 +123,23 @@ export function parseLoad(value) {
 }
 
 /**
+ * Body weight typed as a plain decimal (one place) in kg or lb. Returns kg rounded to
+ * one decimal place, or null when it is not a number or falls outside 20 to 300 kg.
+ */
+export function parseBodyweight(value, unit = 'kg') {
+  if (!LOAD_UNITS.includes(unit)) return null;
+  const trimmed = typeof value === 'string' ? value.trim() : typeof value === 'number' ? String(value) : '';
+  if (!/^\d{1,3}(\.\d)?$/.test(trimmed)) return null;
+  const kg = Math.round(Number(trimmed) * (unit === 'lb' ? KG_PER_LB : 1) * 10) / 10;
+  return kg >= MIN_BODYWEIGHT_KG && kg <= MAX_BODYWEIGHT_KG ? kg : null;
+}
+
+/** True for a stored bodyweightKg: a number from 20 to 300 with at most one decimal place. */
+function isBodyweightKg(v) {
+  return typeof v === 'number' && v >= MIN_BODYWEIGHT_KG && v <= MAX_BODYWEIGHT_KG && Math.abs(Math.round(v * 10) / 10 - v) < 1e-9;
+}
+
+/**
  * Validates the optional setup part of the form. Blank means "not recorded".
  * Returns { errors, value } where value holds only the fields that were set.
  */
@@ -142,6 +163,14 @@ export function validateSetupInput(input) {
     else if (!LOAD_UNITS.includes(unit)) errors.push('Choose kg or lb for the added load.');
     else { value.load = parsed; value.loadUnit = unit; }
   }
+  const bodyweight = text(raw.bodyweight);
+  if (bodyweight) {
+    const unit = text(raw.bodyweightUnit) || 'kg';
+    const kg = parseBodyweight(bodyweight, unit);
+    if (!LOAD_UNITS.includes(unit)) errors.push('Choose kg or lb for your body weight.');
+    else if (kg === null) errors.push(`Body weight must be a number from ${MIN_BODYWEIGHT_KG} to ${MAX_BODYWEIGHT_KG} kg (about ${Math.round(MIN_BODYWEIGHT_KG / KG_PER_LB)} to ${Math.round(MAX_BODYWEIGHT_KG / KG_PER_LB)} lb) with at most one decimal place, or left blank.`);
+    else value.bodyweightKg = kg;
+  }
   const ended = text(raw.ended);
   if (ended) { if (ENDED_TYPES.includes(ended)) value.ended = ended; else errors.push('Choose how the hold ended from the list.'); }
   return { errors, value };
@@ -156,6 +185,7 @@ export function compactEntry(e) {
   if (typeof e.chalk === 'boolean') out.chalk = e.chalk;
   if (e.load !== undefined && e.load !== null) { out.load = e.load; out.loadUnit = e.loadUnit; }
   if (e.ended) out.ended = e.ended;
+  if (e.bodyweightKg !== undefined && e.bodyweightKg !== null) out.bodyweightKg = e.bodyweightKg;
   return out;
 }
 
@@ -221,6 +251,7 @@ export function normalizeStoredEntry(raw, today = toLocalDateString()) {
   if (present(raw.grip) && !GRIP_TYPES.includes(raw.grip)) return null;
   if (present(raw.chalk) && typeof raw.chalk !== 'boolean') return null;
   if (present(raw.ended) && !ENDED_TYPES.includes(raw.ended)) return null;
+  if (present(raw.bodyweightKg) && !isBodyweightKg(raw.bodyweightKg)) return null;
   if (present(raw.load) || present(raw.loadUnit)) {
     if (parseLoad(raw.load) === null || !LOAD_UNITS.includes(raw.loadUnit)) return null;
   }
@@ -392,6 +423,13 @@ export function setupSummary(entry) {
   return parts.join(' · ');
 }
 
+/** Body weight for a row, always from the stored kg, with pounds alongside. Empty when not recorded. */
+export function bodyweightText(entry) {
+  const kg = entry?.bodyweightKg;
+  if (kg === undefined || kg === null) return '';
+  return `${kg} kg (${Math.round(kg / KG_PER_LB * 10) / 10} lb)`;
+}
+
 /** Short load text for a row, in the unit the user entered. */
 export function loadText(entry) {
   if (entry?.load === undefined || entry?.load === null) return '';
@@ -446,7 +484,8 @@ export const SETUP_DEFAULT_KEY = 'dh.log-setup.v1';
 export function serializeSetupDefault(form) {
   const clean = validateSetupInput({ ...form, ended: '' });
   const assistance = ASSISTANCE_TYPES.includes(form?.assistance) ? form.assistance : ASSISTANCE_TYPES[0];
-  return JSON.stringify({ assistance, ...clean.value });
+  const { bodyweightKg, ...rest } = clean.value;
+  return JSON.stringify({ assistance, ...rest });
 }
 
 /** Returns a form-shaped default, or the empty default when the stored text is unusable. */
@@ -488,8 +527,9 @@ export function appendToStoredLog(rawText, entry, today = toLocalDateString()) {
 
 /** Original four columns, still accepted on import. */
 export const CSV_FIELDS_V1 = ['date', 'best_hold_seconds', 'assistance', 'sets'];
-/** Fixed export columns. Nothing else is ever written to CSV. */
-export const CSV_FIELDS = [...CSV_FIELDS_V1, 'entry_type', 'bar', 'grip', 'chalk', 'added_load', 'load_unit', 'hold_ended_by'];
+export const CSV_FIELDS_V2 = [...CSV_FIELDS_V1, 'entry_type', 'bar', 'grip', 'chalk', 'added_load', 'load_unit', 'hold_ended_by'];
+/** Fixed export columns (adds body weight in kg). Nothing else is ever written to CSV. */
+export const CSV_FIELDS = [...CSV_FIELDS_V2, 'bodyweight_kg'];
 
 function csvCell(value) {
   let text = String(value);
@@ -515,6 +555,7 @@ export function toCsv(entries) {
       csvCell(hasLoad ? entry.load : ''),
       csvCell(hasLoad ? entry.loadUnit : ''),
       csvCell(entry.ended ?? ''),
+      csvCell(entry.bodyweightKg ?? ''),
     ].join(','));
   }
   return `${rows.join('\r\n')}\r\n`;
@@ -534,7 +575,7 @@ export function toBackup(entries) {
 
 const INVALID = '\u0000invalid';
 function csvEntry(cells, index) {
-  const [date, seconds, assistance, sets, type, bar, grip, chalk, load, unit, ended] = cells;
+  const [date, seconds, assistance, sets, type, bar, grip, chalk, load, unit, ended, bodyweight] = cells;
   const entry = { id: 'csv-' + index, date, seconds: parseIntStrict(seconds), assistance, sets: parseIntStrict(sets) };
   if (cells.length === CSV_FIELDS_V1.length) return entry;
   if (type === 'test') entry.kind = 'test';
@@ -546,6 +587,7 @@ function csvEntry(cells, index) {
   else if (chalk) entry.chalk = INVALID;
   if (load || unit) { entry.load = parseLoad(load) ?? INVALID; entry.loadUnit = unit; }
   if (ended) entry.ended = ended;
+  if (bodyweight) entry.bodyweightKg = parseBodyweight(bodyweight, 'kg') ?? INVALID;
   return entry;
 }
 
@@ -567,7 +609,7 @@ export function prepareLogImport(text, existing, today = toLocalDateString()) {
     const lines = raw.split(/\r?\n/);
     const cell = (s) => /^"[^"]*"$/.test(s) ? s.slice(1, -1) : s;
     const header = lines.shift()?.split(',').map(cell).join(',');
-    const width = header === CSV_FIELDS.join(',') ? CSV_FIELDS.length : header === CSV_FIELDS_V1.join(',') ? CSV_FIELDS_V1.length : 0;
+    const width = header === CSV_FIELDS.join(',') ? CSV_FIELDS.length : header === CSV_FIELDS_V2.join(',') ? CSV_FIELDS_V2.length : header === CSV_FIELDS_V1.join(',') ? CSV_FIELDS_V1.length : 0;
     if (!width) return fail('CSV columns must match a DeadHangs export.');
     imported = [];
     for (let i = 0; i < lines.length; i++) {
@@ -580,7 +622,7 @@ export function prepareLogImport(text, existing, today = toLocalDateString()) {
   const validated = imported.map((entry) => normalizeStoredEntry(entry, today));
   const badIndex = validated.findIndex((entry) => !entry);
   if (badIndex >= 0) return fail('Entry ' + (badIndex + 1) + ' has invalid values or a future date. Nothing was imported.');
-  const key = (e) => JSON.stringify([e.date, e.seconds, e.assistance, e.sets, e.kind ?? null, e.bar ?? null, e.grip ?? null, e.chalk ?? null, e.load ?? null, e.loadUnit ?? null, e.ended ?? null]);
+  const key = (e) => JSON.stringify([e.date, e.seconds, e.assistance, e.sets, e.kind ?? null, e.bar ?? null, e.grip ?? null, e.chalk ?? null, e.load ?? null, e.loadUnit ?? null, e.ended ?? null, e.bodyweightKg ?? null]);
   const next = [...existing];
   const byId = new Map(next.map(e => [e.id, e]));
   const remaining = new Map();
