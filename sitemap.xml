@@ -131,12 +131,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url>
-    <loc>https://deadhangs.com/deadhang-workout/</loc>
-    <lastmod>2026-03-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
 
   <!-- SEED Pages — Benefits/Health Cluster -->
   <url>
@@ -209,12 +203,6 @@
   </url>
   <url>
     <loc>https://deadhangs.com/passive-vs-active-hang/</loc>
-    <lastmod>2026-03-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://deadhangs.com/weighted-deadhang/</loc>
     <lastmod>2026-03-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

@@ -1,9 +1,9 @@
 ---
 import Article from '../../layouts/Article.astro';
 import HangCalculator from '../../components/HangCalculator';
-const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Dead Hang Calculator', url: 'https://deadhangs.com/dead-hang-calculator/', applicationCategory: 'SportsApplication', dateModified: '2026-10-30', operatingSystem: 'Any', description: 'Compare a dead hang with your own target and previous hold. No population percentile is calculated.', offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' } };
+const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', name: 'Dead Hang Calculator', url: 'https://deadhangs.com/dead-hang-calculator/', applicationCategory: 'SportsApplication', dateModified: '2026-11-02', operatingSystem: 'Any', description: 'Compare a dead hang with your own target and previous hold. No population percentile is calculated.', offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' } };
 ---
-<Article h1={"Your hang. Your next target."} subtitle={"Compare a dead hang with your own target and previous result. Get a useful number without ranking you against the population."} crumbs={[{"name":"Calculator"}]} updated={"Updated October 30, 2026"} title="Dead Hang Calculator: Compare Your Time & Track Progress" description="Compare your dead hang time with a personal target and previous hold. Free calculator with clear results, training links and no invented percentiles." schema={'<script type="application/ld+json">' + JSON.stringify(schema) + '</script>'}>
+<Article h1={"Your hang. Your next target."} subtitle={"Compare a dead hang with your own target and previous result. Get a useful number without ranking you against the population."} crumbs={[{"name":"Calculator"}]} updated={"Updated November 2, 2026"} title="Dead Hang Calculator: Compare Your Time & Track Progress" description="Compare your dead hang time with a personal target and previous hold. Free calculator with clear results, training links and no invented percentiles." schema={'<script type="application/ld+json">' + JSON.stringify(schema) + '</script>'}>
 <div class="article-body">
     <section aria-label="Dead hang calculator"><HangCalculator client:load /><noscript><p>The interactive calculator needs JavaScript. Calculate your target progress by dividing your hold time by your target, then multiplying by 100.</p></noscript></section>
     <h2 id="reading-results">How the comparison works</h2>
@@ -16,7 +16,7 @@ const schema = { '@context': 'https://schema.org', '@type': 'WebApplication', na
     <p>Use the same bar, grip position and assistance. Record a feet-supported hold separately from an unassisted one. Note a change of equipment before comparing results. Stop if a hold causes pain and step down under control.</p>
     <h2 id="improve">Turn a result into a routine</h2>
     <p>Choose a manageable session rather than testing a maximum every time. The free workspace has editable hang and rest intervals plus a log stored on your device.</p>
-    <div class="button-row"><a class="dh-btn" href="/training-log/">Open timer & log</a><a class="text-link" href="/training-programs/">Choose a training plan</a></div>
+    <div class="button-row"><a class="dh-btn" href="/training-log/">Open dead hang timer & log</a><a class="text-link" href="/training-programs/">Choose a training plan</a></div>
     <h2 id="faq">Calculator questions</h2>
     <details class="answer"><summary>Is 60 seconds a required standard?</summary><p>No. It is simply the calculator's editable example target. Set a target that fits your experience and current ability.</p></details>
     <details class="answer"><summary>Does a longer hang predict how long I will live?</summary><p>No individual lifespan can be calculated from this result. Observational research on handgrip strength does not establish that adding seconds to a hang will extend life.</p></details>

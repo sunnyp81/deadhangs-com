@@ -48,7 +48,11 @@ const breadcrumbItems = trail.map((crumb, i) => ({
   "@type": "ListItem",
   "position": i + 1,
   "name": crumb.name,
-  "item": new URL(crumb.href || Astro.url.pathname, 'https://deadhangs.com').href
+  "item": {
+    "@type": "WebPage",
+    "@id": new URL(crumb.href || Astro.url.pathname, 'https://deadhangs.com').href,
+    "name": crumb.name
+  }
 }));
 
 const globalSchema = {
