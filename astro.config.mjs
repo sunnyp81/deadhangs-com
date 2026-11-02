@@ -22,7 +22,7 @@ export default defineConfig({
   compressHTML: true,
   site: 'https://deadhangs.com',
   integrations: [react(), sitemap({
-    filter: (page) => !page.includes('/bar-card/'),
+    filter: (page) => !page.includes('/bar-card/') && !page.includes('/embed/'),
     serialize(item) {
       const lastmod = lastmodFor(item.url);
       if (lastmod) item.lastmod = new Date(lastmod).toISOString();

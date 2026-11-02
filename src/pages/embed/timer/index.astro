@@ -1,0 +1,70 @@
+---
+import EmbedTimer from '../../../components/EmbedTimer';
+import '../../../styles/global.css';
+
+// Static build: query values are read in the browser and clamped to the timer's own limits.
+---
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dead hang timer widget</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preload" href="/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin />
+  <script is:inline>
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var t = (q.get('theme') || '').toLowerCase();
+      document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    })();
+  </script>
+  <style is:global>
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --color-bg: #f4f7fb;
+      --color-surface: #ffffff;
+      --color-surface-2: #eaf0f7;
+      --color-surface-offset: #eef3f9;
+      --color-surface-offset-2: #dde6f1;
+      --color-divider: #cbd6e4;
+      --color-border: #aab9cf;
+      --color-text: #0e1624;
+      --color-text-muted: #435472;
+      --color-text-faint: #4f5f7c;
+      --color-text-inverse: #ffffff;
+      --color-primary: #00697a;
+      --color-primary-hover: #00525f;
+      --color-primary-active: #003f49;
+      --color-cool: #1558a8;
+    }
+    :root[data-theme="dark"] { color-scheme: dark; }
+    html, body { height: auto; min-height: 100%; }
+    body { overflow-x: hidden; }
+    .embed-shell { box-sizing: border-box; max-width: 640px; margin: 0 auto; padding: 12px 12px 8px; min-width: 0; overflow-x: clip; }
+    .embed-slot { min-height: 540px; }
+    .embed-credit { margin: 8px 0 0; text-align: center; font-size: 12px; color: var(--color-text-muted); }
+    .embed-credit a { display: inline-block; padding: 12px 6px; color: var(--color-text); text-decoration: underline; text-underline-offset: 3px; }
+    .embed-credit a:focus-visible, .embed-shell :is(button, summary, input):focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .embed-shell .timer-settings { grid-template-columns: 1fr !important; }
+    .embed-shell .timer-toggles { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: center; margin-top: 8px; }
+    .embed-shell .timer-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; font-size: 13px; }
+    .embed-shell .timer-group { border: 0; padding: 0; margin: 0 0 12px; min-width: 0; }
+    .embed-shell .timer-legend, .embed-shell .timer-sr { font-size: 12px; color: var(--color-text-muted); margin-bottom: 4px; }
+    .embed-shell .timer-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .embed-shell .timer-more summary { min-height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; color: var(--color-text-muted); }
+    .embed-shell .timer-more-body { padding-top: 8px; }
+    .embed-shell .small-copy { font-size: 12px; color: var(--color-text-muted); margin: 4px 0; }
+    .embed-shell .timer-layout { width: 100%; }
+    @media (prefers-reduced-motion: reduce) { .embed-shell * { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="embed-shell">
+    <h1 class="timer-sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Dead hang timer</h1>
+    <div class="embed-slot"><EmbedTimer client:only="react" /></div>
+    <p class="embed-credit"><a href="https://deadhangs.com/training-log/" target="_blank" rel="noopener">Timer by DeadHangs.com</a></p>
+  </main>
+</body>
+</html>
