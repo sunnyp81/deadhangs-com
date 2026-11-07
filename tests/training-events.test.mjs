@@ -24,7 +24,7 @@ test("only allowlisted consented payload is emitted", () => {
     [
       "event",
       "training_timer_started",
-      { page_path: "/training-log/", source: "workspace", timer_mode: "test" },
+      { page_path: "/training-log/", tool_source: "workspace", timer_mode: "test" },
     ],
   ]);
 });
@@ -75,7 +75,7 @@ test("pathnames are canonical and an eligible page view is never replayed", () =
   );
   assert.deepEqual(calls[0][2], {
     page_path: "/training-log/",
-    source: "workspace",
+    tool_source: "workspace",
   });
   assert.equal(trackTrainingToolView({ source: "workspace" }, b), true);
   assert.equal(trackTrainingToolView({ source: "workspace" }, b), false);

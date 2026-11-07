@@ -41,9 +41,9 @@ test("ring fraction counts down from 1 to 0", () => {
 });
 
 test("log link carries whole seconds, full hold when finished", () => {
-  assert.equal(logHref(30), "/training-log/?hold=30");
-  assert.equal(logHref(12.9), "/training-log/?hold=12");
-  assert.equal(logHref(1), "/training-log/?hold=1");
+  assert.equal(logHref(30), "/training-log/#hold=30");
+  assert.equal(logHref(12.9), "/training-log/#hold=12");
+  assert.equal(logHref(1), "/training-log/#hold=1");
   assert.equal(logHref(0.6), null);
 });
 

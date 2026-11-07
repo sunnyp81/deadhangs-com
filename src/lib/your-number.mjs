@@ -81,16 +81,23 @@ export function describeHold(seconds, { sex = '', age = null } = {}) {
   return {
     lines,
     ageNote,
-    logHref: `/training-log/?hold=${Math.round(seconds)}`,
+    logHref: `/training-log/#hold=${Math.round(seconds)}`,
     showLadder: seconds < LADDER_BELOW_SECONDS,
     ladderHref: '/beginner-deadhang/#cant-hang-yet',
   };
 }
 
-/** Read ?hold=SECONDS for the training log. Whole seconds 1 to 3,600, else null. */
+/** Read a local #hold handoff or legacy ?hold link. Whole seconds 1 to 3,600. */
 export function parseHoldParam(search) {
-  const value = new URLSearchParams(String(search ?? '')).get('hold');
+  const values = new URLSearchParams(String(search ?? '').replace(/^#/, '')).getAll('hold');
+  if (values.length !== 1) return null;
+  const value = values[0];
   if (value === null || !/^\d{1,4}$/.test(value)) return null;
   const n = Number(value);
   return n >= 1 && n <= MAX_HOLD_SECONDS ? String(n) : null;
+}
+
+/** Every carried measurement, including old header-timer links, is a test hold. */
+export function parseMeasuredParam(search) {
+  return parseHoldParam(search) !== null;
 }

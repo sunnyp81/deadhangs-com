@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import DialMark from "./DialMark";
-import { trackFeature } from "../scripts/training-events.js";
+import NextSessionChoices from "./NextSessionChoices";
+import { trackFeature, trackNextSessionChosen } from "../scripts/training-events.js";
 import { describeHold, parseAge, parseHold } from "../lib/your-number.mjs";
+import { starterById } from "../lib/next-session.mjs";
+
+const LEVEL_1 = starterById("level-1")!;
 
 type Described = ReturnType<typeof describeHold>;
 
@@ -37,7 +41,7 @@ export default function YourNumberCard() {
   return (
     <div className="hang-calculator yn-card">
       <p className="yn-title dh-eyebrow" id="yn-title"><DialMark size={24} className="yn-dial" /> Your number</p>
-      <form onSubmit={submit} noValidate aria-labelledby="yn-title">
+      <form action="/dead-hang-time-by-age/" method="post" onSubmit={submit} noValidate aria-labelledby="yn-title">
         <div className="field-grid">
           <label htmlFor="yn-hold">
             Your hold <span className="optional">seconds, or minutes:seconds</span>
@@ -91,6 +95,13 @@ export default function YourNumberCard() {
         <p className="small-copy">
           Nothing is stored or sent. Age is never used to score your hold.
         </p>
+        <p className="small-copy">
+          Cannot hang yet?{" "}
+          <a className="text-link" href={LEVEL_1.path} onClick={() => trackNextSessionChosen(LEVEL_1.choice)}>
+            Open a supported Level 1 session
+          </a>{" "}
+          or start the <a className="text-link" href="/beginner-deadhang/#cant-hang-yet">beginner ladder</a>.
+        </p>
         <button className="dh-btn" type="submit" disabled={!hydrated}>
           Show where my hold sits
         </button>
@@ -103,7 +114,8 @@ export default function YourNumberCard() {
       <div id="yn-result" aria-live="polite" aria-atomic="true">
         {shown && (
           <div className="calculator-result yn-result">
-            <p className="dh-eyebrow">Your hold: {shown.seconds} seconds</p>
+            <p className="yn-score">Your hold <strong>{shown.seconds} s</strong></p>
+            <NextSessionChoices source="age_card" />
             <ul className="yn-lines">
               {shown.out.lines.map((line) => (
                 <li key={`${line.kind}-${line.sex}`}>
@@ -115,11 +127,11 @@ export default function YourNumberCard() {
             {shown.out.ageNote && <p className="small-copy">{shown.out.ageNote}</p>}
             <p className="small-copy">These are different groups, so this is a rough comparison and not a ranking.</p>
             <p className="yn-next">
-              <strong>Next step:</strong>{" "}
+              Want to keep this measurement?{" "}
               <a className="text-link" href={shown.out.logHref} onClick={() => trackFeature("your_number_log_link")}>
-                Log this hold in the training log
+                Save this hold as a measured hold
               </a>{" "}
-              (the time is prefilled and nothing is saved until you save it there).
+              (prefilled as a test hold, and saved only when you confirm there).
             </p>
             {shown.out.showLadder && (
               <p className="yn-next">

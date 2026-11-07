@@ -23,7 +23,7 @@ const appLd = JSON.stringify({"@context":"https://schema.org","@type":"WebApplic
   <h2 id="wb-title" style="margin-top:0">Build your embed code</h2>
   <div class="wb-grid">
     <div class="wb-controls">
-      <form id="wb-form" class="wb-form" novalidate>
+      <form id="wb-form" class="wb-form" action="/free-dead-hang-timer-widget/" novalidate>
         <div class="wb-field"><label for="wb-work">Hang time, seconds ({L.work.min} to {L.work.max})</label><input id="wb-work" name="work" type="number" inputmode="numeric" min={L.work.min} max={L.work.max} step={L.work.step} value={L.work.def} /></div>
         <div class="wb-field"><label for="wb-rest">Rest, seconds ({L.rest.min} to {L.rest.max})</label><input id="wb-rest" name="rest" type="number" inputmode="numeric" min={L.rest.min} max={L.rest.max} step={L.rest.step} value={L.rest.def} /></div>
         <div class="wb-field"><label for="wb-rounds">Rounds ({L.rounds.min} to {L.rounds.max})</label><input id="wb-rounds" name="rounds" type="number" inputmode="numeric" min={L.rounds.min} max={L.rounds.max} step={L.rounds.step} value={L.rounds.def} /></div>

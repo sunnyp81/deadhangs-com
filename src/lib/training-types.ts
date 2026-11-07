@@ -57,3 +57,6 @@ export type LogEntry = {
   /** Optional body weight, always kg with one decimal place. */
   bodyweightKg?: number;
 };
+
+/** Fixed placement labels sent to GA4 as tool_source. Mirrors SOURCES in training-events.js. */
+export type ToolSource = "calculator" | "plans" | "workspace" | "home" | "shared" | "embed" | "article_header" | "age_card" | "chosen_session";

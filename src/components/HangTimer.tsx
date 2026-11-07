@@ -15,7 +15,7 @@ import {
   validTimerLoad,
 } from "../lib/timer-state.mjs";
 import MaxTestSave from "./MaxTestSave";
-import type { TimerConfig, TimerLoad, TimerRunState } from "../lib/training-types";
+import type { TimerConfig, TimerLoad, TimerRunState, ToolSource } from "../lib/training-types";
 import { trackFeature, trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 
 const HAPTICS_KEY = "dh-timer-haptics";
@@ -225,7 +225,7 @@ export default function HangTimer({
   onRunState?: (state: TimerRunState) => void;
   onTestSaved?: () => void;
   feedbackAdapters?: Parameters<typeof createFeedbackLifecycle>[0];
-  analyticsSource?: "calculator" | "plans" | "workspace" | "home" | "shared" | "embed";
+  analyticsSource?: ToolSource;
 }) {
   const [hydrated, setHydrated] = useState(false);
   const deadline = useRef(0);
@@ -1179,7 +1179,7 @@ export default function HangTimer({
                     ? "Max test: warm-up, rest, one count-up hold"
                     : mode === "emom"
                       ? `every ${currentWork + Math.max(10, 60 - currentWork)}s`
-                      : `${work}s × ${rounds} rounds`}
+                      : `${work}s hang · ${rest}s rest · ${rounds} rounds`}
           </div>
         </div>
       </div>
@@ -1300,6 +1300,7 @@ export default function HangTimer({
         <MaxTestSave
           key={testRunId}
           seconds={testLogSeconds}
+          analyticsSource={analyticsSource ?? "workspace"}
           onSaved={() => {
             onTestSaved?.();
             if (analyticsSource) trackTrainingEvent("training_log_saved", { source: analyticsSource });

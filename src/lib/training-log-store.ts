@@ -9,6 +9,7 @@ import {
   toLocalDateString,
   validateEntryInput,
 } from "./training-log.mjs";
+import { firstSaveKind } from "./first-save.mjs";
 
 export type SetupForm = {
   assistance: string;
@@ -42,7 +43,7 @@ export function rememberSetup(form: SetupForm) {
 }
 
 export type SaveResult =
-  | { ok: true }
+  | { ok: true; first: "session" | "max_test" | null }
   | { ok: false; message: string };
 
 /**
@@ -87,5 +88,5 @@ export function saveNewEntry(input: {
   }
   rememberSetup(input.setup);
   window.dispatchEvent(new Event(LOG_UPDATED_EVENT));
-  return { ok: true };
+  return { ok: true, first: firstSaveKind(existing.entries, input.kind) as "session" | "max_test" | null };
 }

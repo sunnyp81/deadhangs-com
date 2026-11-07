@@ -42,7 +42,7 @@ test("source article_header and mode are accepted, other values are not", () => 
   const b = browser();
   assert.equal(trackFeature("header_timer_started", { source: "article_header", mode: "simple" }, b), true);
   assert.deepEqual(b.calls[0][2], {
-    page_path: "/dead-hang-time-by-age/", feature: "header_timer_started", source: "article_header", timer_mode: "simple",
+    page_path: "/dead-hang-time-by-age/", feature: "header_timer_started", tool_source: "article_header", timer_mode: "simple",
   });
   assert.equal(trackFeature("header_timer_started", { source: "made_up" }, browser()), false);
   assert.equal(trackFeature("header_timer_started", { mode: "turbo" }, browser()), false);

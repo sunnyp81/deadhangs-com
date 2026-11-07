@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import NextSessionChoices from "./NextSessionChoices";
 import { compareHang } from "../lib/hang-comparison.mjs";
 import { makeDraft, stageDraft } from "../lib/journey-draft.mjs";
-import type { JourneyDraft } from "../lib/training-types";
+import type { JourneyDraft, ToolSource } from "../lib/training-types";
 import {
   trackTrainingToolView,
   trackTrainingEvent,
@@ -9,7 +10,7 @@ import {
 
 type Props = {
   onContinue?: (draft: JourneyDraft) => void;
-  analyticsSource?: "calculator" | "plans" | "workspace" | "home" | "shared" | "embed";
+  analyticsSource?: ToolSource;
 };
 
 export default function HangCalculator({ onContinue, analyticsSource = "calculator" }: Props) {
@@ -75,6 +76,7 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
     <div className="hang-calculator">
       <form action="/dead-hang-calculator/" method="post" onSubmit={calculate}>
         <div className="field-grid">
+          <div>
           <label htmlFor="calc-time">
             Your hold, seconds
             <input
@@ -91,12 +93,17 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
                 setResult(null);
               }}
               inputMode="decimal"
+              aria-describedby="calc-time-hint"
             />
           </label>
+          <p className="small-copy" id="calc-time-hint">Seconds, for example 45.</p>
+          </div>
+          <div>
           <label htmlFor="calc-target">
             Your target, seconds
             <input
               id="calc-target"
+              aria-describedby="calc-target-hint"
               type="number"
               disabled={!hydrated}
               min="1"
@@ -111,6 +118,10 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
               inputMode="decimal"
             />
           </label>
+          <p className="small-copy" id="calc-target-hint">60 is an editable personal goal, not an age norm or fitness requirement.</p>
+          </div>
+          <details className="calc-previous">
+          <summary>Compare with a previous hold (optional)</summary>
           <label htmlFor="calc-previous">
             Previous hold, seconds <span className="optional">Optional</span>
             <input
@@ -128,11 +139,10 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
               inputMode="decimal"
             />
           </label>
+          </details>
         </div>
         <p className="small-copy">
-          60 seconds is an editable personal target, not an age norm or a
-          fitness requirement. Compare holds with the same assistance, bar and
-          grip.
+          Compare holds with the same assistance, bar and grip.
         </p>
         <button className="dh-btn" type="submit" disabled={!hydrated}>
           Compare my hold
@@ -167,6 +177,7 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
               This is a personal comparison. It is not a population percentile
               or a medical assessment.
             </p>
+            <NextSessionChoices source={analyticsSource} />
             <button
               type="button"
               className="dh-btn dh-btn-ghost"
@@ -174,9 +185,6 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
             >
               Review this goal in the timer
             </button>
-            <a className="text-link" href="/training-log/">
-              Time a session and record your progress →
-            </a>
           </div>
         ) : (
           <p className="calculator-empty">

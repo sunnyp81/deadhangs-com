@@ -2,7 +2,9 @@ import { useEffect, useId, useRef, useState } from "react";
 import "../styles/training-workspace.css";
 import SetupFields from "./SetupFields";
 import { EMPTY_SETUP_FORM } from "../lib/training-log.mjs";
-import { setupHasTags, trackFeature } from "../scripts/training-events.js";
+import { setupHasTags, trackFeature, trackTrainingEvent } from "../scripts/training-events.js";
+import { FIRST_SAVE_EVENTS } from "../lib/first-save.mjs";
+import type { ToolSource } from "../lib/training-types";
 import { readRememberedSetup, saveNewEntry } from "../lib/training-log-store";
 import type { SetupForm } from "../lib/training-log-store";
 
@@ -10,7 +12,7 @@ import type { SetupForm } from "../lib/training-log-store";
  * Shown after a max test. The measured time is prefilled and editable, the setup
  * defaults to the last one used, and nothing is saved until the user confirms.
  */
-export default function MaxTestSave({ seconds, onSaved }: { seconds: number; onSaved?: () => void }) {
+export default function MaxTestSave({ seconds, onSaved, analyticsSource = "workspace" }: { seconds: number; onSaved?: () => void; analyticsSource?: ToolSource }) {
   const uid = useId();
   const [hold, setHold] = useState(String(seconds));
   const [setup, setSetup] = useState<SetupForm>({ ...EMPTY_SETUP_FORM } as SetupForm);
@@ -34,6 +36,7 @@ export default function MaxTestSave({ seconds, onSaved }: { seconds: number; onS
     }
     setSaved(true);
     trackFeature("max_test_saved");
+    if (result.first) trackTrainingEvent(FIRST_SAVE_EVENTS[result.first], { source: analyticsSource });
     if (setupHasTags(setup)) trackFeature("setup_saved_with_tags");
     setMessage("Saved to this device as a max test. It now appears in your log and graph.");
     onSaved?.();

@@ -5,9 +5,13 @@ const EVENTS = new Set([
   "training_timer_started",
   "training_timer_finished",
   "training_log_saved",
+  "training_session_saved",
   "training_calculator_used",
   "training_calculator_continued",
   "feature_used",
+  "next_session_chosen",
+  "first_training_session_saved",
+  "first_test_hold_saved",
 ]);
 export const FEATURES = new Set([
   "your_number_compared",
@@ -40,13 +44,18 @@ const SOURCES = new Set([
   "shared",
   "embed",
   "article_header",
+  "age_card",
+  "chosen_session",
 ]);
+/** Fixed starter-session labels for next_session_chosen. Never a hold time or level score. */
+export const SESSION_CHOICES = new Set(["level_1", "level_2", "level_3"]);
 const MODES = new Set(["simple", "emom", "ladder", "test"]);
 const PATHS = new Set([
   "/",
   "/dead-hang-calculator/",
   "/training-log/",
   "/training-programs/",
+  "/dead-hang-time-by-age/",
 ]);
 
 function canonicalPathname(candidate, browser) {
@@ -85,6 +94,11 @@ export function trackFeature(feature, { source, mode, pathname } = {}, browser =
   return trackTrainingEvent("feature_used", { feature, source, mode, pathname }, browser);
 }
 
+/** next_session_chosen: a starter session was opened for review. Sends the fixed choice label only. */
+export function trackNextSessionChosen(choice, { source = "age_card", pathname } = {}, browser = window) {
+  return trackTrainingEvent("next_session_chosen", { source, pathname, choice }, browser);
+}
+
 /** Mark an eligible hydrated page once, without replaying a pre-consent view. */
 export function trackTrainingToolView({ source, pathname } = {}, browser = window) {
   try {
@@ -104,18 +118,23 @@ export function trackTrainingToolView({ source, pathname } = {}, browser = windo
   }
 }
 
-/** Send only fixed, consented training-tool events. Personal training data is never accepted. */
+/**
+ * Send only fixed, consented training-tool events. Personal training data is never accepted.
+ * The placement label is sent as tool_source so it cannot be read as a GA4 traffic source.
+ */
 export function trackTrainingEvent(
   event,
-  { source, mode, pathname, feature } = {},
+  { source, mode, pathname, feature, choice } = {},
   browser = window,
 ) {
   try {
     const isFeature = event === "feature_used";
+    const isChoice = event === "next_session_chosen";
     if (
       !EVENTS.has(event) ||
       (isFeature ? !FEATURES.has(feature) : !SOURCES.has(source)) ||
       (source !== undefined && !SOURCES.has(source)) ||
+      (isChoice ? !SESSION_CHOICES.has(choice) : choice !== undefined) ||
       browser.localStorage.getItem("cookieConsent") !== "accepted" ||
       typeof browser.gtag !== "function"
     )
@@ -126,7 +145,8 @@ export function trackTrainingEvent(
     if (!page_path || (mode && !MODES.has(mode))) return false;
     const payload = { page_path };
     if (isFeature) payload.feature = feature;
-    if (source) payload.source = source;
+    if (source) payload.tool_source = source;
+    if (isChoice) payload.session_choice = choice;
     if (mode) payload.timer_mode = mode;
     browser.gtag("event", event, payload);
     return true;

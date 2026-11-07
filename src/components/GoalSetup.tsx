@@ -47,7 +47,8 @@ const defaults = (): Form => ({
   version: 1,
   targetSeconds: 60,
   assistance: "unassisted",
-  startDate: date(),
+  // Static HTML and the first browser render must agree, even days after a build.
+  startDate: "",
   weekdays: [1, 4],
   windowWeeks: 4,
   workSeconds: 30,
@@ -144,7 +145,9 @@ export default function GoalSetup({
   }
 
   useEffect(() => {
-    applySnapshot(readProfile());
+    const snapshot = readProfile();
+    applySnapshot(snapshot);
+    if (!snapshot.profile) setForm((current) => ({ ...current, startDate: date() }));
     return subscribeProfile(() => {
       const incoming = readProfile();
       if (dirtyRef.current) {
