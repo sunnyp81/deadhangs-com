@@ -64,5 +64,11 @@ export const accountErrorMessage = (error) => ({
   invalid_entries: 'Some saved entries could not be read. Open your device log to recover them before importing.',
   different_account: 'This device log is linked to another account. Sign in to that account, or export and clear the device log before using a different account.',
   pro_required: 'Cloud sync requires an active Pro subscription. Export and delete remain available.',
-  billing_unavailable: 'Checkout is not available yet. No payment has been taken.',
-}[error?.code] || 'That action could not finish. Check your connection and try again. Your existing log has not been replaced.');
+  billing_unavailable: 'Billing is unavailable. Refresh your account to check its status, or contact support. Use Manage billing to check an existing subscription.',
+  billing_provider_unavailable: 'The payment provider could not be reached. Refresh your account before trying again; do not make another payment to resolve this message.',
+  billing_not_launched: 'Checkout is not available yet. Your free tools remain available.',
+  subscription_exists: 'This account already has a subscription. Use Manage billing to view it.',
+  billing_busy: 'Your billing details are being updated. Wait a moment, then refresh your account.',
+  billing_recovery_required: 'A previous billing request needs checking. Contact support before trying to pay or delete the account again.',
+  billing_cancellation_unconfirmed: 'Cancellation could not be confirmed, so the account was kept. Use Manage billing or contact support before retrying deletion.',
+}[error?.code] || 'That action could not finish here. Refresh your account to check its status before trying again.');
