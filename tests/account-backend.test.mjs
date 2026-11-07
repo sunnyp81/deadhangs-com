@@ -32,6 +32,8 @@ const people = {
   // Different Google subject presenting Alice's email: must never reach Alice's account.
   aliceRenamed: { sub: '100000000000000000001', email: 'alice.new@example.test', name: 'Test Alice' },
   imposter: { sub: '100000000000000000003', email: 'alice@example.test', name: 'Other Person' },
+  bobAsAliceNew: { sub: '100000000000000000002', email: 'alice.new@example.test', name: 'Test Bob' },
+  dana: { sub: '100000000000000000004', email: 'dana@example.test', name: 'Dana' },
 };
 const outbound = [];
 async function googleStub(request) {
@@ -242,8 +244,36 @@ test('identity follows the Google subject when the Google email changes', async 
   assert.equal(renamed.done.headers.get('location'), '/training-log/');
   const me = await call(null, '/api/account', { jar: renamed.jar });
   assert.equal(me.data.user.name, 'Test Alice');
+  assert.equal(me.data.user.email, 'alice.new@example.test', 'stored email follows Google on sign-in');
   assert.equal(await db.prepare('SELECT count(*) AS n FROM "user"').first('n'), 2, 'no duplicate user for the same subject');
   assert.equal(await db.prepare('SELECT count(*) AS n FROM "account" WHERE "accountId" = ?').bind(people.alice.sub).first('n'), 1);
+  for (const row of (await db.prepare('SELECT * FROM "user"').all()).results) assert.equal(row.image, null);
+  // A refresh onto an email another user already holds keeps the old email instead of failing sign-in.
+  const clash = await signIn('bobAsAliceNew');
+  assert.equal(clash.done.headers.get('location'), '/training-log/');
+  assert.equal((await call(null, '/api/account', { jar: clash.jar })).data.user.email, 'bob@example.test');
+  const back = await signIn('alice');
+  assert.equal(back.done.headers.get('location'), '/training-log/');
+  assert.equal((await call(null, '/api/account', { jar: back.jar })).data.user.email, 'alice@example.test');
+});
+
+test('an interrupted first sign-in does not lock the email out', async () => {
+  const old = new Date(Date.now() - 5 * 60_000).toISOString();
+  const fresh = new Date().toISOString();
+  const users = 'INSERT INTO "user" ("id","name","email","emailVerified","createdAt","updatedAt") VALUES (?,?,?,?,?,?)';
+  await db.prepare(users).bind('orphan-old', 'Dana', 'dana@example.test', 1, old, old).run();
+  await db.prepare(users).bind('orphan-new', 'Eve', 'eve@example.test', 1, fresh, fresh).run();
+  await db.prepare(users).bind('orphan-data', 'Fay', 'fay@example.test', 1, old, old).run();
+  await db.prepare('INSERT INTO billing_accounts (user_id,app_user_ref,created_at) VALUES (?,?,?)').bind('orphan-data', 'ref-orphan-data', 1).run();
+  const dana = await signIn('dana');
+  assert.equal(dana.done.headers.get('location'), '/training-log/', 'stale orphan removed so sign-up completes');
+  assert.equal((await call(null, '/api/account', { jar: dana.jar })).data.user.email, 'dana@example.test');
+  assert.equal(await db.prepare('SELECT count(*) AS n FROM "user" WHERE "id" = ?').bind('orphan-old').first('n'), 0);
+  assert.equal(await db.prepare('SELECT count(*) AS n FROM "user" WHERE "id" = ?').bind('orphan-new').first('n'), 1, 'in-flight sign-up rows are left alone');
+  assert.equal(await db.prepare('SELECT count(*) AS n FROM "user" WHERE "id" = ?').bind('orphan-data').first('n'), 1, 'rows owning data are never removed');
+  assert.ok(await db.prepare('SELECT 1 FROM "user" WHERE "email" = ?').bind('alice@example.test').first(), 'linked users untouched');
+  await db.prepare('DELETE FROM billing_accounts WHERE user_id = ?').bind('orphan-data').run();
+  await db.prepare('DELETE FROM "user" WHERE "id" IN (?, ?) OR "email" = ?').bind('orphan-new', 'orphan-data', 'dana@example.test').run();
 });
 
 // Seed a verified billing cache only inside the isolated D1 fixture. Stripe verification

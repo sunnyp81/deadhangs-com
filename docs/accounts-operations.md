@@ -17,6 +17,8 @@ Required auth secrets: `BETTER_AUTH_SECRET` (at least 32 random characters), `GO
 
 Google OAuth web client: DeadHangs; scopes `openid email profile`; production redirect `https://deadhangs.com/api/auth/callback/google`. Tokens and profile pictures are not retained. Auth uses secure HTTP-only cookies, D1 sessions, state and PKCE. The local Google stub verifies application behavior, not the configuration of a real Google client.
 
+Identity is bound to the Google subject; email linking is disabled. The stored name and email refresh from Google at each sign-in, except that an email already held by another DeadHangs user is left unchanged rather than failing sign-in. D1 cannot wrap Better Auth's user and account inserts in one transaction, so each Google callback first removes user rows older than 60 seconds that have no Google account, session, training log or billing record. Without that repair an interrupted first sign-in would lock the email out.
+
 ## Billing activation
 
 Required secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`. Required configuration: `STRIPE_ACCOUNT_ID`, `STRIPE_PRODUCT_ID`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `STRIPE_PORTAL_CONFIGURATION_ID`, `BILLING_ENABLED=true`, `BILLING_MODE=live`.

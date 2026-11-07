@@ -1,5 +1,5 @@
 import { betterAuth, type BetterAuthOptions } from 'better-auth';
-import type { ConfiguredEnv } from './env';
+import type { ConfiguredEnv, D1Database } from './env';
 
 export const AUTH_BASE_PATH = '/api/auth';
 export const ALLOWED_CALLBACK_PATHS = ['/training-log/', '/account/'] as const;
@@ -25,6 +25,8 @@ export function authOptions(env: ConfiguredEnv): BetterAuthOptions {
         clientId: env.GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
         prompt: 'select_account',
+        // Keep the stored email and name current with Google; identity stays bound to the Google subject.
+        overrideUserInfoOnSignIn: true,
         // Minimal profile: the Google picture URL is never stored.
         mapProfileToUser: () => ({ image: undefined }),
       },
@@ -49,6 +51,18 @@ export function authOptions(env: ConfiguredEnv): BetterAuthOptions {
       defaultCookieAttributes: { httpOnly: true, secure: true, sameSite: 'lax', path: '/' },
     },
     databaseHooks: {
+      user: {
+        update: {
+          before: async (data) => {
+            // Never let a Google email refresh collide with another user's stored email.
+            if (typeof data.email !== 'string') return { data };
+            const taken = await env.DB.prepare('SELECT 1 FROM "user" WHERE "email" = ? LIMIT 1').bind(data.email.toLowerCase()).first();
+            if (!taken) return { data };
+            // Hook results are merged, so undefined is how the email change is dropped.
+            return { data: { ...data, email: undefined, emailVerified: undefined } };
+          },
+        },
+      },
       account: {
         create: { before: async (data) => ({ data: { ...data, ...TOKEN_FIELDS } }) },
         update: { before: async (data) => ({ data: { ...data, ...TOKEN_FIELDS } }) },
@@ -59,6 +73,30 @@ export function authOptions(env: ConfiguredEnv): BetterAuthOptions {
       },
     },
   };
+}
+
+export const ORPHAN_MIN_AGE_MS = 60_000;
+
+/**
+ * D1 has no multi-statement transaction for Better Auth sign-up, so an interrupted first sign-in can leave a
+ * user row with no Google account. With linking disabled that email would be locked out, so remove such rows
+ * once they are old enough not to be an in-flight sign-up and still own no account, session or data.
+ */
+export async function repairInterruptedSignups(db: D1Database, now = Date.now()): Promise<number> {
+  const { results } = await db.prepare('SELECT "id", "createdAt" FROM "user" u WHERE NOT EXISTS (SELECT 1 FROM "account" a WHERE a."userId" = u."id") LIMIT 25').all<{ id: string; createdAt: string | number }>();
+  let removed = 0;
+  for (const row of results ?? []) {
+    const created = new Date(typeof row.createdAt === 'string' && /^\d+$/.test(row.createdAt) ? Number(row.createdAt) : row.createdAt).getTime();
+    if (!Number.isFinite(created) || now - created < ORPHAN_MIN_AGE_MS) continue;
+    const out = await db.prepare(`DELETE FROM "user" WHERE "id" = ?1
+      AND NOT EXISTS (SELECT 1 FROM "account" WHERE "userId" = ?1)
+      AND NOT EXISTS (SELECT 1 FROM "session" WHERE "userId" = ?1)
+      AND NOT EXISTS (SELECT 1 FROM "training_log" WHERE "user_id" = ?1)
+      AND NOT EXISTS (SELECT 1 FROM "billing_accounts" WHERE "user_id" = ?1)
+      AND NOT EXISTS (SELECT 1 FROM "billing_subscriptions" WHERE "user_id" = ?1)`).bind(row.id).run();
+    removed += out.meta?.changes ?? 0;
+  }
+  return removed;
 }
 
 type Auth = ReturnType<typeof betterAuth>;
