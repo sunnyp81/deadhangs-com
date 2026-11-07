@@ -83,9 +83,10 @@ body:has(#cookie-banner:not([hidden])) { padding-bottom: 96px; }
   .consent-panel { flex-direction: column; align-items: stretch; gap: 4px; padding: 8px 16px calc(8px + env(safe-area-inset-bottom)); }
   .consent-copy { font-size: 13px; line-height: 1.35; }
   .consent-actions { gap: 8px; }
-  .consent-actions .dh-btn { flex: 1; padding: 8px 6px; font-size: 11px; letter-spacing: .04em; }
+  .consent-actions .dh-btn { flex: 1; padding: 8px 6px; font-size: 13px; letter-spacing: 0; }
   body:has(#cookie-banner:not([hidden])) { padding-bottom: 130px; }
 }
+html:has(#cookie-banner:not([hidden])) { scroll-padding-bottom: 150px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   .scroll-reveal { opacity: 1; transform: none; }

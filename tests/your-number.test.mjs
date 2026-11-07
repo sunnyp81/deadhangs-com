@@ -54,7 +54,7 @@ test('age only adds a note, never changes the lines', () => {
 test('ladder under 10 s and log link', () => {
   assert.equal(describeHold(8, {}).showLadder, true);
   assert.equal(describeHold(10, {}).showLadder, false);
-  assert.equal(describeHold(64.6, {}).logHref, '/training-log/?hold=65');
+  assert.equal(describeHold(64.6, {}).logHref, '/training-log/#hold=65');
 });
 
 test('no percentile or ranking language in any output', () => {

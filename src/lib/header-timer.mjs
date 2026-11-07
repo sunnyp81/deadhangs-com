@@ -30,5 +30,6 @@ export function clock(seconds) {
 /** Log link carrying whole seconds held; null when under one second (nothing worth logging). */
 export function logHref(elapsed, total = HEADER_HOLD_SECONDS) {
   const whole = testSecondsToLog(isFinished(elapsed, total) ? total : elapsed);
-  return whole === null ? null : `/training-log/?hold=${whole}`;
+  // Fragments stay in the browser instead of sending the measured hold to the server.
+  return whole === null ? null : `/training-log/#hold=${whole}`;
 }

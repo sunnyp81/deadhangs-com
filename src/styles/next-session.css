@@ -1,0 +1,25 @@
+.next-session { margin: 16px 0 24px; }
+.next-session > summary { cursor: pointer; width: fit-content; gap: 14px; list-style: none; min-height: 44px; }
+.next-session > summary::-webkit-details-marker { display: none; }
+.next-session[open] > summary { margin-bottom: 12px; }
+.next-session > summary span { display: inline-block; }
+.next-session[open] > summary span { transform: rotate(45deg); }
+.next-session .next-session-list { list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 10px; }
+.next-session .next-session-list li { margin: 0; padding: 0; }
+.next-session-choice { display: flex; flex-direction: column; gap: 5px; min-height: 44px; padding: 14px 16px; border: 1px solid var(--color-border); background: var(--color-bg); text-decoration: none; color: var(--color-text); }
+.next-session-choice:hover { border-color: var(--color-primary); background: var(--color-surface-2); }
+.article-body .next-session-choice { text-decoration: none; }
+.next-session-choice:hover .next-session-name, .next-session-choice:focus-visible .next-session-name { text-decoration: underline; }
+.next-session-choice:active { background: var(--color-primary-highlight); }
+.next-session-choice:focus-visible, .next-session > summary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.next-session-name { font: 600 19px/1.25 var(--font-display); color: var(--color-text); }
+.next-session-dose { font: 500 14px/1.4 var(--font-mono); color: var(--color-primary); }
+.next-session-fit { font: 14px/1.5 var(--font-body); color: var(--color-text-muted); }
+.yn-score { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin: 0 0 8px; }
+.yn-score strong { font: 600 32px/1.2 var(--font-mono); color: var(--color-text); }
+.yn-card input[aria-invalid="true"] { border-color: var(--color-danger, #ff7d7d); }
+.calc-previous { grid-column: 1 / -1; }
+.calc-previous > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; font: 500 14px/1.5 var(--font-body); color: var(--color-text-muted); text-decoration: underline; text-underline-offset: 3px; }
+.calc-previous > summary:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; }
+.calc-previous[open] > summary { margin-bottom: 8px; }
+@media (min-width: 800px) { .next-session .next-session-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .next-session-choice { height: 100%; } }

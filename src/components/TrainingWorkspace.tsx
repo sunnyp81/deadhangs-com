@@ -2,7 +2,9 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react'
 import type { FormEvent } from 'react';
 import '../styles/training-workspace.css';
 import { setupHasTags, trackFeature, trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
-import { parseHoldParam } from '../lib/your-number.mjs';
+import { parseHoldParam, parseMeasuredParam } from '../lib/your-number.mjs';
+import { FIRST_SAVE_EVENTS, firstSaveKind } from '../lib/first-save.mjs';
+import { starterLogSetup } from '../lib/next-session.mjs';
 import SetupFields from './SetupFields';
 import {
   EMPTY_SETUP_FORM,
@@ -38,7 +40,7 @@ import {
 } from '../lib/training-log.mjs';
 import { LOG_UPDATED_EVENT, readRememberedSetup, rememberSetup } from '../lib/training-log-store';
 import type { SetupForm } from '../lib/training-log-store';
-import type { LogEntry } from '../lib/training-types';
+import type { LogEntry, ToolSource } from '../lib/training-types';
 
 type Status = 'idle' | 'running' | 'paused' | 'done';
 type Phase = 'work' | 'rest';
@@ -94,7 +96,7 @@ function writeRawLog(text: string): boolean {
   }
 }
 
-export default function TrainingWorkspace({ showTimer = true, onEntriesChange, onManualEntrySaved, registerActualFocus, analyticsSource, formAction = "/training-log/" }: { showTimer?: boolean; onEntriesChange?: (entries: Entry[]) => void; onManualEntrySaved?: () => void; registerActualFocus?: (focus: () => void) => void; analyticsSource?: "calculator" | "plans" | "workspace" | "home" | "shared" | "embed"; formAction?: string }) {
+export default function TrainingWorkspace({ showTimer = true, onEntriesChange, onManualEntrySaved, registerActualFocus, analyticsSource, funnelSource, acceptedPlan, formAction = "/training-log/" }: { showTimer?: boolean; onEntriesChange?: (entries: Entry[]) => void; onManualEntrySaved?: () => void; registerActualFocus?: (focus: () => void) => void; analyticsSource?: ToolSource; funnelSource?: ToolSource; acceptedPlan?: { requestId: string; assistance: string } | null; formAction?: string }) {
   const uid = useId();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => { setHydrated(true); }, []);
@@ -254,8 +256,13 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
 
   const [dateInput, setDateInput] = useState('');
   const [holdInput, setHoldInput] = useState('');
+  // A hold measured elsewhere (the by-age card) is saved as a test entry, never as a training session.
+  const [measuredHold, setMeasuredHold] = useState(false);
   const [setupForm, setSetupForm] = useState<SetupForm>({ ...EMPTY_SETUP_FORM } as SetupForm);
   const [setupOpen, setSetupOpen] = useState(false);
+  const [setupNotice, setSetupNotice] = useState('');
+  const automaticStarterSetup = useRef(false);
+  const assistanceEdited = useRef(false);
   const [filterKey, setFilterKey] = useState('all');
   const [logSetsInput, setLogSetsInput] = useState('1');
   const storageStateRef = useRef<StorageState>('loading');
@@ -271,10 +278,17 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
   useEffect(() => {
     setToday(toLocalDateString());
     setDateInput(toLocalDateString());
-    // ?hold=SECONDS prefills the form only. Nothing is saved until the user submits.
-    const prefill = parseHoldParam(window.location.search);
-    if (prefill) setHoldInput(prefill);
-    setSetupForm(readRememberedSetup());
+    // New links use a browser-only fragment; old query links still work.
+    const handoff = window.location.hash.startsWith('#hold=') ? window.location.hash : window.location.search;
+    const prefill = parseHoldParam(handoff);
+    if (prefill) {
+      setHoldInput(prefill);
+      setMeasuredHold(parseMeasuredParam(handoff));
+    }
+    const remembered = readRememberedSetup();
+    const initialSetup = starterLogSetup(window.location.search, remembered);
+    automaticStarterSetup.current = initialSetup !== remembered;
+    setSetupForm(initialSetup);
     const { available, raw } = readRawLog();
     rawSnapshot.current = raw;
     if (!available) {
@@ -290,6 +304,20 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
     setDroppedRows(parsed.dropped);
     setStorageState('ready');
   }, []);
+
+  // Retire the starter's automatic assistance only after a replacement was accepted.
+  // Never discard a hold, recorded history, or assistance explicitly chosen by the user.
+  useEffect(() => {
+    if (!acceptedPlan || !automaticStarterSetup.current) return;
+    automaticStarterSetup.current = false;
+    if (!assistanceEdited.current) {
+      setSetupForm((current) => ({ ...current, assistance: acceptedPlan.assistance }));
+      setSetupNotice(`The timer accepted your plan. Log assistance now matches it: ${assistanceLabel(acceptedPlan.assistance)}. Check that this is what you actually used.`);
+    } else {
+      setSetupNotice(`The timer accepted your plan (${assistanceLabel(acceptedPlan.assistance)}). Your chosen log assistance was kept; check it before saving.`);
+      setSetupOpen(true);
+    }
+  }, [acceptedPlan]);
 
   // Another island on the page (the timer's max test) or another tab may add an
   // entry. Re-read so this view and its save guard stay current.
@@ -349,7 +377,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
       return;
     }
     const result = validateEntryInput(
-      { date: dateInput, seconds: holdInput, sets: logSetsInput, ...setupForm },
+      { date: dateInput, seconds: holdInput, sets: logSetsInput, ...setupForm, ...(measuredHold ? { kind: 'test' } : {}) },
       toLocalDateString(),
     );
     if (!result.ok || !result.value) {
@@ -362,8 +390,14 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
       setFormErrors([`This log holds ${MAX_ENTRIES} entries. Open “Your data” to export a CSV first, then delete some entries.`]);
       return;
     }
-    if (commit(added.entries as Entry[], `Saved ${entry.seconds}s on ${formatLocalDate(entry.date)} to this device.`)) {
+    const first = firstSaveKind(entries, entry.kind);
+    const savedAs = entry.kind === 'test' ? ' as a measured hold' : '';
+    const firstNote = first === 'session' ? ' Your first training session is in the log.' : '';
+    if (commit(added.entries as Entry[], `Saved ${entry.seconds}s${savedAs} on ${formatLocalDate(entry.date)} to this device.${firstNote}`)) {
       rememberSetup(setupForm);
+      setMeasuredHold(false);
+      if (first) trackTrainingEvent(FIRST_SAVE_EVENTS[first], { source: funnelSource ?? analyticsSource ?? 'workspace' });
+      if (entry.kind !== 'test') trackTrainingEvent('training_session_saved', { source: funnelSource ?? analyticsSource ?? 'workspace' });
       if (setupHasTags(setupForm)) trackFeature("setup_saved_with_tags");
       setSetupForm((current) => ({ ...current, ended: '', bodyweight: '' }));
       setHoldInput('');
@@ -479,6 +513,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
   }, [setupForm]);
 
   function copySetupFrom(entry: Entry) {
+    assistanceEdited.current = true;
     setSetupForm(setupFormFromEntry(entry) as SetupForm);
     setLogStatus(`Setup copied from ${formatLocalDate(entry.date)}. Enter the hold you did and save.`);
     holdFieldRef.current?.focus();
@@ -635,6 +670,12 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
         )}
 
         <form className="tw-form" action={formAction} method="post" onSubmit={handleSubmit}>
+          {measuredHold && (
+            <p className="tw-note" role="status">
+              This measurement will be saved as a test hold.{' '}
+              <button type="button" className="tw-link" onClick={() => setMeasuredHold(false)}>Save it as a training entry instead</button>
+            </p>
+          )}
           <div className="tw-form-grid">
             <div className="tw-field">
               <label htmlFor={`${uid}-date`}>Date</label>
@@ -662,6 +703,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
             </div>
           </div>
 
+          {setupNotice && <p className="tw-note" role="status">{setupNotice}</p>}
           <details className="tw-setup" open={setupOpen} onToggle={(e) => setSetupOpen((e.currentTarget as HTMLDetailsElement).open)}>
             <summary>
               <span className="tw-setup-title">Setup, remembered for next time</span>
@@ -669,7 +711,10 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
             </summary>
             <div className="tw-setup-body">
               <p className="tw-hint">Every field is optional. Bests are kept separately for each setup, so record the bar, grip, chalk, load and assistance you actually used.</p>
-              <SetupFields value={setupForm} onChange={setSetupForm} disabled={!canWrite} showEnded idPrefix={`${uid}-setup`} />
+              <SetupFields value={setupForm} onChange={(next) => {
+                if (next.assistance !== setupForm.assistance) assistanceEdited.current = true;
+                setSetupForm(next);
+              }} disabled={!canWrite} showEnded idPrefix={`${uid}-setup`} />
             </div>
           </details>
 
@@ -688,6 +733,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
           </p>
         </form>
 
+        <p className="tw-status" aria-live="polite">{logStatus}</p>
         <details className="tw-data">
           <summary>Your data: export, backup and import</summary>
           <div className="tw-data-body">
@@ -709,8 +755,6 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
             </div>}
           </div>
         </details>
-        <p className="tw-status" aria-live="polite">{logStatus}</p>
-
         {entries.length > 0 && (
           <div className="tw-setup-bests">
             <h4 className="tw-subtitle">Your best for each setup</h4>
@@ -791,7 +835,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
                   {shownEntries.map((entry) => (
                     <tr key={entry.id}>
                       <td>{formatLocalDate(entry.date)}</td>
-                      <td className="dh-mono">{entry.seconds}s{entry.kind === 'test' && <span className="tw-badge">Max test</span>}</td>
+                      <td className="dh-mono">{entry.seconds}s{entry.kind === 'test' && <span className="tw-badge">Test hold</span>}</td>
                       <td>{assistanceLabel(entry.assistance)}</td>
                       <td>{setupSummary(entry)}</td>
                       <td>{bodyweightText(entry) || '-'}</td>

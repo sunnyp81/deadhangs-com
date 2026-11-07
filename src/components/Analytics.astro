@@ -1,6 +1,61 @@
 <script is:inline>
   (function () {
     var id = 'G-YBPRQVR2Y3';
+    var OWN_SITE = 'deadhangs.com';
+    // Public campaign vocabulary only. A character regex cannot exclude people's names.
+    var SOURCES = ['google', 'bing', 'newsletter', 'youtube', 'instagram', 'facebook', 'reddit', 't.co', 'partner', 'qr', 'embed'];
+    var CAMPAIGNS = ['hang-longer', 'beginner-session', 'timer-embed', 'bar-card', 'launch', 'bf-2026'];
+    var MEDIUMS = ['organic', 'referral', 'email', 'newsletter', 'social', 'community', 'cpc', 'paid', 'display', 'video', 'partner', 'affiliate', 'embed', 'qr', 'print', 'outreach'];
+    function bareHost(host) {
+      return String(host || '').toLowerCase().replace(/\.$/, '').replace(/^www\./, '');
+    }
+    function sameSite(host, current) {
+      var h = bareHost(host);
+      var own = [bareHost(current), OWN_SITE];
+      for (var i = 0; i < own.length; i++) {
+        if (own[i] && (h === own[i] || h.slice(-(own[i].length + 1)) === '.' + own[i])) return true;
+      }
+      return false;
+    }
+    // Cross-site referrer reduced to its origin only: no path, query, hash or credentials.
+    function safeReferrer(referrer, currentHost) {
+      if (typeof referrer !== 'string' || !referrer) return '';
+      try {
+        var url = new URL(referrer);
+        if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
+        if (!url.hostname || sameSite(url.hostname, currentHost)) return '';
+        var origin = url.origin + '/';
+        return origin.length <= 120 ? origin : '';
+      } catch (_) {
+        return '';
+      }
+    }
+    function label(value, allowed) {
+      if (typeof value !== 'string') return null;
+      var v = value.trim().toLowerCase();
+      return allowed.indexOf(v) === -1 ? null : v;
+    }
+    // Only a complete, tightly validated utm_source + utm_medium (+ optional utm_campaign) set is used.
+    function campaignFields(search) {
+      try {
+        var params = new URLSearchParams(search || '');
+        var keys = ['utm_source', 'utm_medium', 'utm_campaign'];
+        for (var i = 0; i < keys.length; i++) if (params.getAll(keys[i]).length > 1) return null;
+        var source = label(params.get('utm_source'), SOURCES);
+        var mediumRaw = params.get('utm_medium');
+        var medium = typeof mediumRaw === 'string' ? mediumRaw.trim().toLowerCase() : '';
+        if (!source || MEDIUMS.indexOf(medium) === -1) return null;
+        var fields = { campaign_source: source, campaign_medium: medium };
+        if (params.has('utm_campaign')) {
+          var name = label(params.get('utm_campaign'), CAMPAIGNS);
+          if (!name) return null;
+          fields.campaign_name = name;
+        }
+        return fields;
+      } catch (_) {
+        return null;
+      }
+    }
     window.__gaLoad = function () {
       window['ga-disable-' + id] = false;
       if (window.__gaLoaded) return;
@@ -19,11 +74,14 @@
           canonical = null;
         }
       }
-      // Keep automatic page measurement clear of query, hash and referrer data.
-      window.gtag('config', id, {
+      // page_location stays path-only. page_referrer is always set, so gtag never falls back to the full document.referrer.
+      var config = {
         page_location: canonical || window.location.origin + window.location.pathname,
-        page_referrer: ''
-      });
+        page_referrer: safeReferrer(document.referrer, window.location.hostname)
+      };
+      var campaign = campaignFields(window.location.search);
+      if (campaign) for (var key in campaign) config[key] = campaign[key];
+      window.gtag('config', id, config);
       var script = document.createElement('script');
       script.async = true;
       script.src = 'https://www.googletagmanager.com/gtag/js?id=' + id;
