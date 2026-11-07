@@ -1,0 +1,52 @@
+// Preview and local development use the isolated database. Secrets are environment-specific.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "deadhangs-com",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-11-07",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "vars": {
+    "NODE_VERSION": "22",
+    "AUTH_BASE_URL": ""
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "deadhangs-accounts-preview",
+      "database_id": "a0c76057-9b90-4df8-8a89-b901d1b3ec00",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "env": {
+    "preview": {
+      "vars": {
+        "NODE_VERSION": "22",
+        "AUTH_BASE_URL": ""
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "deadhangs-accounts-preview",
+          "database_id": "a0c76057-9b90-4df8-8a89-b901d1b3ec00",
+          "migrations_dir": "migrations"
+        }
+      ]
+    },
+    "production": {
+      "vars": {
+        "NODE_VERSION": "22",
+        "AUTH_BASE_URL": "https://deadhangs.com"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "deadhangs-accounts",
+          "database_id": "59ad920f-3a42-4cb2-be65-2bfe64c25231",
+          "migrations_dir": "migrations"
+        }
+      ]
+    }
+  }
+}

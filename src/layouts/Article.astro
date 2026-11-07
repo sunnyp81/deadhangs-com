@@ -70,6 +70,7 @@ const normaliseSchema = (html?: string) => (html || '').replace(/(<script type="
 });
 const pageSchema = normaliseSchema(schema);
 const isNotFound = Astro.url.pathname.startsWith('/404');
+const isAccountPage = /^\/(account|pro)(\/|$)/.test(Astro.url.pathname);
 
 const globalSchema = {
   "@context": "https://schema.org",
@@ -122,7 +123,7 @@ const globalSchema = {
   {pageSchema && <Fragment set:html={pageSchema} />}
   <link rel="preload" href="/fonts/barlow-semi-condensed-700.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/ibm-plex-sans.woff2" as="font" type="font/woff2" crossorigin />
-  <Analytics />
+  {!isAccountPage && <Analytics />}
   <script>
     import { trackAffiliateClick } from '../scripts/affiliate-tracking.js';
     document.addEventListener('click', (event) => trackAffiliateClick(event));

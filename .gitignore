@@ -3,6 +3,9 @@
 .env.*
 .env.local
 .env.production
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 *.pem
 *.key
 credentials.json

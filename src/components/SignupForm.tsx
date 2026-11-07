@@ -15,8 +15,8 @@ export default function SignupForm({ dark = false }: { dark?: boolean }) {
     try {
       const response = await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email}), signal:controller.signal });
       const body = await response.json();
-      if (!response.ok || body.ok !== true) throw new Error('Not registered');
-      setExisting(body.existing === true);
+      if (!response.ok || !body || typeof body !== 'object' || !('ok' in body) || body.ok !== true) throw new Error('Not registered');
+      setExisting('existing' in body && body.existing === true);
       setStatus('ok');
     } catch { setStatus('error'); }
     finally { window.clearTimeout(timeout); }
