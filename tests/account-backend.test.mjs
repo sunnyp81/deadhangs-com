@@ -258,6 +258,8 @@ test('identity follows the Google subject when the Google email changes', async 
 });
 
 test('an interrupted first sign-in does not lock the email out', async () => {
+  const real = await db.prepare('SELECT "createdAt" FROM "user" WHERE "email" = ?').bind('alice@example.test').first('createdAt');
+  assert.match(real, /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/, 'repair relies on Better Auth writing ISO-8601 UTC createdAt');
   const old = new Date(Date.now() - 5 * 60_000).toISOString();
   const fresh = new Date().toISOString();
   const users = 'INSERT INTO "user" ("id","name","email","emailVerified","createdAt","updatedAt") VALUES (?,?,?,?,?,?)';

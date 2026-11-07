@@ -83,20 +83,16 @@ export const ORPHAN_MIN_AGE_MS = 60_000;
  * once they are old enough not to be an in-flight sign-up and still own no account, session or data.
  */
 export async function repairInterruptedSignups(db: D1Database, now = Date.now()): Promise<number> {
-  const { results } = await db.prepare('SELECT "id", "createdAt" FROM "user" u WHERE NOT EXISTS (SELECT 1 FROM "account" a WHERE a."userId" = u."id") LIMIT 25').all<{ id: string; createdAt: string | number }>();
-  let removed = 0;
-  for (const row of results ?? []) {
-    const created = new Date(typeof row.createdAt === 'string' && /^\d+$/.test(row.createdAt) ? Number(row.createdAt) : row.createdAt).getTime();
-    if (!Number.isFinite(created) || now - created < ORPHAN_MIN_AGE_MS) continue;
-    const out = await db.prepare(`DELETE FROM "user" WHERE "id" = ?1
-      AND NOT EXISTS (SELECT 1 FROM "account" WHERE "userId" = ?1)
-      AND NOT EXISTS (SELECT 1 FROM "session" WHERE "userId" = ?1)
-      AND NOT EXISTS (SELECT 1 FROM "training_log" WHERE "user_id" = ?1)
-      AND NOT EXISTS (SELECT 1 FROM "billing_accounts" WHERE "user_id" = ?1)
-      AND NOT EXISTS (SELECT 1 FROM "billing_subscriptions" WHERE "user_id" = ?1)`).bind(row.id).run();
-    removed += out.meta?.changes ?? 0;
-  }
-  return removed;
+  // Better Auth stores createdAt as an ISO-8601 UTC string, so string comparison orders by time.
+  const cutoff = new Date(now - ORPHAN_MIN_AGE_MS).toISOString();
+  const out = await db.prepare(`DELETE FROM "user" WHERE "id" IN (SELECT u."id" FROM "user" u WHERE u."createdAt" < ?1
+      AND NOT EXISTS (SELECT 1 FROM "account" WHERE "userId" = u."id")
+      AND NOT EXISTS (SELECT 1 FROM "session" WHERE "userId" = u."id")
+      AND NOT EXISTS (SELECT 1 FROM "training_log" WHERE "user_id" = u."id")
+      AND NOT EXISTS (SELECT 1 FROM "billing_accounts" WHERE "user_id" = u."id")
+      AND NOT EXISTS (SELECT 1 FROM "billing_subscriptions" WHERE "user_id" = u."id")
+      LIMIT 25)`).bind(cutoff).run();
+  return out.meta?.changes ?? 0;
 }
 
 type Auth = ReturnType<typeof betterAuth>;
