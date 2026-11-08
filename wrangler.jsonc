@@ -23,7 +23,7 @@
     "preview": {
       "vars": {
         "NODE_VERSION": "22",
-        "AUTH_BASE_URL": ""
+        "AUTH_BASE_URL": "https://codex-accounts-paid-20261107.deadhangs-com-bew.pages.dev"
       },
       "d1_databases": [
         {
