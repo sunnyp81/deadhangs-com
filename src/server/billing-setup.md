@@ -69,8 +69,11 @@ production even if a database is copied accidentally. Use a separate preview D1.
 
 ## Merchant setup draft (operator action, not executed)
 
-Use the separately verified owner merchant account; do not change account-wide
-OwnedWork settings. Create the dedicated product named DeadHangs Pro with
+DeadHangs is operated by ND Media Ltd and is not part of OwnedWork. Use a merchant
+account verified as owned by ND Media Ltd, with DeadHangs-specific business name,
+support details, receipts and statement descriptor. Do not present OwnedWork as the
+seller or provider, reuse OwnedWork customers, products or credentials, or change
+another application's account-wide defaults. Create the dedicated product named DeadHangs Pro with
 `metadata.app=deadhangs`; create the two recurring GBP prices above with no trial,
 coupon or other currency. Confirm tax treatment and exact customer-facing totals
 against the published prices before opening sales. Do not use a client account.
@@ -92,7 +95,8 @@ refund/cancellation terms and tax display are accurate for this merchant.
 
 All customer, Checkout and subscription metadata uses `app=deadhangs` and
 `deadhangs_user_ref=<random app reference>`. Never add `metadata.userId`:
-the shared account's existing OwnedWork webhook consumes that key.
+if the merchant account also serves another application, that application's
+webhook may consume that key (OwnedWork's does).
 
 Create a dedicated snapshot webhook pointing to `/api/billing/webhook`, using
 Stripe API version **2026-10-28.endive**, subscribed to:

@@ -23,7 +23,7 @@ Identity is bound to the Google subject; email linking is disabled. The stored n
 
 Required secrets: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`. Required configuration: `STRIPE_ACCOUNT_ID`, `STRIPE_PRODUCT_ID`, `STRIPE_MONTHLY_PRICE_ID`, `STRIPE_YEARLY_PRICE_ID`, `STRIPE_PORTAL_CONFIGURATION_ID`, `BILLING_ENABLED=true`, `BILLING_MODE=live`.
 
-Create a dedicated DeadHangs product and prices in the selected merchant account. Use `metadata.app=deadhangs`. Never add `metadata.userId`: another application on the proposed shared account consumes that field. The application creates its own opaque `deadhangs_user_ref` and separate customers. Do not change shared merchant branding or portal defaults to configure DeadHangs.
+DeadHangs is operated by ND Media Ltd and is not part of OwnedWork. Use a merchant account verified as owned by ND Media Ltd, with DeadHangs-specific branding, support details, receipts and statement descriptor; OwnedWork must not appear as the seller or provider. Create a dedicated DeadHangs product and prices in that account. Use `metadata.app=deadhangs`. Never add `metadata.userId`: if the account also serves another application, that application may consume that field. The application creates its own opaque `deadhangs_user_ref` and separate customers. Do not change shared merchant branding or portal defaults to configure DeadHangs.
 
 Configure a dedicated portal with cancellation at period end and subscription plan changes disabled. Register the signed webhook at `/api/billing/webhook`; its accepted event list is in `src/server/billing.mjs`. Events trigger retrieval of current Stripe state, rather than trusting an old event snapshot. A checkout success URL never grants Pro.
 
