@@ -30,7 +30,7 @@ export function authOptions(env: ConfiguredEnv): BetterAuthOptions {
         // Runs only after Better Auth has checked state and exchanged the code with Google, so the
         // interrupted-signup repair is limited to the verified email of this sign-in. The picture is never stored.
         mapProfileToUser: async (profile) => {
-          if (profile.email_verified === true && typeof profile.email === 'string' && profile.email) {
+          if (profile.email_verified === true && typeof profile.sub === 'string' && profile.sub && typeof profile.email === 'string' && profile.email) {
             try { await repairInterruptedSignup(env.DB, profile.email); } catch (error) { console.error('signup repair failed', error instanceof Error ? error.name : 'unknown'); }
           }
           return { image: undefined };

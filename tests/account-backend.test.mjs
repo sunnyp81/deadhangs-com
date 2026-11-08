@@ -306,11 +306,17 @@ test('an interrupted first sign-in is repaired only by a validated Google sign-i
   for (const id of ['orphan-other', 'orphan-new', 'orphan-data']) assert.ok(await exists(id), `${id} untouched by another email's sign-in`);
   assert.equal(await db.prepare('SELECT count(*) AS n FROM "account" WHERE "accountId" = ?').bind(people.dana.sub).first('n'), 1);
   assert.ok(await db.prepare('SELECT 1 FROM "user" WHERE "email" = ?').bind('alice@example.test').first(), 'linked users untouched');
+  // Fresh-row protection is temporary: once the row is past the in-flight window the next sign-in repairs it.
+  await db.prepare('UPDATE "user" SET "createdAt" = ? WHERE "id" = ?').bind(old, 'orphan-new').run();
+  const eve = await signIn('eve');
+  assert.equal(eve.done.headers.get('location'), '/training-log/');
+  assert.equal(await exists('orphan-new'), false);
+  assert.ok(await exists('orphan-other') && await exists('orphan-data'));
   const again = await signIn('alice');
   assert.equal(again.done.headers.get('location'), '/training-log/', 'normal returning sign-in still works');
 
   await db.prepare('DELETE FROM billing_accounts WHERE user_id = ?').bind('orphan-data').run();
-  await db.prepare('DELETE FROM "user" WHERE "id" IN (?, ?, ?) OR "email" = ?').bind('orphan-new', 'orphan-data', 'orphan-other', 'dana@example.test').run();
+  await db.prepare('DELETE FROM "user" WHERE "id" IN (?, ?) OR "email" IN (?, ?)').bind('orphan-data', 'orphan-other', 'dana@example.test', 'eve@example.test').run();
 });
 
 // Seed a verified billing cache only inside the isolated D1 fixture. Stripe verification
