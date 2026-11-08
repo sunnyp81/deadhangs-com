@@ -23,7 +23,15 @@
     "preview": {
       "vars": {
         "NODE_VERSION": "22",
-        "AUTH_BASE_URL": "https://codex-accounts-paid-20261107.deadhangs-com-bew.pages.dev"
+        "AUTH_BASE_URL": "https://codex-accounts-paid-20261107.deadhangs-com-bew.pages.dev",
+        "BILLING_ENABLED": "true",
+        "BILLING_MODE": "test",
+        "BILLING_LAUNCH_ENABLED": "true",
+        "STRIPE_ACCOUNT_ID": "acct_1UZYZeEiamtoGTBs",
+        "STRIPE_PRODUCT_ID": "prod_VakEnBwJGAzVa2",
+        "STRIPE_MONTHLY_PRICE_ID": "price_1UZYkKEiamtoGTBsNK8N4lTG",
+        "STRIPE_YEARLY_PRICE_ID": "price_1UZYkKEiamtoGTBsMwIJt4OG",
+        "STRIPE_PORTAL_CONFIGURATION_ID": "bpc_1UZYmoEiamtoGTBsUbk2l2oF"
       },
       "d1_databases": [
         {

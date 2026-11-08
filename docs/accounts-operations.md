@@ -29,7 +29,7 @@ Configure a dedicated portal with cancellation at period end and subscription pl
 
 Use `BILLING_MODE=test` only on a separate preview origin and database, with test credentials and test objects. Test mode is rejected on the production origin; cached test entitlements cannot unlock production.
 
-Keep `BILLING_LAUNCH_ENABLED` unset until all of these have evidence:
+Keep production `BILLING_LAUNCH_ENABLED` unset until all of these have evidence:
 
 - Real Google login, logout, account isolation and explicit sync on the deployed preview.
 - Stripe sandbox checkout, signed webhook, renewal, cancellation, refund, expired session and duplicate-checkout handling.
@@ -37,7 +37,9 @@ Keep `BILLING_LAUNCH_ENABLED` unset until all of these have evidence:
 - Final subscription terms, applicable cancellation rights, confirmation and renewal notices. The current terms are an implementation draft; the merchant information is not yet verified.
 - Production build, tests, rendered desktop/mobile review, dependency and secret scans, and exact deployed commit readback.
 
-Then set `BILLING_LAUNCH_ENABLED=true`. Turning new checkout off must not prevent an existing customer from using the billing portal, cancelling, exporting or deleting their data. Do not make a real charge merely to test the integration.
+After the dedicated sandbox account, test key and billing resources are verified, real sandbox Checkout requires `BILLING_ENABLED=true`, `BILLING_MODE=test` and `BILLING_LAUNCH_ENABLED=true` on the isolated preview only. The checkout handler checks the launch flag in both modes. Use the separate preview D1 and exact preview auth origin; never enable test billing on production. Pages preview bindings apply to every preview deployment, so review other preview branches before opening this controlled test window. Turn preview `BILLING_LAUNCH_ENABLED` off again when the test window ends while production readiness is pending.
+
+After all launch evidence passes, set production `BILLING_LAUNCH_ENABLED=true`. Turning new checkout off must not prevent an existing customer from using the billing portal, cancelling, exporting or deleting their data. Do not make a real charge merely to test the integration.
 
 ## Data and recovery
 
