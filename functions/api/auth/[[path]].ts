@@ -1,5 +1,5 @@
 import { configuredEnv, type AccountEnv, type PagesContext } from '../../../src/server/env';
-import { ALLOWED_CALLBACK_PATHS, AUTH_BASE_PATH, DEFAULT_CALLBACK_PATH, getAuth, repairInterruptedSignups } from '../../../src/server/auth';
+import { ALLOWED_CALLBACK_PATHS, AUTH_BASE_PATH, DEFAULT_CALLBACK_PATH, getAuth } from '../../../src/server/auth';
 import { checkWriteRequest, isPlainObject, json, readJson, serverError, unavailable } from '../../../src/server/http';
 
 const SIGN_IN_KEYS = new Set(['provider', 'callbackURL', 'errorCallbackURL', 'newUserCallbackURL']);
@@ -52,9 +52,6 @@ export const onRequest = async ({ request, env: rawEnv }: PagesContext<AccountEn
     const rebuilt = await signInRequest(request, env.AUTH_BASE_URL);
     if (rebuilt instanceof Response) return rebuilt;
     forwarded = rebuilt;
-  }
-  if (route === 'pass') {
-    try { await repairInterruptedSignups(env.DB); } catch (error) { console.error('signup repair failed', error instanceof Error ? error.name : 'unknown'); }
   }
   try {
     const response = await getAuth(env, rawEnv as object).handler(forwarded);

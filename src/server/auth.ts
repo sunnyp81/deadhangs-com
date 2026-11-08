@@ -27,8 +27,14 @@ export function authOptions(env: ConfiguredEnv): BetterAuthOptions {
         prompt: 'select_account',
         // Keep the stored email and name current with Google; identity stays bound to the Google subject.
         overrideUserInfoOnSignIn: true,
-        // Minimal profile: the Google picture URL is never stored.
-        mapProfileToUser: () => ({ image: undefined }),
+        // Runs only after Better Auth has checked state and exchanged the code with Google, so the
+        // interrupted-signup repair is limited to the verified email of this sign-in. The picture is never stored.
+        mapProfileToUser: async (profile) => {
+          if (profile.email_verified === true && typeof profile.email === 'string' && profile.email) {
+            try { await repairInterruptedSignup(env.DB, profile.email); } catch (error) { console.error('signup repair failed', error instanceof Error ? error.name : 'unknown'); }
+          }
+          return { image: undefined };
+        },
       },
     },
     account: {
@@ -79,19 +85,18 @@ export const ORPHAN_MIN_AGE_MS = 60_000;
 
 /**
  * D1 has no multi-statement transaction for Better Auth sign-up, so an interrupted first sign-in can leave a
- * user row with no Google account. With linking disabled that email would be locked out, so remove such rows
- * once they are old enough not to be an in-flight sign-up and still own no account, session or data.
+ * user row with no Google account. With linking disabled that email would be locked out, so a verified Google
+ * sign-in for that email removes the row if it is old enough not to be in flight and owns no account, session or data.
  */
-export async function repairInterruptedSignups(db: D1Database, now = Date.now()): Promise<number> {
-  // Better Auth stores createdAt as an ISO-8601 UTC string, so string comparison orders by time.
+export async function repairInterruptedSignup(db: D1Database, email: string, now = Date.now()): Promise<number> {
+  // Better Auth stores lower-cased emails and ISO-8601 UTC createdAt strings, so string comparison orders by time.
   const cutoff = new Date(now - ORPHAN_MIN_AGE_MS).toISOString();
-  const out = await db.prepare(`DELETE FROM "user" WHERE "id" IN (SELECT u."id" FROM "user" u WHERE u."createdAt" < ?1
-      AND NOT EXISTS (SELECT 1 FROM "account" WHERE "userId" = u."id")
-      AND NOT EXISTS (SELECT 1 FROM "session" WHERE "userId" = u."id")
-      AND NOT EXISTS (SELECT 1 FROM "training_log" WHERE "user_id" = u."id")
-      AND NOT EXISTS (SELECT 1 FROM "billing_accounts" WHERE "user_id" = u."id")
-      AND NOT EXISTS (SELECT 1 FROM "billing_subscriptions" WHERE "user_id" = u."id")
-      LIMIT 25)`).bind(cutoff).run();
+  const out = await db.prepare(`DELETE FROM "user" WHERE "email" = ?1 AND "createdAt" < ?2
+      AND NOT EXISTS (SELECT 1 FROM "account" WHERE "userId" = "user"."id")
+      AND NOT EXISTS (SELECT 1 FROM "session" WHERE "userId" = "user"."id")
+      AND NOT EXISTS (SELECT 1 FROM "training_log" WHERE "user_id" = "user"."id")
+      AND NOT EXISTS (SELECT 1 FROM "billing_accounts" WHERE "user_id" = "user"."id")
+      AND NOT EXISTS (SELECT 1 FROM "billing_subscriptions" WHERE "user_id" = "user"."id")`).bind(email.toLowerCase(), cutoff).run();
   return out.meta?.changes ?? 0;
 }
 

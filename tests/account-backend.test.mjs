@@ -34,6 +34,9 @@ const people = {
   imposter: { sub: '100000000000000000003', email: 'alice@example.test', name: 'Other Person' },
   bobAsAliceNew: { sub: '100000000000000000002', email: 'alice.new@example.test', name: 'Test Bob' },
   dana: { sub: '100000000000000000004', email: 'dana@example.test', name: 'Dana' },
+  eve: { sub: '100000000000000000005', email: 'eve@example.test', name: 'Eve' },
+  fay: { sub: '100000000000000000006', email: 'fay@example.test', name: 'Fay' },
+  gusUnverified: { sub: '100000000000000000007', email: 'gus@example.test', name: 'Gus', email_verified: false },
 };
 const outbound = [];
 async function googleStub(request) {
@@ -257,25 +260,57 @@ test('identity follows the Google subject when the Google email changes', async 
   assert.equal((await call(null, '/api/account', { jar: back.jar })).data.user.email, 'alice@example.test');
 });
 
-test('an interrupted first sign-in does not lock the email out', async () => {
+test('an interrupted first sign-in is repaired only by a validated Google sign-in for that email', async () => {
   const real = await db.prepare('SELECT "createdAt" FROM "user" WHERE "email" = ?').bind('alice@example.test').first('createdAt');
   assert.match(real, /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/, 'repair relies on Better Auth writing ISO-8601 UTC createdAt');
   const old = new Date(Date.now() - 5 * 60_000).toISOString();
   const fresh = new Date().toISOString();
   const users = 'INSERT INTO "user" ("id","name","email","emailVerified","createdAt","updatedAt") VALUES (?,?,?,?,?,?)';
   await db.prepare(users).bind('orphan-old', 'Dana', 'dana@example.test', 1, old, old).run();
+  await db.prepare(users).bind('orphan-other', 'Gus', 'gus@example.test', 1, old, old).run();
   await db.prepare(users).bind('orphan-new', 'Eve', 'eve@example.test', 1, fresh, fresh).run();
   await db.prepare(users).bind('orphan-data', 'Fay', 'fay@example.test', 1, old, old).run();
   await db.prepare('INSERT INTO billing_accounts (user_id,app_user_ref,created_at) VALUES (?,?,?)').bind('orphan-data', 'ref-orphan-data', 1).run();
+  const exists = async (id) => (await db.prepare('SELECT count(*) AS n FROM "user" WHERE "id" = ?').bind(id).first('n')) === 1;
+  const allSeeded = async (msg) => { for (const id of ['orphan-old', 'orphan-other', 'orphan-new', 'orphan-data']) assert.ok(await exists(id), `${id} kept after ${msg}`); };
+
+  // Invalid callbacks never reach the repair.
+  const missing = await call(null, '/api/auth/callback/google?code=dana', { jar: new Jar() });
+  assert.equal(missing.status, 302); assert.match(missing.headers.get('location'), /\/account\/\?error=/);
+  await allSeeded('missing state');
+  const jar = new Jar();
+  const start = await call(null, '/api/auth/sign-in/social', { method: 'POST', jar, body: { provider: 'google' } });
+  const state = new URL(start.data.url).searchParams.get('state');
+  const forged = await call(null, `/api/auth/callback/google?code=dana&state=forged-${state}`, { jar: jar.clone() });
+  assert.match(forged.headers.get('location'), /\/account\/\?error=/);
+  await allSeeded('forged state');
+  const failed = await signIn('no-such-google-code');
+  assert.match(failed.done.headers.get('location'), /\/account\/\?error=/, 'provider exchange failure');
+  await allSeeded('failed provider exchange');
+  const unverified = await signIn('gusUnverified');
+  assert.match(unverified.done.headers.get('location'), /\/account\/\?error=account_not_linked/);
+  await allSeeded('unverified Google email');
+
+  // Fresh (possibly in-flight) and data-owning rows block their own email rather than being removed.
+  for (const who of ['eve', 'fay']) {
+    const r = await signIn(who);
+    assert.equal(r.done.headers.get('location'), `${ORIGIN}/account/?error=account_not_linked`, who);
+  }
+  await allSeeded('fresh and data-owning sign-ins');
+
+  // A valid sign-in repairs only its own stale orphan.
   const dana = await signIn('dana');
   assert.equal(dana.done.headers.get('location'), '/training-log/', 'stale orphan removed so sign-up completes');
   assert.equal((await call(null, '/api/account', { jar: dana.jar })).data.user.email, 'dana@example.test');
-  assert.equal(await db.prepare('SELECT count(*) AS n FROM "user" WHERE "id" = ?').bind('orphan-old').first('n'), 0);
-  assert.equal(await db.prepare('SELECT count(*) AS n FROM "user" WHERE "id" = ?').bind('orphan-new').first('n'), 1, 'in-flight sign-up rows are left alone');
-  assert.equal(await db.prepare('SELECT count(*) AS n FROM "user" WHERE "id" = ?').bind('orphan-data').first('n'), 1, 'rows owning data are never removed');
+  assert.equal(await exists('orphan-old'), false);
+  for (const id of ['orphan-other', 'orphan-new', 'orphan-data']) assert.ok(await exists(id), `${id} untouched by another email's sign-in`);
+  assert.equal(await db.prepare('SELECT count(*) AS n FROM "account" WHERE "accountId" = ?').bind(people.dana.sub).first('n'), 1);
   assert.ok(await db.prepare('SELECT 1 FROM "user" WHERE "email" = ?').bind('alice@example.test').first(), 'linked users untouched');
+  const again = await signIn('alice');
+  assert.equal(again.done.headers.get('location'), '/training-log/', 'normal returning sign-in still works');
+
   await db.prepare('DELETE FROM billing_accounts WHERE user_id = ?').bind('orphan-data').run();
-  await db.prepare('DELETE FROM "user" WHERE "id" IN (?, ?) OR "email" = ?').bind('orphan-new', 'orphan-data', 'dana@example.test').run();
+  await db.prepare('DELETE FROM "user" WHERE "id" IN (?, ?, ?) OR "email" = ?').bind('orphan-new', 'orphan-data', 'orphan-other', 'dana@example.test').run();
 });
 
 // Seed a verified billing cache only inside the isolated D1 fixture. Stripe verification
