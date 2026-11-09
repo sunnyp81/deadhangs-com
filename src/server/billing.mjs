@@ -305,7 +305,7 @@ export function createBillingService(env, options = {}) {
       const session = await stripe('/v1/checkout/sessions', 'POST', {
         mode: 'subscription', customer: fresh.stripe_customer_id,
         'line_items[0][price]': priceId, 'line_items[0][quantity]': '1',
-        'payment_method_types[0]': 'card', allow_promotion_codes: 'false',
+        allow_promotion_codes: 'false',
         'adaptive_pricing[enabled]': 'false',
         success_url: `${env.AUTH_BASE_URL}/account/?billing=success`, cancel_url: `${env.AUTH_BASE_URL}/account/?billing=cancelled`,
         expires_at: String(expires),

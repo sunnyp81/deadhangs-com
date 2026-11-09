@@ -68,6 +68,7 @@ export const accountErrorMessage = (error) => ({
   billing_provider_unavailable: 'The payment provider could not be reached. Refresh your account before trying again; do not make another payment to resolve this message.',
   billing_not_launched: 'Checkout is not available yet. Your free tools remain available.',
   subscription_exists: 'This account already has a subscription. Use Manage billing to view it.',
+  account_deleting: 'This account has a deletion in progress, so checkout is blocked. Contact support to finish or undo the deletion.',
   billing_busy: 'Your billing details are being updated. Wait a moment, then refresh your account.',
   billing_recovery_required: 'A previous billing request needs checking. Contact support before trying to pay or delete the account again.',
   billing_cancellation_unconfirmed: 'Cancellation could not be confirmed, so the account was kept. Use Manage billing or contact support before retrying deletion.',
