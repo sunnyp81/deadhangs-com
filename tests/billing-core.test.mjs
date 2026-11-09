@@ -58,6 +58,8 @@ function fixture(overrides = {}) {
     } else if (path === '/v1/checkout/sessions' && method === 'POST') {
       value = { id: `cs_${live ? 'live' : 'test'}_${state.sessions.size + 1}`, livemode: live, mode: form.mode, customer: form.customer, status: 'open', url: 'https://checkout.stripe.com/c/pay/fixture', metadata: { app: form['metadata[app]'], deadhangs_user_ref: form['metadata[deadhangs_user_ref]'] } };
       state.sessions.set(value.id, value);
+    } else if (path === '/v1/checkout/sessions') {
+      value = { data: [...state.sessions.values()].filter((s) => s.customer === url.searchParams.get('customer') && (!url.searchParams.get('status') || s.status === url.searchParams.get('status'))), has_more: false };
     } else if (path.startsWith('/v1/checkout/sessions/')) {
       const id = path.split('/')[4];
       value = state.sessions.get(id);
@@ -191,6 +193,15 @@ test('only verified paid active subscriptions grant Pro, cached term expires loc
   assert.equal((await f.service().getEntitlement('alice', { refresh: true })).active, false);
 });
 
+test('scheduled cancel_at (portal cancel on newer API versions) reports cancelAtPeriodEnd and keeps the paid term', async () => {
+  const { sub } = await f.paid();
+  const end = sub.items.data[0].current_period_end;
+  sub.cancel_at_period_end = false; sub.cancel_at = end;
+  const ent = await f.service().getEntitlement('alice', { refresh: true });
+  assert.equal(ent.active, true); assert.equal(ent.cancelAtPeriodEnd, true);
+  assert.equal(new Date(ent.paidThrough).getTime(), end * 1000);
+});
+
 test('trial, unpaid, failed renewal, pause and refund do not grant paid rights; partial goodwill refund retains term', async () => {
   const p = await f.paid();
   for (const status of ['trialing', 'incomplete', 'past_due', 'unpaid', 'canceled']) {
@@ -275,6 +286,30 @@ test('deletion cancels subscriptions immediately, expires open checkout, and tom
   assert.equal((await f.service().getEntitlement('alice')).active, false);
   f.env.BILLING_LAUNCH_ENABLED = 'true';
   await rejectsCode(f.service().checkout({ id: 'alice' }, 'monthly'), 'account_deleting');
+});
+
+test('deletion after a checkout whose session id was never stored expires the open session instead of blocking', async () => {
+  let once = true;
+  f.state.after = (call) => { if (call.path === '/v1/checkout/sessions' && call.method === 'POST' && once) { once = false; throw new Error('response lost after creation'); } };
+  await rejectsCode(f.service().checkout({ id: 'alice' }, 'monthly'), 'billing_provider_unavailable');
+  f.state.after = null;
+  const [session] = f.state.sessions.values();
+  assert.equal(session.status, 'open');
+  await f.service().prepareDeletion('alice');
+  assert.equal(session.status, 'expired');
+  await rejectsCode(f.service().checkout({ id: 'alice' }, 'monthly'), 'account_deleting');
+});
+
+test('a failed deletion lifts the tombstone so the kept account is not blocked', async () => {
+  const p = await f.paid();
+  f.state.fail = (call) => call.method === 'DELETE';
+  await rejectsCode(f.service().prepareDeletion('alice'), 'billing_provider_unavailable');
+  f.state.fail = null;
+  const row = await db.prepare('SELECT deleting FROM billing_accounts WHERE user_id=?').bind('alice').first();
+  assert.equal(row.deleting, 0);
+  await rejectsCode(f.service().checkout({ id: 'alice' }, 'monthly'), 'subscription_exists');
+  await f.service().prepareDeletion('alice');
+  assert.equal(p.sub.status, 'canceled');
 });
 
 test('deletion refuses unavailable cancellation and never cancels a foreign product/account', async () => {

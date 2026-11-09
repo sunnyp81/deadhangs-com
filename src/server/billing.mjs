@@ -212,7 +212,7 @@ export function createBillingService(env, options = {}) {
 
   async function subscriptionState(sub, row) {
     const items = sub.items?.data;
-    const base = { id: sub.id, price: '', status: sub.status, paidThrough: 0, cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end), eligible: false };
+    const base = { id: sub.id, price: '', status: sub.status, paidThrough: 0, cancelAtPeriodEnd: Boolean(sub.cancel_at_period_end || (Number.isSafeInteger(sub.cancel_at) && sub.cancel_at > 0)), eligible: false };
     if (!Array.isArray(items) || items.length !== 1 || sub.items.has_more || !validPrice(items[0].price) || items[0].quantity !== 1) return base;
     base.price = items[0].price.id;
     if (sub.status !== 'active' || sub.pause_collection || sub.trial_end || !cleanId(idOf(sub.latest_invoice), 'in')) return base;
@@ -388,30 +388,47 @@ export function createBillingService(env, options = {}) {
     const row = await account(userId, true);
     return locked(row, async (fresh, token) => {
       await q('UPDATE billing_accounts SET deleting=1 WHERE user_id=? AND lock_token=?', userId, token).run();
-      if (!fresh.stripe_customer_id && !fresh.customer_started_at) return;
-      ready();
-      if (!fresh.stripe_customer_id) throw new BillingError('billing_recovery_required');
-      await verifyAccount();
-      await customer(fresh, token);
-      if (fresh.checkout_started_at && !fresh.checkout_session_id) throw new BillingError('billing_recovery_required');
-      if (fresh.checkout_session_id) {
-        const session = await stripe(`/v1/checkout/sessions/${fresh.checkout_session_id}`);
-        if (!owned(session, fresh) || session.livemode !== live || idOf(session.customer) !== fresh.stripe_customer_id) throw new BillingError('billing_ownership_mismatch');
-        if (session.status === 'open') {
-          await guardLock(fresh, token);
-          const expired = await stripe(`/v1/checkout/sessions/${session.id}/expire`, 'POST', {}, `deadhangs:expire:${session.id}`);
-          if (expired.id !== session.id || expired.status !== 'expired' || expired.livemode !== live || !owned(expired, fresh)) throw new BillingError('billing_cancellation_unconfirmed');
-        }
-      }
-      const subscriptions = await listSubscriptions(fresh, true);
-      for (const sub of subscriptions) if (!TERMINAL.has(sub.status)) {
-        await guardLock(fresh, token);
-        await stripe(`/v1/subscriptions/${sub.id}`, 'DELETE', { invoice_now: 'false', prorate: 'false' });
-      }
-      if ((await listSubscriptions(fresh, true)).some((sub) => !TERMINAL.has(sub.status))) throw new BillingError('billing_cancellation_unconfirmed');
-      await guardLock(fresh, token);
-      await q('UPDATE billing_subscriptions SET eligible=0,paid_through=0,status=? WHERE user_id=? AND EXISTS (SELECT 1 FROM billing_accounts WHERE user_id=? AND lock_token=? AND lock_until>?)', 'canceled', userId, userId, token, now()).run();
+      // A failed preparation keeps the account, so lift the tombstone; otherwise checkout and retries stay blocked.
+      try { await cancelForDeletion(fresh, token); }
+      catch (error) { await q('UPDATE billing_accounts SET deleting=0 WHERE user_id=? AND lock_token=?', userId, token).run(); throw error; }
     });
+  }
+
+  async function cancelForDeletion(fresh, token) {
+    const userId = fresh.user_id;
+    if (!fresh.stripe_customer_id && !fresh.customer_started_at) return;
+    ready();
+    if (!fresh.stripe_customer_id) throw new BillingError('billing_recovery_required');
+    await verifyAccount();
+    await customer(fresh, token);
+    if (fresh.checkout_started_at && !fresh.checkout_session_id) {
+      // The session id was never stored (creation failed or its response was lost): expire any owned open session.
+      const list = await stripe(`/v1/checkout/sessions?customer=${encodeURIComponent(fresh.stripe_customer_id)}&status=open&limit=100`);
+      if (!Array.isArray(list.data) || list.has_more) throw new BillingError('billing_recovery_required');
+      for (const open of list.data) {
+        if (!owned(open, fresh) || open.livemode !== live || open.status !== 'open') continue;
+        await guardLock(fresh, token);
+        const expired = await stripe(`/v1/checkout/sessions/${open.id}/expire`, 'POST', {}, `deadhangs:expire:${open.id}`);
+        if (expired.id !== open.id || expired.status !== 'expired') throw new BillingError('billing_cancellation_unconfirmed');
+      }
+    }
+    if (fresh.checkout_session_id) {
+      const session = await stripe(`/v1/checkout/sessions/${fresh.checkout_session_id}`);
+      if (!owned(session, fresh) || session.livemode !== live || idOf(session.customer) !== fresh.stripe_customer_id) throw new BillingError('billing_ownership_mismatch');
+      if (session.status === 'open') {
+        await guardLock(fresh, token);
+        const expired = await stripe(`/v1/checkout/sessions/${session.id}/expire`, 'POST', {}, `deadhangs:expire:${session.id}`);
+        if (expired.id !== session.id || expired.status !== 'expired' || expired.livemode !== live || !owned(expired, fresh)) throw new BillingError('billing_cancellation_unconfirmed');
+      }
+    }
+    const subscriptions = await listSubscriptions(fresh, true);
+    for (const sub of subscriptions) if (!TERMINAL.has(sub.status)) {
+      await guardLock(fresh, token);
+      await stripe(`/v1/subscriptions/${sub.id}`, 'DELETE', { invoice_now: 'false', prorate: 'false' });
+    }
+    if ((await listSubscriptions(fresh, true)).some((sub) => !TERMINAL.has(sub.status))) throw new BillingError('billing_cancellation_unconfirmed');
+    await guardLock(fresh, token);
+    await q('UPDATE billing_subscriptions SET eligible=0,paid_through=0,status=? WHERE user_id=? AND EXISTS (SELECT 1 FROM billing_accounts WHERE user_id=? AND lock_token=? AND lock_until>?)', 'canceled', userId, userId, token, now()).run();
   }
 
   return { getEntitlement, checkout, portal, status, webhook, prepareDeletion };
