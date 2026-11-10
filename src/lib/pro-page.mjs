@@ -8,19 +8,19 @@ export const PRO_FAQ = [
   },
   {
     q: 'What happens when I cancel?',
-    html: 'Cancel renewal in Manage billing on your account page, or email the address on the <a href="/terms/">terms page</a>. Pro normally continues until the end of the period you have paid for. After Pro ends, your cloud log stays in your account and you can export or delete it, but merging new holds needs Pro again. Your device log is not touched. Cancelling renewal does not itself request a refund; your rights to cancel during any applicable cooling-off period and to a refund required by law are unaffected. Deleting your account ends a subscription and paid access straight away.',
+    html: 'Cancel renewal in Manage billing on your account page or email the address on the <a href="/terms/">terms page</a>. Pro normally continues until the end of the period you have paid for. After Pro ends your cloud log stays in your account. You can still export or delete it. Merging new holds needs Pro again. Your device log is not touched. Cancelling renewal does not itself request a refund; your rights to cancel during any applicable cooling-off period and to a refund required by law are unaffected. Deleting your account ends a subscription and paid access straight away.',
   },
   {
     q: 'What is the 200-entry limit?',
-    html: 'Your cloud log holds up to 200 entries, the same as the free log in your browser. A merge that would go over the limit is refused rather than cut short, so nothing is silently dropped. Your account page shows how many entries are stored.',
+    html: 'Your cloud log holds up to 200 entries. That matches the free log in your browser. A merge that would go over the limit is refused rather than cut short. Nothing is silently dropped. Your account page shows how many entries are stored.',
   },
   {
     q: 'Why is sign-in Google only?',
-    html: 'Google is the only sign-in option today, so DeadHangs never stores a password. It receives your name, email address and a Google account identifier, as the <a href="/privacy/">privacy policy</a> explains.',
+    html: 'Google is the only sign-in option today. DeadHangs never stores a password. It receives your name, email address and a Google account identifier as the <a href="/privacy/">privacy policy</a> explains.',
   },
   {
     q: 'How do I pay?',
-    html: 'Payment runs through Stripe’s checkout: card, plus any other methods Stripe shows at checkout. Prices are in GBP. Check the final total, billing interval and seller details in checkout before you pay. There is no free trial; the timer and device log are free to use first.',
+    html: 'Payment runs through Stripe checkout with card and any other methods Stripe shows there. Prices are in GBP. Check the final total, billing interval and seller details in checkout before you pay. There is no free trial; the timer and device log are free to use first.',
   },
   {
     q: 'Does Pro include coaching?',
@@ -28,7 +28,7 @@ export const PRO_FAQ = [
   },
   {
     q: 'I only train on one device. Is Pro still useful?',
-    html: 'Progress history from your cloud entries still works, and your account keeps a copy if this browser’s storage is cleared. If you never change device and export your log regularly, the free log may be all you need.',
+    html: 'Progress history from your cloud entries still works. Your account also keeps a copy if this browser’s storage is cleared. The free log may be all you need if you never change device and export your log regularly.',
   },
   {
     q: 'Who runs DeadHangs Pro?',
