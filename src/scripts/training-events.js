@@ -35,8 +35,15 @@ export const FEATURES = new Set([
   "header_timer_started",
   "demo_loop_played",
   "video_played",
+  "pro_link_click",
+  "account_link_click",
+  "pro_signin_click",
+  "pro_plan_monthly_click",
+  "pro_plan_yearly_click",
+  "pro_nudge_dismissed",
+  "email_signup_success",
 ]);
-const SOURCES = new Set([
+export const SOURCES = new Set([
   "calculator",
   "plans",
   "workspace",
@@ -46,6 +53,15 @@ const SOURCES = new Set([
   "article_header",
   "age_card",
   "chosen_session",
+  "nav",
+  "footer",
+  "log_header",
+  "post_save",
+  "progress",
+  "your_number",
+  "calculator_result",
+  "pro_page",
+  "article",
 ]);
 /** Fixed starter-session labels for next_session_chosen. Never a hold time or level score. */
 export const SESSION_CHOICES = new Set(["level_1", "level_2", "level_3"]);

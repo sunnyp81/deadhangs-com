@@ -43,3 +43,13 @@ test("embed page is noindex, has no analytics, consent banner, nav or service wo
   assert.match(html, /<meta name="robots" content="noindex, nofollow">/);
   for (const bad of ["googletagmanager", "G-YBPRQVR2Y3", "cookie-banner", "serviceWorker", "<nav", "<footer", "application/ld+json"]) assert.ok(!html.includes(bad), bad);
 });
+
+test("built /account/ has no analytics; built /pro/ carries the consent-gated tag", { skip: !existsSync(new URL("../dist/pro/index.html", import.meta.url)) }, () => {
+  const account = readFileSync(new URL("../dist/account/index.html", import.meta.url), "utf8");
+  for (const bad of ["googletagmanager", "G-YBPRQVR2Y3", "__gaLoad"]) assert.ok(!account.includes(bad), `account: ${bad}`);
+  const pro = readFileSync(new URL("../dist/pro/index.html", import.meta.url), "utf8");
+  assert.ok(pro.includes("G-YBPRQVR2Y3"), "pro: measurement id");
+  assert.ok(pro.includes("googletagmanager.com/gtag/js"), "pro: loader");
+  assert.match(pro, /localStorage\.getItem\('cookieConsent'\) === 'accepted'\) window\.__gaLoad\(\)/, "pro: consent gate");
+  assert.ok(!/<script[^>]+src="https:\/\/www\.googletagmanager/.test(pro), "pro: no eager gtag script tag");
+});

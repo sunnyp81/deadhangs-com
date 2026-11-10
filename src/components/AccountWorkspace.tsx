@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { accountRequest, AccountError, accountErrorMessage, mergeAccountEntries, cloudProgress, trustedRedirect } from '../lib/account-client.mjs';
 import { STORAGE_KEY, MAX_ENTRIES, parseStoredLog, serializeLog, formatLocalDate, setupSummary } from '../lib/training-log.mjs';
+import { trackFeature } from '../scripts/training-events.js';
 
 const OWNER_KEY = 'dh.cloud-log-owner.v1';
 const json = (method: string, body: unknown = {}) => ({ method, body: JSON.stringify(body) });
@@ -9,6 +10,8 @@ export default function AccountWorkspace({ pricing = false }: { pricing?: boolea
   const [state, setState] = useState('loading'), [busy, setBusy] = useState(false), [message, setMessage] = useState(''), [error, setError] = useState('');
   const [confirm, setConfirm] = useState(''), [ownsDevice, setOwnsDevice] = useState(false), [deviceCount, setDeviceCount] = useState(0);
   const generation = useRef(0);
+  // Pricing page only, and only through the consented allowlist. /account/ loads no gtag, so these are no-ops there.
+  const track = (feature: string) => { if (pricing) trackFeature(feature, { source: 'pro_page' }); };
   const active = billing?.entitlement?.active === true;
   const authenticated = (path: string, options: any = {}) => accountRequest(path, { ...options, headers: { ...options.headers, 'X-DeadHangs-Account-Key': account?.accountKey || '' } });
   async function refresh() {
@@ -93,15 +96,15 @@ export default function AccountWorkspace({ pricing = false }: { pricing?: boolea
     setTimeout(() => URL.revokeObjectURL(url), 1000); setMessage('Account export downloaded. Keep it somewhere private.');
   }
   const prices = <div className="account-plans">
-    <div><h3>Monthly</h3><p className="account-price">£4.99<span> / month</span></p><p>Billed monthly until cancelled.</p><button disabled={busy || !billing?.paidAvailable || active} onClick={() => action(() => pay('monthly'))}>Choose monthly</button></div>
-    <div><h3>Yearly</h3><p className="account-price">£39<span> / year</span></p><p>Billed yearly until cancelled.</p><button disabled={busy || !billing?.paidAvailable || active} onClick={() => action(() => pay('yearly'))}>Choose yearly</button></div>
+    <div><h3>Monthly</h3><p className="account-price">£4.99<span> / month</span></p><p>Billed monthly until cancelled.</p><button disabled={busy || !billing?.paidAvailable || active} onClick={() => { track('pro_plan_monthly_click'); action(() => pay('monthly')); }}>Choose monthly</button></div>
+    <div><h3>Yearly</h3><p className="account-price">£39<span> / year</span></p><p>Billed yearly until cancelled.</p><button disabled={busy || !billing?.paidAvailable || active} onClick={() => { track('pro_plan_yearly_click'); action(() => pay('yearly')); }}>Choose yearly</button></div>
   </div>;
   return <div className="account-workspace" aria-busy={busy || state === 'loading'}>
     {error && <p className="account-error" role="alert">{error}</p>}
     {message && <p className="account-notice" role="status">{message}</p>}
     {state === 'loading' && <p role="status">Checking your account…</p>}
     {(state === 'unavailable' || state === 'error') && <section className="account-panel"><h2>{state === 'unavailable' ? 'Accounts are not available yet' : 'Could not load your account'}</h2><p>Your free timer and device log are still available.</p><button disabled={busy} onClick={() => action(refresh)}>Try again</button> <a href="/training-log/">Open the free timer</a></section>}
-    {state === 'signedout' && <section className="account-panel"><h2>One account. Your saved holds.</h2><p>Creating a Google account connection is free. Pro adds cloud sync and progress history. Signing in does not upload your device log.</p><button className="google-continue" disabled={busy} onClick={() => action(signIn)}>Continue with Google</button><p className="account-small">By continuing, you agree to the <a href="/terms/">terms</a> and acknowledge the <a href="/privacy/">privacy policy</a>. No marketing subscription.</p></section>}
+    {state === 'signedout' && <section className="account-panel"><h2>One account. Your saved holds.</h2><p>Creating a Google account connection is free. Pro adds cloud sync and progress history. Signing in does not upload your device log.</p><button className="google-continue" disabled={busy} onClick={() => { track('pro_signin_click'); action(signIn); }}>Continue with Google</button><p className="account-small">By continuing, you agree to the <a href="/terms/">terms</a> and acknowledge the <a href="/privacy/">privacy policy</a>. No marketing subscription.</p></section>}
     {state === 'signedin' && <>
       <header className="account-identity"><div><h2>{active ? 'Your Pro account' : 'Your free account'}</h2><p>{account.user.email}</p></div><button disabled={busy} onClick={() => action(async () => { await accountRequest('/api/auth/sign-out', json('POST')); await refresh(); })}>Sign out</button></header>
       {active ? <section className="account-panel"><h3>Pro is active</h3><p>{billing.entitlement.cancelAtPeriodEnd ? 'Your subscription is cancelled. Pro access continues' : 'Your paid access runs'}{billing.entitlement.paidThrough ? ` until ${new Date(billing.entitlement.paidThrough).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}` : ''}. {billing.entitlement.cancelAtPeriodEnd ? 'You can restart renewal in billing.' : 'Manage renewal or cancel in billing.'}</p><button disabled={busy} onClick={() => action(async () => { const r = await authenticated('/api/billing/portal', json('POST')); location.assign(trustedRedirect(r.url, 'stripe')); })}>Manage billing</button>{pricing && <p><a href="/account/">Open your cloud log</a></p>}</section> : <section className="account-panel"><h3>Unlock cloud sync and progress history</h3><p>The timer and on-device log stay free. Pro lets you merge your saved holds into your account and open them on another device. Includes up to {account?.limits?.maxEntries ?? 200} cloud entries.</p>{prices}{!billing?.paidAvailable && <p role="status">Checkout is not available yet. No payment can be taken here.</p>}<p className="account-small">Cancel renewal in your account. Access continues until the end of the paid period. Export and delete remain available after Pro ends.</p></section>}

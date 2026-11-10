@@ -1,6 +1,6 @@
 // Page-wide feature usage events, sent through the consented, allowlisted helper.
 // Only the feature name and page path leave the browser.
-import { trackFeature } from "./training-events.js";
+import { SOURCES, trackFeature } from "./training-events.js";
 
 const LADDER = "/beginner-deadhang/#cant-hang-yet";
 const STOP_RULES_ID = "stop-and-step-down";
@@ -39,6 +39,23 @@ export function isLadderLink(anchor, browser = window) {
   }
 }
 
+const PRO_PATHS = { "/pro/": "pro_link_click", "/account/": "account_link_click" };
+
+/** Same-origin link to /pro/ or /account/: returns the feature name and an allowlisted placement label. */
+export function proAccountLink(anchor, browser = window) {
+  try {
+    const url = new URL(anchor.getAttribute("href") || "", browser.location.href);
+    if (url.origin !== browser.location.origin) return null;
+    const path = url.pathname.endsWith("/") ? url.pathname : `${url.pathname}/`;
+    const feature = PRO_PATHS[path];
+    if (!feature) return null;
+    const label = anchor.dataset?.dhSource;
+    return { feature, source: SOURCES.has(label) ? label : "article" };
+  } catch {
+    return null;
+  }
+}
+
 export function initFeatureTracking(browser = window) {
   const doc = browser.document;
   try {
@@ -46,6 +63,8 @@ export function initFeatureTracking(browser = window) {
       if (event.button !== 0) return;
       const anchor = event.target?.closest?.("a[href]");
       if (anchor && isLadderLink(anchor, browser)) trackFeature("ladder_link_click", {}, browser);
+      const link = anchor && proAccountLink(anchor, browser);
+      if (link) trackFeature(link.feature, { source: link.source }, browser);
     });
 
     browser.addEventListener("appinstalled", () => trackFeature("pwa_installed", {}, browser));

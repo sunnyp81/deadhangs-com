@@ -1,6 +1,6 @@
 # Training-tool measurement
 
-Updated 7 November 2026. Analytics run only after consent. Events use fixed `page_path`, `tool_source`, and where applicable `timer_mode`, `feature` or `session_choice`. No hold times, ages, assistance, goals, dates, entry IDs, email addresses or full URLs are accepted by the event helper. Internal callers still use `source`; the transmitted parameter is `tool_source` so it cannot collide with acquisition source.
+Updated 10 November 2026. Analytics run only after consent. Events use fixed `page_path`, `tool_source`, and where applicable `timer_mode`, `feature` or `session_choice`. No hold times, ages, assistance, goals, dates, entry IDs, email addresses or full URLs are accepted by the event helper. Internal callers still use `source`; the transmitted parameter is `tool_source` so it cannot collide with acquisition source.
 
 ## Events and interpretation
 
@@ -18,6 +18,21 @@ Updated 7 November 2026. Analytics run only after consent. Events use fixed `pag
 | `first_test_hold_saved` | First successful test-kind save in the current local log history, including a comparison measurement or max test. Never training activation. |
 | `feature_used` | One fixed named feature action; see the helper's allowlist. |
 
+### Pro and sign-up events (10 November 2026)
+
+All are `feature_used` rows with a fixed `feature` name and a fixed `tool_source` placement label. No new parameters and no values.
+
+| `feature` | Fires when | `tool_source` |
+|---|---|---|
+| `pro_link_click` | Primary click on any same-origin link to `/pro/` | The link's `data-dh-source` if allowlisted (`nav`, `footer`, `log_header`, `post_save`, `progress`, `your_number`, `calculator_result`), else `article` |
+| `account_link_click` | Primary click on any same-origin link to `/account/` | As above |
+| `pro_signin_click` | "Continue with Google" on `/pro/` only | `pro_page` |
+| `pro_plan_monthly_click` / `pro_plan_yearly_click` | Plan button on `/pro/` only | `pro_page` |
+| `pro_nudge_dismissed` | Reserved for the in-tool Pro nudge (batch 2, C1); nothing sends it yet | |
+| `email_signup_success` | SignupForm reports a new registration (not an address already on file) | `home` or `article` |
+
+`/pro/` loads the same consent-gated Google Analytics as public pages. `/account/` loads none, so the shared account component's calls are no-ops there. Link clicks are sent as the page unloads; GA4 normally delivers them with a beacon, but some may be lost.
+
 First-save classification runs against stored entries and fires only after a successful write. Imports, deletion, failed writes, timer completion, pause and resume do not fire save events. Deleting all entries of a kind, clearing storage, using another browser/device, or importing a different history can change first-save eligibility. These are browser-log milestones, not lifetime unique people. A save without analytics consent is not replayed after consent.
 
 ## Reporting definitions
@@ -26,6 +41,9 @@ First-save classification runs against stored entries and fires only after a suc
 - **Activation:** consent-observed users with an eligible tool interaction or starter arrival followed by `first_training_session_saved` in an ordered same-session exploration. Divide by users entering that same defined funnel. Aggregate user counts across unrelated events are not an ordered conversion rate.
 - **Seven/28-day return:** first-training-save cohort members with a later `training_session_saved` on another GA4 reporting date within the window. Include only cohorts with the full observation window. Do not use `training_log_saved`, which includes test holds.
 - **Revenue:** actual payment-provider transactions, reconciled for refunds and fees. Activation has no currency value and is not a sale.
+- **Funnel A (GA4, ordered, same session):** `page_view` on a top page, `training_tool_view`, `first_training_session_saved` or `training_log_saved`, `feature_used` with `feature=pro_link_click`, `page_view` of `/pro/`, `feature_used` with `feature=pro_plan_monthly_click` or `pro_plan_yearly_click`. Consent-limited; a Pro visit that starts on `/pro/` from search or a bookmark skips the earlier steps.
+- **Funnel B (D1 counts, `scripts/funnel-readout.mjs`):** accounts created, accounts whose latest checkout start falls in the window, paid (eligible active subscriptions by plan), cancelled at period end. `billing_accounts.checkout_started_at` is overwritten by each new checkout, so it counts accounts, not checkout attempts. Read-only aggregate counts; never emails, names or IDs.
+- **Joining A and B:** by counts and dates only, never by user. GA4 has no account identifier and D1 has no analytics identifier.
 
 Read and record the property's reporting timezone when constructing cohort reports. The browser's entry date is not sent to GA4 or used to backdate events. Consent gaps, blocked analytics, storage changes and multiple devices limit interpretation; no retention rate is inferred from this release.
 

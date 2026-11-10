@@ -1,5 +1,6 @@
 import { useEffect, useId, useState } from 'react';
-export default function SignupForm({ dark = false }: { dark?: boolean }) {
+import { trackFeature } from '../scripts/training-events.js';
+export default function SignupForm({ dark = false, source = 'article' }: { dark?: boolean; source?: 'home' | 'article' }) {
   const uid = useId();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => { setHydrated(true); }, []);
@@ -16,8 +17,11 @@ export default function SignupForm({ dark = false }: { dark?: boolean }) {
       const response = await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email}), signal:controller.signal });
       const body = await response.json();
       if (!response.ok || !body || typeof body !== 'object' || !('ok' in body) || body.ok !== true) throw new Error('Not registered');
-      setExisting('existing' in body && body.existing === true);
+      const existingAddress = 'existing' in body && body.existing === true;
+      setExisting(existingAddress);
       setStatus('ok');
+      // Counts a new registration only: no address or form value is sent.
+      if (!existingAddress) trackFeature('email_signup_success', { source });
     } catch { setStatus('error'); }
     finally { window.clearTimeout(timeout); }
   }
