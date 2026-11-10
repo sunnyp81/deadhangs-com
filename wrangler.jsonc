@@ -45,7 +45,15 @@
     "production": {
       "vars": {
         "NODE_VERSION": "22",
-        "AUTH_BASE_URL": "https://deadhangs.com"
+        "AUTH_BASE_URL": "https://deadhangs.com",
+        "BILLING_ENABLED": "true",
+        "BILLING_MODE": "live",
+        "BILLING_LAUNCH_ENABLED": "true",
+        "STRIPE_ACCOUNT_ID": "acct_1UZYZTEp4lCx1so6",
+        "STRIPE_PRODUCT_ID": "prod_VbEy7boSR7FKx6",
+        "STRIPE_MONTHLY_PRICE_ID": "price_1Ua2UxEp4lCx1so6NgBm7GPY",
+        "STRIPE_YEARLY_PRICE_ID": "price_1Ua2UyEp4lCx1so6ojJsesO8",
+        "STRIPE_PORTAL_CONFIGURATION_ID": "bpc_1Ua2UyEp4lCx1so62gnYni3B"
       },
       "d1_databases": [
         {
