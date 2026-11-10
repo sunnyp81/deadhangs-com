@@ -2,16 +2,32 @@ import { useEffect, useId, useState } from "react";
 import { useMemo } from "react";
 import { filterBySetup, listSetups } from "../lib/training-log.mjs";
 import { progressFor } from "../lib/training-progress.mjs";
+import { PRO_NUDGE_DISMISSED_EVENT, dismissNudge, nudgeDismissed, showProgressNudge } from "../lib/pro-nudge.mjs";
+import { trackFeature } from "../scripts/training-events.js";
 import type { LogEntry, TrainingProfile } from "../lib/training-types";
 
 type Entry = LogEntry;
 type Assistance = "unassisted" | "feet-supported";
 
-export default function ProgressSummary({ entries, profile }: { entries: Entry[]; profile: TrainingProfile | null }) {
+export default function ProgressSummary({ entries, profile, proNudges = false }: { entries: Entry[]; profile: TrainingProfile | null; proNudges?: boolean }) {
   const id = useId();
   const [assistance, setAssistance] = useState<Assistance>(profile?.assistance || "unassisted");
   const [windowDays, setWindowDays] = useState<30 | 90>(90);
   const [setupKey, setSetupKey] = useState("all");
+  const [nudgeOff, setNudgeOff] = useState(true);
+  useEffect(() => {
+    if (!proNudges) return;
+    const sync = () => setNudgeOff(nudgeDismissed(window.localStorage));
+    sync();
+    window.addEventListener(PRO_NUDGE_DISMISSED_EVENT, sync);
+    return () => window.removeEventListener(PRO_NUDGE_DISMISSED_EVENT, sync);
+  }, [proNudges]);
+  const closeNudge = () => {
+    dismissNudge(window.localStorage);
+    setNudgeOff(true);
+    trackFeature("pro_nudge_dismissed", { source: "progress" });
+    window.dispatchEvent(new Event(PRO_NUDGE_DISMISSED_EVENT));
+  };
   useEffect(() => {
     setAssistance(profile?.assistance || "unassisted");
   }, [profile?.assistance]);
@@ -70,6 +86,13 @@ export default function ProgressSummary({ entries, profile }: { entries: Entry[]
             </div>
             {!progress.selectedWindow.length && <p className="tw-empty">No comparable entries fall within this calendar window.</p>}
           </>
+        )}
+        {proNudges && !nudgeOff && showProgressNudge(entries.length) && (
+          <p className="tw-pro-nudge">
+            <span>This history lives in this browser. Pro keeps a copy in your account for your other devices.</span>{" "}
+            <a className="tw-pro-link" href="/pro/" data-dh-source="progress">See Pro</a>{" "}
+            <button type="button" className="tw-pro-dismiss" onClick={closeNudge}>Not now</button>
+          </p>
         )}
       </div>
     </section>

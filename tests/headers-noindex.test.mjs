@@ -9,9 +9,9 @@ const blocks = src.split(/\n\s*\n/).map((b) => {
 });
 const block = (rule) => blocks.find((b) => b.rule === rule);
 
-test("noindex is scoped to previews, widgets and account pages, never the whole apex site", () => {
+test("noindex is scoped to previews, widgets and the account page, never the whole apex site or /pro/", () => {
   for (const { rule, headers } of blocks) {
-    if (headers.some((h) => /x-robots-tag:\s*noindex/i.test(h))) assert.match(rule, /^(https:\/\/(:version\.)?:project\.pages\.dev\/\*|\/(embed|account|pro)\/\*)$/);
+    if (headers.some((h) => /x-robots-tag:\s*noindex/i.test(h))) assert.match(rule, /^(https:\/\/(:version\.)?:project\.pages\.dev\/\*|\/(embed|account)\/\*)$/);
   }
 });
 

@@ -28,7 +28,7 @@ All are `feature_used` rows with a fixed `feature` name and a fixed `tool_source
 | `account_link_click` | Primary click on any same-origin link to `/account/` | As above |
 | `pro_signin_click` | "Continue with Google" on `/pro/` only | `pro_page` |
 | `pro_plan_monthly_click` / `pro_plan_yearly_click` | Plan button on `/pro/` only | `pro_page` |
-| `pro_nudge_dismissed` | Reserved for the in-tool Pro nudge (batch 2, C1); nothing sends it yet | |
+| `pro_nudge_dismissed` | "Not now" on an inline Pro line in the /training-log/ workspace; the dismissal is stored in this browser (`dh-pro-nudge`) and hides every line for good | `post_save` (under the save status, after a save that leaves 2 or more entries) or `progress` (under Comparable progress, 3 or more entries) |
 | `email_signup_success` | SignupForm reports a new registration (not an address already on file) | `home` or `article` |
 
 `/pro/` loads the same consent-gated Google Analytics as public pages. `/account/` loads none, so the shared account component's calls are no-ops there. Link clicks are sent as the page unloads; GA4 sends them as a keepalive request before the page unloads (seen in 15 of 15 preview runs), but some may still be lost.

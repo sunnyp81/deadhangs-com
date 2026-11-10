@@ -39,6 +39,7 @@ import {
   validateEntryInput,
 } from '../lib/training-log.mjs';
 import { LOG_UPDATED_EVENT, readRememberedSetup, rememberSetup } from '../lib/training-log-store';
+import { PRO_NUDGE_DISMISSED_EVENT, dismissNudge, nudgeDismissed, showSaveNudge } from '../lib/pro-nudge.mjs';
 import type { SetupForm } from '../lib/training-log-store';
 import type { LogEntry, ToolSource } from '../lib/training-types';
 
@@ -96,7 +97,7 @@ function writeRawLog(text: string): boolean {
   }
 }
 
-export default function TrainingWorkspace({ showTimer = true, onEntriesChange, onManualEntrySaved, registerActualFocus, analyticsSource, funnelSource, acceptedPlan, formAction = "/training-log/" }: { showTimer?: boolean; onEntriesChange?: (entries: Entry[]) => void; onManualEntrySaved?: () => void; registerActualFocus?: (focus: () => void) => void; analyticsSource?: ToolSource; funnelSource?: ToolSource; acceptedPlan?: { requestId: string; assistance: string } | null; formAction?: string }) {
+export default function TrainingWorkspace({ showTimer = true, proNudges = false, onEntriesChange, onManualEntrySaved, registerActualFocus, analyticsSource, funnelSource, acceptedPlan, formAction = "/training-log/" }: { showTimer?: boolean; proNudges?: boolean; onEntriesChange?: (entries: Entry[]) => void; onManualEntrySaved?: () => void; registerActualFocus?: (focus: () => void) => void; analyticsSource?: ToolSource; funnelSource?: ToolSource; acceptedPlan?: { requestId: string; assistance: string } | null; formAction?: string }) {
   const uid = useId();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => { setHydrated(true); }, []);
@@ -245,6 +246,22 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
   const [entries, setEntries] = useState<Entry[]>([]);
   const [droppedRows, setDroppedRows] = useState(0);
   const [logStatus, setLogStatus] = useState('');
+  // Pro line under the save status: /training-log/ only, after a save that leaves 2+ entries, until "Not now".
+  const [saveNudge, setSaveNudge] = useState(false);
+  const [nudgeOff, setNudgeOff] = useState(true);
+  useEffect(() => {
+    if (!proNudges) return;
+    const sync = () => setNudgeOff(nudgeDismissed(window.localStorage));
+    sync();
+    window.addEventListener(PRO_NUDGE_DISMISSED_EVENT, sync);
+    return () => window.removeEventListener(PRO_NUDGE_DISMISSED_EVENT, sync);
+  }, [proNudges]);
+  function closeSaveNudge() {
+    dismissNudge(window.localStorage);
+    setNudgeOff(true);
+    trackFeature('pro_nudge_dismissed', { source: 'post_save' });
+    window.dispatchEvent(new Event(PRO_NUDGE_DISMISSED_EVENT));
+  }
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   const [confirmClearAll, setConfirmClearAll] = useState(false);
@@ -402,6 +419,7 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
       setSetupForm((current) => ({ ...current, ended: '', bodyweight: '' }));
       setHoldInput('');
       onManualEntrySaved?.();
+      setSaveNudge(proNudges && showSaveNudge(added.entries.length));
       if (analyticsSource)
         trackTrainingEvent("training_log_saved", { source: analyticsSource });
     }
@@ -409,11 +427,13 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
 
   function handleDelete(id: string) {
     setPendingDelete(null);
+    setSaveNudge(false);
     commit(removeEntry(entries, id) as Entry[], 'Entry deleted from this device.');
   }
 
   function handleClearAll() {
     setConfirmClearAll(false);
+    setSaveNudge(false);
     commit([], 'All entries deleted from this device.');
   }
 
@@ -734,6 +754,13 @@ export default function TrainingWorkspace({ showTimer = true, onEntriesChange, o
         </form>
 
         <p className="tw-status" aria-live="polite">{logStatus}</p>
+        {proNudges && saveNudge && !nudgeOff && (
+          <p className="tw-pro-nudge">
+            <span>Saved on this device only. Pro keeps your log on every device, £4.99 a month. The timer and this log stay free.</span>{' '}
+            <a className="tw-pro-link" href="/pro/" data-dh-source="post_save">See Pro</a>{' '}
+            <button type="button" className="tw-pro-dismiss" onClick={closeSaveNudge}>Not now</button>
+          </p>
+        )}
         <details className="tw-data">
           <summary>Your data: export, backup and import</summary>
           <div className="tw-data-body">

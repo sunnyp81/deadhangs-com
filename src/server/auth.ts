@@ -2,7 +2,7 @@ import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import type { ConfiguredEnv, D1Database } from './env';
 
 export const AUTH_BASE_PATH = '/api/auth';
-export const ALLOWED_CALLBACK_PATHS = ['/training-log/', '/account/'] as const;
+export const ALLOWED_CALLBACK_PATHS = ['/training-log/', '/account/', '/pro/'] as const;
 export const DEFAULT_CALLBACK_PATH = '/training-log/';
 export const ERROR_PATH = '/account/';
 export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;

@@ -39,9 +39,103 @@
 .account-table caption { text-align: left; padding: 8px 0 16px; }
 .account-table td, .account-table th { padding: 12px; border-bottom: 1px solid var(--color-border); }
 .account-table th { background: var(--color-surface); }
-.pro-intro { width: calc(100% - 40px); max-width: 896px; margin: 0 auto 32px; }
-.pro-intro .account-plans { max-width: 700px; }
-.pro-intro h2 { font: 700 1.7rem var(--font-display); }
-.pro-intro ul { padding-left: 24px; list-style: disc; }
-.pro-intro li { margin: 12px 0; }
 @media (max-width: 540px) { .account-plans { grid-template-columns: 1fr; } .account-progress dl { grid-template-columns: 1fr; gap: 16px; } .account-progress dl > div { display:flex; align-items: center; justify-content: space-between; gap: 16px; } .account-progress dd { font-size: 1.25rem; text-align: right; } .account-actions > button { width: 100%; } }
+.account-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* /pro/ sales page. The offer, price and action share the first screen; the action card holds one size while the account check runs. */
+.pro-hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px 56px; align-items: start; max-width: 1120px; margin: 0 auto; padding: 32px 32px 40px; }
+.pro-hero .article-breadcrumb { margin-bottom: 16px; }
+.pro-h1 { font: 700 clamp(2.2rem, 4.6vw, 3.6rem)/1.04 var(--font-display); letter-spacing: -.01em; color: var(--color-text); margin: 0 0 20px; text-wrap: balance; }
+.pro-price { font: 400 1.05rem/1.3 var(--font-body); color: var(--color-text-muted); margin: 8px 0 12px; }
+.pro-price-figure { font: 700 clamp(2.2rem, 3.8vw, 2.9rem)/1 var(--font-display); color: var(--color-text); }
+.pro-price-or { color: var(--color-text-faint); padding: 0 4px; }
+.pro-price-note { max-width: 560px; margin: 0 0 20px; font-size: .95rem; line-height: 1.55; color: var(--color-text-muted); }
+.pro-gets { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-border); }
+.pro-gets li { position: relative; padding: 10px 0 10px 28px; border-bottom: 1px solid var(--color-border); line-height: 1.45; color: var(--color-text); }
+.pro-gets li::before { content: ""; position: absolute; left: 4px; top: 17px; width: 12px; height: 6px; border-left: 2px solid var(--color-primary); border-bottom: 2px solid var(--color-primary); transform: rotate(-45deg); }
+.pro-hero-action { padding-top: 36px; }
+.pro-hero-action .account-workspace { width: 100%; max-width: none; }
+.pro-hero-action .account-panel { margin: 0 0 16px; }
+.pro-action { border-top: 3px solid var(--color-primary); }
+.pro-action h2, .pro-action h3 { font-size: 1.5rem; }
+.pro-hero-action .account-plans { grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+.pro-hero-action .account-plans > div { padding-top: 16px; }
+.pro-hero-action .account-workspace .account-price { font-size: 2rem; }
+.pro-noscript { margin: 0; }
+.pro-body { max-width: 1120px; margin: 0 auto; padding: 0 32px 64px; }
+.pro-body h2 { font: 700 clamp(1.6rem, 3vw, 2.1rem)/1.15 var(--font-display); color: var(--color-text); margin: 0 0 16px; }
+.pro-body p, .pro-body li { line-height: 1.6; color: var(--color-text); }
+.pro-body a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 4px; }
+.pro-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding: 48px 0; border-top: 1px solid var(--color-border); }
+.pro-why ul { padding-left: 22px; list-style: disc; }
+.pro-why li { margin: 8px 0; }
+.pro-example { margin: 0; }
+.pro-example-svg { display: block; width: 100%; height: auto; aspect-ratio: 480 / 330; }
+.pro-example figcaption { margin-top: 10px; font-size: .9rem; line-height: 1.5; color: var(--color-text-muted); }
+.pe-frame { fill: var(--color-surface); stroke: var(--color-border); }
+.pe-tag { fill: var(--color-warn); }
+.pe-tag-text { font: 700 13px var(--font-body); letter-spacing: .12em; fill: #111; }
+.pe-h { font: 700 19px var(--font-display); fill: var(--color-text); }
+.pe-sub, .pe-label { font: 400 13px var(--font-body); fill: #aebbd3; }
+.pe-num { font: 700 28px var(--font-display); fill: var(--color-text); }
+.pe-up { fill: var(--color-primary); }
+.pe-rule { stroke: var(--color-border); }
+.pe-th { fill: var(--color-surface-2); }
+.pe-cell, .pe-cell text { font: 400 14px var(--font-body); fill: var(--color-text); }
+.pe-bold { font-weight: 600; }
+.pro-section { padding: 48px 0; border-top: 1px solid var(--color-border); }
+.pro-table { overflow-x: auto; max-width: 100%; }
+.pro-table:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 4px; }
+.pro-table table { width: 100%; min-width: 520px; border-collapse: collapse; text-align: left; }
+.pro-table th, .pro-table td { padding: 12px 14px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+.pro-table thead th { background: var(--color-surface); font-weight: 600; }
+.pro-table tbody th { font-weight: 400; }
+.pro-table td { white-space: nowrap; }
+.pro-table td:last-child { color: var(--color-text); font-weight: 600; }
+.pro-steps { counter-reset: step; list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; }
+.pro-steps li { counter-increment: step; position: relative; padding-top: 52px; }
+.pro-steps li::before { content: counter(step); position: absolute; top: 0; left: 0; font: 700 2.4rem/1 var(--font-mono); color: var(--color-primary); }
+.pro-faq { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 48px; }
+.pro-faq-item h3 { font: 600 1.15rem/1.3 var(--font-body); color: var(--color-text); margin: 20px 0 8px; }
+.pro-faq-item p { margin: 0; color: var(--color-text-muted); }
+.pro-launch { margin-top: 40px; font-size: .95rem; color: var(--color-text-muted); }
+@media (max-width: 900px) {
+  .pro-hero { grid-template-columns: 1fr; padding: 16px 20px 32px; }
+  .pro-hero-action { padding-top: 0; }
+  .pro-body { padding: 0 20px 48px; }
+  .pro-split { grid-template-columns: 1fr; gap: 28px; padding: 40px 0; }
+  .pro-steps, .pro-faq { grid-template-columns: 1fr; }
+  .pro-steps { gap: 24px; }
+}
+@media (max-width: 540px) {
+  .pro-h1 { font-size: 2.15rem; margin-bottom: 12px; }
+  .pro-hero .article-breadcrumb { margin-bottom: 10px; }
+  .pro-price-figure { font-size: 2.2rem; }
+  .pro-price-note { font-size: .9rem; margin-bottom: 12px; }
+  .pro-gets li { padding: 7px 0 7px 26px; font-size: .95rem; }
+  .pro-gets li::before { top: 13px; }
+  .pro-hero-action .account-panel { padding: 18px; }
+  .pro-action h2, .pro-action h3 { font-size: 1.3rem; margin-bottom: 8px; }
+  .pro-action p { margin: 8px 0; }
+  .pro-hero-action .account-plans { grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  .pro-hero-action .account-plans p { margin: 6px 0; font-size: .9rem; line-height: 1.4; }
+  .pro-hero-action .account-plans button { width: 100%; padding: 10px 8px; }
+  .pro-hero-action .account-workspace .account-price { font-size: 1.6rem; }
+  .pro-table td { white-space: normal; }
+}
+.pro-hero-action .account-identity { padding: 0 0 12px; gap: 12px; }
+.pro-hero-action .account-identity h2 { font-size: 1.2rem; margin: 0; }
+.pro-hero-action .account-identity p { margin: 4px 0 0; font-size: .9rem; color: var(--color-text-muted); }
+.pro-hero-action .account-identity button { min-height: 44px; padding: 8px 14px; }
+.pro-hero-action .account-workspace .account-price { font-family: var(--font-display); letter-spacing: 0; }
+/* Phones: the action sits straight after the price, so the plan buttons stay on the first screen after sign-in too. */
+@media (max-width: 900px) {
+  .pro-hero-copy { display: contents; }
+  .pro-hero { gap: 0; }
+  .pro-hero .article-breadcrumb { order: 1; }
+  .pro-h1 { order: 2; }
+  .pro-price { order: 3; }
+  .pro-price-note { order: 4; }
+  .pro-hero-action { order: 5; }
+  .pro-gets { order: 6; margin-top: 8px; }
+}

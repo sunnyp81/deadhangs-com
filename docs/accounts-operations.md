@@ -47,6 +47,6 @@ Every authenticated account operation uses the server session as owner. `X-DeadH
 
 Export and deletion remain available without Pro. The account export can be imported into the free local log. Account deletion first expires open checkout and confirms subscription cancellation; provider failure refuses deletion rather than leaving an orphaned renewal. Device logs are not deleted by account deletion.
 
-Private APIs return `Cache-Control: no-store`. The service worker ignores account, Pro and API paths. Analytics is omitted from account and Pro pages. Avoid logging request bodies, cookies, OAuth responses or payment-provider bodies. Configure edge rate limits for auth/account/billing routes before opening a public paid service.
+Private APIs return `Cache-Control: no-store`. The service worker ignores account, Pro and API paths. Analytics is omitted from the account page; the Pro information page uses the same consent-gated analytics as other public pages. Avoid logging request bodies, cookies, OAuth responses or payment-provider bodies. Configure edge rate limits for auth/account/billing routes before opening a public paid service.
 
 The canonical dated activation status and handoff are in the shared harness directive for deadhangs.com, not this operational guide.
