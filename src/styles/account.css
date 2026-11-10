@@ -122,6 +122,9 @@
   .pro-hero-action .account-plans button { width: 100%; padding: 10px 8px; }
   .pro-hero-action .account-workspace .account-price { font-size: 1.6rem; }
   .pro-table td { white-space: normal; }
+  .pro-table table { min-width: 0; font-size: .9rem; }
+  .pro-table th, .pro-table td { padding: 10px 8px; }
+  .pro-table td { width: 26%; }
 }
 .pro-hero-action .account-identity { padding: 0 0 12px; gap: 12px; }
 .pro-hero-action .account-identity h2 { font-size: 1.2rem; margin: 0; }
