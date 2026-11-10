@@ -1,0 +1,23 @@
+---
+import Article from '../../layouts/Article.astro';
+import AccountWorkspace from '../../components/AccountWorkspace';
+import '../../styles/account.css';
+---
+<Article title="DeadHangs Pro | Cloud Sync & Progress History" description="DeadHangs Pro is £4.99 monthly or £39 yearly. Save your training log to your account, open it on another device and compare your recorded holds." h1="Your holds. On every device." subtitle="DeadHangs Pro: cloud sync and progress history for your own training." crumbs={[{name:'Pro'}]} noindex wide>
+  <section class="pro-intro" aria-labelledby="pro-price-title">
+    <h2 id="pro-price-title">£4.99 / month or £39 / year</h2>
+    <p>Includes up to 200 cloud entries, with export whenever you need it.</p>
+    <p>A recurring subscription in GBP. Choose monthly or yearly after signing in. Cancel renewal in your account; Pro access continues to the end of your paid period.</p>
+  </section>
+  <AccountWorkspace pricing client:load />
+  <section class="pro-intro" aria-labelledby="pro-includes-title">
+    <h2 id="pro-includes-title">What Pro adds to your training log</h2>
+    <ul>
+      <li><strong>Cloud sync you control.</strong> Merge device entries into your account when you choose. Sign in with the same Google account on another device to retrieve them.</li>
+      <li><strong>Progress from real entries.</strong> Compare daily best holds within the same recorded setup and see your cloud history by date.</li>
+      <li><strong>Your data stays yours.</strong> Export and delete your cloud log even after your subscription ends.</li>
+    </ul>
+    <p>The timer, on-device training log, local progress tools and calculators stay free. A Google sign-in is free too. Pro does not include coaching or personalised training advice.</p>
+  </section>
+  <noscript><p>Enable JavaScript to sign in and choose a subscription.</p></noscript>
+</Article>

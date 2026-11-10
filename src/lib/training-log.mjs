@@ -253,7 +253,9 @@ export function normalizeStoredEntry(raw, today = toLocalDateString()) {
   if (present(raw.ended) && !ENDED_TYPES.includes(raw.ended)) return null;
   if (present(raw.bodyweightKg) && !isBodyweightKg(raw.bodyweightKg)) return null;
   if (present(raw.load) || present(raw.loadUnit)) {
-    if (parseLoad(raw.load) === null || !LOAD_UNITS.includes(raw.loadUnit)) return null;
+    const load = parseLoad(raw.load);
+    if (load === null || !LOAD_UNITS.includes(raw.loadUnit)) return null;
+    return compactEntry({ ...raw, load });
   }
   return compactEntry(raw);
 }
@@ -603,6 +605,9 @@ export function prepareLogImport(text, existing, today = toLocalDateString()) {
     try { parsed = JSON.parse(raw); } catch { return fail('This JSON file could not be read.'); }
     if (Array.isArray(parsed)) imported = parsed;
     else if (parsed?.format === 'deadhangs-training-log' && (parsed.version === 1 || parsed.version === 2) && Array.isArray(parsed.entries)) imported = parsed.entries;
+    else if (parsed?.format === 'deadhangs-account-export' && parsed.version === 1 &&
+      parsed.trainingLog?.format === 'deadhangs-training-log' && parsed.trainingLog.version === 2 &&
+      Array.isArray(parsed.trainingLog.entries)) imported = parsed.trainingLog.entries;
     else return fail('Choose a DeadHangs version 1 or 2 backup or exported CSV.');
   } else {
     csv = true;

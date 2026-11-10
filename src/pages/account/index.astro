@@ -1,0 +1,9 @@
+---
+import Article from '../../layouts/Article.astro';
+import AccountWorkspace from '../../components/AccountWorkspace';
+import '../../styles/account.css';
+---
+<Article title="Your account | DeadHangs" description="Manage your DeadHangs account, cloud training log and subscription." h1="Your account." subtitle="Keep your saved holds together. You control what moves to the cloud." crumbs={[{name:'Account'}]} noindex wide>
+  <AccountWorkspace client:load />
+  <noscript><p>Enable JavaScript to sign in and manage your account. Your <a href="/training-log/">free training tools</a> remain available.</p></noscript>
+</Article>

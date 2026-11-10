@@ -1,0 +1,21 @@
+# Copy to .dev.vars for local `wrangler pages dev` only. Never commit .dev.vars.
+# Accounts stay disabled (503) unless every value below is set and the request origin equals AUTH_BASE_URL.
+AUTH_BASE_URL=http://localhost:8788
+# At least 32 random characters, e.g. `openssl rand -base64 32`.
+BETTER_AUTH_SECRET=
+# Google OAuth client for local testing; its redirect URI must be AUTH_BASE_URL + /api/auth/callback/google.
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+# D1 is a binding (DB), not a variable; configure it in wrangler/Pages settings.
+
+# Billing remains disabled until provider setup and launch checks have passed.
+BILLING_ENABLED=false
+BILLING_LAUNCH_ENABLED=false
+BILLING_MODE=test
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_ACCOUNT_ID=
+STRIPE_PRODUCT_ID=
+STRIPE_MONTHLY_PRICE_ID=
+STRIPE_YEARLY_PRICE_ID=
+STRIPE_PORTAL_CONFIGURATION_ID=

@@ -11,3 +11,12 @@ test('CSV accepts a BOM and quoted fixed cells',()=>{const r=prepareLogImport('\
 test('invalid row, unknown version, future date and formulas reject all rows',()=>{for(const text of [toBackup([entry(),entry({id:'b',date:'2027-01-01'})]),toBackup([entry({date:'2026-02-30'})]),'{"format":"deadhangs-training-log","version":3,"entries":[]}',toCsv([entry()])+'2026-09-10,=1+1,unassisted,2\r\n','date,best_hold_seconds,assistance,sets\n2026-09-10,35,assisted,2']){assert.equal(prepareLogImport(text,[],today).ok,false,text);}});
 test('size and merged-count limits reject without losing current entries',()=>{assert.equal(prepareLogImport('x'.repeat(MAX_IMPORT_BYTES+1),[],today).ok,false);const full=Array.from({length:200},(_,i)=>entry({id:'existing-'+i}));const r=prepareLogImport(toBackup([entry({id:'new'})]),full,today);assert.equal(r.ok,false);assert.equal(r.entries.length,200);});
 test('raw recovery arrays can be restored; empty backups never erase data',()=>{assert.equal(prepareLogImport(JSON.stringify([entry()]),[],today).added,1);assert.deepEqual(prepareLogImport(toBackup([]),[entry()],today).entries,[entry()]);});
+
+test('account exports restore into the free local log without importing identity data',()=>{
+  const exported={format:'deadhangs-account-export',version:1,account:{email:'private@example.test'},trainingLog:JSON.parse(toBackup([entry()]))};
+  const result=prepareLogImport(JSON.stringify(exported),[],today);
+  assert.equal(result.ok,true); assert.deepEqual(result.entries,[entry()]);
+  assert.ok(!JSON.stringify(result.entries).includes('private'));
+  exported.version=2;
+  assert.equal(prepareLogImport(JSON.stringify(exported),[],today).ok,false);
+});

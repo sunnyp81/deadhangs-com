@@ -66,6 +66,8 @@ self.addEventListener('fetch', (event) => {
   // Never touch cross-origin traffic (analytics, ads), the API or Cloudflare internals.
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/cdn-cgi/') || url.pathname === '/sw.js') return;
+  // Account and checkout pages require a connection; never substitute the timer shell.
+  if (/^\/(account|pro)(\/|$)/.test(url.pathname)) return;
   if (request.mode === 'navigate') {
     event.respondWith(navigate(request, url));
     return;
