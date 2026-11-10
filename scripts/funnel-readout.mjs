@@ -28,6 +28,9 @@ export const METRICS = [
   ["paid_yearly", "Paid, active yearly", `SELECT COUNT(*) FROM billing_subscriptions WHERE ${ACTIVE} AND stripe_price_id = '${YEARLY_PRICE}'`],
   ["paid_other_price", "Paid, active, other price", `SELECT COUNT(*) FROM billing_subscriptions WHERE ${ACTIVE} AND stripe_price_id NOT IN ('${MONTHLY_PRICE}', '${YEARLY_PRICE}')`],
   ["cancel_at_period_end", "Paid, active, set to cancel at period end", `SELECT COUNT(*) FROM billing_subscriptions WHERE ${ACTIVE} AND cancel_at_period_end = 1`],
+  // Reconciliation: Stripe says active but the app has not granted access (unfunded or unverified invoice).
+  ["active_not_eligible", "Stripe status active, not access-eligible", "SELECT COUNT(*) FROM billing_subscriptions WHERE status = 'active' AND eligible = 0"],
+  ["active_not_eligible_cancelling", "Of those, set to cancel at period end", "SELECT COUNT(*) FROM billing_subscriptions WHERE status = 'active' AND eligible = 0 AND cancel_at_period_end = 1"],
 ];
 
 /** One statement, one row, integer columns only. */
