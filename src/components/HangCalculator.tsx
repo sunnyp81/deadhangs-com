@@ -11,9 +11,11 @@ import {
 type Props = {
   onContinue?: (draft: JourneyDraft) => void;
   analyticsSource?: ToolSource;
+  /** One result-state line pointing to /pro/; on for /dead-hang-calculator/ only, never the homepage. */
+  proLine?: boolean;
 };
 
-export default function HangCalculator({ onContinue, analyticsSource = "calculator" }: Props) {
+export default function HangCalculator({ onContinue, analyticsSource = "calculator", proLine = false }: Props) {
   const [hydrated, setHydrated] = useState(false);
   const [hold, setHold] = useState("");
   const [target, setTarget] = useState("60");
@@ -185,6 +187,12 @@ export default function HangCalculator({ onContinue, analyticsSource = "calculat
             >
               Review this goal in the timer
             </button>
+            {proLine && (
+              <p className="small-copy calc-pro">
+                Holds you log stay on this device. A free account plus Pro keeps them on every device.{" "}
+                <a className="text-link" href="/pro/" data-dh-source="calculator_result">See what Pro adds</a>
+              </p>
+            )}
           </div>
         ) : (
           <p className="calculator-empty">

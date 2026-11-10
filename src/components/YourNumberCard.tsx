@@ -133,6 +133,10 @@ export default function YourNumberCard() {
               </a>{" "}
               (prefilled as a test hold, and saved only when you confirm there).
             </p>
+            <p className="small-copy yn-pro">
+              Holds you log stay on this device. A free account plus Pro keeps them on every device.{" "}
+              <a className="text-link" href="/pro/" data-dh-source="your_number">See what Pro adds</a>
+            </p>
             {shown.out.showLadder && (
               <p className="yn-next">
                 Short holds are a normal place to start.{" "}
