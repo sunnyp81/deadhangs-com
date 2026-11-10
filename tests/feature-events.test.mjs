@@ -7,7 +7,8 @@ import {
   trackFeature,
   trackTrainingEvent,
 } from "../src/scripts/training-events.js";
-import { isLadderLink } from "../src/scripts/feature-tracking.js";
+import { isLadderLink, proAccountLink } from "../src/scripts/feature-tracking.js";
+import { readFileSync } from "node:fs";
 
 const browser = (over = {}) => {
   const calls = [];
@@ -20,13 +21,15 @@ const browser = (over = {}) => {
   };
 };
 
-test("the feature allowlist is exactly the agreed 21 names", () => {
+test("the feature allowlist is exactly the agreed 28 names", () => {
   assert.deepEqual([...FEATURES].sort(), [
     "backup_export", "backup_import", "bar_card_print", "csv_export", "demo_loop_played",
     "haptics_enabled", "header_timer_started", "ladder_link_click", "max_test_saved",
     "max_test_started", "preset_copy_link", "preset_link_opened", "pwa_installed",
     "pwa_standalone_session", "setup_best_use", "setup_saved_with_tags", "stop_rules_view",
     "video_played", "voice_enabled", "your_number_compared", "your_number_log_link",
+    "pro_link_click", "account_link_click", "pro_signin_click", "pro_plan_monthly_click",
+    "pro_plan_yearly_click", "pro_nudge_dismissed", "email_signup_success",
   ].sort());
 });
 
@@ -106,4 +109,49 @@ test("ladder link detection matches only the same-origin starting ladder anchor"
   assert.equal(isLadderLink(a("https://deadhangs.com/beginner-deadhang/#cant-hang-yet"), b), true);
   assert.equal(isLadderLink(a("https://other.test/beginner-deadhang/#cant-hang-yet"), b), false);
   assert.equal(isLadderLink(a("/beginner-deadhang/"), b), false);
+});
+
+const link = (href, dhSource) => ({ getAttribute: () => href, dataset: dhSource === undefined ? {} : { dhSource } });
+
+test("links to /pro/ and /account/ map to their feature with an allowlisted placement", () => {
+  const b = browser();
+  assert.deepEqual(proAccountLink(link("/pro/", "nav"), b), { feature: "pro_link_click", source: "nav" });
+  assert.deepEqual(proAccountLink(link("/account/", "footer"), b), { feature: "account_link_click", source: "footer" });
+  assert.deepEqual(proAccountLink(link("https://deadhangs.com/pro/?ref=x#plans", "post_save"), b), { feature: "pro_link_click", source: "post_save" });
+  assert.deepEqual(proAccountLink(link("/account"), b), { feature: "account_link_click", source: "article" });
+  assert.deepEqual(proAccountLink(link("/pro/", "made_up"), b), { feature: "pro_link_click", source: "article" });
+  assert.deepEqual(proAccountLink(link("/pro/", "__proto__"), b), { feature: "pro_link_click", source: "article" });
+  for (const href of ["https://other.test/pro/", "/pro/plans/", "/training-log/", "/account/delete/", "", "javascript:void(0)"])
+    assert.equal(proAccountLink(link(href, "nav"), b), null, href);
+});
+
+test("every new placement label is sent as tool_source with the Pro features and nothing else", () => {
+  for (const source of ["nav", "footer", "log_header", "post_save", "progress", "your_number", "calculator_result", "pro_page", "article", "home"]) {
+    const b = browser();
+    assert.equal(trackFeature("pro_link_click", { source, email: "a@b.test", href: "/pro/?x=1" }, b), true, source);
+    assert.deepEqual(b.calls, [["event", "feature_used", { page_path: "/dead-hang-time-by-age/", feature: "pro_link_click", tool_source: source }]]);
+  }
+  assert.equal(trackFeature("email_signup_success", { source: "newsletter" }, browser()), false);
+});
+
+test("Pro and sign-up events stay consent-gated", () => {
+  for (const feature of ["pro_link_click", "account_link_click", "pro_signin_click", "pro_plan_monthly_click", "pro_plan_yearly_click", "email_signup_success"]) {
+    const b = browser({ localStorage: { getItem: () => null } });
+    assert.equal(trackFeature(feature, { source: "nav" }, b), false, feature);
+    assert.equal(trackFeature(feature, { source: "nav" }, browser({ gtag: undefined })), false, feature);
+    assert.equal(b.calls.length, 0);
+  }
+});
+
+test("nav and footer links carry their placement label", () => {
+  assert.match(readFileSync(new URL("../src/components/Nav.astro", import.meta.url), "utf8"), /<a href=\{link\.href\} data-dh-source="nav"/);
+  assert.match(readFileSync(new URL("../src/components/Footer.astro", import.meta.url), "utf8"), /<a href=\{l\.href\} data-dh-source="footer"/);
+});
+
+test("pricing events fire only on the pricing instance, and sign-up success skips existing addresses", () => {
+  const account = readFileSync(new URL("../src/components/AccountWorkspace.tsx", import.meta.url), "utf8");
+  assert.match(account, /if \(pricing\) trackFeature\(feature, \{ source: 'pro_page' \}\)/);
+  for (const f of ["pro_signin_click", "pro_plan_monthly_click", "pro_plan_yearly_click"]) assert.ok(account.includes(`track('${f}')`), f);
+  const signup = readFileSync(new URL("../src/components/SignupForm.tsx", import.meta.url), "utf8");
+  assert.match(signup, /if \(!existingAddress\) trackFeature\('email_signup_success', \{ source \}\)/);
 });

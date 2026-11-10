@@ -70,7 +70,8 @@ const normaliseSchema = (html?: string) => (html || '').replace(/(<script type="
 });
 const pageSchema = normaliseSchema(schema);
 const isNotFound = Astro.url.pathname.startsWith('/404');
-const isAccountPage = /^\/(account|pro)(\/|$)/.test(Astro.url.pathname);
+// /pro/ is a public information page and loads the same consent-gated analytics; /account/ never does.
+const isAccountPage = /^\/account(\/|$)/.test(Astro.url.pathname);
 
 const globalSchema = {
   "@context": "https://schema.org",

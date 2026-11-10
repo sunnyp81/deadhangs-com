@@ -104,3 +104,13 @@ test("only the explicit setup save can invoke the goal-saved callback", async ()
   assert.match(save, /onSaved\?\.\(\)/);
   assert.doesNotMatch(imported, /onSaved\?\.\(\)/);
 });
+
+test("new placement labels are valid tool sources, mirrored in the ToolSource type", async () => {
+  const { SOURCES } = await import("../src/scripts/training-events.js");
+  const types = await fs.readFile(new URL("../src/lib/training-types.ts", import.meta.url), "utf8");
+  for (const source of ["nav", "footer", "log_header", "post_save", "progress", "your_number", "calculator_result", "pro_page", "article"]) {
+    assert.ok(SOURCES.has(source), source);
+    assert.ok(types.includes(`"${source}"`), `ToolSource ${source}`);
+  }
+  for (const source of SOURCES) assert.ok(types.includes(`"${source}"`), `ToolSource mirrors ${source}`);
+});
