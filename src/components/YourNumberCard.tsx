@@ -142,7 +142,7 @@ export default function YourNumberCard() {
                 .
               </p>
             )}
-            <p className="small-copy yn-pro">
+            <p className="yn-next small-copy yn-pro">
               Holds you log stay on this device. A free account plus Pro keeps them on every device.{" "}
               <a className="text-link" href="/pro/" data-dh-source="your_number">See what Pro adds</a>
             </p>
