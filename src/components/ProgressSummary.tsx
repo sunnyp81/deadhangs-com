@@ -18,13 +18,13 @@ export default function ProgressSummary({ entries, profile, proNudges = false }:
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     if (!proNudges) return;
-    const sync = () => setNudgeOff(nudgeDismissed(window.localStorage));
+    const sync = () => setNudgeOff(nudgeDismissed());
     sync();
     window.addEventListener(PRO_NUDGE_DISMISSED_EVENT, sync);
     return () => window.removeEventListener(PRO_NUDGE_DISMISSED_EVENT, sync);
   }, [proNudges]);
   const closeNudge = () => {
-    dismissNudge(window.localStorage);
+    dismissNudge();
     setNudgeOff(true);
     trackFeature("pro_nudge_dismissed", { source: "progress" });
     window.dispatchEvent(new Event(PRO_NUDGE_DISMISSED_EVENT));

@@ -93,3 +93,17 @@ test("built /training-log/ carries the log header Pro link", { skip: !existsSync
   assert.match(html, /<a href="\/pro\/" data-dh-source="log_header">See Pro<\/a>/);
   assert.equal((html.match(/href="\/pro\/"/g) || []).length, 1, "one Pro link in the static page");
 });
+
+test("nudge helpers survive a localStorage getter that throws (blocked site data)", () => {
+  const desc = Object.getOwnPropertyDescriptor(globalThis, "localStorage");
+  Object.defineProperty(globalThis, "localStorage", { configurable: true, get() { throw new Error("SecurityError"); } });
+  try {
+    assert.equal(nudgeDismissed(), true);
+    assert.equal(dismissNudge(), false);
+  } finally {
+    if (desc) Object.defineProperty(globalThis, "localStorage", desc); else delete globalThis.localStorage;
+  }
+  for (const f of ["src/components/TrainingWorkspace.tsx", "src/components/ProgressSummary.tsx"]) {
+    assert.doesNotMatch(readFileSync(f, "utf8"), /(nudgeDismissed|dismissNudge)\(window\.localStorage\)/, `${f} must not read storage outside the helper's try`);
+  }
+});
