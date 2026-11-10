@@ -31,7 +31,7 @@ All are `feature_used` rows with a fixed `feature` name and a fixed `tool_source
 | `pro_nudge_dismissed` | Reserved for the in-tool Pro nudge (batch 2, C1); nothing sends it yet | |
 | `email_signup_success` | SignupForm reports a new registration (not an address already on file) | `home` or `article` |
 
-`/pro/` loads the same consent-gated Google Analytics as public pages. `/account/` loads none, so the shared account component's calls are no-ops there. Link clicks are sent as the page unloads; GA4 normally delivers them with a beacon, but some may be lost.
+`/pro/` loads the same consent-gated Google Analytics as public pages. `/account/` loads none, so the shared account component's calls are no-ops there. Link clicks are sent as the page unloads; GA4 sends them as a keepalive request before the page unloads (seen in 15 of 15 preview runs), but some may still be lost.
 
 First-save classification runs against stored entries and fires only after a successful write. Imports, deletion, failed writes, timer completion, pause and resume do not fire save events. Deleting all entries of a kind, clearing storage, using another browser/device, or importing a different history can change first-save eligibility. These are browser-log milestones, not lifetime unique people. A save without analytics consent is not replayed after consent.
 

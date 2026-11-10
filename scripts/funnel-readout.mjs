@@ -77,7 +77,7 @@ export function renderMarkdown(row, { generatedAt, commit }) {
     "|---|---:|",
     ...METRICS.map(([key, label]) => `| ${label} | ${row[key]} |`),
     "",
-    "Notes: counts only. Sunny's own test subscription is included in the paid rows and is noted by hand, not filtered. `checkout_started_at` is overwritten by each new checkout, so it counts accounts, not attempts.",
+    "Notes: counts only. Sunny's own test subscription is not filtered; note by hand which row it falls in. `checkout_started_at` is overwritten by each new checkout, so it counts accounts, not attempts.",
   ];
   if (row.users_28d !== row.users_total) lines.push("", "Check: some accounts are older than 28 days.");
   return lines.join("\n");
