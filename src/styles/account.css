@@ -108,7 +108,8 @@
   .pro-steps { gap: 24px; }
 }
 @media (max-width: 540px) {
-  .pro-h1 { font-size: 2.15rem; margin-bottom: 12px; }
+  .pro-h1 { font-size: 2rem; margin-bottom: 8px; }
+  .pro-hero-action .account-small { font-size: .8rem; line-height: 1.45; }
   .pro-hero .article-breadcrumb { margin-bottom: 10px; }
   .pro-price-figure { font-size: 2.2rem; }
   .pro-price-note { font-size: .9rem; margin-bottom: 12px; }

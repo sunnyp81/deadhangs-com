@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useMemo } from "react";
 import { filterBySetup, listSetups } from "../lib/training-log.mjs";
 import { progressFor } from "../lib/training-progress.mjs";
@@ -15,6 +15,7 @@ export default function ProgressSummary({ entries, profile, proNudges = false }:
   const [windowDays, setWindowDays] = useState<30 | 90>(90);
   const [setupKey, setSetupKey] = useState("all");
   const [nudgeOff, setNudgeOff] = useState(true);
+  const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
     if (!proNudges) return;
     const sync = () => setNudgeOff(nudgeDismissed(window.localStorage));
@@ -27,6 +28,7 @@ export default function ProgressSummary({ entries, profile, proNudges = false }:
     setNudgeOff(true);
     trackFeature("pro_nudge_dismissed", { source: "progress" });
     window.dispatchEvent(new Event(PRO_NUDGE_DISMISSED_EVENT));
+    titleRef.current?.focus();
   };
   useEffect(() => {
     setAssistance(profile?.assistance || "unassisted");
@@ -40,7 +42,7 @@ export default function ProgressSummary({ entries, profile, proNudges = false }:
   return (
     <section className="training-workspace" aria-labelledby={`${id}-title`}>
       <div className="tw-panel">
-        <h2 id={`${id}-title`} className="tw-panel-title">Comparable progress</h2>
+        <h2 id={`${id}-title`} className="tw-panel-title" ref={titleRef} tabIndex={-1}>Comparable progress</h2>
         <div className="tw-settings-grid">
           <fieldset className="tw-settings">
             <legend className="tw-legend">Compare assistance</legend>

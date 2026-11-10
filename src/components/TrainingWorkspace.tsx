@@ -249,6 +249,7 @@ export default function TrainingWorkspace({ showTimer = true, proNudges = false,
   // Pro line under the save status: /training-log/ only, after a save that leaves 2+ entries, until "Not now".
   const [saveNudge, setSaveNudge] = useState(false);
   const [nudgeOff, setNudgeOff] = useState(true);
+  const logStatusRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     if (!proNudges) return;
     const sync = () => setNudgeOff(nudgeDismissed(window.localStorage));
@@ -261,6 +262,7 @@ export default function TrainingWorkspace({ showTimer = true, proNudges = false,
     setNudgeOff(true);
     trackFeature('pro_nudge_dismissed', { source: 'post_save' });
     window.dispatchEvent(new Event(PRO_NUDGE_DISMISSED_EVENT));
+    logStatusRef.current?.focus();
   }
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
@@ -753,7 +755,7 @@ export default function TrainingWorkspace({ showTimer = true, proNudges = false,
           </p>
         </form>
 
-        <p className="tw-status" aria-live="polite">{logStatus}</p>
+        <p className="tw-status" aria-live="polite" ref={logStatusRef} tabIndex={-1}>{logStatus}</p>
         {proNudges && saveNudge && !nudgeOff && (
           <p className="tw-pro-nudge">
             <span>Saved on this device only. Pro keeps your log on every device, £4.99 a month. The timer and this log stay free.</span>{' '}
