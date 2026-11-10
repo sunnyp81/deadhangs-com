@@ -1,5 +1,7 @@
 ---
 import Article from '../../layouts/Article.astro';
+import { TIMER_PRESETS } from '../../lib/timer-preset.mjs';
+const level1Html = TIMER_PRESETS.find((p) => p.id === 'level-1')!.path.replaceAll('&', '&amp;');
 ---
 
 <Article
@@ -119,6 +121,7 @@ import Article from '../../layouts/Article.astro';
 
         <h2>Level 1: Assisted Dead Hang (Box and Band Options)</h2>
         <p><strong>How do you do an assisted dead hang?</strong> Place a box under the bar and hang with your toes touching it, or loop a resistance band over the bar and step both feet in. Both reduce the load on your grip. Hold 3 sets of 15 seconds with 90 seconds rest, record the assistance used and move to Level 2 when all 3 sets reach 15 seconds with minimal assistance.</p>
+        <p>The free <a href="${level1Html}">Level 1 timer session</a> opens set to 3 hangs of 15 seconds with 90 seconds of rest, so you only need to tap Start.</p>
         <p>The assisted dead hang reduces bodyweight load on your grip. Use this level if you cannot yet hold a standard dead hang for 15 seconds. Foot support and a loop band are the two common assistance methods.</p>
 
         <h3>Feet-on-Ground Method</h3>

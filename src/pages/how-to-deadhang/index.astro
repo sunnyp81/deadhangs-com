@@ -3,6 +3,8 @@ import Article from '../../layouts/Article.astro';
 import DemoLoopInit from '../../components/DemoLoopInit.astro';
 import { hangFigureSvg, demoLoopHtml } from '../../lib/hang-figure.js';
 import '../../styles/figures.css';
+import { TIMER_PRESETS } from '../../lib/timer-preset.mjs';
+const level1Html = TIMER_PRESETS.find((p) => p.id === 'level-1')!.path.replaceAll('&', '&amp;');
 ---
 
 <Article
@@ -148,6 +150,7 @@ import '../../styles/figures.css';
       </ol>
     </div>
     <Fragment set:html={`<p>To dead hang, grip a pull-up bar overhand at shoulder width, step off with straight arms, set your shoulders and hold while breathing slowly. Stop one or two seconds before your grip gives out and step down under control.</p>
+        <p>To time your first holds, the free <a href="${level1Html}">Level 1 timer session</a> runs 3 hangs of 15 seconds with 90 seconds of rest and keeps a log in your browser.</p>
 
         <h2>Dead Hang Setup: What You Need</h2>
         <p>A dead hang needs one piece of equipment: a pull-up bar. The bar should sit high enough that your feet clear the ground with arms fully extended. A step or sturdy platform helps you reach the bar safely.</p>
