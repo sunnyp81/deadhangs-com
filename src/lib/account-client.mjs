@@ -73,3 +73,9 @@ export const accountErrorMessage = (error) => ({
   billing_recovery_required: 'A previous billing request needs checking. Contact support before trying to pay or delete the account again.',
   billing_cancellation_unconfirmed: 'Cancellation could not be confirmed, so the account was kept. Use Manage billing or contact support before retrying deletion.',
 }[error?.code] || 'That action could not finish here. Refresh your account to check its status before trying again.');
+
+/** Google sign-in request body. From /pro/ the visitor comes back to /pro/ (success or error) so the plan step stays in view. */
+export function signInBody(pricing = false) {
+  const back = pricing ? '/pro/' : '/account/';
+  return { provider: 'google', callbackURL: back, errorCallbackURL: back };
+}

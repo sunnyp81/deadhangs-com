@@ -9,6 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 import { Miniflare } from 'miniflare';
 import { prepareLogImport } from '../src/lib/training-log.mjs';
+import { signInBody } from '../src/lib/account-client.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ORIGIN = 'https://deadhangs.com';
@@ -103,8 +104,8 @@ async function call(target, pathname, { method = 'GET', jar, body, headers = {},
   return { status: response.status, headers: response.headers, data, text };
 }
 
-async function signIn(who, jar = new Jar()) {
-  const start = await call(null, '/api/auth/sign-in/social', { method: 'POST', jar, body: { provider: 'google', callbackURL: '/training-log/' } });
+async function signIn(who, jar = new Jar(), callbackURL = '/training-log/') {
+  const start = await call(null, '/api/auth/sign-in/social', { method: 'POST', jar, body: { provider: 'google', callbackURL } });
   assert.equal(start.status, 200, start.text);
   const auth = new URL(start.data.url);
   const state = auth.searchParams.get('state');
@@ -230,6 +231,21 @@ test('Google sign-in creates a persisted session without storing tokens, IP, use
   const session = await call(null, '/api/auth/get-session', { jar: alice });
   assert.equal(session.status, 404, 'raw library session endpoint is not exposed');
   assert.ok(!me.text.includes(people.alice.sub));
+});
+
+test('sign-in started on /pro/ returns to /pro/ with the body the pricing page sends', async () => {
+  const body = signInBody(true);
+  assert.deepEqual(body, { provider: 'google', callbackURL: '/pro/', errorCallbackURL: '/pro/' });
+  assert.deepEqual(signInBody(false), { provider: 'google', callbackURL: '/account/', errorCallbackURL: '/account/' });
+  const jar = new Jar();
+  const start = await call(null, '/api/auth/sign-in/social', { method: 'POST', jar, body });
+  assert.equal(start.status, 200, start.text);
+  const state = new URL(start.data.url).searchParams.get('state');
+  const done = await call(null, `/api/auth/callback/google?code=alice&state=${encodeURIComponent(state)}`, { jar });
+  assert.equal(done.status, 302, done.text);
+  assert.equal(done.headers.get('location'), '/pro/');
+  for (const callbackURL of ['/pro', '/pro/?plan=yearly', '/pro/#plans']) assert.equal((await call(null, '/api/auth/sign-in/social', { method: 'POST', body: { provider: 'google', callbackURL } })).status, 400, callbackURL);
+  await call(null, '/api/auth/sign-out', { method: 'POST', jar });
 });
 
 test('a different Google subject with an existing email is refused, not linked', async () => {

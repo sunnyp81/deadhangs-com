@@ -114,6 +114,7 @@ export default function TrainingJourney() {
       </section>
       <TrainingWorkspace
         showTimer={false}
+        proNudges
         funnelSource={starter ? "chosen_session" : "workspace"}
         acceptedPlan={acceptedPlan}
         onEntriesChange={setEntries}
@@ -140,7 +141,7 @@ export default function TrainingJourney() {
           onSaved={trackGoalSaved}
         />
       </details>
-      <ProgressSummary entries={entries} profile={profile} />
+      <ProgressSummary entries={entries} profile={profile} proNudges />
     </div>
   );
 }
