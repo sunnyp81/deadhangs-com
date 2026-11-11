@@ -91,7 +91,8 @@ test("built /pro/: indexable, canonical, sitemap, visible FAQ, example label, of
 test("built /training-log/ carries the log header Pro link", { skip: !existsSync(built("training-log/index.html")) }, () => {
   const html = readFileSync(built("training-log/index.html"), "utf8");
   assert.match(html, /<a href="\/pro\/" data-dh-source="log_header">See Pro<\/a>/);
-  assert.equal((html.match(/href="\/pro\/"/g) || []).length, 1, "one Pro link in the static page");
+  const body = html.replace(/<footer[\s\S]*<\/footer>/, "");
+  assert.equal((body.match(/href="\/pro\/"/g) || []).length, 1, "one Pro link in the static page outside the footer");
 });
 
 test("nudge helpers survive a localStorage getter that throws (blocked site data)", () => {

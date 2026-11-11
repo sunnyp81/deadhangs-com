@@ -1,5 +1,7 @@
 ---
 import Article from '../../layouts/Article.astro';
+import { TIMER_PRESETS } from '../../lib/timer-preset.mjs';
+const level1Html = TIMER_PRESETS.find((p) => p.id === 'level-1')!.path.replaceAll('&', '&amp;');
 ---
 
 <Article
@@ -90,6 +92,7 @@ import Article from '../../layouts/Article.astro';
           <a href="/deadhang-benefits/" class="cta-btn">Dead hang benefits</a>
           <a href="/how-to-deadhang/" class="cta-btn">How to dead hang: form</a>
           <a href="/beginner-deadhang/" class="cta-btn">Cannot hang yet?</a>
+          <a href="${level1Html}" class="cta-btn">Time your first holds (free)</a>
         </div>
 
         <h2>What Is a Dead Hang?</h2>

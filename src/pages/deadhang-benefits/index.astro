@@ -2,6 +2,8 @@
 import Article from '../../layouts/Article.astro';
 import SignupForm from '../../components/SignupForm';
 import '../../styles/figures.css';
+import { TIMER_PRESETS } from '../../lib/timer-preset.mjs';
+const level1Html = TIMER_PRESETS.find((p) => p.id === 'level-1')!.path.replaceAll('&', '&amp;');
 ---
 
 <Article
@@ -108,7 +110,7 @@ import '../../styles/figures.css';
         <h2>1. Grip Strength and Forearm Endurance</h2>
         <p>Evidence level: training principle and not a dead hang trial. Hanging holds the forearm flexors under sustained isometric load. Grip endurance is the most direct thing a hang trains. Deadlifts, rows, pull-ups and carries all end when the hands open first. Grip endurance helps in all of these lifts.</p>
         <p>Dead hangs work three forearm muscles together: the flexor digitorum profundus, flexor digitorum superficialis and flexor pollicis longus. Fingertip push-ups and wrist curls work these muscles in different ways. Hangs are one option among several. The <a href="/grip-strength/">grip strength training guide</a> covers forearm programming in detail.</p>
-        <p>A common starting point is 10 to 20 second holds. Add about 5 seconds to your target hold once you complete every set cleanly and roughly once a week. This is common training practice, not a tested prescription.</p>
+        <p>A common starting point is 10 to 20 second holds. The free <a href="${level1Html}">Level 1 timer session</a> runs 3 hangs of 15 seconds with 90 seconds of rest. Add about 5 seconds to your target hold once you complete every set cleanly and roughly once a week. This is common training practice, not a tested prescription.</p>
 
         <h2 id="the-spine">2. The Spine</h2>
         <p>Evidence level: mechanism only. Hanging unloads the spine while you hang. No study has measured disc height or pressure during a bodyweight hang. A Cochrane review (Wegner et al. 2013) found traction gives little or no benefit for low back pain. Some people find short hangs ease stiffness.</p>

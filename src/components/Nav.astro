@@ -5,7 +5,7 @@ const links = [
   { label: 'World record', href: '/dead-hang-world-record/' },
   { label: 'Calculator', href: '/dead-hang-calculator/' },
   { label: 'Account', href: '/account/' },
-  { label: 'Start →', href: '/#timer' },
+  { label: 'Start →', href: Astro.url.pathname === '/' ? '/#timer' : '/training-log/' },
 ];
 ---
 <a class="skip-link" href="#main-content">Skip to content</a>
