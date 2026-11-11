@@ -17,6 +17,8 @@ const articleSchema = {"@context":"https://schema.org","@type":"Article","headli
 {"@type":"ScholarlyArticle","name":"Grip strength across the life course: normative data from twelve British studies","url":"https://doi.org/10.1371/journal.pone.0113637"},
 {"@type":"ScholarlyArticle","name":"An investigation of the tri-bar gripping system on isometric muscular endurance","url":"https://doi.org/10.1519/R-13883.1"}]};
 const jsonLd = [faqSchema, articleSchema].map(o=>'<script type="application/ld+json">' + JSON.stringify(o) + '</script>').join('');
+import SignupForm from '../../components/SignupForm';
+import { EMAIL_CAPTURE_ENABLED } from '../../lib/email-flag.mjs';
 ---
 <style is:global>
 .bya-updated{font-size:13px;color:var(--color-text-muted)}
@@ -146,6 +148,7 @@ const jsonLd = [faqSchema, articleSchema].map(o=>'<script type="application/ld+j
 <p>Grip force falls with age. Nobody has measured how many hanging seconds are lost per decade.</p><p>A pooled analysis of 12 British studies (60,803 measurements from 49,964 participants) found median peak grip of 51 kg in males aged 29 to 39 and 31 kg in females aged 26 to 42 (Dodds et al. PLOS ONE 2014). That is force in kilograms and not seconds. The <a href="/grip-strength-by-age/">grip strength by age guide</a> covers the force side.</p>
 <h2 id="improve">Turn your baseline into a routine</h2>
 <p>Choose manageable holds and enough rest to maintain control. Record what you actually held instead of saving the timer setting as a result.</p><p>The training plans organize practice and review points without promising a particular gain.</p>
+{EMAIL_CAPTURE_ENABLED && <SignupForm client:visible source="article" offer />}
 <h2 id="how-long-per-session">How long should you dead hang in a session?</h2>
 <p>Level 1 is the starting dose: 3 hangs of 15 seconds each, with 90 seconds of rest between hangs, on 3 non-consecutive days a week (for example Monday, Wednesday and Friday). Stop each hang 1 to 2 seconds before your grip gives out. This is common training practice and not a tested prescription. Stop if you feel sharp pain. This is not medical advice.</p>
 <p>Rest, progression and how to add sessions are covered in <a href="/deadhang-frequency/">how often to dead hang</a>.</p>

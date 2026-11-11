@@ -1,4 +1,16 @@
-interface Env { BREVO_API_KEY: string; }
+import { consentSource, CONSENT_WORDING_VERSION, emailFlagOn } from '../../src/lib/email-consent.mjs';
+import { listId, sendCompliantEmail, sendReadiness, siteOrigin, welcomeEmail } from '../../src/server/email.mjs';
+
+interface Env {
+  BREVO_API_KEY?: string;
+  EMAIL_CAPTURE_ENABLED?: string;
+  EMAIL_LIST_ID?: string;
+  UNSUB_SECRET?: string;
+  EMAIL_POSTAL_ADDRESS?: string;
+  EMAIL_SENDER?: string;
+  EMAIL_SENDER_NAME?: string;
+  AUTH_BASE_URL?: string;
+}
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control':'no-store' } });
 export const onRequestPost = async ({ request, env }: { request: Request; env: Env }) => {
   const origin = request.headers.get('origin');
@@ -24,12 +36,27 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     if (raw.length > 4096) return json({ error:'Request too large' },413);
     let input: unknown;
     try { input = JSON.parse(raw); } catch { return json({ error:'Invalid JSON' },400); }
-    const value = input && typeof input === 'object' ? (input as {email?:unknown}).email : null;
-    const email = typeof value === 'string' ? value.trim() : '';
+    const body = (input && typeof input === 'object' ? input : {}) as { email?: unknown; source?: unknown; website?: unknown };
+    const email = typeof body.email === 'string' ? body.email.trim() : '';
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error:'Invalid email' },400);
+    // Honeypot: people never fill the hidden field. Answer as success so bots learn nothing.
+    if (typeof body.website === 'string' && body.website.trim() !== '') return json({ ok:true });
     if (!env.BREVO_API_KEY) return json({ error:'Signup is temporarily unavailable' },503);
-    const response = await fetch('https://api.brevo.com/v3/contacts', { method:'POST', headers:{'Content-Type':'application/json','api-key':env.BREVO_API_KEY}, body:JSON.stringify({email,listIds:[3],attributes:{SIGNUP_DATE:new Date().toISOString().split('T')[0],DRIP_LAST_SENT:'-1'},updateEnabled:false}), signal:AbortSignal.timeout(10000) });
-    if (response.ok) return json({ok:true});
+    const list = listId(env);
+    if (list === null) return json({ error:'Signup is temporarily unavailable' },503);
+    const flagOn = emailFlagOn(env.EMAIL_CAPTURE_ENABLED);
+    const attributes: Record<string, string> = { SIGNUP_DATE: new Date().toISOString().split('T')[0], DRIP_LAST_SENT: '-1' };
+    // Consent record. Sent only with the flag on, because Brevo needs these attributes created first (NEEDS SUNNY).
+    if (flagOn) Object.assign(attributes, { CONSENT_SOURCE: consentSource(body.source), CONSENT_AT: new Date().toISOString(), CONSENT_WORDING: CONSENT_WORDING_VERSION });
+    const response = await fetch('https://api.brevo.com/v3/contacts', { method:'POST', headers:{'Content-Type':'application/json','api-key':env.BREVO_API_KEY}, body:JSON.stringify({email,listIds:[list],attributes,updateEnabled:false}), signal:AbortSignal.timeout(10000) });
+    if (response.ok) {
+      // Welcome email only when every gate passes; sendCompliantEmail re-checks readiness and suppression.
+      if (flagOn && sendReadiness(env).length === 0) {
+        const message = welcomeEmail(siteOrigin(env));
+        await sendCompliantEmail(env, { email, ...message });
+      }
+      return json({ok:true});
+    }
     const result = await response.json() as {code?:string};
     if (response.status === 400 && result.code === 'duplicate_parameter') return json({ok:true,existing:true});
     return json({error:'Subscription failed'},502);

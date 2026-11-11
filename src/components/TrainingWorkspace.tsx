@@ -39,6 +39,7 @@ import {
   validateEntryInput,
 } from '../lib/training-log.mjs';
 import { LOG_UPDATED_EVENT, readRememberedSetup, rememberSetup } from '../lib/training-log-store';
+import SignupForm from './SignupForm';
 import { PRO_NUDGE_DISMISSED_EVENT, dismissNudge, nudgeDismissed, showSaveNudge } from '../lib/pro-nudge.mjs';
 import type { SetupForm } from '../lib/training-log-store';
 import type { LogEntry, ToolSource } from '../lib/training-types';
@@ -97,7 +98,7 @@ function writeRawLog(text: string): boolean {
   }
 }
 
-export default function TrainingWorkspace({ showTimer = true, proNudges = false, onEntriesChange, onManualEntrySaved, registerActualFocus, analyticsSource, funnelSource, acceptedPlan, formAction = "/training-log/" }: { showTimer?: boolean; proNudges?: boolean; onEntriesChange?: (entries: Entry[]) => void; onManualEntrySaved?: () => void; registerActualFocus?: (focus: () => void) => void; analyticsSource?: ToolSource; funnelSource?: ToolSource; acceptedPlan?: { requestId: string; assistance: string } | null; formAction?: string }) {
+export default function TrainingWorkspace({ showTimer = true, proNudges = false, emailOffer = false, onEntriesChange, onManualEntrySaved, registerActualFocus, analyticsSource, funnelSource, acceptedPlan, formAction = "/training-log/" }: { showTimer?: boolean; proNudges?: boolean; emailOffer?: boolean; onEntriesChange?: (entries: Entry[]) => void; onManualEntrySaved?: () => void; registerActualFocus?: (focus: () => void) => void; analyticsSource?: ToolSource; funnelSource?: ToolSource; acceptedPlan?: { requestId: string; assistance: string } | null; formAction?: string }) {
   const uid = useId();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => { setHydrated(true); }, []);
@@ -249,6 +250,8 @@ export default function TrainingWorkspace({ showTimer = true, proNudges = false,
   // Pro line under the save status: /training-log/ only, after a save that leaves 2+ entries, until "Not now".
   const [saveNudge, setSaveNudge] = useState(false);
   const [nudgeOff, setNudgeOff] = useState(true);
+  // Signup offer appears only after a save in this visit, and only when the build flag is on.
+  const [savedThisVisit, setSavedThisVisit] = useState(false);
   const logStatusRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     if (!proNudges) return;
@@ -422,6 +425,7 @@ export default function TrainingWorkspace({ showTimer = true, proNudges = false,
       setHoldInput('');
       onManualEntrySaved?.();
       setSaveNudge(proNudges && showSaveNudge(added.entries.length));
+      if (emailOffer) setSavedThisVisit(true);
       if (analyticsSource)
         trackTrainingEvent("training_log_saved", { source: analyticsSource });
     }
@@ -763,6 +767,7 @@ export default function TrainingWorkspace({ showTimer = true, proNudges = false,
             <button type="button" className="tw-pro-dismiss" onClick={closeSaveNudge}>Not now</button>
           </p>
         )}
+        {emailOffer && savedThisVisit && <SignupForm source="post_save" offer />}
         <details className="tw-data">
           <summary>Your data: export, backup and import</summary>
           <div className="tw-data-body">

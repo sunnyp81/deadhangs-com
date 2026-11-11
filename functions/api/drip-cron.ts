@@ -1,5 +1,13 @@
+import { complianceFor, isSuppressed, listId, sendReadiness } from '../../src/server/email.mjs';
+
 interface Env {
   BREVO_API_KEY?: string;
+  EMAIL_CAPTURE_ENABLED?: string;
+  EMAIL_LIST_ID?: string;
+  UNSUB_SECRET?: string;
+  EMAIL_POSTAL_ADDRESS?: string;
+  EMAIL_SENDER?: string;
+  AUTH_BASE_URL?: string;
   DRIP_CRON_SECRET?: string;
   DRIP_ENABLED?: string;
   DRIP_TEMPLATE_IDS?: string;
@@ -42,6 +50,10 @@ async function run({ request, env }: Context, dryRun: boolean) {
   if (!env.BREVO_API_KEY) blockers.push('BREVO_API_KEY is missing');
   if (!ids) blockers.push('DRIP_TEMPLATE_IDS must contain twelve distinct positive template IDs in sequence order');
   if (!env.DRIP_CRON_SECRET) blockers.push('A dedicated DRIP_CRON_SECRET is required before enabling sends');
+  // Live sends also need the email compliance gate: flag, unsubscribe secret, postal address, sender, origin.
+  if (!dryRun) for (const b of sendReadiness(env)) if (!blockers.includes(b)) blockers.push(b);
+  const list = listId(env);
+  if (list === null && !blockers.includes('EMAIL_LIST_ID is invalid')) blockers.push('EMAIL_LIST_ID is invalid');
   if (blockers.length) return json({ ok: false, dryRun, ready: false, sent: 0, blockers }, 503);
   let scanned = 0, due = 0, sent = 0, accepted = 0, skipped = 0;
   const dueByStep = Array.from({ length: 12 }, () => 0);
@@ -53,7 +65,8 @@ async function run({ request, env }: Context, dryRun: boolean) {
       if (!response.ok) { blockers.push('Template ' + id + ' is unavailable'); continue; }
       const template = await response.json() as { isActive?: boolean; subject?: string; sender?: { email?: string }; htmlContent?: string };
       if (!template.isActive || !template.subject?.trim() || !template.sender?.email) blockers.push('Template ' + id + ' needs an active status, subject and sender');
-      if (!/{{\s*unsubscribe\s*}}/.test(template.htmlContent || '')) blockers.push('Template ' + id + ' is missing the Brevo unsubscribe token');
+      if (!/{{\s*(unsubscribe|params\.UNSUB_URL)\s*}}/.test(template.htmlContent || '')) blockers.push('Template ' + id + ' is missing an unsubscribe link');
+      if (!/{{\s*params\.POSTAL_ADDRESS\s*}}/.test(template.htmlContent || '')) blockers.push('Template ' + id + ' is missing {{ params.POSTAL_ADDRESS }}');
     }
     if (blockers.length) return json({ ok: false, dryRun, ready: false, sent: 0, blockers }, 503);
     const limit = 50;
@@ -61,7 +74,7 @@ async function run({ request, env }: Context, dryRun: boolean) {
     if (!Number.isSafeInteger(offset) || offset < 0) return json({ error: 'Invalid offset' }, 400);
     // Keep requests bounded. Counts describe this batch, never an invented list total.
     while (scanned < 200) {
-      const res = await brevo('/contacts/lists/3/contacts?limit=' + limit + '&offset=' + offset, env);
+      const res = await brevo('/contacts/lists/' + list + '/contacts?limit=' + limit + '&offset=' + offset, env);
       if (!res.ok) return json({ error: 'Contact lookup failed', dryRun, sent, accepted }, 502);
       const data = await res.json() as { contacts?: Contact[] };
       if (!Array.isArray(data.contacts) || data.contacts.length > limit) return json({ error: 'Invalid contact response', dryRun, sent, accepted }, 502);
@@ -72,7 +85,10 @@ async function run({ request, env }: Context, dryRun: boolean) {
         if (i < 0) { skipped++; continue; }
         due++; dueByStep[i]++;
         if (dryRun) continue;
-        const delivery = await brevo('/smtp/email', env, { method: 'POST', body: JSON.stringify({ templateId: ids![i], to: [{ email: contact.email }] }) });
+        // Fresh suppression check immediately before the send; the list snapshot may be stale.
+        if (await isSuppressed(env.BREVO_API_KEY!, contact.email)) { skipped++; due--; dueByStep[i]--; continue; }
+        const c = await complianceFor(env, contact.email);
+        const delivery = await brevo('/smtp/email', env, { method: 'POST', body: JSON.stringify({ templateId: ids![i], to: [{ email: contact.email }], headers: c.headers, params: { UNSUB_URL: c.url, POSTAL_ADDRESS: c.postal } }) });
         if (!delivery.ok) return json({ error: 'Email provider rejected send', dryRun, sent, accepted }, 502);
         accepted++;
         const update = await brevo('/contacts/' + encodeURIComponent(contact.email), env, { method: 'PUT', body: JSON.stringify({ attributes: { DRIP_LAST_SENT: String(i) } }) });
