@@ -13,7 +13,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
 ---
 <Article h1={"Dead Hang Calculator"} subtitle={"Enter your hold and a target to see your percent of goal and your change since last time. Every number comes from your own entries."} crumbs={[{"name":"Calculator"}]} updated={"Updated November 2, 2026"} title="Dead Hang Calculator: Compare Your Hold With Your Target" description="Free dead hang calculator: enter your hold time and a target to see percent of goal and change since your last hold. No made-up percentiles by age." schema={'<script type="application/ld+json">' + JSON.stringify(schema) + '</script><script type="application/ld+json">' + JSON.stringify(faqSchema) + '</script>'}>
 <div class="article-body">
-    <section aria-label="Dead hang calculator"><HangCalculator client:load /><noscript><p>The interactive calculator needs JavaScript. Calculate your target progress by dividing your hold time by your target, then multiplying by 100.</p></noscript></section>
+    <section aria-label="Dead hang calculator"><HangCalculator client:load proLine /><noscript><p>The interactive calculator needs JavaScript. Calculate your target progress by dividing your hold time by your target, then multiplying by 100.</p></noscript></section>
     <div class="callout">
       <h2 id="glance" style="margin-top:0">At a glance</h2>
       <ol class="stop-steps">
@@ -52,7 +52,7 @@ const faqSchema = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEn
     </ol>
     <h2 id="improve">What should you do with a result?</h2>
     <p>Use the result to set the next target, not to judge yourself. Choose a manageable session rather than testing a maximum every time. The free workspace has editable hang and rest intervals plus a log stored on your device.</p>
-    <div class="button-row"><a class="dh-btn" href="/training-log/">Open dead hang timer & log</a><a class="text-link" href="/training-programs/">Choose a training plan</a></div>
+    <div class="button-row"><a class="dh-btn" href="/training-log/">Open dead hang timer & log</a><a class="text-link" href="/training-programs/">Choose a training plan</a><a class="text-link" href="/pro/" data-dh-source="article">Keep your log on every device</a></div>
     <h2 id="faq">Dead hang calculator questions</h2>
     {faqs.map((f) => (<details class="answer"><summary>{f.q}</summary><p>{f.a}</p></details>))}
     <p>For the research behind the grip and lifespan question, see <a href="/longevity-research/">dead hangs and longevity</a>.</p>
