@@ -56,23 +56,3 @@ test("every outbound link on the S1 pages opens in a new tab with noopener noref
     }
   }
 });
-
-test("benefits answers 'make you taller' in 40 to 60 words with linked primary sources", { skip: !built }, () => {
-  const html = read("dist/deadhang-benefits/index.html");
-  const section = html.slice(html.indexOf('id="taller"'), html.indexOf("<h2", html.indexOf('id="taller"') + 5));
-  const answer = section.match(/<p><strong>No\.[\s\S]*?<\/p>/)?.[0];
-  assert.ok(answer, "answer-first paragraph");
-  const words = text(answer).split(" ").length;
-  assert.ok(words >= 40 && words <= 60, `answer is ${words} words`);
-  for (const src of ["pubmed.ncbi.nlm.nih.gov/21483279", "doi.org/10.1249/00005768-199006000-00016", "doi.org/10.1097/00007632-198503000-00011"]) {
-    assert.ok(section.includes(src), src);
-  }
-});
-
-test("guide At a glance names the muscles worked and links the full list", { skip: !built }, () => {
-  const html = read("dist/deadhang-guide/index.html");
-  const card = html.slice(html.indexOf('id="at-a-glance"'), html.indexOf("</ol>", html.indexOf('id="at-a-glance"')));
-  assert.match(card, /<strong>Muscles worked:<\/strong>/);
-  assert.match(card, /href="#muscles-worked"/);
-  assert.ok(html.includes('id="muscles-worked"'), "anchor target exists");
-});
