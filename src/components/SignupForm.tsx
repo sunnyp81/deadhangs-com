@@ -1,10 +1,13 @@
 import { useEffect, useId, useState } from 'react';
 import { trackFeature } from '../scripts/training-events.js';
-export default function SignupForm({ dark = false, source = 'article' }: { dark?: boolean; source?: 'home' | 'article' }) {
+import { CONSENT_WORDING, OFFER_WORDING } from '../lib/email-consent.mjs';
+// `offer` is used only by the flagged placements (EMAIL_CAPTURE_ENABLED); existing pages keep their copy.
+export default function SignupForm({ dark = false, source = 'article', offer = false }: { dark?: boolean; source?: 'home' | 'article' | 'post_save'; offer?: boolean }) {
   const uid = useId();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => { setHydrated(true); }, []);
   const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState('');
   const [existing, setExisting] = useState(false);
   const [status, setStatus] = useState<'idle'|'loading'|'ok'|'error'>('idle');
   async function submit(event: React.FormEvent) {
@@ -14,7 +17,7 @@ export default function SignupForm({ dark = false, source = 'article' }: { dark?
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email}), signal:controller.signal });
+      const response = await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email,website,source:window.location.pathname}), signal:controller.signal });
       const body = await response.json();
       if (!response.ok || !body || typeof body !== 'object' || !('ok' in body) || body.ok !== true) throw new Error('Not registered');
       const existingAddress = 'existing' in body && body.existing === true;
@@ -26,11 +29,13 @@ export default function SignupForm({ dark = false, source = 'article' }: { dark?
     finally { window.clearTimeout(timeout); }
   }
   return <div className="signup-form" data-dark={dark}>
+    {offer && <p>{OFFER_WORDING}</p>}
     <p><a href="/training-programs/#print-plan">Open the free session planner now</a>. No email required.</p>
     <form action="/api/subscribe" method="post" onSubmit={submit}>
       <label htmlFor={uid}>Email address for optional training emails</label>
       <div className="signup-controls"><input id={uid} className="dh-input" type="email" name="email" autoComplete="email" required maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} disabled={!hydrated||status==='ok'||status==='loading'}/><button type="submit" className="dh-btn" disabled={!hydrated||status==='ok'||status==='loading'}>{status==='loading'?'Registering…':status==='ok'?'Request received':'Subscribe'}</button></div>
-      <p className="small-copy">By subscribing, you ask to receive DeadHangs training emails. Unsubscribe in any received message. <a href="/privacy/">Privacy details</a>.</p>
+      <div className="signup-hp" aria-hidden="true"><label htmlFor={uid + '-website'}>Leave this field empty</label><input id={uid + '-website'} type="text" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={e=>setWebsite(e.target.value)}/></div>
+      <p className="small-copy">{CONSENT_WORDING} <a href="/privacy/">Privacy details</a>.</p>
       <p role="status">{status==='ok'?(existing?'This address is already on file. Your existing subscription preferences were left unchanged.':'Subscription registered. This confirms signup, not inbox delivery.'):status==='error'?'We could not register your subscription. Try again, or use the free planner above.':''}</p>
     </form>
   </div>;

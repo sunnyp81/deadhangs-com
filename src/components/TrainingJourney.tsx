@@ -8,7 +8,7 @@ import { parseTimerParams } from "../lib/timer-preset.mjs";
 import { parseSessionParam, starterTimerLoad } from "../lib/next-session.mjs";
 import { trackFeature, trackTrainingEvent, trackTrainingToolView } from "../scripts/training-events.js";
 import type { TimerLoad, TrainingProfile } from "../lib/training-types";
-export default function TrainingJourney() {
+export default function TrainingJourney({ emailOffer = false }: { emailOffer?: boolean }) {
   const [draft, setDraft] = useState<any>(null),
     [draftNotice, setDraftNotice] = useState(""),
     [profile, setProfile] = useState<TrainingProfile | null>(null),
@@ -115,6 +115,7 @@ export default function TrainingJourney() {
       <TrainingWorkspace
         showTimer={false}
         proNudges
+        emailOffer={emailOffer}
         funnelSource={starter ? "chosen_session" : "workspace"}
         acceptedPlan={acceptedPlan}
         onEntriesChange={setEntries}

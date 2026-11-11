@@ -2,23 +2,25 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import ts from 'typescript';
-async function load(file) { const source=await fs.readFile(new URL('../'+file,import.meta.url),'utf8'); return import('data:text/javascript;base64,'+Buffer.from(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText).toString('base64')); }
+async function load(file) { const base=new URL('../'+file,import.meta.url);const source=await fs.readFile(base,'utf8'); const out=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from '(\.{1,2}\/[^']+)'/g,(_m,spec)=>`from '${new URL(spec,base).href}'`); return import('data:text/javascript;base64,'+Buffer.from(out).toString('base64')); }
 const {onRequestPost:subscribe}=await load('functions/api/subscribe.ts');
 const {onRequestGet:dryRun,onRequestPost:drip,nextEmail}=await load('functions/api/drip-cron.ts');
-const env={BREVO_API_KEY:'test-only',DRIP_CRON_SECRET:'cron-test-only',DRIP_ENABLED:'true',DRIP_TEMPLATE_IDS:'1,2,3,4,5,6,7,8,9,10,11,12'};
+const ready={EMAIL_CAPTURE_ENABLED:'true',UNSUB_SECRET:'u'.repeat(40),EMAIL_POSTAL_ADDRESS:'1 Test Street, Testtown, TE1 1ST',EMAIL_SENDER:'sender@example.com',AUTH_BASE_URL:'https://deadhangs.com'};
+const env={BREVO_API_KEY:'test-only',DRIP_CRON_SECRET:'cron-test-only',DRIP_ENABLED:'true',DRIP_TEMPLATE_IDS:'1,2,3,4,5,6,7,8,9,10,11,12',...ready};
 const request=(body,headers={})=>new Request('https://deadhangs.com/api/subscribe',{method:'POST',headers:{'content-type':'application/json',...headers},body:typeof body==='string'?body:JSON.stringify(body)});
 test('signup validates input and origin before contacting provider',async(t)=>{ let calls=0;t.mock.method(globalThis,'fetch',async()=>{calls++;throw Error('unexpected')});for(const [body,headers,status] of [[{email:'bad'},{},400],[{email:'a@example.com'},{origin:'https://elsewhere.test'},403],['{',{},400],[{email:'a@example.com'},{'content-type':'text/plain'},415],['x'.repeat(4097),{},413]])assert.equal((await subscribe({request:request(body,headers),env})).status,status);assert.equal(calls,0);});
-test('signup records consent list, preserves existing sequences and handles provider failure',async(t)=>{let payload;t.mock.method(globalThis,'fetch',async(_url,options)=>{payload=JSON.parse(options.body);return new Response('',{status:201})});assert.equal((await subscribe({request:request({email:' a@example.com '}),env})).status,200);assert.equal(payload.email,'a@example.com');assert.equal(payload.updateEnabled,false);assert.deepEqual(payload.listIds,[3]);globalThis.fetch=async()=>new Response(JSON.stringify({code:'duplicate_parameter'}),{status:400});assert.equal((await subscribe({request:request({email:'a@example.com'}),env})).status,200);globalThis.fetch=async()=>new Response('provider detail',{status:500});const failed=await subscribe({request:request({email:'a@example.com'}),env});assert.equal(failed.status,502);assert.ok(!(await failed.text()).includes('provider detail'));});
+test('signup records consent list, preserves existing sequences and handles provider failure',async(t)=>{let payload;t.mock.method(globalThis,'fetch',async(_url,options)=>{payload=JSON.parse(options.body);return new Response('',{status:201})});assert.equal((await subscribe({request:request({email:' a@example.com '}),env:{BREVO_API_KEY:'test-only'}})).status,200);assert.equal(payload.email,'a@example.com');assert.equal(payload.updateEnabled,false);assert.deepEqual(payload.listIds,[3]);globalThis.fetch=async()=>new Response(JSON.stringify({code:'duplicate_parameter'}),{status:400});assert.equal((await subscribe({request:request({email:'a@example.com'}),env:{BREVO_API_KEY:'test-only'}})).status,200);globalThis.fetch=async()=>new Response('provider detail',{status:500});const failed=await subscribe({request:request({email:'a@example.com'}),env:{BREVO_API_KEY:'test-only'}});assert.equal(failed.status,502);assert.ok(!(await failed.text()).includes('provider detail'));});
 
 const cronRequest=(secret='cron-test-only',method='POST',query='')=>new Request('https://deadhangs.com/api/drip-cron'+query,{method,headers:{'x-cron-secret':secret}});
 const contact={email:'sample+test@example.com',attributes:{SIGNUP_DATE:'2026-01-01',DRIP_LAST_SENT:'-1'}};
-const template={isActive:true,subject:'Training',sender:{email:'sender@example.com'},htmlContent:'<a href="{{ unsubscribe }}">Unsubscribe</a>'};
+const template={isActive:true,subject:'Training',sender:{email:'sender@example.com'},htmlContent:'<a href="{{ params.UNSUB_URL }}">Unsubscribe</a> {{ params.POSTAL_ADDRESS }}'};
 function mockBrevo(t, contacts=[contact], responder) {
   const calls=[];
   t.mock.method(globalThis,'fetch',async(url,options)=>{
     calls.push({url,options});
     if(url.includes('/smtp/templates/'))return Response.json(template);
     if(url.includes('/contacts/lists/'))return Response.json({contacts});
+    if(url.includes('/v3/contacts/')&&!options?.method)return Response.json({emailBlacklisted:false});
     return responder ? responder(url,options) : new Response(null,{status:options?.method==='POST'?201:204});
   });
   return calls;

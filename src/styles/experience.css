@@ -133,3 +133,4 @@ html:has(#cookie-banner:not([hidden])) { scroll-padding-bottom: 150px; }
 @media(max-width:768px) { .hero-ticker { display:none; } }
 
 @media(max-width:480px) { #main-content .link-grid { grid-template-columns:1fr !important; } }
+.signup-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
