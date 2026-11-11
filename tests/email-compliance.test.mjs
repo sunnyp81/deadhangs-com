@@ -140,21 +140,35 @@ test('honeypot submissions get a quiet success and never reach Brevo', async (t)
 
 const unsubRequest = (method, query) => new Request('https://deadhangs.com/api/unsubscribe' + query, { method, ...(method === 'POST' ? { headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: 'List-Unsubscribe=One-Click' } : {}) });
 
-test('one-click POST and footer GET blacklist the contact with a valid token', async (t) => {
+test('GET with a valid token makes no Brevo call and returns the confirm form', async (t) => {
+  const calls = fakeBrevo(t);
   const token = await mail.makeUnsubToken('a@example.com', SECRET);
-  for (const method of ['POST', 'GET']) {
+  const res = await unsub.onRequestGet({ request: unsubRequest('GET', `?e=a%40example.com&t=${token}`), env: ready });
+  assert.equal(res.status, 200);
+  assert.equal(calls.length, 0);
+  const html = await res.text();
+  assert.ok(html.includes(`<form method="post" action="/api/unsubscribe?e=a%40example.com&amp;t=${token}"><button type="submit">Unsubscribe</button></form>`));
+  assert.match(html, /min-height:44px/);
+  assert.equal(res.headers.get('X-Robots-Tag'), 'noindex');
+  assert.equal(res.headers.get('Referrer-Policy'), 'no-referrer');
+});
+
+test('POST from the confirm form and the RFC 8058 one-click both blacklist the contact', async (t) => {
+  const token = await mail.makeUnsubToken('a@example.com', SECRET);
+  for (const kind of ['form', 'one-click']) {
     t.mock.restoreAll();
     const calls = fakeBrevo(t);
-    const handler = method === 'POST' ? unsub.onRequestPost : unsub.onRequestGet;
-    const res = await handler({ request: unsubRequest(method, `?e=A%40example.com&t=${token}`), env: ready });
+    const request = kind === 'form'
+      ? new Request(`https://deadhangs.com/api/unsubscribe?e=A%40example.com&t=${token}`, { method: 'POST', headers: { accept: 'text/html,application/xhtml+xml', 'content-type': 'application/x-www-form-urlencoded' }, body: '' })
+      : unsubRequest('POST', `?e=A%40example.com&t=${token}`);
+    const res = await unsub.onRequestPost({ request, env: ready });
     assert.equal(res.status, 200);
-    assert.equal(res.headers.get('X-Robots-Tag'), 'noindex');
-    assert.equal(res.headers.get('Referrer-Policy'), 'no-referrer');
     assert.equal(calls.length, 1);
     assert.equal(calls[0].method, 'PUT');
     assert.equal(calls[0].url, 'https://api.brevo.com/v3/contacts/a%40example.com');
     assert.deepEqual(calls[0].body, { emailBlacklisted: true });
-    if (method === 'GET') assert.match(await res.text(), /You are unsubscribed/);
+    const body = await res.text();
+    if (kind === 'form') assert.match(body, /You are unsubscribed/); else assert.equal(body, 'done');
   }
 });
 
@@ -173,7 +187,7 @@ test('unsubscribe still works with the send flag off, and the page has no dashes
   fakeBrevo(t);
   const token = await mail.makeUnsubToken('a@example.com', SECRET);
   assert.equal((await unsub.onRequestPost({ request: unsubRequest('POST', `?e=a%40example.com&t=${token}`), env: { ...ready, EMAIL_CAPTURE_ENABLED: undefined } })).status, 200);
-  for (const state of ['done', 'invalid', 'unavailable']) assert.doesNotMatch(unsub.page(state), BAD_CHARS);
+  for (const state of ['confirm', 'done', 'invalid', 'unavailable']) assert.doesNotMatch(unsub.page(state, '/api/unsubscribe'), BAD_CHARS);
   const w = mail.welcomeEmail('https://deadhangs.com');
   assert.doesNotMatch(w.bodyHtml + w.bodyText + mail.footerHtml('u', 'p') + w.subject, BAD_CHARS);
 });

@@ -11,7 +11,7 @@ Every send is refused unless all of these hold: flag `"true"`; `BREVO_API_KEY`; 
 Each send then checks Brevo for `emailBlacklisted` immediately before sending (errors count as suppressed), and carries `List-Unsubscribe` (https and mailto), `List-Unsubscribe-Post: List-Unsubscribe=One-Click`, and a footer with the unsubscribe link and the postal address.
 
 ## Unsubscribe
-`/api/unsubscribe?e=<email>&t=<token>`; token is base64url HMAC-SHA256 of the lowercased address with `UNSUB_SECRET`. GET (footer link) and POST (RFC 8058 one-click) both set `emailBlacklisted: true` in Brevo. Bad or missing token: 403/400, nothing changed. Missing secret: 503, nothing changed. Suppression lives in Brevo only; there is no local store.
+`/api/unsubscribe?e=<email>&t=<token>`; token is base64url HMAC-SHA256 of the lowercased address with `UNSUB_SECRET`. GET (footer link and the https List-Unsubscribe URI) verifies the token and shows a confirm page with one Unsubscribe button; it never calls Brevo, so link scanners and prefetchers cannot unsubscribe anyone. POST (the RFC 8058 one-click body `List-Unsubscribe=One-Click` from mail clients, or the confirm button) sets `emailBlacklisted: true` in Brevo. Bad or missing token: 403/400, nothing changed. Missing secret: 503, nothing changed. Suppression lives in Brevo only; there is no local store.
 
 ## Replies saying "stop" (manual process)
 The mailto in `List-Unsubscribe` goes to `EMAIL_SENDER`. Check that inbox at least weekly while sending. For any "stop", "unsubscribe" or removal request: in Brevo, open the contact and set it to blacklisted (Contacts, the contact, Blocklist). For a deletion request, also clear every attribute except the email so the blocklist entry stays; reply within one month.
