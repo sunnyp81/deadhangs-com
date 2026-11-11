@@ -102,6 +102,14 @@ const schema = '<script type="application/ld+json">' + JSON.stringify(schemaArti
 <h2 id="gear">What you need</h2>
 <p>You need a bar that holds your weight with room to hang below it. A doorway bar works for most people. See the <a href="/doorway-bars/">doorway bar guide</a> for setup and safety checks, or <a href="https://www.amazon.com/s?k=pull+up+bar&tag=deadhangs-20" target="_blank" rel="nofollow sponsored noopener noreferrer">browse pull-up bars on Amazon</a> (affiliate link). Check the current price and the weight rating before you buy.</p>
 
+<div class="visual-block">
+<div class="dg-figs" role="img" aria-label="Two set-up details. Hands hold the bar with an overhand grip and the thumbs wrapped around it. A person stands on a box under the bar with straight arms, the set-up used to reach the top position for negatives.">
+<div><Fragment set:html={hangFigureSvg({ pose: 'overhand' })} /><p>Overhand grip, thumbs around</p></div>
+<div><Fragment set:html={hangFigureSvg({ pose: 'supported', hl: 'legs' })} /><p>A box under the bar for negatives</p></div>
+</div>
+<p class="caption">Figure 3. Schematic only. The grip used for every rep, and the box that gets you to the top of a negative.</p>
+</div>
+
 <h2 id="faq">Dead hang pull-up FAQ</h2>
 {faqs.map(([q, a]) => <div class="faq"><h3>{q}</h3><p>{a}</p></div>)}
 
