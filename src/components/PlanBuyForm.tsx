@@ -52,9 +52,14 @@ export default function PlanBuyForm({ testSeconds, age = null, source }: Props) 
       const res = await fetch(PLAN_CHECKOUT_PATH, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inputs: built.inputs }),
+        body: JSON.stringify(built.inputs),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 400 && (data.error === "ineligible_low" || data.error === "ineligible_high")) {
+        setError(data.error === "ineligible_low" ? "The plan starts from a repeatable hold of 20 to 60 seconds." : "The plan stops at 60-second holds.");
+        setBusy(false);
+        return;
+      }
       if (res.ok && isStripeCheckoutUrl(data.url)) {
         window.location.assign(data.url);
         return;

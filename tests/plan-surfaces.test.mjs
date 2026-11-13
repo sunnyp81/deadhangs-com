@@ -36,6 +36,15 @@ test("eligibility window is 20 to 60 inclusive", () => {
   assert.doesNotMatch(form, /\bsex\b/);
 });
 
+test("checkout posts the flat PlanInputs and success uses the url as given", () => {
+  const form = read("src/components/PlanBuyForm.tsx");
+  assert.ok(form.includes("body: JSON.stringify(built.inputs)"));
+  assert.doesNotMatch(form, /{ inputs:/);
+  const ok = read("src/pages/plan/success/index.astro");
+  assert.match(ok, /link.href = data.url/);
+  assert.doesNotMatch(ok, /data.token/);
+});
+
 test("age bands and Stripe URL guard", () => {
   assert.equal(ageBandFor(39), "under-40");
   assert.equal(ageBandFor(40), "40-59");

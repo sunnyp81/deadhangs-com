@@ -29,8 +29,8 @@ async function load() {
   try {
     const res = await fetch('/api/billing/plan/success?session_id=' + encodeURIComponent(sessionId), { headers: { Accept: 'application/json' } });
     const data = await res.json();
-    if (res.ok && typeof data.token === 'string' && /^[A-Za-z0-9_-]{16,200}$/.test(data.token)) {
-      link.href = '/plan/view/?t=' + encodeURIComponent(data.token);
+    if (res.ok && typeof data.url === 'string' && data.url.startsWith("/plan/view/?t=")) {
+      link.href = data.url;
       link.hidden = false;
       form.hidden = false;
       status.textContent = 'Payment received. Your plan is ready.';
