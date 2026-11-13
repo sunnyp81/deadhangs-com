@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import DialMark from "./DialMark";
 import NextSessionChoices from "./NextSessionChoices";
 import { trackFeature, trackNextSessionChosen } from "../scripts/training-events.js";
 import { describeHold, parseAge, parseHold } from "../lib/your-number.mjs";
 import { starterById } from "../lib/next-session.mjs";
-import PlanOfferCard from "./PlanOfferCard";
+const PlanOfferCard = lazy(() => import("./PlanOfferCard"));
 
 const LEVEL_1 = starterById("level-1")!;
 
@@ -147,7 +147,11 @@ export default function YourNumberCard({ planOffer = false }: { planOffer?: bool
               Holds you log stay on this device. A free account plus Pro keeps them on every device.{" "}
               <a className="text-link" href="/pro/" data-dh-source="your_number">See what Pro adds</a>
             </p>
-            {planOffer && <PlanOfferCard testSeconds={Math.round(shown.seconds)} age={shown.age} />}
+            {planOffer && (
+              <Suspense fallback={null}>
+                <PlanOfferCard testSeconds={Math.round(shown.seconds)} age={shown.age} />
+              </Suspense>
+            )}
           </div>
         )}
       </div>
