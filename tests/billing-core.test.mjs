@@ -2,14 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { Miniflare } from 'miniflare';
-import { billingConfigured, createBillingService, verifyStripeSignature, readBoundedBody, STRIPE_API_VERSION } from '../src/server/billing.mjs';
+import { billingConfigured, createBillingService, planAccessByToken, verifyStripeSignature, readBoundedBody, STRIPE_API_VERSION } from '../src/server/billing.mjs';
 
 // Real Workers D1/SQLite constraints and atomic batches; Stripe alone is simulated.
 // These are fixture secrets, never credentials or requests to a real merchant.
 const mf = new Miniflare({ modules: true, script: 'export default {fetch(){return new Response("ok")}}', compatibilityDate: '2025-09-01', d1Databases: ['DB'] });
 const db = await mf.getD1Database('DB');
 await db.prepare('CREATE TABLE "user" (id TEXT PRIMARY KEY)').run();
-const sql = (await fs.readFile(new URL('../migrations/0002_billing.sql', import.meta.url), 'utf8')).replace(/^--.*$/gm, '');
+const sql = (await Promise.all(['0002_billing.sql', '0003_plan_purchases.sql'].map((file) => fs.readFile(new URL(`../migrations/${file}`, import.meta.url), 'utf8')))).join(' ').replace(/^--.*$/gm, '');
 await db.batch(sql.split(';').map((s) => s.trim()).filter(Boolean).map((s) => db.prepare(s)));
 test.after(() => mf.dispose());
 let f;
@@ -404,4 +404,155 @@ test('test-mode payment can grant only in preview and its cached entitlement can
   assert.equal((await f.service().getEntitlement('alice')).active, false);
   f.env.BILLING_MODE = 'live'; f.env.STRIPE_SECRET_KEY = 'sk_live_fixture';
   assert.equal((await f.service().getEntitlement('alice')).active, false);
+});
+
+// One-off plan path: Stripe is a mock, no network, fixture secrets only.
+const PLAN_INPUTS = { testSeconds: 60, repeatSeconds: 40, ageBand: '30-39', sessionsPerWeek: 3 };
+function planFixture(overrides = {}) {
+  const env = { DB: db, BILLING_ENABLED: 'true', BILLING_LAUNCH_ENABLED: 'true', PLAN_LAUNCH_ENABLED: 'true', AUTH_BASE_URL: 'https://deadhangs.com',
+    STRIPE_SECRET_KEY: 'sk_live_fixture', STRIPE_WEBHOOK_SECRET: 'whsec_fixture', STRIPE_ACCOUNT_ID: 'acct_fixture', STRIPE_PRODUCT_ID: 'prod_fixture',
+    STRIPE_MONTHLY_PRICE_ID: 'price_monthly', STRIPE_YEARLY_PRICE_ID: 'price_yearly', STRIPE_PORTAL_CONFIGURATION_ID: 'bpc_fixture', STRIPE_PLAN_PRICE_ID: 'price_plan8', ...overrides };
+  const state = { time: 1804636800, calls: [], price: { id: 'price_plan8', livemode: true, active: true, currency: 'gbp', unit_amount: 900, type: 'one_time', product: { id: 'prod_plan8', livemode: true, active: true, metadata: { app: 'deadhangs', product: 'plan8' } } },
+    session: null, charge: null };
+  const paidSession = (extra = {}) => ({ id: 'cs_live_plan1', livemode: true, mode: 'payment', status: 'complete', payment_status: 'paid', amount_total: 900, currency: 'gbp',
+    metadata: { app: 'deadhangs', product: 'plan8', inputs: JSON.stringify(PLAN_INPUTS) }, customer_details: { email: 'buyer@example.test' },
+    payment_intent: { id: 'pi_plan1', latest_charge: state.charge = { id: 'ch_plan1', livemode: true, payment_intent: 'pi_plan1', amount: 900, amount_refunded: 0, refunded: false } }, ...extra });
+  async function fetcher(input, init = {}) {
+    const url = new URL(input); const path = url.pathname; const method = init.method || 'GET';
+    const form = Object.fromEntries(init.body || []);
+    state.calls.push({ path, method, form, search: url.search });
+    let value;
+    if (path === '/v1/account') value = { id: 'acct_fixture', charges_enabled: true };
+    else if (path === '/v1/prices/price_plan8') value = state.price;
+    else if (path === '/v1/checkout/sessions' && method === 'POST') value = { id: 'cs_live_plan1', livemode: true, mode: 'payment', url: 'https://checkout.stripe.com/c/pay/plan', metadata: { app: form['metadata[app]'], product: form['metadata[product]'] } };
+    else if (path === '/v1/checkout/sessions/cs_live_plan1') value = state.session;
+    else if (path === '/v1/charges/ch_plan1') value = state.charge;
+    if (!value) return Response.json({ error: 'fixture_object_missing' }, { status: 404 });
+    return Response.json(value);
+  }
+  const service = () => createBillingService(env, { now: () => state.time, fetch: fetcher });
+  async function event(type, object, id = `evt_${Math.random().toString(36).slice(2)}`) {
+    const raw = JSON.stringify({ id, type, livemode: true, data: { object } });
+    return new Request(`${env.AUTH_BASE_URL}/api/billing/webhook`, { method: 'POST', headers: { 'Stripe-Signature': await signature(raw, state.time) }, body: raw });
+  }
+  const completed = () => event('checkout.session.completed', { id: 'cs_live_plan1', mode: 'payment', metadata: { app: 'deadhangs', product: 'plan8' } });
+  const rows = () => db.prepare('SELECT * FROM plan_purchases').all().then((r) => r.results);
+  return { env, state, service, event, completed, rows, paidSession };
+}
+test.beforeEach(async () => { await db.prepare('DELETE FROM plan_purchases').run(); });
+
+test('plan checkout validates price and product, sends payment-mode metadata, and never touches subscription state', async () => {
+  const p = planFixture();
+  const result = await p.service().checkoutPlan(PLAN_INPUTS, 'https://deadhangs.com');
+  assert.match(result.url, /^https:\/\/checkout\.stripe\.com\//);
+  const create = p.state.calls.find((c) => c.path === '/v1/checkout/sessions').form;
+  assert.equal(create.mode, 'payment');
+  assert.equal(create['line_items[0][price]'], 'price_plan8');
+  assert.equal(create['metadata[product]'], 'plan8');
+  assert.equal(create['metadata[app]'], 'deadhangs');
+  assert.deepEqual(JSON.parse(create['metadata[inputs]']), PLAN_INPUTS);
+  assert.equal(create.success_url, 'https://deadhangs.com/plan/success/?session_id={CHECKOUT_SESSION_ID}');
+  assert.equal(create.customer, undefined);
+  assert.equal((await db.prepare('SELECT COUNT(*) AS n FROM billing_accounts').first()).n, 0);
+});
+
+test('plan checkout fails closed: flag off, missing price id, wrong origin, bad price or product, bad inputs', async () => {
+  let p = planFixture({ PLAN_LAUNCH_ENABLED: 'false' });
+  await rejectsCode(p.service().checkoutPlan(PLAN_INPUTS, 'https://deadhangs.com'), 'plan_not_launched');
+  assert.equal(p.state.calls.length, 0);
+  p = planFixture({ STRIPE_PLAN_PRICE_ID: '' });
+  await rejectsCode(p.service().checkoutPlan(PLAN_INPUTS, 'https://deadhangs.com'), 'billing_configuration_error');
+  p = planFixture();
+  await rejectsCode(p.service().checkoutPlan(PLAN_INPUTS, 'https://evil.example'), 'billing_configuration_error');
+  for (const patch of [{ unit_amount: 899 }, { currency: 'usd' }, { active: false }, { type: 'recurring' }, { livemode: false }, { product: 'prod_plan8' },
+    { product: { id: 'prod_plan8', livemode: true, active: true, metadata: { app: 'deadhangs', product: 'other' } } }]) {
+    p = planFixture(); p.state.price = { ...p.state.price, ...patch };
+    await rejectsCode(p.service().checkoutPlan(PLAN_INPUTS, 'https://deadhangs.com'), 'billing_configuration_error');
+    assert.equal(p.state.calls.some((c) => c.path === '/v1/checkout/sessions'), false);
+  }
+  p = planFixture();
+  for (const bad of [{ ...PLAN_INPUTS, extra: 1 }, { ...PLAN_INPUTS, testSeconds: 0 }, { ...PLAN_INPUTS, testSeconds: 30, repeatSeconds: 40 }, { ...PLAN_INPUTS, sex: 'na' },
+    { ...PLAN_INPUTS, sessionsPerWeek: 4 }, { ...PLAN_INPUTS, ageBand: 'A B' }, { ...PLAN_INPUTS, testSeconds: 1.5 }, null, []]) {
+    await rejectsCode(p.service().checkoutPlan(bad, 'https://deadhangs.com'), 'invalid_plan_inputs');
+  }
+  assert.equal(p.state.calls.length, 0);
+});
+
+test('plan webhook records the purchase once, replayed events add no row, and the success endpoint returns the same token', async () => {
+  const p = planFixture(); p.state.session = p.paidSession();
+  assert.deepEqual(await p.service().webhook(await p.completed()), { received: true });
+  const [row] = await p.rows();
+  assert.equal(row.status, 'paid'); assert.equal(row.payment_intent_id, 'pi_plan1'); assert.equal(row.email, 'buyer@example.test');
+  assert.match(row.token_hash, /^[a-f0-9]{64}$/);
+  const same = await p.event('checkout.session.completed', { id: 'cs_live_plan1', mode: 'payment', metadata: { app: 'deadhangs', product: 'plan8' } }, 'evt_samereplay');
+  await p.service().webhook(same.clone());
+  assert.equal((await p.service().webhook(same)).duplicate, true);
+  await p.service().webhook(await p.completed());
+  assert.equal((await p.rows()).length, 1);
+  const { url } = await p.service().planSuccess('cs_live_plan1');
+  const access = await planAccessByToken(p.env, new URL(url, 'https://deadhangs.com').searchParams.get('t'));
+  assert.deepEqual(access, { status: 'paid', inputs: PLAN_INPUTS });
+  assert.equal((await p.rows()).length, 1);
+  assert.equal(await planAccessByToken(p.env, 'A'.repeat(43)), null);
+  assert.equal(await planAccessByToken(p.env, 'short'), null);
+});
+
+test('plan success mints the token when the webhook has not arrived, and rejects unpaid, wrong amount and foreign sessions', async () => {
+  const p = planFixture(); p.state.session = p.paidSession();
+  const { url } = await p.service().planSuccess('cs_live_plan1');
+  assert.match(url, /^\/plan\/view\/\?t=[A-Za-z0-9_-]{43}$/);
+  assert.equal((await p.rows()).length, 1);
+  await db.prepare('DELETE FROM plan_purchases').run();
+  p.state.session = p.paidSession({ payment_status: 'unpaid' });
+  await rejectsCode(p.service().planSuccess('cs_live_plan1'), 'plan_payment_pending');
+  p.state.session = p.paidSession({ amount_total: 100 });
+  await rejectsCode(p.service().planSuccess('cs_live_plan1'), 'billing_ownership_mismatch');
+  p.state.session = p.paidSession({ metadata: { app: 'deadhangs', deadhangs_user_ref: 'x' } });
+  await rejectsCode(p.service().planSuccess('cs_live_plan1'), 'billing_ownership_mismatch');
+  p.state.session = p.paidSession({ mode: 'subscription' });
+  await rejectsCode(p.service().planSuccess('cs_live_plan1'), 'billing_ownership_mismatch');
+  await rejectsCode(p.service().planSuccess('not-a-session'), 'invalid_session');
+  assert.equal((await p.rows()).length, 0);
+});
+
+test('full refund revokes access; partial refund keeps it; late completion of a refunded charge stays refunded', async () => {
+  const p = planFixture(); p.state.session = p.paidSession();
+  const { url } = await p.service().planSuccess('cs_live_plan1');
+  const token = new URL(url, 'https://deadhangs.com').searchParams.get('t');
+  const refundEvent = () => p.event('charge.refunded', { id: 'ch_plan1', payment_intent: 'pi_plan1' });
+  Object.assign(p.state.charge, { amount_refunded: 300 });
+  await p.service().webhook(await refundEvent());
+  assert.equal((await planAccessByToken(p.env, token)).status, 'paid');
+  Object.assign(p.state.charge, { amount_refunded: 900, refunded: true });
+  assert.deepEqual(await p.service().webhook(await refundEvent()), { received: true });
+  assert.equal((await planAccessByToken(p.env, token)).status, 'refunded');
+  assert.ok((await p.rows())[0].refunded_at > 0);
+  await p.service().webhook(await p.completed());
+  assert.equal((await p.rows())[0].status, 'refunded');
+  await rejectsCode(p.service().planSuccess('cs_live_plan1'), 'plan_refunded');
+  await db.prepare('DELETE FROM plan_purchases').run();
+  p.state.session = p.paidSession(); p.state.session.payment_intent.latest_charge.refunded = true;
+  await rejectsCode(p.service().planSuccess('cs_live_plan1'), 'plan_refunded');
+  assert.equal((await p.rows())[0].status, 'refunded');
+});
+
+test('plan webhook leaves subscription events and unknown refunds on the existing path', async () => {
+  const p = planFixture();
+  const subSession = await p.event('checkout.session.completed', { id: 'cs_live_sub1', mode: 'subscription', customer: 'cus_elsewhere', metadata: { app: 'deadhangs' } });
+  assert.equal((await p.service().webhook(subSession)).ignored, true);
+  const refund = await p.event('charge.refunded', { id: 'ch_other', payment_intent: 'pi_other', customer: 'cus_elsewhere' });
+  assert.equal((await p.service().webhook(refund)).ignored, true);
+  assert.equal(p.state.calls.length, 0);
+  assert.equal((await p.rows()).length, 0);
+});
+
+test('plan eligibility window: 19 and 61 are rejected, 20 and 60 accepted', async () => {
+  const p = planFixture();
+  await rejectsCode(p.service().checkoutPlan({ ...PLAN_INPUTS, testSeconds: 90, repeatSeconds: 19 }, 'https://deadhangs.com'), 'ineligible_low');
+  await rejectsCode(p.service().checkoutPlan({ ...PLAN_INPUTS, testSeconds: 90, repeatSeconds: 61 }, 'https://deadhangs.com'), 'ineligible_high');
+  assert.equal(p.state.calls.length, 0);
+  for (const repeatSeconds of [20, 60]) {
+    const q = planFixture();
+    assert.match((await q.service().checkoutPlan({ ...PLAN_INPUTS, testSeconds: 90, repeatSeconds }, 'https://deadhangs.com')).url, /^https:\/\/checkout\.stripe\.com\//);
+  }
 });
