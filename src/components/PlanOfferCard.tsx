@@ -1,7 +1,10 @@
 import PlanBuyForm from "./PlanBuyForm";
+import planCss from "../styles/plan-offer.css?inline";
 
 export default function PlanOfferCard({ testSeconds, age }: { testSeconds: number; age: number | null }) {
   return (
+    <>
+    <style>{planCss}</style>
     <section className="yn-plan" aria-labelledby="pb-plan_offer-title">
       <p className="yn-title dh-eyebrow" id="pb-plan_offer-title">Your 8-week plan from this result</p>
       <p className="small-copy">
@@ -14,5 +17,6 @@ export default function PlanOfferCard({ testSeconds, age }: { testSeconds: numbe
       </ul>
       <PlanBuyForm source="plan_offer" testSeconds={testSeconds} age={age} />
     </section>
+    </>
   );
 }

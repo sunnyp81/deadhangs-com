@@ -63,7 +63,11 @@ test("age bands and Stripe URL guard", () => {
 
 test("offer card renders only behind the opt-in prop, inside the result state", () => {
   const card = read("src/components/YourNumberCard.tsx");
-  assert.ok(card.indexOf("{planOffer && <PlanOfferCard") > card.indexOf("{shown && ("));
+  assert.ok(card.indexOf("{planOffer && (") > card.indexOf("{shown && ("));
+  assert.match(card, /lazy\(\(\) => import\("\.\/PlanOfferCard"\)\)/);
+  assert.match(card, /<Suspense[\s\S]*<PlanOfferCard/);
+  assert.doesNotMatch(card, /^import PlanOfferCard/m);
+  assert.equal(readFileSync(new URL("../src/styles/next-session.css", import.meta.url), "utf8").includes("yn-plan"), false);
   assert.match(read("src/pages/dead-hang-time-by-age/index.astro"), /PLAN_LAUNCH_ENABLED \? \{ planOffer: true \} : \{\}/);
 });
 
