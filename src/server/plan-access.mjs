@@ -1,9 +1,9 @@
 // Looks up a plan purchase by access token. The raw token is never stored: only its SHA-256 hex digest.
-// ASSUMPTION to align with the billing package: token_hash = lowercase hex SHA-256 of the raw token string.
+// token_hash = lowercase hex SHA-256 of the raw token string, minted by billing.mjs.
 
-const TOKEN = /^[A-Za-z0-9_-]{16,128}$/;
+export const PLAN_TOKEN_REGEX = /^[A-Za-z0-9_-]{43}$/;
 
-export const isPlausibleToken = (t) => typeof t === 'string' && TOKEN.test(t);
+export const isPlausibleToken = (t) => typeof t === 'string' && PLAN_TOKEN_REGEX.test(t);
 
 export async function hashToken(token) {
   const bytes = new TextEncoder().encode(token);

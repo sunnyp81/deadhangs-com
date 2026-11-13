@@ -37,7 +37,7 @@ async function provider(request) {
     if (url.pathname === '/v1/account') return Response.json({ id: 'acct_fixture', charges_enabled: true });
     if (url.pathname === '/v1/prices/price_plan8') return Response.json({ id: 'price_plan8', livemode: true, active: true, currency: 'gbp', unit_amount: 900, type: 'one_time', product: { id: 'prod_plan8', livemode: true, active: true, metadata: { app: 'deadhangs', product: 'plan8' } } });
     if (url.pathname === '/v1/checkout/sessions') return Response.json({ id: 'cs_live_http1', livemode: true, mode: 'payment', url: 'https://checkout.stripe.com/c/pay/plan', metadata: { app: 'deadhangs', product: 'plan8' } });
-    if (url.pathname === '/v1/checkout/sessions/cs_live_http1') return Response.json({ id: 'cs_live_http1', livemode: true, mode: 'payment', status: 'complete', payment_status: 'paid', amount_total: 900, currency: 'gbp', metadata: { app: 'deadhangs', product: 'plan8', inputs: JSON.stringify({ testSeconds: 60, repeatSeconds: 40, ageBand: '30-39', sessionsPerWeek: 3 }) }, customer_details: { email: 'http@example.test' }, payment_intent: { id: 'pi_http1', latest_charge: { id: 'ch_http1', amount: 900, amount_refunded: 0, refunded: false } } });
+    if (url.pathname === '/v1/checkout/sessions/cs_live_http1') return Response.json({ id: 'cs_live_http1', livemode: true, mode: 'payment', status: 'complete', payment_status: 'paid', amount_total: 900, currency: 'gbp', metadata: { app: 'deadhangs', product: 'plan8', inputs: JSON.stringify({ testSeconds: 60, repeatSeconds: 40, ageBand: '40-59', sessionsPerWeek: 3 }) }, customer_details: { email: 'http@example.test' }, payment_intent: { id: 'pi_http1', latest_charge: { id: 'ch_http1', amount: 900, amount_refunded: 0, refunded: false } } });
     if (url.pathname === '/v1/customers/cus_alice') return Response.json(customer);
     if (url.pathname === '/v1/billing_portal/configurations/bpc_fixture') return Response.json({ id: 'bpc_fixture', active: true, livemode: true, metadata: { app: 'deadhangs' }, features: { subscription_cancel: { enabled: true, mode: 'at_period_end' }, subscription_update: { enabled: false } } });
     if (url.pathname === '/v1/billing_portal/sessions') return Response.json({ customer: 'cus_alice', livemode: true, url: 'https://billing.stripe.com/p/session/fixture' });
@@ -45,7 +45,7 @@ async function provider(request) {
   return new Response('blocked by test', { status: 599 });
 }
 const env = { BETTER_AUTH_SECRET: 'fixture-auth-secret-'.padEnd(48, 'x'), GOOGLE_CLIENT_ID: 'fixture-google', GOOGLE_CLIENT_SECRET: 'fixture-google-secret', AUTH_BASE_URL: ORIGIN,
-  BILLING_ENABLED: 'true', BILLING_LAUNCH_ENABLED: 'true', STRIPE_SECRET_KEY: 'sk_live_fixture', STRIPE_WEBHOOK_SECRET: 'whsec_fixture', STRIPE_ACCOUNT_ID: 'acct_fixture', STRIPE_PRODUCT_ID: 'prod_fixture', STRIPE_MONTHLY_PRICE_ID: 'price_monthly', STRIPE_YEARLY_PRICE_ID: 'price_yearly', STRIPE_PORTAL_CONFIGURATION_ID: 'bpc_fixture', STRIPE_PLAN_PRICE_ID: 'price_plan8', PLAN_LAUNCH_ENABLED: 'true' };
+  BILLING_ENABLED: 'true', BILLING_LAUNCH_ENABLED: 'true', STRIPE_SECRET_KEY: 'sk_live_fixture', PLAN_TOKEN_SECRET: 'plan-token-fixture-secret-0123456789ab', STRIPE_WEBHOOK_SECRET: 'whsec_fixture', STRIPE_ACCOUNT_ID: 'acct_fixture', STRIPE_PRODUCT_ID: 'prod_fixture', STRIPE_MONTHLY_PRICE_ID: 'price_monthly', STRIPE_YEARLY_PRICE_ID: 'price_yearly', STRIPE_PORTAL_CONFIGURATION_ID: 'bpc_fixture', STRIPE_PLAN_PRICE_ID: 'price_plan8', PLAN_LAUNCH_ENABLED: 'true' };
 const mf = new Miniflare({ modules: [{ type: 'ESModule', path: path.join(root, 'tests/billing-test-worker.mjs'), contents: bundle.outputFiles[0].text }], compatibilityDate: '2025-09-01', compatibilityFlags: ['nodejs_compat'], bindings: env, d1Databases: ['DB'], outboundService: provider });
 const db = await mf.getD1Database('DB');
 for (const file of ['0001_accounts.sql', '0002_billing.sql', '0003_plan_purchases.sql']) {
@@ -133,7 +133,7 @@ test('availability exposes only public fixed prices and no credentials', async (
   assert.equal((await call('billing/availability', { method: 'GET', host: 'https://wrong.example' })).data.paidAvailable, false);
 });
 
-const PLAN_BODY = { testSeconds: 60, repeatSeconds: 40, ageBand: '30-39', sessionsPerWeek: 3 };
+const PLAN_BODY = { testSeconds: 60, repeatSeconds: 40, ageBand: '40-59', sessionsPerWeek: 3 };
 test('plan checkout is account-less, origin-checked, input-validated and returns only a Stripe URL', async () => {
   const before = providerCalls.length;
   assert.equal((await call('billing/plan/checkout', { body: PLAN_BODY, origin: 'https://evil.example' })).status, 403);

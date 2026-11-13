@@ -1,7 +1,8 @@
 // Pure plan builder. Every number comes from plan-rules.json or the buyer's PlanInputs.
 
 const FIRST_INT = /\d+/;
-const MAX_TEST = 3600;
+export const MAX_TEST_SECONDS = 3600;
+export const AGE_BANDS = Object.freeze(['under-40', '40-59', '60-plus']);
 
 function byId(rules) {
   const list = Array.isArray(rules) ? rules : rules?.rules;
@@ -43,7 +44,7 @@ const isInt = (n) => Number.isInteger(n);
 export function checkInputs(inputs, rules) {
   const lim = planLimits(rules);
   const { testSeconds, repeatSeconds, sessionsPerWeek } = inputs ?? {};
-  if (!isInt(testSeconds) || !isInt(repeatSeconds) || testSeconds < 1 || testSeconds > MAX_TEST || repeatSeconds < 1) {
+  if (!isInt(testSeconds) || !isInt(repeatSeconds) || testSeconds < 1 || testSeconds > MAX_TEST_SECONDS || repeatSeconds < 1) {
     return { ok: false, error: 'invalid_inputs' };
   }
   if (sessionsPerWeek !== lim.sessionsPerWeek) return { ok: false, error: 'invalid_inputs' };
@@ -118,9 +119,20 @@ export function buildPlan(inputs, rules) {
       cleanSet: ['pg.move_up_form', 'pg.move_up_pain'],
       stop: ['w8.stop_painful', 'w8.stop_rule', 'sf.stop_what_to_do'],
       troubleshooting: ['w8.missed_session', 'w8.change_plan', 'w8.one_variable', 'w8.extra_session', 'w8.rest_days'],
-      convention: ['mk.lighter_week'],
       capLine: ['pg.l3_exit', 'pg.l4'],
     },
+  };
+}
+
+/** Week 1 summary for the buying card: { text, ruleIds }, or null when the inputs are not eligible. */
+export function weekOneLine(inputs, rules) {
+  const plan = buildPlan(inputs, rules);
+  if (!plan.ok) return null;
+  const w = plan.weeks[0];
+  const hold = w.options[0].holdSeconds;
+  return {
+    text: `Week 1: ${w.sets} sets of ${hold} seconds, rest ${w.restLow} to ${w.restHigh} seconds`,
+    ruleIds: [...new Set([...w.rules, ...w.options[0].rules])],
   };
 }
 

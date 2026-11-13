@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { Miniflare } from 'miniflare';
-import { billingConfigured, createBillingService, planAccessByToken, verifyStripeSignature, readBoundedBody, STRIPE_API_VERSION } from '../src/server/billing.mjs';
+import { hashToken, lookupPlan } from '../src/server/plan-access.mjs';
+import { billingConfigured, createBillingService, planConfigured, verifyStripeSignature, readBoundedBody, STRIPE_API_VERSION } from '../src/server/billing.mjs';
 
 // Real Workers D1/SQLite constraints and atomic batches; Stripe alone is simulated.
 // These are fixture secrets, never credentials or requests to a real merchant.
@@ -406,11 +407,16 @@ test('test-mode payment can grant only in preview and its cached entitlement can
   assert.equal((await f.service().getEntitlement('alice')).active, false);
 });
 
+async function planAccessByToken(env, token) {
+  const row = await env.DB.prepare('SELECT status, inputs FROM plan_purchases WHERE token_hash = ?').bind(await hashToken(token)).first();
+  return row ? { status: row.status, inputs: JSON.parse(row.inputs) } : null;
+}
+
 // One-off plan path: Stripe is a mock, no network, fixture secrets only.
-const PLAN_INPUTS = { testSeconds: 60, repeatSeconds: 40, ageBand: '30-39', sessionsPerWeek: 3 };
+const PLAN_INPUTS = { testSeconds: 60, repeatSeconds: 40, ageBand: '40-59', sessionsPerWeek: 3 };
 function planFixture(overrides = {}) {
   const env = { DB: db, BILLING_ENABLED: 'true', BILLING_LAUNCH_ENABLED: 'true', PLAN_LAUNCH_ENABLED: 'true', AUTH_BASE_URL: 'https://deadhangs.com',
-    STRIPE_SECRET_KEY: 'sk_live_fixture', STRIPE_WEBHOOK_SECRET: 'whsec_fixture', STRIPE_ACCOUNT_ID: 'acct_fixture', STRIPE_PRODUCT_ID: 'prod_fixture',
+    STRIPE_SECRET_KEY: 'sk_live_fixture', PLAN_TOKEN_SECRET: 'plan-token-fixture-secret-0123456789ab', STRIPE_WEBHOOK_SECRET: 'whsec_fixture', STRIPE_ACCOUNT_ID: 'acct_fixture', STRIPE_PRODUCT_ID: 'prod_fixture',
     STRIPE_MONTHLY_PRICE_ID: 'price_monthly', STRIPE_YEARLY_PRICE_ID: 'price_yearly', STRIPE_PORTAL_CONFIGURATION_ID: 'bpc_fixture', STRIPE_PLAN_PRICE_ID: 'price_plan8', ...overrides };
   const state = { time: 1804636800, calls: [], price: { id: 'price_plan8', livemode: true, active: true, currency: 'gbp', unit_amount: 900, type: 'one_time', product: { id: 'prod_plan8', livemode: true, active: true, metadata: { app: 'deadhangs', product: 'plan8' } } },
     session: null, charge: null };
@@ -472,7 +478,7 @@ test('plan checkout fails closed: flag off, missing price id, wrong origin, bad 
   }
   p = planFixture();
   for (const bad of [{ ...PLAN_INPUTS, extra: 1 }, { ...PLAN_INPUTS, testSeconds: 0 }, { ...PLAN_INPUTS, testSeconds: 30, repeatSeconds: 40 }, { ...PLAN_INPUTS, sex: 'na' },
-    { ...PLAN_INPUTS, sessionsPerWeek: 4 }, { ...PLAN_INPUTS, ageBand: 'A B' }, { ...PLAN_INPUTS, testSeconds: 1.5 }, null, []]) {
+    { ...PLAN_INPUTS, sessionsPerWeek: 4 }, { ...PLAN_INPUTS, ageBand: 'A B' }, { ...PLAN_INPUTS, testSeconds: 1.5 }, { ...PLAN_INPUTS, ageBand: '30-39' }, { ...PLAN_INPUTS, testSeconds: 3601 }, null, []]) {
     await rejectsCode(p.service().checkoutPlan(bad, 'https://deadhangs.com'), 'invalid_plan_inputs');
   }
   assert.equal(p.state.calls.length, 0);
@@ -492,6 +498,7 @@ test('plan webhook records the purchase once, replayed events add no row, and th
   const { url } = await p.service().planSuccess('cs_live_plan1');
   const access = await planAccessByToken(p.env, new URL(url, 'https://deadhangs.com').searchParams.get('t'));
   assert.deepEqual(access, { status: 'paid', inputs: PLAN_INPUTS });
+  assert.equal((await lookupPlan(p.env.DB, new URL(url, 'https://deadhangs.com').searchParams.get('t'))).status, 'ok');
   assert.equal((await p.rows()).length, 1);
   assert.equal(await planAccessByToken(p.env, 'A'.repeat(43)), null);
   assert.equal(await planAccessByToken(p.env, 'short'), null);
@@ -526,6 +533,7 @@ test('full refund revokes access; partial refund keeps it; late completion of a 
   Object.assign(p.state.charge, { amount_refunded: 900, refunded: true });
   assert.deepEqual(await p.service().webhook(await refundEvent()), { received: true });
   assert.equal((await planAccessByToken(p.env, token)).status, 'refunded');
+  assert.equal((await lookupPlan(p.env.DB, token)).status, 'gone');
   assert.ok((await p.rows())[0].refunded_at > 0);
   await p.service().webhook(await p.completed());
   assert.equal((await p.rows())[0].status, 'refunded');
@@ -555,4 +563,15 @@ test('plan eligibility window: 19 and 61 are rejected, 20 and 60 accepted', asyn
     const q = planFixture();
     assert.match((await q.service().checkoutPlan({ ...PLAN_INPUTS, testSeconds: 90, repeatSeconds }, 'https://deadhangs.com')).url, /^https:\/\/checkout\.stripe\.com\//);
   }
+});
+
+test('plan needs its own PLAN_TOKEN_SECRET, never the Stripe key', async () => {
+  const p = planFixture();
+  assert.equal(planConfigured(p.env), true);
+  assert.equal(planConfigured({ ...p.env, PLAN_TOKEN_SECRET: undefined }), false);
+  assert.equal(planConfigured({ ...p.env, PLAN_TOKEN_SECRET: 'short' }), false);
+  const bare = planFixture({ PLAN_TOKEN_SECRET: undefined });
+  bare.state.session = bare.paidSession();
+  await rejectsCode(bare.service().planSuccess('cs_live_plan1'), 'billing_unavailable');
+  await rejectsCode(bare.service().checkoutPlan(PLAN_INPUTS, 'https://deadhangs.com'), 'billing_unavailable');
 });

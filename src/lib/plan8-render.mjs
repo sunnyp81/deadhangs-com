@@ -1,11 +1,12 @@
-import { buildPlan, ruleLookup } from './plan8.mjs';
+import { buildPlan, ruleLookup, AGE_BANDS } from './plan8.mjs';
 import { DEFAULT_TIMER_CONFIG, buildTimerQuery } from './timer-preset.mjs';
 
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export const esc = (v) => String(v).replace(/[&<>"']/g, (c) => ESC[c]);
 
 // Display labels for the by-age page's age groups. The chart comparison uses the label only.
-export const AGE_BAND_LABELS = { 'under-40': 'Adults under 40', '40-59': 'Adults 40 to 59', '60-plus': 'Adults 60 and over' };
+const BAND_TEXT = ['Adults under 40', 'Adults 40 to 59', 'Adults 60 and over'];
+export const AGE_BAND_LABELS = Object.fromEntries(AGE_BANDS.map((b, i) => [b, BAND_TEXT[i]]));
 
 const pagePath = (source) => { try { return new URL(source).pathname; } catch { return source; } };
 
@@ -71,7 +72,6 @@ ${cap}
 <p class="plan8-noprint">Optional: ${bandLabel ? `you chose ${esc(bandLabel.toLowerCase())}. ` : ''}See how your result sits against the reference points on the <a href="/dead-hang-time-by-age/">dead hang time by age page</a>. They are reference points, not targets.</p></section>
 <section class="plan8-section plan8-noprint"><h2>Timer presets for your holds</h2><p>Each link opens the timer with ${lim.sets} rounds and ${secs(lim.restHigh)} of rest. You can shorten the rest to ${secs(lim.restLow)} in the timer.</p><ul class="plan8-links">${timerLinks}</ul></section>
 <section class="plan8-section"><h2>Stop and troubleshooting</h2>${q(plan.quoteGroups.stop)}${q(plan.quoteGroups.troubleshooting)}</section>
-<section class="plan8-section"><h2>A lighter week</h2><p>Convention, not a tested rule. Not scheduled in this plan.</p>${q(plan.quoteGroups.convention)}</section>
 <section class="plan8-section"><h2>About these numbers</h2>${q(['bg.dose_caveat'])}</section>
 <section class="plan8-section plan8-noprint"><details><summary>How each number is set</summary><ul class="plan8-rules">${rulesList}</ul></details></section>
 </div>`;

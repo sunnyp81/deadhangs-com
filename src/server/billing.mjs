@@ -1,3 +1,5 @@
+import { AGE_BANDS, MAX_TEST_SECONDS } from '../lib/plan8.mjs';
+
 /** Stripe snapshot API 2026-10-28.endive. Never log provider bodies or credentials. */
 export const STRIPE_API_VERSION = '2026-10-28.endive';
 export const BILLING_PRICES = Object.freeze({ monthly: 499, yearly: 3900, currency: 'GBP' });
@@ -27,12 +29,12 @@ export function canonicalPlanInputs(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) bad();
   if (Object.keys(value).sort().join(',') !== 'ageBand,repeatSeconds,sessionsPerWeek,testSeconds') bad();
   const { testSeconds, repeatSeconds, ageBand, sessionsPerWeek } = value;
-  if (!Number.isSafeInteger(testSeconds) || testSeconds < 1 || testSeconds > 900) bad();
+  if (!Number.isSafeInteger(testSeconds) || testSeconds < 1 || testSeconds > MAX_TEST_SECONDS) bad();
   if (!Number.isSafeInteger(repeatSeconds) || repeatSeconds < 1) bad();
   if (repeatSeconds < 20) throw new BillingError('ineligible_low', 400);
   if (repeatSeconds > 60) throw new BillingError('ineligible_high', 400);
   if (repeatSeconds > testSeconds) bad();
-  if (typeof ageBand !== 'string' || !/^[a-z0-9_-]{1,32}$/.test(ageBand)) bad();
+  if (!AGE_BANDS.includes(ageBand)) bad();
   if (sessionsPerWeek !== 3) bad();
   return JSON.stringify({ testSeconds, repeatSeconds, ageBand, sessionsPerWeek });
 }
@@ -43,17 +45,9 @@ async function sha256Hex(text) {
 
 /** Deterministic access token so the webhook and success endpoint mint the same link. Only its hash is stored. */
 async function planToken(env, sessionId) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.STRIPE_SECRET_KEY), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.PLAN_TOKEN_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`deadhangs:plan8:token:${sessionId}`));
   return b64url(new Uint8Array(mac));
-}
-
-/** Read-only token lookup for the plan view page: { status, inputs } or null when unknown. */
-export async function planAccessByToken(env, token) {
-  if (typeof token !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(token) || !env.DB) return null;
-  const row = await env.DB.prepare('SELECT status, inputs FROM plan_purchases WHERE token_hash = ?').bind(await sha256Hex(token)).first();
-  if (!row) return null;
-  return { status: row.status, inputs: JSON.parse(row.inputs) };
 }
 
 export class BillingError extends Error {
@@ -98,6 +92,10 @@ export async function verifyStripeSignature(raw, header, secret, now = Math.floo
     if (await crypto.subtle.verify('HMAC', key, signature, input)) return true;
   }
   return false;
+}
+
+export function planConfigured(env) {
+  return billingConfigured(env) && typeof env.PLAN_TOKEN_SECRET === 'string' && env.PLAN_TOKEN_SECRET.length >= 32;
 }
 
 export function billingConfigured(env) {
@@ -426,8 +424,10 @@ export function createBillingService(env, options = {}) {
 
   const planMeta = (object) => object?.metadata?.app === APP && object?.metadata?.product === PLAN_PRICE.product;
 
+  const readyPlan = () => { if (!planConfigured(env)) throw new BillingError('billing_unavailable'); };
+
   async function checkoutPlan(inputs, origin) {
-    ready();
+    readyPlan();
     if (env.PLAN_LAUNCH_ENABLED !== 'true') throw new BillingError('plan_not_launched');
     if (!cleanId(env.STRIPE_PLAN_PRICE_ID, 'price')) throw new BillingError('billing_configuration_error');
     if (origin !== env.AUTH_BASE_URL) throw new BillingError('billing_configuration_error');
@@ -448,7 +448,7 @@ export function createBillingService(env, options = {}) {
       'payment_intent_data[metadata][app]': APP, 'payment_intent_data[metadata][product]': PLAN_PRICE.product,
       'branding_settings[display_name]': 'DeadHangs',
       'consent_collection[terms_of_service]': 'required',
-      'custom_text[terms_of_service_acceptance][message]': `I agree to the [DeadHangs terms](${origin}/terms/) and acknowledge the [privacy policy](${origin}/privacy/).`,
+      'custom_text[terms_of_service_acceptance][message]': `I agree to the [DeadHangs terms](${origin}/terms/#plan) and acknowledge the [privacy policy](${origin}/privacy/).`,
       'custom_text[submit][message]': 'One payment of GBP 9, no subscription. Full refund within 14 days if you ask.',
     });
     if (!cleanId(session.id, 'cs') || session.livemode !== live || session.mode !== 'payment' || !planMeta(session)) throw new BillingError('billing_ownership_mismatch');
@@ -457,6 +457,7 @@ export function createBillingService(env, options = {}) {
 
   /** Re-fetches the session from Stripe, then records the purchase once. Returns { token }, { refunded } or { pending }. */
   async function settlePlanSession(sessionId) {
+    readyPlan();
     if (!cleanId(sessionId, 'cs')) throw new BillingError('invalid_session', 400);
     const session = await stripe(`/v1/checkout/sessions/${sessionId}?expand[]=payment_intent.latest_charge`);
     if (session.id !== sessionId || session.livemode !== live || session.mode !== 'payment' || !planMeta(session)) throw new BillingError('billing_ownership_mismatch');
@@ -482,7 +483,7 @@ export function createBillingService(env, options = {}) {
 
   /** Success endpoint: verify against Stripe, mint the same token the webhook would. Works even when the launch flag is off. */
   async function planSuccess(sessionId) {
-    ready();
+    readyPlan();
     const result = await settlePlanSession(sessionId);
     if (result.pending) throw new BillingError('plan_payment_pending', 409);
     if (result.refunded) throw new BillingError('plan_refunded', 410);

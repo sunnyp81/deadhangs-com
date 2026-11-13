@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import rules from '../src/data/plan-rules.json' with { type: 'json' };
-import { buildPlan, planLimits, baselineHint } from '../src/lib/plan8.mjs';
+import { buildPlan, planLimits, baselineHint, weekOneLine, AGE_BANDS, MAX_TEST_SECONDS } from '../src/lib/plan8.mjs';
 import { renderPlanHtml, renderGoneHtml, esc } from '../src/lib/plan8-render.mjs';
 import { lookupPlan, hashToken, isPlausibleToken } from '../src/server/plan-access.mjs';
 import { handlePlanView } from '../src/server/plan-view.mjs';
@@ -236,4 +236,24 @@ test('/plan/view/: database down returns 503, other methods 405, shell failure s
   const res = await get(`https://deadhangs.com/plan/view/?t=${TOKEN}`, { DB: mockDb(rows), ASSETS: { fetch: async () => { throw new Error('x'); } } });
   assert.equal(res.status, 200);
   assert.match(await res.text(), /noindex/);
+});
+
+test('weekOneLine reads week 1 from the plan and is null when ineligible', () => {
+  for (const r of [20, 30, 60]) {
+    const line = weekOneLine(inputs(r), rules);
+    assert.equal(line.text, `Week 1: 3 sets of ${r} seconds, rest 60 to 90 seconds`);
+    assert.ok(line.ruleIds.includes('w8.sets') && line.ruleIds.includes('w8.rest_seconds') && line.ruleIds.includes('w8.block1_hold'));
+    assert.doesNotMatch(line.text, DENY);
+    assert.doesNotMatch(line.text, /placeholder/i);
+  }
+  assert.equal(weekOneLine(inputs(19), rules), null);
+  assert.equal(weekOneLine(inputs(61), rules), null);
+});
+
+test('shared constants and no convention note in the rendered plan', () => {
+  assert.deepEqual([...AGE_BANDS], ['under-40', '40-59', '60-plus']);
+  assert.equal(MAX_TEST_SECONDS, 3600);
+  assert.equal(buildPlan(inputs(30), rules).quoteGroups.convention, undefined);
+  const html = renderPlanHtml(buildPlan(inputs(30), rules), rules);
+  assert.doesNotMatch(html, /coach|lighter week/i);
 });
