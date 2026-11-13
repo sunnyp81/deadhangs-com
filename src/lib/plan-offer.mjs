@@ -6,10 +6,12 @@ export const PLAN_REASONS = Object.freeze([
   ['timer_presets', 'Timer presets set to my holds'],
   ['other', 'Something else'],
 ]);
+import { MAX_TEST_SECONDS, checkInputs } from './plan8.mjs';
+
 export const AGE_BANDS = Object.freeze([['under-40', 'Under 40'], ['40-59', '40 to 59'], ['60-plus', '60 and over']]);
 export const REPEAT_MIN = 20;
 export const REPEAT_MAX = 60;
-const MAX = 3600;
+const MAX = MAX_TEST_SECONDS;
 
 export function ageBandFor(age) {
   if (!Number.isInteger(age)) return null;
@@ -42,4 +44,11 @@ export function isStripeCheckoutUrl(value) {
     const u = new URL(value);
     return u.protocol === 'https:' && u.hostname === 'checkout.stripe.com';
   } catch { return false; }
+}
+
+/** Where an ineligible repeatable hold is sent. One source: the generator's own eligibility check. */
+export function ineligibleRoute(repeatSeconds, rules) {
+  const repeat = Math.round(Number(repeatSeconds));
+  const check = checkInputs({ testSeconds: MAX, repeatSeconds: repeat, sessionsPerWeek: 3 }, rules);
+  return check.ok ? null : check.route ?? null;
 }
