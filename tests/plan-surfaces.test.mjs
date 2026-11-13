@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { buildPlanInputs, ageBandFor, eligibility, isStripeCheckoutUrl, PLAN_REASONS } from "../src/lib/plan-offer.mjs";
+import { readFileSync, existsSync } from "node:fs";
+import rules from "../src/data/plan-rules.json" with { type: "json" };
+import { buildPlanInputs, ageBandFor, eligibility, ineligibleRoute, isStripeCheckoutUrl, PLAN_REASONS } from "../src/lib/plan-offer.mjs";
+import { weekOneLine, baselineHint, checkInputs } from "../src/lib/plan8.mjs";
 import { SOURCES } from "../src/scripts/training-events.js";
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8").replace(/\r\n/g, "\n");
@@ -31,8 +33,11 @@ test("eligibility window is 20 to 60 inclusive", () => {
   const form = read("src/components/PlanBuyForm.tsx");
   assert.match(form, /plan_offer_ineligible_low/);
   assert.match(form, /plan_offer_ineligible_high/);
-  assert.match(form, /href="\/beginner-deadhang\/"/);
-  assert.match(form, /href="\/deadhang-progressions\/"/);
+  assert.doesNotMatch(form, /href="\//, "ineligible hrefs come from the generator route");
+  assert.match(form, /ineligibleRoute\(/);
+  for (const n of [4, 5, 19, 61]) assert.equal(ineligibleRoute(n, rules).url, checkInputs({ testSeconds: 3600, repeatSeconds: n, sessionsPerWeek: 3 }, rules).route.url, String(n));
+  assert.equal(ineligibleRoute(19, rules).url, "/4-week-program/");
+  assert.equal(ineligibleRoute(30, rules), null);
   assert.doesNotMatch(form, /\bsex\b/);
 });
 
@@ -78,4 +83,38 @@ test("denylisted words never appear in the new copy", () => {
     assert.doesNotMatch(t, /—|–/, `${f} dash`);
     assert.doesNotMatch(t, /\b(coach|programme|reviewed|improve|stronger|health|pain|longevity)\b/i, f);
   }
+});
+
+test("buying card uses the real week 1 line, no placeholder", () => {
+  const form = read("src/components/PlanBuyForm.tsx");
+  assert.doesNotMatch(form, /placeholder|plan8-stub/i);
+  assert.match(form, /from "\.\.\/lib\/plan8\.mjs"/);
+  assert.equal(existsSync(new URL("../src/lib/plan8-stub.mjs", import.meta.url)), false);
+  const line = weekOneLine({ testSeconds: 60, repeatSeconds: 35, ageBand: "40-59", sessionsPerWeek: 3 }, rules);
+  assert.match(line.text, /35 seconds/);
+  assert.doesNotMatch(line.text, /placeholder/i);
+});
+
+test("80% hint is the guide quote, labelled; copy is not overstated", () => {
+  const form = read("src/components/PlanBuyForm.tsx");
+  assert.match(form, /From the 4-week guide: \{hint\.quote\}/);
+  assert.ok(baselineHint(rules).quote.includes("80%"));
+  assert.doesNotMatch(form, /data-dh-source/);
+  for (const f of ["src/components/PlanOfferCard.tsx", "src/pages/plan/index.astro"]) {
+    const t = read(f);
+    assert.doesNotMatch(t, /every hold written out|age chart/, f);
+    assert.match(t, /Your holds for each week, with the choices written out/, f);
+    assert.match(t, /Re-test weeks 4 and 8, with a link to the age comparison/, f);
+  }
+});
+
+test("success and lost-link make no receipt promise; purchase event fires once per session", () => {
+  const ok = read("src/pages/plan/success/index.astro");
+  const lost = read("src/pages/plan/lost-link/index.astro");
+  assert.doesNotMatch(ok + lost, /receipt carries|on your Stripe receipt|carries a link back/i);
+  assert.match(ok, /Bookmark this page now; the link lives only here/);
+  assert.match(ok, /id="plan-copy"/);
+  assert.match(ok, /sessionStorage/);
+  assert.match(ok, /res\.status === 409/);
+  assert.match(lost, /receipt number/);
 });

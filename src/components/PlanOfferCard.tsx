@@ -8,8 +8,8 @@ export default function PlanOfferCard({ testSeconds, age }: { testSeconds: numbe
         Built from the same progression rules as the free guides, arranged around your result of {testSeconds} s.
       </p>
       <ul className="yn-lines">
-        <li><span className="yn-text">Eight weeks, three sessions a week, with every hold written out for you.</span></li>
-        <li><span className="yn-text">Re-test weeks set against the age chart on this page.</span></li>
+        <li><span className="yn-text">Eight weeks, three sessions a week. Your holds for each week, with the choices written out.</span></li>
+        <li><span className="yn-text">Re-test weeks 4 and 8, with a link to the age comparison.</span></li>
         <li><span className="yn-text">A printable sheet and timer presets set to your holds.</span></li>
       </ul>
       <PlanBuyForm source="plan_offer" testSeconds={testSeconds} age={age} />

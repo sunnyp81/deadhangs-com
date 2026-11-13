@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { trackTrainingEvent } from "../scripts/training-events.js";
-import { weekOneLine } from "../lib/plan8-stub.mjs";
-import { AGE_BANDS, PLAN_CHECKOUT_PATH, PLAN_PRICE_LABEL, ageBandFor, buildPlanInputs, eligibility, isStripeCheckoutUrl } from "../lib/plan-offer.mjs";
+import rules from "../data/plan-rules.json";
+import { baselineHint, weekOneLine } from "../lib/plan8.mjs";
+import { AGE_BANDS, PLAN_CHECKOUT_PATH, PLAN_PRICE_LABEL, ageBandFor, buildPlanInputs, eligibility, ineligibleRoute, isStripeCheckoutUrl } from "../lib/plan-offer.mjs";
 
 type Props = {
   /** Card mode: the hold and age come from the by-age result. Page mode: the buyer types them. */
@@ -70,10 +71,13 @@ export default function PlanBuyForm({ testSeconds, age = null, source }: Props) 
   }
 
   const preview = card && fit === "ok" ? buildPlanInputs({ testSeconds, repeatSeconds: repeat, ageBand: band }).inputs : undefined;
+  const weekOne = preview ? weekOneLine(preview, rules) : null;
+  const route = fit === "low" || fit === "high" ? ineligibleRoute(repeat, rules) : null;
+  const hint = baselineHint(rules);
   const id = `pb-${source}`;
   return (
     <form className="plan-buy" onSubmit={submit} noValidate aria-labelledby={`${id}-title`}>
-      {preview && <p className="plan-week1" data-plan-placeholder>{weekOneLine(preview)}</p>}
+      {weekOne && <p className="plan-week1" data-rules={weekOne.ruleIds.join(" ")}>{weekOne.text}</p>}
       <div className="field-grid">
         {!card && (
           <label htmlFor={`${id}-test`}>
@@ -84,7 +88,7 @@ export default function PlanBuyForm({ testSeconds, age = null, source }: Props) 
         <label htmlFor={`${id}-repeat`}>
           Longest hold you can repeat three times <span className="optional">seconds</span>
           <input id={`${id}-repeat`} type="text" inputMode="numeric" autoComplete="off" disabled={!hydrated} value={repeat} onChange={(e) => setRepeat(e.target.value)} aria-describedby={`${id}-hint`} />
-          <span className="small-copy" id={`${id}-hint`}>Hint: the 4-week guide suggests starting at about 80% of your test-day max. The plan starts at the hold you enter.</span>
+          <span className="small-copy" id={`${id}-hint`}>From the 4-week guide: {hint.quote} The plan starts at the hold you enter.</span>
         </label>
         {(!card || !band) && (
           <label htmlFor={`${id}-age`}>
@@ -96,19 +100,19 @@ export default function PlanBuyForm({ testSeconds, age = null, source }: Props) 
           </label>
         )}
       </div>
-      {fit === "low" && (
+      {fit === "low" && route && (
         <p className="plan-ineligible" role="status">
-          The plan starts from a repeatable hold of 20 to 60 seconds. Start with the <a className="text-link" href="/beginner-deadhang/">beginner guide</a>, then come back.
+          The plan starts from a repeatable hold of 20 to 60 seconds. Your next step is on the <a className="text-link" href={route.url}>free guide for your hold</a>, then come back.
         </p>
       )}
-      {fit === "high" && (
+      {fit === "high" && route && (
         <p className="plan-ineligible" role="status">
-          The plan stops at 60-second holds. Your next step is on the free <a className="text-link" href="/deadhang-progressions/">progressions page, Level 4</a>.
+          The plan stops at 60-second holds. Your next step is on the free <a className="text-link" href={route.url}>progressions page, Level 4</a>.
         </p>
       )}
       {(fit === "ok" || fit === null) && (
         <>
-          <button className="dh-btn" type="submit" disabled={!hydrated || busy} data-dh-source="your_number">
+          <button className="dh-btn" type="submit" disabled={!hydrated || busy}>
             Get my 8-week plan, {PLAN_PRICE_LABEL}
           </button>
           <p className="small-copy">{PLAN_PRICE_LABEL}, one payment, 14-day refund. Pay by card on Stripe. No account needed.</p>
