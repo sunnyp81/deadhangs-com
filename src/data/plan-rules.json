@@ -1,0 +1,930 @@
+{
+  "generated": "2026-11-13",
+  "note": "Every rule is a verbatim quote from a live free page. Nothing here is invented.",
+  "rules": [
+    {
+      "id": "w8.sessions_per_week",
+      "topic": "sessions",
+      "value": 3,
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Three sessions a week on non-consecutive days, for example Monday, Wednesday and Friday, with 3 sets and 60 to 90 seconds of rest."
+    },
+    {
+      "id": "w8.sets",
+      "topic": "sets",
+      "value": 3,
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "3 sets at a hold you can repeat cleanly"
+    },
+    {
+      "id": "w8.rest_seconds",
+      "topic": "rest",
+      "value": "60 to 90",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Warm-up, 3 sets, 60 to 90 seconds of rest, record actual holds"
+    },
+    {
+      "id": "w8.block1_hold",
+      "topic": "progression",
+      "value": "same hold for weeks 1 and 2",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Establish repeatable sessions"
+    },
+    {
+      "id": "w8.block1_setup",
+      "topic": "progression",
+      "value": "keep bar, grip and assistance the same",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Keep the bar, grip and assistance the same."
+    },
+    {
+      "id": "w8.add_seconds_weeks3_4",
+      "topic": "progression",
+      "value": 5,
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Same hold, or add about 5 seconds once every set is clean"
+    },
+    {
+      "id": "w8.review_weeks3_4",
+      "topic": "retest",
+      "value": "review logged holds; keep settings or change one variable",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Look at logged holds. Keep the settings or change one variable."
+    },
+    {
+      "id": "w8.weeks5_6_hold",
+      "topic": "progression",
+      "value": "3 sets at the revised hold",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "3 sets at the revised hold"
+    },
+    {
+      "id": "w8.weeks5_6_fallback",
+      "topic": "troubleshooting",
+      "value": "return to previous setup if the new one is too demanding",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Return to the previous setup if the new one is too demanding."
+    },
+    {
+      "id": "w8.weeks7_8_hold",
+      "topic": "progression",
+      "value": "3 sets at the setup that worked best",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "3 sets at the setup that worked best"
+    },
+    {
+      "id": "w8.retest_weeks",
+      "topic": "retest",
+      "value": "weeks 4 and 8",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Review two comparable sessions at the end of weeks 4 and 8"
+    },
+    {
+      "id": "w8.one_variable",
+      "topic": "progression",
+      "value": "one of: hold duration, assistance, sets, rest",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Change one variable only: hold duration, assistance, sets or rest."
+    },
+    {
+      "id": "w8.entry_hold",
+      "topic": "entry",
+      "value": "comfortable 20 to 30 seconds",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "The 8-week program suits you once you can hold a comfortable 20 to 30 seconds."
+    },
+    {
+      "id": "w8.entry_fallback",
+      "topic": "entry",
+      "value": "under 20 to 30 seconds: use the 4-week program",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "If you cannot yet, start with the 4-week program."
+    },
+    {
+      "id": "w8.rest_days",
+      "topic": "sessions",
+      "value": "four rest days, non-consecutive hang days",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "A typical week in the 8-week program has three hang sessions on non-consecutive days and four rest days."
+    },
+    {
+      "id": "w8.extra_session",
+      "topic": "sessions",
+      "value": "add a session only if pain free",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Add a session only if you stay pain free."
+    },
+    {
+      "id": "w8.stop_rule",
+      "topic": "stop",
+      "value": "step down a second or two before grip gives out; no failure",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Step down a second or two before your grip gives out, and do not hang to failure."
+    },
+    {
+      "id": "w8.missed_session",
+      "topic": "troubleshooting",
+      "value": "do not make up extra sets",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "A missed session does not require making up extra sets."
+    },
+    {
+      "id": "w8.change_plan",
+      "topic": "troubleshooting",
+      "value": "change the plan when a hold is painful or step-down is not controlled",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Change the 8-week plan when a hold is painful or when you cannot step down under control."
+    },
+    {
+      "id": "w8.compare_like_with_like",
+      "topic": "retest",
+      "value": "compare supported with supported, unassisted with unassisted",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Compare supported hangs with supported hangs and unassisted hangs with unassisted hangs."
+    },
+    {
+      "id": "w8.stop_painful",
+      "topic": "stop",
+      "value": "stop a painful hold; end a set before control goes",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "Stop a painful hold and end a set before your control goes."
+    },
+    {
+      "id": "w8.next_plan",
+      "topic": "entry",
+      "value": "12-week program suits a comfortable hold of 30 seconds or longer",
+      "source": "https://deadhangs.com/8-week-program/",
+      "quote": "suits a comfortable hold of 30 seconds or longer."
+    },
+    {
+      "id": "w4.sessions_per_week",
+      "topic": "sessions",
+      "value": 3,
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "The 4-week dead hang schedule runs Monday, Wednesday and Friday."
+    },
+    {
+      "id": "w4.sets_rest",
+      "topic": "sets",
+      "value": "3 sets, 90 seconds rest",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Perform your normal 3 sets at Week 3 target times with 90 seconds rest between sets."
+    },
+    {
+      "id": "w4.rest_seconds",
+      "topic": "rest",
+      "value": 90,
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Rest stays at 90 seconds between sets."
+    },
+    {
+      "id": "w4.entry_hold",
+      "topic": "entry",
+      "value": "about 5 seconds",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "The program suits anyone who can hold the bar for about 5 seconds."
+    },
+    {
+      "id": "w4.baseline_fraction",
+      "topic": "baseline",
+      "value": "about 80% of the max test hold",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Your baseline hold is about 80% of that number."
+    },
+    {
+      "id": "w4.baseline_definition",
+      "topic": "baseline",
+      "value": "the hold you can repeat for three clean sets; week 1 target",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "It is the hold you can repeat for three clean sets and it is your Week 1 target."
+    },
+    {
+      "id": "w4.baseline_test_stop",
+      "topic": "stop",
+      "value": "hang until a second or two before grip gives out",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Hang until a second or two before your grip gives out."
+    },
+    {
+      "id": "w4.week1",
+      "topic": "progression",
+      "value": "3 sets at baseline",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Every set uses your baseline hold."
+    },
+    {
+      "id": "w4.week2_add",
+      "topic": "progression",
+      "value": 5,
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Add 5 seconds to each set compared to your Week 1 times."
+    },
+    {
+      "id": "w4.week3_add",
+      "topic": "progression",
+      "value": 5,
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Add another 5 seconds per set on top of Week 2."
+    },
+    {
+      "id": "w4.week3_neutral_grip",
+      "topic": "progression",
+      "value": "one session in week 3 may use neutral grip",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "On one session this week swap your overhand grip for a neutral grip"
+    },
+    {
+      "id": "w4.week4_sessions",
+      "topic": "progression",
+      "value": "sessions 1 and 2 at week 3 targets; session 3 is test day",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "These sessions maintain volume without draining you before the final test."
+    },
+    {
+      "id": "w4.test_warmup",
+      "topic": "retest",
+      "value": "2 easy hangs of 10 to 15 seconds",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Warm up with a short mobility routine and 2 easy hangs of 10 to 15 seconds each"
+    },
+    {
+      "id": "w4.test_rest",
+      "topic": "retest",
+      "value": "2 to 3 minutes",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Rest 2-3 minutes"
+    },
+    {
+      "id": "w4.test_stop",
+      "topic": "retest",
+      "value": "best controlled hold; step down before grip gives out",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Grip the bar and hang for your best controlled hold. Step down a second or two before your grip gives out."
+    },
+    {
+      "id": "w4.test_target",
+      "topic": "retest",
+      "value": "30 seconds or longer; not a fixed outcome",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Target: 30 seconds or longer. Test day shows where you are now. It is not a fixed outcome."
+    },
+    {
+      "id": "w4.miss_third_set",
+      "topic": "troubleshooting",
+      "value": "2 to 3 seconds short on set 3 is acceptable",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Falling 2 to 3 seconds short on the third set is normal and acceptable."
+    },
+    {
+      "id": "w4.repeat_week",
+      "topic": "troubleshooting",
+      "value": "repeat current week if missing by more than 5 seconds",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Repeat the current week before progressing if you consistently miss by more than 5 seconds."
+    },
+    {
+      "id": "w4.repeat_weeks3_4",
+      "topic": "troubleshooting",
+      "value": "repeat weeks 3 and 4 if test is under 30",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Repeat weeks 3 and 4 until you reach 30 if you start lower."
+    },
+    {
+      "id": "w4.weekly_volume",
+      "topic": "volume",
+      "value": "under 5 minutes per week for baseline up to 20 seconds",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Weekly hang time stays under 5 minutes for a baseline up to 20 seconds."
+    },
+    {
+      "id": "w4.under_5s",
+      "topic": "entry",
+      "value": "under 5 seconds: regression exercises for 1 to 2 weeks first",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Start with the regression exercises in the beginner dead hang guide for 1 to 2 weeks before beginning this program."
+    },
+    {
+      "id": "w4.rest_day_between",
+      "topic": "sessions",
+      "value": "rest day between sessions",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "A rest day between sessions is the common starting rule."
+    },
+    {
+      "id": "w4.maintain",
+      "topic": "maintenance",
+      "value": "2 sessions per week at 3 sets each at 30 seconds",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "Keep your 30-second hold with 2 sessions per week at 3 sets each."
+    },
+    {
+      "id": "w4.dose_caveat",
+      "topic": "caveat",
+      "value": "common training practice, not a tested prescription",
+      "source": "https://deadhangs.com/4-week-program/",
+      "quote": "The doses are common training practice, not a tested prescription."
+    },
+    {
+      "id": "bg.first_hold",
+      "topic": "entry",
+      "value": "5 to 10 seconds",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Aim for 5-10 seconds on your first real dead hang."
+    },
+    {
+      "id": "bg.first_target",
+      "topic": "entry",
+      "value": "3 sets of 15 seconds with as much help as needed; rest 90 to 120 seconds",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "3 sets of 15 seconds with as much help as you need. Rest 90 to 120 seconds between sets."
+    },
+    {
+      "id": "bg.feet_off_pattern",
+      "topic": "progression",
+      "value": "3 sets of 5 seconds, then add about 5 seconds when every set is clean",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "For feet-off holds, one common pattern is 3 sets of 5 seconds, then adding about 5 seconds once every set is clean."
+    },
+    {
+      "id": "bg.no_failure",
+      "topic": "stop",
+      "value": "never hang to failure",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Never hang to failure."
+    },
+    {
+      "id": "bg.rest_seconds",
+      "topic": "rest",
+      "value": "90 to 120",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "rest 90 to 120 seconds between sets and train on non-consecutive days."
+    },
+    {
+      "id": "bg.add_seconds_weekly",
+      "topic": "progression",
+      "value": "5 seconds, roughly once a week, when every set is complete cleanly",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Add about 5 seconds to your target hold once you complete every set cleanly, roughly once a week."
+    },
+    {
+      "id": "bg.session_length",
+      "topic": "sessions",
+      "value": "under 10 minutes",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Each session takes less than 10 minutes."
+    },
+    {
+      "id": "bg.extra_session",
+      "topic": "sessions",
+      "value": "add a session only if pain free",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Add a session only if you stay pain free, and leave at least one rest day between hard sessions."
+    },
+    {
+      "id": "bg.sets_per_session",
+      "topic": "sets",
+      "value": 3,
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Sets per session:</strong> 3"
+    },
+    {
+      "id": "bg.example_w1",
+      "topic": "progression",
+      "value": "example only: week 1 target 5-10 seconds per set",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "<td>5-10 seconds</td>"
+    },
+    {
+      "id": "bg.example_w2",
+      "topic": "progression",
+      "value": "example only: week 2 target 10-15 seconds per set",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "<td>10-15 seconds</td>"
+    },
+    {
+      "id": "bg.example_w3",
+      "topic": "progression",
+      "value": "example only: week 3 target 15-22 seconds per set",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "<td>15-22 seconds</td>"
+    },
+    {
+      "id": "bg.example_w4",
+      "topic": "progression",
+      "value": "example only: week 4 target 22-30 seconds per set",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "<td>22-30 seconds</td>"
+    },
+    {
+      "id": "bg.example_caveat",
+      "topic": "caveat",
+      "value": "table is an example, not a norm",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "The 4-week table is an example of how targets can rise, not a norm."
+    },
+    {
+      "id": "bg.rung3_stop",
+      "topic": "stop",
+      "value": "step down before grip gives out",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Step down under control before your grip gives out."
+    },
+    {
+      "id": "bg.rung4",
+      "topic": "progression",
+      "value": "3 sets of 15 seconds, 90 seconds rest",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Three sets of 15 seconds, with as much assistance as you need to reach 15. Rest 90 seconds between sets."
+    },
+    {
+      "id": "bg.rung4_exit",
+      "topic": "progression",
+      "value": "15 seconds across all 3 sets with minimal assistance",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "You hold 15 seconds across all 3 sets with minimal assistance."
+    },
+    {
+      "id": "bg.ready_to_progress",
+      "topic": "progression",
+      "value": "30-second overhand hang completed 3 times in one session",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "30-second overhand dead hang completed 3 times in one session"
+    },
+    {
+      "id": "bg.regress_feet_hold",
+      "topic": "regression",
+      "value": "15 to 30 seconds",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Hold for 15 to 30 seconds."
+    },
+    {
+      "id": "bg.regress_band_hold",
+      "topic": "regression",
+      "value": "10 to 20 seconds",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Hang with fully extended arms for 10 to 20 seconds."
+    },
+    {
+      "id": "bg.record_assist",
+      "topic": "troubleshooting",
+      "value": "record the assist used so tests stay comparable",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Record the assist you used so tests stay comparable."
+    },
+    {
+      "id": "bg.hypermobility_cap",
+      "topic": "stop",
+      "value": "ten seconds or fewer to start if cleared to hang",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Two physiotherapy academics advise ten seconds or fewer to start if you are cleared to hang."
+    },
+    {
+      "id": "bg.stop_signs",
+      "topic": "stop",
+      "value": "sharp pain, numbness, light-headedness, pinching shoulder",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Stop and step down if you notice sharp pain, numbness, light-headedness or a pinching shoulder."
+    },
+    {
+      "id": "bg.use_step",
+      "topic": "stop",
+      "value": "use a step or box to reach the bar",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Use a step or box to reach the bar safely."
+    },
+    {
+      "id": "bg.weak_grip",
+      "topic": "troubleshooting",
+      "value": "chalk helps if sweat, not fatigue, ends the hang",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "Chalk helps if sweat, not fatigue, ends your hang."
+    },
+    {
+      "id": "bg.dose_caveat",
+      "topic": "caveat",
+      "value": "common training practice, not a tested prescription",
+      "source": "https://deadhangs.com/beginner-deadhang/",
+      "quote": "This is common training practice, not a tested prescription."
+    },
+    {
+      "id": "pg.sessions",
+      "topic": "sessions",
+      "value": "3 per week, non-consecutive; add a session only if pain free",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Start with 3 sessions a week on non-consecutive days and add a session only if you stay pain free"
+    },
+    {
+      "id": "pg.l1",
+      "topic": "progression",
+      "value": "3 sets of 15 seconds, 90 seconds rest",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Level 1 uses 3 sets of 15-second holds with as much assistance as you need to reach 15 seconds. Rest 90 seconds between sets."
+    },
+    {
+      "id": "pg.l1_exit",
+      "topic": "progression",
+      "value": "15 seconds across all 3 sets with minimal assistance",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Move to Level 2 when you can hold 15 seconds across all 3 sets with minimal foot or band assistance."
+    },
+    {
+      "id": "pg.l2",
+      "topic": "progression",
+      "value": "3 sets of 15 to 30 seconds, rest 60 to 90 seconds",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Level 2 uses 3 sets of 15 to 30 second holds with 60 to 90 seconds of rest."
+    },
+    {
+      "id": "pg.l2_add",
+      "topic": "progression",
+      "value": "5 seconds, roughly once a week",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Add about 5 seconds to your target hold once you complete every set cleanly, roughly once a week."
+    },
+    {
+      "id": "pg.l2_exit",
+      "topic": "progression",
+      "value": "30 seconds for 3 sets with clean form",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Move to Level 3 when you can hold 30 seconds for 3 sets with clean form."
+    },
+    {
+      "id": "pg.l2_form",
+      "topic": "stop",
+      "value": "stop a second or two before grip gives out",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Stop a second or two before your grip gives out and step down under control."
+    },
+    {
+      "id": "pg.l3",
+      "topic": "progression",
+      "value": "3 or 4 sets of 30 to 60 seconds, rest 60 to 90 seconds",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Level 3 uses 3 or 4 sets of 30 to 60 second holds with 60 to 90 seconds of rest."
+    },
+    {
+      "id": "pg.l3_exit",
+      "topic": "progression",
+      "value": "60 seconds for 3 sets",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Move to Level 4 when you hold 60 seconds for 3 sets."
+    },
+    {
+      "id": "pg.l3_milestone",
+      "topic": "caveat",
+      "value": "60-second hold is a personal milestone, not a published standard",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "A 60-second hold is a personal milestone on this ladder."
+    },
+    {
+      "id": "pg.l4",
+      "topic": "progression",
+      "value": "3 or 4 sets of 20 to 45 seconds, rest 60 to 90 seconds",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Level 4 uses 3 or 4 sets of 20 to 45 second holds with 60 to 90 seconds of rest."
+    },
+    {
+      "id": "pg.l4_exit",
+      "topic": "progression",
+      "value": "active hang 45 seconds across 3 sets",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Move to Level 5 when you hold an active hang for 45 seconds across 3 sets."
+    },
+    {
+      "id": "pg.l5_prereq",
+      "topic": "progression",
+      "value": "comfortable pain-free bodyweight hang of about 45 seconds before adding load",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Level 5 also needs a comfortable and pain-free bodyweight hang of about 45 seconds before you add load."
+    },
+    {
+      "id": "pg.l5_load",
+      "topic": "progression",
+      "value": "start 5 to 10 lbs (2 to 5 kg), add about 5 lbs when every set is clean",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Start with 5 to 10 lbs (2 to 5 kg) and add about 5 lbs once every set is clean."
+    },
+    {
+      "id": "pg.l5",
+      "topic": "progression",
+      "value": "3 or 4 sets of 15 to 30 seconds, rest 90 to 120 seconds",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Level 5 uses 3 or 4 sets of 15 to 30 second holds with 90 to 120 seconds of rest."
+    },
+    {
+      "id": "pg.l5_exit",
+      "topic": "progression",
+      "value": "controlled two-arm hang of about 60 seconds",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Move to Level 6 when you can hold a controlled two-arm hang for about 60 seconds."
+    },
+    {
+      "id": "pg.l6",
+      "topic": "progression",
+      "value": "2 or 3 sets per arm, rest 2 to 3 minutes",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Level 6 uses 2 or 3 sets per arm with 2 to 3 minutes of rest."
+    },
+    {
+      "id": "pg.move_up_hold",
+      "topic": "progression",
+      "value": "target hold for 3 consecutive sets in one session",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "You reach the target hold time for 3 consecutive sets in a single session."
+    },
+    {
+      "id": "pg.move_up_form",
+      "topic": "progression",
+      "value": "no breakdown in arm extension, shoulder position, core engagement or breathing",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "No breakdown in arm extension, shoulder position, core engagement or breathing during any set."
+    },
+    {
+      "id": "pg.move_up_pain",
+      "topic": "stop",
+      "value": "zero sharp, shooting or radiating pain",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Zero sharp, shooting or radiating pain in your hands, wrists, elbows or shoulders during or after training."
+    },
+    {
+      "id": "pg.pain_response",
+      "topic": "troubleshooting",
+      "value": "stay at current level or drop back one",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "If any pain develops, stay at your current level or drop back one level."
+    },
+    {
+      "id": "pg.skip_levels",
+      "topic": "entry",
+      "value": "start at the level matching your current hold",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Start at the level that matches your current hold and meet its criteria."
+    },
+    {
+      "id": "pg.timeline_caveat",
+      "topic": "caveat",
+      "value": "weeks are a sample; heavier people often take longer",
+      "source": "https://deadhangs.com/deadhang-progressions/",
+      "quote": "Timelines vary with bodyweight and training history. Heavier people often take longer at each level."
+    },
+    {
+      "id": "sf.stop_rule",
+      "topic": "stop",
+      "value": "any listed sign ends the hang",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Any item below ends the hang."
+    },
+    {
+      "id": "sf.stop_what_to_do",
+      "topic": "stop",
+      "value": "step down under control; do not drop",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Step down under control. Do not drop."
+    },
+    {
+      "id": "sf.faint",
+      "topic": "stop",
+      "value": "sit down until it passes",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "If you feel light-headed or faint, sit down until it passes."
+    },
+    {
+      "id": "sf.end_session",
+      "topic": "stop",
+      "value": "do not continue that session",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Do not continue that session."
+    },
+    {
+      "id": "sf.seek_advice",
+      "topic": "stop",
+      "value": "seek medical advice if it recurs or persists",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Seek medical advice if it recurs or persists."
+    },
+    {
+      "id": "sf.start_short",
+      "topic": "stop",
+      "value": "if in doubt, holds of 10 seconds or fewer",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "If in doubt, start with holds of 10 seconds or fewer"
+    },
+    {
+      "id": "sf.forearm_burning",
+      "topic": "stop",
+      "value": "stop one or two seconds before grip gives out",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Stop one or two seconds before your grip gives out and step down under control."
+    },
+    {
+      "id": "sf.numbness",
+      "topic": "stop",
+      "value": "release the bar immediately",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Release the bar immediately"
+    },
+    {
+      "id": "sf.elbow_pain",
+      "topic": "stop",
+      "value": "stop and rest; see a clinician if it persists",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Stop and rest; see a clinician if it persists"
+    },
+    {
+      "id": "sf.joint_pain",
+      "topic": "stop",
+      "value": "joint pain is a stop sign",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Joint pain is your stop sign."
+    },
+    {
+      "id": "sf.faint_recovery",
+      "topic": "stop",
+      "value": "see a clinician if it recurs",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "See a clinician if it happens again, or if tingling or pain lasts after you let go."
+    },
+    {
+      "id": "sf.breathing",
+      "topic": "troubleshooting",
+      "value": "breathe normally; do not hold your breath",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Breathe normally from the start of a hang. Do not hold your breath."
+    },
+    {
+      "id": "sf.get_down",
+      "topic": "stop",
+      "value": "lower feet first and step down",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Lower yourself feet first and step down."
+    },
+    {
+      "id": "sf.hang_height",
+      "topic": "setup",
+      "value": "feet 15 to 30 cm (6 to 12 inches) from the ground when starting",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Keep your feet 15 to 30 cm (6 to 12 inches) from the ground when starting."
+    },
+    {
+      "id": "sf.surface",
+      "topic": "setup",
+      "value": "rubber mat, carpet or grass",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Hang over a rubber mat, carpet or grass."
+    },
+    {
+      "id": "sf.older_adults",
+      "topic": "entry",
+      "value": "both feet on the ground, remove weight gradually",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Start with both feet on the ground and remove weight gradually by bending your knees."
+    },
+    {
+      "id": "sf.shoulder_start",
+      "topic": "entry",
+      "value": "short holds of 5 to 10 seconds, increase gradually",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Start with short holds of 5 to 10 seconds and increase gradually."
+    },
+    {
+      "id": "sf.ask_first",
+      "topic": "entry",
+      "value": "ask a clinician first with shoulder hypermobility or instability",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Ask a physical therapist or doctor before hanging if you have shoulder hypermobility or instability."
+    },
+    {
+      "id": "sf.return_volume",
+      "topic": "return",
+      "value": "cut volume to about half for the first two weeks back",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "A cautious option is to cut your training volume to about half for the first two weeks back"
+    },
+    {
+      "id": "sf.return_w1",
+      "topic": "return",
+      "value": "50% of pre-break max hold, 2 sets, 3 sessions",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "50% of pre-break max hold, 2 sets per session, 3 sessions"
+    },
+    {
+      "id": "sf.return_w2",
+      "topic": "return",
+      "value": "65% of pre-break max hold, 3 sets, 3 sessions",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "65% of pre-break max hold, 3 sets per session, 3 sessions"
+    },
+    {
+      "id": "sf.return_w3",
+      "topic": "return",
+      "value": "80% of pre-break max hold, 3 to 4 sets, 3 sessions with a rest day between",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "80% of pre-break max hold, 3 to 4 sets per session, 3 sessions with a rest day between"
+    },
+    {
+      "id": "sf.return_w4",
+      "topic": "return",
+      "value": "resume normal programming if pain free",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Resume normal programming if you stayed pain free"
+    },
+    {
+      "id": "sf.return_caveat",
+      "topic": "caveat",
+      "value": "return plan is practical guidance, not trial-tested",
+      "source": "https://deadhangs.com/deadhang-safety/",
+      "quote": "Example Return Plan (Practical Guidance, Not Trial-Tested)"
+    },
+    {
+      "id": "mk.add_seconds",
+      "topic": "progression",
+      "value": "about 5 seconds once every set is clean, roughly weekly",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Add about 5 seconds once every set is clean, roughly weekly"
+    },
+    {
+      "id": "mk.rest_day",
+      "topic": "sessions",
+      "value": "at least one rest day between hard sessions",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Leave at least one rest day between hard sessions."
+    },
+    {
+      "id": "mk.lighter_week",
+      "topic": "deload",
+      "value": "lighter week about every fourth week (convention, not a tested rule)",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "A lighter week about every fourth week is a common coaching convention and not a tested rule."
+    },
+    {
+      "id": "mk.warmup",
+      "topic": "warmup",
+      "value": "2 to 3 minutes of arm circles, wrist circles, band pull-aparts, one or two easy hangs",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Spend 2 to 3 minutes on arm circles, wrist circles, band pull-aparts and one or two short easy hangs."
+    },
+    {
+      "id": "mk.no_failure",
+      "topic": "stop",
+      "value": "stop one or two seconds before grip gives out; do not hang to failure or drop",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Stop one or two seconds before your grip gives out and step down under control. Do not hang to failure or drop from the bar."
+    },
+    {
+      "id": "mk.breath_count",
+      "topic": "troubleshooting",
+      "value": "count breaths during the first 10 seconds",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Counting your breaths during the first 10 seconds of each hang helps you notice."
+    },
+    {
+      "id": "mk.swing_fix",
+      "topic": "troubleshooting",
+      "value": "brace core, squeeze glutes, keep legs together",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Brace your core, squeeze your glutes, keep your legs together"
+    },
+    {
+      "id": "mk.straight_arms",
+      "topic": "form",
+      "value": "straighten the arms fully at the start of every hang",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Straighten the arms fully at the start of every hang"
+    },
+    {
+      "id": "mk.grip_width",
+      "topic": "form",
+      "value": "hands about shoulder width; log it",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Keep hands about shoulder width and log it"
+    },
+    {
+      "id": "mk.shoulder_position",
+      "topic": "form",
+      "value": "decide passive or active before grabbing the bar",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Decide passive or active before you grab the bar"
+    },
+    {
+      "id": "mk.straps",
+      "topic": "form",
+      "value": "bare hands for grip work; straps for hand injury",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Use bare hands for grip work; keep straps for hand injury"
+    },
+    {
+      "id": "mk.form_over_time",
+      "topic": "troubleshooting",
+      "value": "a shorter hang with good form beats a longer hang with poor form",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "A shorter hang with good form beats a longer hang with poor form."
+    },
+    {
+      "id": "mk.form_breaks",
+      "topic": "troubleshooting",
+      "value": "start lighter and keep feet on a box if form breaks down",
+      "source": "https://deadhangs.com/deadhang-mistakes/",
+      "quote": "Start lighter if your form breaks down. Keep your feet on a box to take part of your weight until you can hold correct position."
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 ---
 import Article from '../../layouts/Article.astro';
+import { PLAN_LAUNCH_ENABLED } from '../../lib/plan-flag.mjs';
 ---
 <Article title="Account & Pro Terms | DeadHangs" description="How DeadHangs accounts, optional Pro subscriptions, cancellation and your saved training data work." h1="Account and Pro terms." subtitle="The free tools stay free. You choose whether to store your log online." crumbs={[{name:'Account terms'}]} noindex>
   <div class="article-body">
@@ -16,6 +17,15 @@ import Article from '../../layouts/Article.astro';
     <p>Choose Manage billing in your account to cancel renewal through Stripe. Pro normally continues until the end of the paid period. You can also email us to cancel, including the email used for your account. You do not need to give a reason.</p>
     <p>Your right to cancel during any applicable cooling-off period, receive a refund required by law or seek a remedy for a faulty service is unaffected. Contact us to exercise those rights. Cancelling renewal through the billing portal does not itself request a refund.</p>
     <p>After Pro ends, you can export or delete the cloud log. Further cloud uploads require an active Pro subscription. Export a copy before deleting your account. Account deletion immediately stops any continuing subscription and removes your account and cloud log; access to the deleted account cannot be restored. Local entries on your devices are managed separately.</p>
+    {PLAN_LAUNCH_ENABLED && (
+      <>
+        <h2 id="plan">One-off plan</h2>
+        <p>The one-off plan is an 8-week schedule of hang times, written out from the numbers you enter. It costs £9 in GBP, paid once through Stripe. It is not a subscription and you do not need an account.</p>
+        <p>The link to your plan is shown on the confirmation page straight after payment. Bookmark it there. Anyone who has the link can open the plan, so keep it private.</p>
+        <p>You can ask for a full refund within 14 days of paying. Email <a href="mailto:hello@sunnypatel.co.uk">hello@sunnypatel.co.uk</a> with your receipt number and the email you paid with. A refund switches the plan link off.</p>
+        <p>The plan is a schedule drawn from the free guides on this site. It is not tailored advice and not medical advice, and it does not promise any result. Your statutory rights are unaffected.</p>
+      </>
+    )}
     <h2>Your data and availability</h2>
     <p>You remain responsible for the accuracy of entries you record. Keep an exported backup of records you want to retain. The service may occasionally be unavailable for maintenance or a provider outage. The <a href="/privacy/">privacy page</a> explains what we store and how to request access, correction or deletion.</p>
     <p>We may restrict access where necessary to address abuse or protect other users. Nothing here excludes rights or liability that cannot lawfully be excluded.</p>
