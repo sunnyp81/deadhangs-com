@@ -59,4 +59,4 @@ export type LogEntry = {
 };
 
 /** Fixed placement labels sent to GA4 as tool_source. Mirrors SOURCES in training-events.js. */
-export type ToolSource = "calculator" | "plans" | "workspace" | "home" | "shared" | "embed" | "article_header" | "age_card" | "chosen_session" | "nav" | "footer" | "log_header" | "post_save" | "progress" | "your_number" | "calculator_result" | "pro_page" | "article";
+export type ToolSource = "calculator" | "plans" | "workspace" | "home" | "shared" | "embed" | "article_header" | "age_card" | "chosen_session" | "nav" | "footer" | "log_header" | "post_save" | "progress" | "your_number" | "plan_offer" | "plan_page" | "plan_success" | "calculator_result" | "pro_page" | "article";

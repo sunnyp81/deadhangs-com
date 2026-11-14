@@ -1,0 +1,37 @@
+---
+import Article from '../../layouts/Article.astro';
+import PlanBuyForm from '../../components/PlanBuyForm';
+import { PLAN_LAUNCH_ENABLED } from '../../lib/plan-flag.mjs';
+import { PLAN_PRICE_LABEL } from '../../lib/plan-offer.mjs';
+import '../../styles/next-session.css';
+import '../../styles/plan-offer.css';
+---
+<Article title="Your 8-week dead hang plan" description="An 8-week dead hang plan built around your own test result, with re-test weeks, a printable sheet and timer presets. One payment, 14-day refund." h1="Your 8-week plan, built around your own test result." crumbs={[{ name: 'Plan' }]} noindex wide>
+<div class="article-body plan-page">
+{PLAN_LAUNCH_ENABLED ? (
+<>
+<section class="plan-hero" aria-labelledby="pb-plan_page-title">
+<div class="plan-what">
+<h2 id="pb-plan_page-title">What you get for {PLAN_PRICE_LABEL}</h2>
+<ul>
+<li>Eight weeks, three sessions a week. Your holds for each week, with the choices written out.</li>
+<li>Re-test weeks 4 and 8, with a link to the age comparison.</li>
+<li>A printable sheet and timer presets set to your holds.</li>
+</ul>
+<p class="small-copy">{PLAN_PRICE_LABEL}, one payment, 14-day refund. Built from the same progression rules as the free guides, arranged around your result.</p>
+</div>
+<div class="plan-form"><PlanBuyForm client:load source="plan_page" /></div>
+</section>
+<p class="small-copy">Not tested your max yet? <a href="/dead-hang-calculator/">Use the calculator</a> or check <a href="/dead-hang-time-by-age/">where a hold sits by age</a> first. Lost a plan link? <a href="/plan/lost-link/">Get it back</a>.</p>
+</>
+) : (
+<p>The plan is not open yet. The free <a href="/8-week-program/">8-week guide</a> and the <a href="/dead-hang-time-by-age/">age comparison</a> are available now.</p>
+)}
+</div>
+</Article>
+<style is:global>
+.plan-hero{display:grid;gap:24px;margin:8px 0 24px}
+.plan-what ul{margin:12px 0;padding-left:20px}
+.plan-what li{margin-bottom:8px}
+@media (min-width:800px){.plan-hero{grid-template-columns:1fr 1fr;align-items:start}}
+</style>
