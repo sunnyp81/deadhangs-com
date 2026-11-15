@@ -14,6 +14,7 @@ const MODE_TO_URL = { simple: "simple", emom: "emom", ladder: "ladder", test: "m
 const PREP_CHOICES = [0, 5, 10];
 
 const HANG = { min: 5, max: 120, emomMax: 50 };
+export const HANG_MAX_SECONDS = HANG.max;
 const REST = { min: 10, max: 300 };
 const ROUNDS = { min: 1, max: 10 };
 const WARMUPS = { min: 0, max: 3 };

@@ -280,7 +280,6 @@ test('starting hold uses only w4 rules: no cap at 60, no age band, entry quote u
   assert.match(short.bodyText, /Your result: 6 seconds\./);
   assert.match(short.bodyText, /"The program suits anyone who can hold the bar for about 5 seconds\."/);
   assert.doesNotMatch(short.bodyText, /that is about|3 x \d/);
-  assert.match(short.bodyText, /Free Level 1 timer preset/);
   assert.deepEqual(mail.startingHold(6), { entry: 'The program suits anyone who can hold the bar for about 5 seconds.' });
   assert.equal(mail.startingHold(50).baseline, 40);
 });
@@ -313,4 +312,25 @@ test('flag off: a posted result is ignored and nothing is sent', async (t) => {
   await subscribe({ request: signup({ email: 'a@example.com', result: { seconds: 60, ageBand: 'under-40' } }), env: { ...ready, EMAIL_CAPTURE_ENABLED: undefined } });
   assert.equal(calls.length, 1);
   assert.deepEqual(Object.keys(calls[0].body.attributes).sort(), ['DRIP_LAST_SENT', 'SIGNUP_DATE']);
+});
+
+test('baseline above the timer maximum: link text says "Open the timer", not a set-to figure', () => {
+  const now = new Date('2026-11-20T10:00:00Z');
+  const at = mail.welcomeEmail('https://deadhangs.com', { seconds: 150 }, now);
+  assert.match(at.bodyText, /about 120 seconds, 3 sets/);
+  assert.match(at.bodyText, /Open the timer set to 3 x 120 seconds/);
+  const over = mail.welcomeEmail('https://deadhangs.com', { seconds: 300 }, now);
+  for (const text of [over.bodyText, over.bodyHtml]) {
+    assert.match(text, /Open the timer(:|<)/);
+    assert.doesNotMatch(text, /set to 3 x/);
+  }
+});
+
+test('max under 7 seconds: no Level 1 line or preset, links the how-to guide instead', () => {
+  const w = mail.welcomeEmail('https://deadhangs.com', { seconds: 6 }, new Date('2026-11-20T10:00:00Z'));
+  for (const text of [w.bodyText, w.bodyHtml]) {
+    assert.doesNotMatch(text, /Level 1|gentle place|mode=simple/);
+    assert.match(text, /\/how-to-deadhang\/\?utm_source=newsletter/);
+  }
+  assert.match(w.bodyHtml, /<a href="https:\/\/deadhangs\.com\/how-to-deadhang\/\?[^"]+">Read how to dead hang<\/a>/);
 });

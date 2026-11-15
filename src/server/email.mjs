@@ -1,8 +1,7 @@
 // Every email the site sends goes through sendCompliantEmail. Nothing sends unless sendReadiness() is empty.
 import { emailFlagOn } from '../lib/email-consent.mjs';
-import { TIMER_PRESETS, buildTimerQuery } from '../lib/timer-preset.mjs';
-import { AGE_BANDS, MAX_TEST_SECONDS, ruleLookup, weekOneLine } from '../lib/plan8.mjs';
-import { AGE_BAND_LABELS } from '../lib/plan8-render.mjs';
+import { HANG_MAX_SECONDS, TIMER_PRESETS, buildTimerQuery } from '../lib/timer-preset.mjs';
+import { AGE_BANDS, MAX_TEST_SECONDS, ruleLookup } from '../lib/plan8.mjs';
 import { PLAN_PRICE_LABEL } from '../lib/plan-offer.mjs';
 import rules from '../data/plan-rules.json' with { type: 'json' };
 
@@ -229,11 +228,15 @@ export function welcomeEmail(origin, result = null, now = new Date()) {
     holdsHtml = `The <a href="${h(programmeUrl)}">free 4-week programme</a> starts at your baseline, about 80% of your max: ${h(tail)}`;
     holdsText = `The free 4-week programme starts at your baseline, about 80% of your max: ${tail}\n4-week programme: ${programmeUrl}`;
     timerUrl = `${origin}/training-log/?${buildTimerQuery({ config: { mode: 'simple', workSeconds: hold.baseline, restSeconds: hold.rest, rounds: 3, prepSeconds: 5 } })}&${utm}`;
-    timerLabel = `Open the timer set to 3 x ${hold.baseline} seconds`;
+    // The timer caps a hold at HANG_MAX_SECONDS, so a larger baseline cannot be promised in the link text.
+    timerLabel = hold.baseline > HANG_MAX_SECONDS ? 'Open the timer' : `Open the timer set to 3 x ${hold.baseline} seconds`;
     timerText = timerLabel;
   } else if (hold?.entry) {
-    holdsHtml = `The <a href="${h(programmeUrl)}">free 4-week programme</a> says: "${h(hold.entry)}" Level 1 below is a gentle place to start.`;
-    holdsText = `The free 4-week programme says: "${hold.entry}" Level 1 below is a gentle place to start.\n4-week programme: ${programmeUrl}`;
+    holdsHtml = `The <a href="${h(programmeUrl)}">free 4-week programme</a> says: "${h(hold.entry)}"`;
+    holdsText = `The free 4-week programme says: "${hold.entry}"\n4-week programme: ${programmeUrl}`;
+    timerUrl = `${origin}/how-to-deadhang/?${utm}`;
+    timerLabel = 'Read how to dead hang';
+    timerText = 'How to dead hang';
   } else {
     holdsText = 'Start with Level 1: 3 hangs of 15 seconds, 90 seconds of rest between them, on 3 non-consecutive days a week. Stop each hang a second or two before your grip gives out.';
     holdsHtml = h(holdsText);
