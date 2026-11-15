@@ -33,7 +33,7 @@
         "STRIPE_YEARLY_PRICE_ID": "price_1UZYkKEiamtoGTBsMwIJt4OG",
         "STRIPE_PORTAL_CONFIGURATION_ID": "bpc_1UZYmoEiamtoGTBsUbk2l2oF",
         "STRIPE_PLAN_PRICE_ID": "price_1Uc3mYEiamtoGTBs3ZjjGCdo",
-        "PLAN_LAUNCH_ENABLED": "true"
+        "PLAN_LAUNCH_ENABLED": "false"
       },
       "d1_databases": [
         {
