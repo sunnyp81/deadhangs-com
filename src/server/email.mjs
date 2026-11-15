@@ -1,6 +1,8 @@
 // Every email the site sends goes through sendCompliantEmail. Nothing sends unless sendReadiness() is empty.
 import { emailFlagOn } from '../lib/email-consent.mjs';
-import { TIMER_PRESETS } from '../lib/timer-preset.mjs';
+import { HANG_MAX_SECONDS, TIMER_PRESETS, buildTimerQuery } from '../lib/timer-preset.mjs';
+import { AGE_BANDS, MAX_TEST_SECONDS, ruleLookup } from '../lib/plan8.mjs';
+import { PLAN_PRICE_LABEL } from '../lib/plan-offer.mjs';
 
 const BREVO = 'https://api.brevo.com/v3';
 export const POSTAL_ADDRESS_PLACEHOLDER = 'POSTAL ADDRESS REQUIRED';
@@ -54,24 +56,43 @@ function base64url(bytes) {
   return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-/** base64url(HMAC-SHA256(lowercased email, secret)); recomputed on unsubscribe, so no token store. */
-export async function makeUnsubToken(email, secret) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(String(email).trim().toLowerCase()));
-  return base64url(new Uint8Array(sig));
+function fromBase64url(text) {
+  if (typeof text !== 'string' || !/^[A-Za-z0-9_-]+$/.test(text)) return null;
+  try {
+    const bin = atob(text.replace(/-/g, '+').replace(/_/g, '/') + '='.repeat((4 - (text.length % 4)) % 4));
+    return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  } catch { return null; }
 }
 
-export async function verifyUnsubToken(email, token, secret) {
-  if (!email || typeof token !== 'string' || !token || !secret) return false;
-  const expected = await makeUnsubToken(email, secret);
-  if (expected.length !== token.length) return false;
-  let diff = 0;
-  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ token.charCodeAt(i);
-  return diff === 0;
+async function unsubKey(secret) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('deadhangs-unsub-v1:' + secret));
+  return crypto.subtle.importKey('raw', digest, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
 }
 
-export function unsubscribeUrl(origin, email, token) {
-  return `${origin}/api/unsubscribe?e=${encodeURIComponent(String(email).trim().toLowerCase())}&t=${token}`;
+/** Opaque unsubscribe id: base64url(version | iv | AES-GCM(lowercased address)). The address never appears in a URL, and the GCM tag makes it tamper-proof with no token store. */
+export async function makeUnsubId(email, secret) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const body = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await unsubKey(secret), new TextEncoder().encode(String(email).trim().toLowerCase())));
+  const out = new Uint8Array(1 + iv.length + body.length);
+  out[0] = 1;
+  out.set(iv, 1);
+  out.set(body, 1 + iv.length);
+  return base64url(out);
+}
+
+/** The address behind an unsubscribe id, or null when the id is missing, altered or made with another secret. */
+export async function readUnsubId(id, secret) {
+  const bytes = fromBase64url(id);
+  if (!bytes || !secret || bytes.length < 30 || bytes.length > 400 || bytes[0] !== 1) return null;
+  try {
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bytes.slice(1, 13) }, await unsubKey(secret), bytes.slice(13));
+    const email = new TextDecoder().decode(plain);
+    return email && email.length <= 254 ? email : null;
+  } catch { return null; }
+}
+
+export function unsubscribeUrl(origin, id) {
+  return `${origin}/api/unsubscribe?u=${id}`;
 }
 
 /** RFC 2369 + RFC 8058 headers: https one-click first, mailto fallback. */
@@ -116,8 +137,7 @@ export async function blacklist(apiKey, email) {
 
 /** Per-recipient unsubscribe URL and headers for a send. Used by the welcome email and the drip. */
 export async function complianceFor(env, email) {
-  const token = await makeUnsubToken(email, env.UNSUB_SECRET);
-  const url = unsubscribeUrl(siteOrigin(env), email, token);
+  const url = unsubscribeUrl(siteOrigin(env), await makeUnsubId(email, env.UNSUB_SECRET));
   return { url, headers: listUnsubscribeHeaders(url, senderEmail(env)), postal: postalAddress(env) };
 }
 
@@ -147,19 +167,87 @@ export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyTe
   } catch { return { sent: false, reason: 'network' }; }
 }
 
-/** Welcome email copy. DRAFT: needs Sunny's approval before EMAIL_CAPTURE_ENABLED turns on. */
-export function welcomeEmail(origin) {
+/** The visitor's by-age result as posted by the form. Anything out of range is dropped, never trusted. */
+export function cleanResult(input) {
+  if (!input || typeof input !== 'object') return null;
+  const seconds = typeof input.seconds === 'number' ? Math.round(input.seconds) : NaN;
+  if (!Number.isFinite(seconds) || seconds < 1 || seconds > MAX_TEST_SECONDS) return null;
+  const ageBand = typeof input.ageBand === 'string' && AGE_BANDS.includes(input.ageBand) ? input.ageBand : null;
+  return { seconds, ageBand };
+}
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+/** Date four weeks after `now`, in UTC, written out in full for UK readers. */
+export function retestDate(now = new Date()) {
+  const d = new Date(now.getTime() + 28 * 86400000);
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+}
+
+const NUMBER_WORDS = { 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven' };
+const firstNumber = (value) => Number(/\d+/.exec(String(value))?.[0]);
+
+/**
+ * Starting hold from the free 4-week programme's published rules only (w4.*), one arithmetic step on a quoted rule.
+ * It never runs the paid 8-week generator. Returns { entry: quote } when the max is under the programme's entry hold.
+ */
+export function startingHold(seconds, rules) {
+  const rule = ruleLookup(rules);
+  const share = firstNumber(rule('w4.baseline_fraction').value) / 100;
+  const entry = firstNumber(rule('w4.entry_hold').value);
+  if (!(share > 0 && share < 1) || !(entry > 0)) return null;
+  // Under about 7 seconds the 80% baseline falls below the programme's entry hold, so no hold is computed.
+  if (seconds < Math.ceil(entry / share)) return { entry: rule('w4.entry_hold').quote };
+  return {
+    baseline: Math.round(seconds * share),
+    setsRest: String(rule('w4.sets_rest').value),
+    rest: firstNumber(rule('w4.rest_seconds').value),
+    days: NUMBER_WORDS[firstNumber(rule('w4.sessions_per_week').value)] ?? null,
+  };
+}
+
+/** Welcome email copy (`rules` is plan-rules.json, passed in because the Pages bundler rejects JSON import attributes): personal when a valid result is supplied, generic otherwise. DRAFT until Sunny approves the wording. */
+export function welcomeEmail(origin, result, now, rules) {
   const utm = 'utm_source=newsletter&utm_medium=email&utm_campaign=hang-longer';
   const preset = (name) => `${origin}${TIMER_PRESETS.find((p) => p.name === name).path}&${utm}`;
   const level1 = preset('Level 1 session');
-  const maxTest = preset('Max test');
+  const planUrl = `${origin}/plan/?${utm}`;
+  const programmeUrl = `${origin}/4-week-program/?${utm}`;
+  const date = retestDate(now ?? new Date());
+  const r = cleanResult(result ?? null);
+  const hold = r ? startingHold(r.seconds, rules) : null;
+  const h = escapeHtml;
+  const resultText = r ? `Your result: ${r.seconds} seconds.` : null;
+  let holdsHtml;
+  let holdsText;
+  let timerLabel = 'Open the free Level 1 timer preset';
+  let timerText = 'Free Level 1 timer preset';
+  let timerUrl = level1;
+  if (hold?.baseline) {
+    const tail = `for ${r.seconds} seconds that is about ${hold.baseline} seconds, ${hold.setsRest}${hold.days ? `, ${hold.days} days a week` : ''}.`;
+    holdsHtml = `The <a href="${h(programmeUrl)}">free 4-week programme</a> starts at your baseline, about 80% of your max: ${h(tail)}`;
+    holdsText = `The free 4-week programme starts at your baseline, about 80% of your max: ${tail}\n4-week programme: ${programmeUrl}`;
+    timerUrl = `${origin}/training-log/?${buildTimerQuery({ config: { mode: 'simple', workSeconds: hold.baseline, restSeconds: hold.rest, rounds: 3, prepSeconds: 5 } })}&${utm}`;
+    // The timer caps a hold at HANG_MAX_SECONDS, so a larger baseline cannot be promised in the link text.
+    timerLabel = hold.baseline > HANG_MAX_SECONDS ? 'Open the timer' : `Open the timer set to 3 x ${hold.baseline} seconds`;
+    timerText = timerLabel;
+  } else if (hold?.entry) {
+    holdsHtml = `The <a href="${h(programmeUrl)}">free 4-week programme</a> says: "${h(hold.entry)}"`;
+    holdsText = `The free 4-week programme says: "${hold.entry}"\n4-week programme: ${programmeUrl}`;
+    timerUrl = `${origin}/how-to-deadhang/?${utm}`;
+    timerLabel = 'Read how to dead hang';
+    timerText = 'How to dead hang';
+  } else {
+    holdsText = 'Start with Level 1: 3 hangs of 15 seconds, 90 seconds of rest between them, on 3 non-consecutive days a week. Stop each hang a second or two before your grip gives out.';
+    holdsHtml = h(holdsText);
+  }
+  const retestText = `Test again on ${date}, four weeks from today, in the same way on the same bar, and compare like with like.`;
+  const planText = `If you would rather have it set out for you, the ${PLAN_PRICE_LABEL} plan builds eight weeks around your own holds.`;
+  const closing = 'You will also get a short starter series when it is ready. The timer and your log stay free, with no account needed.';
+  const resultHtml = resultText ? `<p>${h(resultText)}</p>\n` : '';
+  const resultPlain = resultText ? `${resultText}\n\n` : '';
   return {
-    subject: 'Your first dead hang session',
-    bodyHtml: `<p>Thanks for signing up to DeadHangs training emails.</p>
-<p>You will get a starter plan, a weekly test reminder and a note on when to progress. Nothing else.</p>
-<p>Start with Level 1: 3 hangs of 15 seconds, 90 seconds of rest between them, on 3 non-consecutive days a week. Stop each hang a second or two before your grip gives out. <a href="${escapeHtml(level1)}">Open the timer with Level 1 set up</a>.</p>
-<p>Want a baseline first? <a href="${escapeHtml(maxTest)}">Run the max hang test in the timer</a> and log the result.</p>
-<p>The timer and your log stay free, with no account needed.</p>`,
-    bodyText: `Thanks for signing up to DeadHangs training emails.\n\nYou will get a starter plan, a weekly test reminder and a note on when to progress. Nothing else.\n\nStart with Level 1: 3 hangs of 15 seconds, 90 seconds of rest between them, on 3 non-consecutive days a week. Stop each hang a second or two before your grip gives out.\nOpen the timer with Level 1 set up: ${level1}\n\nWant a baseline first? Run the max hang test in the timer: ${maxTest}\n\nThe timer and your log stay free, with no account needed.`,
+    subject: r ? `Your ${r.seconds} second dead hang and your starting hold` : 'Your starting hold and your re-test date',
+    bodyHtml: `<p>Thanks for signing up to DeadHangs training emails.</p>\n${resultHtml}<p>${holdsHtml}</p>\n<p><a href="${h(timerUrl)}">${h(timerLabel)}</a>.</p>\n<p>${h(retestText)}</p>\n<p>${h(planText)} <a href="${h(planUrl)}">See the plan</a>.</p>\n<p>${h(closing)}</p>`,
+    bodyText: `Thanks for signing up to DeadHangs training emails.\n\n${resultPlain}${holdsText}\n\n${timerText}: ${timerUrl}\n\n${retestText}\n\n${planText}\nSee the plan: ${planUrl}\n\n${closing}`,
   };
 }

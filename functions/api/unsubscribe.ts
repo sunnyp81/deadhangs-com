@@ -1,4 +1,4 @@
-import { blacklist, verifyUnsubToken } from '../../src/server/email.mjs';
+import { blacklist, readUnsubId } from '../../src/server/email.mjs';
 
 interface Env { BREVO_API_KEY?: string; UNSUB_SECRET?: string; }
 type State = 'confirm' | 'done' | 'invalid' | 'unavailable';
@@ -21,16 +21,16 @@ export function page(state: State, action = '') {
 }
 async function handle({ request, env }: { request: Request; env: Env }, isPost: boolean) {
   const url = new URL(request.url);
-  const email = (url.searchParams.get('e') || '').trim().toLowerCase();
-  const token = url.searchParams.get('t') || '';
+  const id = url.searchParams.get('u') || '';
   // A person pressing the confirm button gets a page back; a mail client's one-click POST gets plain text.
   const fromForm = isPost && (request.headers.get('accept') || '').includes('text/html');
   const reply = (state: State, status: number) => isPost
     ? (fromForm ? new Response(page(state), { status, headers: headers('text/html; charset=utf-8') }) : new Response(state, { status, headers: headers('text/plain; charset=utf-8') }))
     : new Response(page(state), { status, headers: headers('text/html; charset=utf-8') });
-  if (!email || !token || email.length > 254) return reply('invalid', 400);
+  if (!id || id.length > 600) return reply('invalid', 400);
   if (!env.UNSUB_SECRET || !env.BREVO_API_KEY) return reply('unavailable', 503);
-  if (!(await verifyUnsubToken(email, token, env.UNSUB_SECRET))) return reply('invalid', 403);
+  const email = await readUnsubId(id, env.UNSUB_SECRET);
+  if (!email) return reply('invalid', 403);
   // GET never changes anything: link scanners and prefetchers fetch this URL. It shows a confirm form that POSTs back.
   if (!isPost) return new Response(page('confirm', url.pathname + url.search), { status: 200, headers: headers('text/html; charset=utf-8') });
   try { await blacklist(env.BREVO_API_KEY, email); } catch { return reply('unavailable', 502); }

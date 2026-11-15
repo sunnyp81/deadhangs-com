@@ -1,4 +1,5 @@
 import { consentSource, CONSENT_WORDING_VERSION, emailFlagOn } from '../../src/lib/email-consent.mjs';
+import rules from '../../src/data/plan-rules.json';
 import { listId, sendCompliantEmail, sendReadiness, siteOrigin, welcomeEmail } from '../../src/server/email.mjs';
 
 interface Env {
@@ -36,7 +37,7 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     if (raw.length > 4096) return json({ error:'Request too large' },413);
     let input: unknown;
     try { input = JSON.parse(raw); } catch { return json({ error:'Invalid JSON' },400); }
-    const body = (input && typeof input === 'object' ? input : {}) as { email?: unknown; source?: unknown; website?: unknown };
+    const body = (input && typeof input === 'object' ? input : {}) as { email?: unknown; source?: unknown; website?: unknown; result?: unknown };
     const email = typeof body.email === 'string' ? body.email.trim() : '';
     if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error:'Invalid email' },400);
     // Honeypot: people never fill the hidden field. Answer as success so bots learn nothing.
@@ -52,7 +53,7 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     if (response.ok) {
       // Welcome email only when every gate passes; sendCompliantEmail re-checks readiness and suppression.
       if (flagOn && sendReadiness(env).length === 0) {
-        const message = welcomeEmail(siteOrigin(env));
+        const message = welcomeEmail(siteOrigin(env), body.result, new Date(), rules);
         await sendCompliantEmail(env, { email, ...message });
       }
       return json({ok:true});
