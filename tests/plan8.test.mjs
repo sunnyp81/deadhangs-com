@@ -203,7 +203,7 @@ test('hashToken is lowercase hex SHA-256', async () => {
 
 const SHELL = '<!doctype html><html><head><meta name="robots" content="noindex, follow"></head><body><main><!--PLAN8--></main></body></html>';
 const assets = { fetch: async () => new Response(SHELL, { status: 200 }) };
-const get = (url, env, method = 'GET') => handlePlanView(new Request(url, { method }), env);
+const get = (url, env, method = 'GET') => handlePlanView(new Request(url, { method }), env, rules);
 
 test('/plan/view/: valid token returns 200 with the plan, noindex and no-store', async () => {
   const rows = new Map([[await hashToken(TOKEN), { status: 'paid', inputs: JSON.stringify(inputs(30)) }]]);

@@ -1,4 +1,3 @@
-import rules from '../data/plan-rules.json' with { type: 'json' };
 import { buildPlan } from '../lib/plan8.mjs';
 import { renderPlanHtml, renderGoneHtml, renderUnavailableHtml } from '../lib/plan8-render.mjs';
 import { lookupPlan } from './plan-access.mjs';
@@ -29,7 +28,7 @@ async function page(request, env, body, status) {
 }
 
 /** GET /plan/view/?t=<token>. 200 with the plan, 410 for unknown or refunded, 503 if the database is down. */
-export async function handlePlanView(request, env) {
+export async function handlePlanView(request, env, rules) {
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     return new Response('Method not allowed', { status: 405, headers: headers({ Allow: 'GET, HEAD' }) });
   }
