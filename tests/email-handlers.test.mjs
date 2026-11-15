@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import ts from 'typescript';
-async function load(file) { const base=new URL('../'+file,import.meta.url);const source=await fs.readFile(base,'utf8'); const out=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from '(\.{1,2}\/[^']+)'/g,(_m,spec)=>`from '${new URL(spec,base).href}'`); return import('data:text/javascript;base64,'+Buffer.from(out).toString('base64')); }
+async function load(file) { const base=new URL('../'+file,import.meta.url);const source=await fs.readFile(base,'utf8'); const out=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText.replace(/from '(\.{1,2}\/[^']+)'/g,(_m,spec)=>`from '${new URL(spec,base).href}'${spec.endsWith('.json')?" with { type: 'json' }":''}`); return import('data:text/javascript;base64,'+Buffer.from(out).toString('base64')); }
 const {onRequestPost:subscribe}=await load('functions/api/subscribe.ts');
 const {onRequestGet:dryRun,onRequestPost:drip,nextEmail}=await load('functions/api/drip-cron.ts');
 const ready={EMAIL_CAPTURE_ENABLED:'true',UNSUB_SECRET:'u'.repeat(40),EMAIL_POSTAL_ADDRESS:'1 Test Street, Testtown, TE1 1ST',EMAIL_SENDER:'sender@example.com',AUTH_BASE_URL:'https://deadhangs.com'};

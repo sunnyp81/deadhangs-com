@@ -4,17 +4,19 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import ts from 'typescript';
 import * as mail from '../src/server/email.mjs';
+import rules from '../src/data/plan-rules.json' with { type: 'json' };
 import { consentSource, emailFlagOn, CONSENT_WORDING_VERSION } from '../src/lib/email-consent.mjs';
 
 async function load(file) {
   const base = new URL('../' + file, import.meta.url);
   const out = ts.transpileModule(await fs.readFile(base, 'utf8'), { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 } }).outputText
-    .replace(/from '(\.{1,2}\/[^']+)'/g, (_m, spec) => `from '${new URL(spec, base).href}'`);
+    .replace(/from '(\.{1,2}\/[^']+)'/g, (_m, spec) => `from '${new URL(spec, base).href}'${spec.endsWith('.json') ? " with { type: 'json' }" : ''}`);
   return import('data:text/javascript;base64,' + Buffer.from(out).toString('base64'));
 }
 const { onRequestPost: subscribe } = await load('functions/api/subscribe.ts');
 const unsub = await load('functions/api/unsubscribe.ts');
 
+const welcome = (origin, result, now) => mail.welcomeEmail(origin, result, now, rules);
 const SECRET = 's'.repeat(40);
 const BAD_CHARS = new RegExp('[' + String.fromCharCode(0x2013, 0x2014, 0xfffd) + ']');
 const ready = { BREVO_API_KEY: 'test-only', EMAIL_CAPTURE_ENABLED: 'true', UNSUB_SECRET: SECRET, EMAIL_POSTAL_ADDRESS: '1 Test Street, Testtown, TE1 1ST', EMAIL_SENDER: 'sender@example.com', AUTH_BASE_URL: 'https://deadhangs.com' };
@@ -203,7 +205,7 @@ test('unsubscribe still works with the send flag off, and the page has no dashes
   const id = await mail.makeUnsubId('a@example.com', SECRET);
   assert.equal((await unsub.onRequestPost({ request: unsubRequest('POST', `?u=${id}`), env: { ...ready, EMAIL_CAPTURE_ENABLED: undefined } })).status, 200);
   for (const state of ['confirm', 'done', 'invalid', 'unavailable']) assert.doesNotMatch(unsub.page(state, '/api/unsubscribe'), BAD_CHARS);
-  const w = mail.welcomeEmail('https://deadhangs.com');
+  const w = welcome('https://deadhangs.com');
   assert.doesNotMatch(w.bodyHtml + w.bodyText + mail.footerHtml('u', 'p') + w.subject, BAD_CHARS);
 });
 
@@ -252,7 +254,7 @@ test('result validation drops anything out of range and keeps valid values', () 
 
 test('welcome email applies the free 4-week programme rules to the submitted seconds, with a date 28 days out', () => {
   const now = new Date('2026-11-20T10:00:00Z');
-  const w = mail.welcomeEmail('https://deadhangs.com', { seconds: 50, ageBand: '40-59' }, now);
+  const w = welcome('https://deadhangs.com', { seconds: 50, ageBand: '40-59' }, now);
   for (const text of [w.bodyHtml, w.bodyText]) {
     assert.match(text, /50 seconds/);
     assert.match(text, /free 4-week programme/);
@@ -272,22 +274,22 @@ test('welcome email applies the free 4-week programme rules to the submitted sec
 
 test('starting hold uses only w4 rules: no cap at 60, no age band, entry quote under 7 seconds', () => {
   const now = new Date('2026-11-20T10:00:00Z');
-  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 90, ageBand: 'under-40' }, now).bodyText, /about 72 seconds, 3 sets, 90 seconds rest/);
-  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 300 }, now).bodyText, /about 240 seconds, 3 sets/);
-  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 30 }, now).bodyText, /about 24 seconds, 3 sets/);
-  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 7 }, now).bodyText, /about 6 seconds, 3 sets/);
-  const short = mail.welcomeEmail('https://deadhangs.com', { seconds: 6, ageBand: null }, now);
+  assert.match(welcome('https://deadhangs.com', { seconds: 90, ageBand: 'under-40' }, now).bodyText, /about 72 seconds, 3 sets, 90 seconds rest/);
+  assert.match(welcome('https://deadhangs.com', { seconds: 300 }, now).bodyText, /about 240 seconds, 3 sets/);
+  assert.match(welcome('https://deadhangs.com', { seconds: 30 }, now).bodyText, /about 24 seconds, 3 sets/);
+  assert.match(welcome('https://deadhangs.com', { seconds: 7 }, now).bodyText, /about 6 seconds, 3 sets/);
+  const short = welcome('https://deadhangs.com', { seconds: 6, ageBand: null }, now);
   assert.match(short.bodyText, /Your result: 6 seconds\./);
   assert.match(short.bodyText, /"The program suits anyone who can hold the bar for about 5 seconds\."/);
   assert.doesNotMatch(short.bodyText, /that is about|3 x \d/);
-  assert.deepEqual(mail.startingHold(6), { entry: 'The program suits anyone who can hold the bar for about 5 seconds.' });
-  assert.equal(mail.startingHold(50).baseline, 40);
+  assert.deepEqual(mail.startingHold(6, rules), { entry: 'The program suits anyone who can hold the bar for about 5 seconds.' });
+  assert.equal(mail.startingHold(50, rules).baseline, 40);
 });
 
 test('welcome email without a valid result is generic but still has a re-test date', () => {
   const now = new Date('2026-11-20T10:00:00Z');
   for (const input of [undefined, null, { seconds: 99999 }, 'junk']) {
-    const w = mail.welcomeEmail('https://deadhangs.com', input, now);
+    const w = welcome('https://deadhangs.com', input, now);
     assert.ok(!w.bodyText.includes('Your result'));
     assert.match(w.bodyText, /18 December 2026/);
     assert.match(w.bodyText, /Start with Level 1/);
@@ -316,10 +318,10 @@ test('flag off: a posted result is ignored and nothing is sent', async (t) => {
 
 test('baseline above the timer maximum: link text says "Open the timer", not a set-to figure', () => {
   const now = new Date('2026-11-20T10:00:00Z');
-  const at = mail.welcomeEmail('https://deadhangs.com', { seconds: 150 }, now);
+  const at = welcome('https://deadhangs.com', { seconds: 150 }, now);
   assert.match(at.bodyText, /about 120 seconds, 3 sets/);
   assert.match(at.bodyText, /Open the timer set to 3 x 120 seconds/);
-  const over = mail.welcomeEmail('https://deadhangs.com', { seconds: 300 }, now);
+  const over = welcome('https://deadhangs.com', { seconds: 300 }, now);
   for (const text of [over.bodyText, over.bodyHtml]) {
     assert.match(text, /Open the timer(:|<)/);
     assert.doesNotMatch(text, /set to 3 x/);
@@ -327,7 +329,7 @@ test('baseline above the timer maximum: link text says "Open the timer", not a s
 });
 
 test('max under 7 seconds: no Level 1 line or preset, links the how-to guide instead', () => {
-  const w = mail.welcomeEmail('https://deadhangs.com', { seconds: 6 }, new Date('2026-11-20T10:00:00Z'));
+  const w = welcome('https://deadhangs.com', { seconds: 6 }, new Date('2026-11-20T10:00:00Z'));
   for (const text of [w.bodyText, w.bodyHtml]) {
     assert.doesNotMatch(text, /Level 1|gentle place|mode=simple/);
     assert.match(text, /\/how-to-deadhang\/\?utm_source=newsletter/);

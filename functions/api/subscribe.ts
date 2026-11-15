@@ -1,4 +1,5 @@
 import { consentSource, CONSENT_WORDING_VERSION, emailFlagOn } from '../../src/lib/email-consent.mjs';
+import rules from '../../src/data/plan-rules.json';
 import { listId, sendCompliantEmail, sendReadiness, siteOrigin, welcomeEmail } from '../../src/server/email.mjs';
 
 interface Env {
@@ -52,7 +53,7 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     if (response.ok) {
       // Welcome email only when every gate passes; sendCompliantEmail re-checks readiness and suppression.
       if (flagOn && sendReadiness(env).length === 0) {
-        const message = welcomeEmail(siteOrigin(env), body.result);
+        const message = welcomeEmail(siteOrigin(env), body.result, new Date(), rules);
         await sendCompliantEmail(env, { email, ...message });
       }
       return json({ok:true});

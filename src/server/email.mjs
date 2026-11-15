@@ -3,7 +3,6 @@ import { emailFlagOn } from '../lib/email-consent.mjs';
 import { HANG_MAX_SECONDS, TIMER_PRESETS, buildTimerQuery } from '../lib/timer-preset.mjs';
 import { AGE_BANDS, MAX_TEST_SECONDS, ruleLookup } from '../lib/plan8.mjs';
 import { PLAN_PRICE_LABEL } from '../lib/plan-offer.mjs';
-import rules from '../data/plan-rules.json' with { type: 'json' };
 
 const BREVO = 'https://api.brevo.com/v3';
 export const POSTAL_ADDRESS_PLACEHOLDER = 'POSTAL ADDRESS REQUIRED';
@@ -191,7 +190,7 @@ const firstNumber = (value) => Number(/\d+/.exec(String(value))?.[0]);
  * Starting hold from the free 4-week programme's published rules only (w4.*), one arithmetic step on a quoted rule.
  * It never runs the paid 8-week generator. Returns { entry: quote } when the max is under the programme's entry hold.
  */
-export function startingHold(seconds) {
+export function startingHold(seconds, rules) {
   const rule = ruleLookup(rules);
   const share = firstNumber(rule('w4.baseline_fraction').value) / 100;
   const entry = firstNumber(rule('w4.entry_hold').value);
@@ -206,16 +205,16 @@ export function startingHold(seconds) {
   };
 }
 
-/** Welcome email copy: personal when a valid result is supplied, generic otherwise. DRAFT until Sunny approves the wording. */
-export function welcomeEmail(origin, result = null, now = new Date()) {
+/** Welcome email copy (`rules` is plan-rules.json, passed in because the Pages bundler rejects JSON import attributes): personal when a valid result is supplied, generic otherwise. DRAFT until Sunny approves the wording. */
+export function welcomeEmail(origin, result, now, rules) {
   const utm = 'utm_source=newsletter&utm_medium=email&utm_campaign=hang-longer';
   const preset = (name) => `${origin}${TIMER_PRESETS.find((p) => p.name === name).path}&${utm}`;
   const level1 = preset('Level 1 session');
   const planUrl = `${origin}/plan/?${utm}`;
   const programmeUrl = `${origin}/4-week-program/?${utm}`;
-  const date = retestDate(now);
-  const r = cleanResult(result);
-  const hold = r ? startingHold(r.seconds) : null;
+  const date = retestDate(now ?? new Date());
+  const r = cleanResult(result ?? null);
+  const hold = r ? startingHold(r.seconds, rules) : null;
   const h = escapeHtml;
   const resultText = r ? `Your result: ${r.seconds} seconds.` : null;
   let holdsHtml;
