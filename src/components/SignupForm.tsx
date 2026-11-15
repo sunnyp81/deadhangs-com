@@ -1,6 +1,7 @@
 import { useEffect, useId, useState } from 'react';
 import { trackFeature } from '../scripts/training-events.js';
 import { CONSENT_WORDING, OFFER_WORDING } from '../lib/email-consent.mjs';
+import { recallResult } from '../lib/by-age-result.mjs';
 // `offer` is used only by the flagged placements (EMAIL_CAPTURE_ENABLED); existing pages keep their copy.
 export default function SignupForm({ dark = false, source = 'article', offer = false }: { dark?: boolean; source?: 'home' | 'article' | 'post_save'; offer?: boolean }) {
   const uid = useId();
@@ -17,7 +18,7 @@ export default function SignupForm({ dark = false, source = 'article', offer = f
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email,website,source:window.location.pathname}), signal:controller.signal });
+      const response = await fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email,website,source:window.location.pathname,...(offer?{result:recallResult()}:{})}), signal:controller.signal });
       const body = await response.json();
       if (!response.ok || !body || typeof body !== 'object' || !('ok' in body) || body.ok !== true) throw new Error('Not registered');
       const existingAddress = 'existing' in body && body.existing === true;

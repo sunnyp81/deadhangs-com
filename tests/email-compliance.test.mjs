@@ -56,14 +56,27 @@ test('send readiness lists every missing piece and blocks the placeholder postal
   assert.equal(mail.listId({}), 3);
 });
 
-test('unsubscribe token is per address, case-insensitive and rejects tampering', async () => {
-  const token = await mail.makeUnsubToken('A@Example.com', SECRET);
-  assert.match(token, /^[A-Za-z0-9_-]{43}$/);
-  assert.equal(await mail.verifyUnsubToken('a@example.com', token, SECRET), true);
-  assert.equal(await mail.verifyUnsubToken('b@example.com', token, SECRET), false);
-  assert.equal(await mail.verifyUnsubToken('a@example.com', token, 'x'.repeat(40)), false);
-  assert.equal(await mail.verifyUnsubToken('a@example.com', token.slice(1) + 'A', SECRET), false);
-  assert.equal(await mail.verifyUnsubToken('a@example.com', '', SECRET), false);
+test('unsubscribe id is opaque, per address, case-insensitive and rejects tampering', async () => {
+  const id = await mail.makeUnsubId('A@Example.com', SECRET);
+  assert.match(id, /^[A-Za-z0-9_-]+$/);
+  assert.equal(await mail.readUnsubId(id, SECRET), 'a@example.com');
+  assert.notEqual(await mail.makeUnsubId('A@Example.com', SECRET), id);
+  assert.equal(await mail.readUnsubId(id, 'x'.repeat(40)), null);
+  assert.equal(await mail.readUnsubId(id.slice(0, -2) + (id.endsWith('AA') ? 'BB' : 'AA'), SECRET), null);
+  assert.equal(await mail.readUnsubId(id.slice(1), SECRET), null);
+  for (const bad of ['', 'abc', 'a@example.com', null, undefined, '!!!']) assert.equal(await mail.readUnsubId(bad, SECRET), null);
+});
+
+test('no address appears in any unsubscribe URL, header or footer, plain or encoded', async (t) => {
+  const calls = fakeBrevo(t);
+  await mail.sendCompliantEmail(ready, { email: 'Someone+tag@example.com', subject: 'S', bodyHtml: '<p>Hi</p>', bodyText: 'Hi' });
+  const send = calls[1].body;
+  const urls = [...(send.headers['List-Unsubscribe'].match(/<https:[^>]+>/g) || []), ...(send.htmlContent + send.textContent).match(/https:\/\/deadhangs\.com\/api\/unsubscribe\S*/g)];
+  assert.ok(urls.length >= 3);
+  for (const url of urls) {
+    assert.match(url, /\/api\/unsubscribe\?u=[A-Za-z0-9_-]+/);
+    for (const needle of ['someone', 'example.com', '%40', '@', 'e=']) assert.ok(!url.toLowerCase().includes(needle), needle + ' in ' + url);
+  }
 });
 
 test('a compliant send carries both unsubscribe headers, footer link and postal address', async (t) => {
@@ -73,11 +86,11 @@ test('a compliant send carries both unsubscribe headers, footer link and postal 
   assert.equal(calls[0].method, 'GET');
   assert.equal(calls[0].url, 'https://api.brevo.com/v3/contacts/a%2Bb%40example.com');
   const send = calls[1].body;
-  const token = await mail.makeUnsubToken('a+b@example.com', SECRET);
-  const url = `https://deadhangs.com/api/unsubscribe?e=a%2Bb%40example.com&t=${token}`;
-  assert.equal(send.headers['List-Unsubscribe'], `<${url}>, <mailto:sender@example.com?subject=unsubscribe>`);
+  const url = send.headers['List-Unsubscribe'].match(/^<(https:\/\/deadhangs\.com\/api\/unsubscribe\?u=[A-Za-z0-9_-]+)>, <mailto:sender@example\.com\?subject=unsubscribe>$/)?.[1];
+  assert.ok(url);
+  assert.equal(await mail.readUnsubId(new URL(url).searchParams.get('u'), SECRET), 'a+b@example.com');
   assert.equal(send.headers['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click');
-  assert.ok(send.htmlContent.includes(url.replace(/&/g, '&amp;')));
+  assert.ok(send.htmlContent.includes(url));
   assert.ok(send.htmlContent.includes('1 Test Street') && send.textContent.includes('1 Test Street') && send.textContent.includes(url));
   assert.equal(calls.length, 2);
 });
@@ -142,25 +155,25 @@ const unsubRequest = (method, query) => new Request('https://deadhangs.com/api/u
 
 test('GET with a valid token makes no Brevo call and returns the confirm form', async (t) => {
   const calls = fakeBrevo(t);
-  const token = await mail.makeUnsubToken('a@example.com', SECRET);
-  const res = await unsub.onRequestGet({ request: unsubRequest('GET', `?e=a%40example.com&t=${token}`), env: ready });
+  const id = await mail.makeUnsubId('a@example.com', SECRET);
+  const res = await unsub.onRequestGet({ request: unsubRequest('GET', `?u=${id}`), env: ready });
   assert.equal(res.status, 200);
   assert.equal(calls.length, 0);
   const html = await res.text();
-  assert.ok(html.includes(`<form method="post" action="/api/unsubscribe?e=a%40example.com&amp;t=${token}"><button type="submit">Unsubscribe</button></form>`));
+  assert.ok(html.includes(`<form method="post" action="/api/unsubscribe?u=${id}"><button type="submit">Unsubscribe</button></form>`));
   assert.match(html, /min-height:44px/);
   assert.equal(res.headers.get('X-Robots-Tag'), 'noindex');
   assert.equal(res.headers.get('Referrer-Policy'), 'no-referrer');
 });
 
 test('POST from the confirm form and the RFC 8058 one-click both blacklist the contact', async (t) => {
-  const token = await mail.makeUnsubToken('a@example.com', SECRET);
+  const id = await mail.makeUnsubId('A@example.com', SECRET);
   for (const kind of ['form', 'one-click']) {
     t.mock.restoreAll();
     const calls = fakeBrevo(t);
     const request = kind === 'form'
-      ? new Request(`https://deadhangs.com/api/unsubscribe?e=A%40example.com&t=${token}`, { method: 'POST', headers: { accept: 'text/html,application/xhtml+xml', 'content-type': 'application/x-www-form-urlencoded' }, body: '' })
-      : unsubRequest('POST', `?e=A%40example.com&t=${token}`);
+      ? new Request(`https://deadhangs.com/api/unsubscribe?u=${id}`, { method: 'POST', headers: { accept: 'text/html,application/xhtml+xml', 'content-type': 'application/x-www-form-urlencoded' }, body: '' })
+      : unsubRequest('POST', `?u=${id}`);
     const res = await unsub.onRequestPost({ request, env: ready });
     assert.equal(res.status, 200);
     assert.equal(calls.length, 1);
@@ -174,10 +187,12 @@ test('POST from the confirm form and the RFC 8058 one-click both blacklist the c
 
 test('forged, missing and unconfigured unsubscribe requests change nothing', async (t) => {
   const calls = fakeBrevo(t);
-  const token = await mail.makeUnsubToken('a@example.com', SECRET);
-  assert.equal((await unsub.onRequestGet({ request: unsubRequest('GET', `?e=b%40example.com&t=${token}`), env: ready })).status, 403);
-  assert.equal((await unsub.onRequestPost({ request: unsubRequest('POST', '?e=a%40example.com'), env: ready })).status, 400);
-  const res = await unsub.onRequestGet({ request: unsubRequest('GET', `?e=a%40example.com&t=${token}`), env: { BREVO_API_KEY: 'test-only' } });
+  const id = await mail.makeUnsubId('a@example.com', SECRET);
+  assert.equal((await unsub.onRequestGet({ request: unsubRequest('GET', `?u=${id.slice(0, -3)}AAA`), env: ready })).status, 403);
+  assert.equal((await unsub.onRequestGet({ request: unsubRequest('GET', '?e=a%40example.com'), env: ready })).status, 400);
+  assert.equal((await unsub.onRequestPost({ request: unsubRequest('POST', '?u=' + await mail.makeUnsubId('a@example.com', 'z'.repeat(40))), env: ready })).status, 403);
+  assert.equal((await unsub.onRequestPost({ request: unsubRequest('POST', ''), env: ready })).status, 400);
+  const res = await unsub.onRequestGet({ request: unsubRequest('GET', `?u=${id}`), env: { BREVO_API_KEY: 'test-only' } });
   assert.equal(res.status, 503);
   assert.match(await res.text(), /mailto:/);
   assert.equal(calls.length, 0);
@@ -185,8 +200,8 @@ test('forged, missing and unconfigured unsubscribe requests change nothing', asy
 
 test('unsubscribe still works with the send flag off, and the page has no dashes or broken characters', async (t) => {
   fakeBrevo(t);
-  const token = await mail.makeUnsubToken('a@example.com', SECRET);
-  assert.equal((await unsub.onRequestPost({ request: unsubRequest('POST', `?e=a%40example.com&t=${token}`), env: { ...ready, EMAIL_CAPTURE_ENABLED: undefined } })).status, 200);
+  const id = await mail.makeUnsubId('a@example.com', SECRET);
+  assert.equal((await unsub.onRequestPost({ request: unsubRequest('POST', `?u=${id}`), env: { ...ready, EMAIL_CAPTURE_ENABLED: undefined } })).status, 200);
   for (const state of ['confirm', 'done', 'invalid', 'unavailable']) assert.doesNotMatch(unsub.page(state, '/api/unsubscribe'), BAD_CHARS);
   const w = mail.welcomeEmail('https://deadhangs.com');
   assert.doesNotMatch(w.bodyHtml + w.bodyText + mail.footerHtml('u', 'p') + w.subject, BAD_CHARS);
@@ -216,4 +231,76 @@ test('drip: a contact suppressed since the list snapshot is skipped, sends carry
   const blocked = await drip({ request: new Request('https://deadhangs.com/api/drip-cron', { method: 'POST', headers: { 'x-cron-secret': 'cron-test-only' } }), env: { ...env, EMAIL_CAPTURE_ENABLED: undefined } });
   assert.equal(blocked.status, 503);
   assert.equal(n, 0);
+});
+
+test('consent wording version is bumped and the offer promises only what ships', async () => {
+  const consent = await import('../src/lib/email-consent.mjs');
+  assert.equal(consent.CONSENT_WORDING_VERSION, 'signup-2026-11-15');
+  assert.equal(consent.CONSENT_WORDING, 'By subscribing, you ask to receive DeadHangs training emails. Unsubscribe in any received message.');
+  assert.match(consent.OFFER_WORDING, /welcome email/);
+  assert.match(consent.OFFER_WORDING, /short starter series when it is ready/);
+  assert.doesNotMatch(consent.OFFER_WORDING, /weekly|reminder|progress/);
+  assert.doesNotMatch(consent.OFFER_WORDING + consent.CONSENT_WORDING, BAD_CHARS);
+});
+
+test('result validation drops anything out of range and keeps valid values', () => {
+  assert.deepEqual(mail.cleanResult({ seconds: 45.4, ageBand: '40-59' }), { seconds: 45, ageBand: '40-59' });
+  assert.deepEqual(mail.cleanResult({ seconds: 3600, ageBand: 'nonsense' }), { seconds: 3600, ageBand: null });
+  for (const bad of [null, 'x', {}, { seconds: 0 }, { seconds: -5 }, { seconds: 3601 }, { seconds: '45' }, { seconds: NaN }, { seconds: Infinity }]) assert.equal(mail.cleanResult(bad), null);
+});
+
+test('welcome email carries the submitted seconds, the age group, week-1 holds and a date 28 days out', () => {
+  const now = new Date('2026-11-20T10:00:00Z');
+  const w = mail.welcomeEmail('https://deadhangs.com', { seconds: 50, ageBand: '40-59' }, now);
+  for (const text of [w.bodyHtml, w.bodyText]) {
+    assert.match(text, /50 seconds/);
+    assert.match(text, /adults 40 to 59/);
+    assert.match(text, /18 December 2026/);
+    assert.match(text, /Week 1: 3 sets of 40 seconds, rest 60 to 90 seconds/);
+    assert.match(text, /training-log\/\?mode=simple&(amp;)?hang=15/);
+    assert.match(text, /£9 plan/);
+  }
+  assert.match(w.subject, /50 second/);
+  assert.doesNotMatch(w.subject + w.bodyHtml + w.bodyText, BAD_CHARS);
+  assert.equal(mail.retestDate(new Date('2026-12-10T00:00:00Z')), '7 January 2027');
+});
+
+test('welcome email falls back to Level 1 under the plan entry hold, and caps long holds at 60', () => {
+  const now = new Date('2026-11-20T10:00:00Z');
+  const short = mail.welcomeEmail('https://deadhangs.com', { seconds: 12, ageBand: null }, now);
+  assert.match(short.bodyText, /Your result: 12 seconds\./);
+  assert.match(short.bodyText, /Start with Level 1: 3 hangs of 15 seconds/);
+  assert.ok(!/Week 1:/.test(short.bodyText));
+  const long = mail.welcomeEmail('https://deadhangs.com', { seconds: 300, ageBand: 'under-40' }, now);
+  assert.match(long.bodyText, /Week 1: 3 sets of 60 seconds/);
+});
+
+test('welcome email without a valid result is generic but still has a re-test date', () => {
+  const now = new Date('2026-11-20T10:00:00Z');
+  for (const input of [undefined, null, { seconds: 99999 }, 'junk']) {
+    const w = mail.welcomeEmail('https://deadhangs.com', input, now);
+    assert.ok(!w.bodyText.includes('Your result'));
+    assert.match(w.bodyText, /18 December 2026/);
+    assert.match(w.bodyText, /Start with Level 1/);
+  }
+});
+
+test('subscribe passes the submitted result into the welcome email and ignores out-of-range values', async (t) => {
+  let calls = fakeBrevo(t);
+  assert.equal((await subscribe({ request: signup({ email: 'a@example.com', source: '/dead-hang-time-by-age/', result: { seconds: 63, ageBand: '60-plus' } }), env: ready })).status, 200);
+  let send = calls.find((c) => c.url.endsWith('/smtp/email')).body;
+  assert.match(send.textContent, /Your result: 63 seconds, compared with adults 60 and over\./);
+  assert.match(send.textContent, /Week 1: 3 sets of 50 seconds/);
+  assert.match(send.textContent, /\d{1,2} (January|February|March|April|May|June|July|August|September|October|November|December) \d{4}/);
+  t.mock.restoreAll(); calls = fakeBrevo(t);
+  await subscribe({ request: signup({ email: 'a@example.com', result: { seconds: 99999, ageBand: 'x' } }), env: ready });
+  send = calls.find((c) => c.url.endsWith('/smtp/email')).body;
+  assert.ok(!send.textContent.includes('Your result'));
+});
+
+test('flag off: a posted result is ignored and nothing is sent', async (t) => {
+  const calls = fakeBrevo(t);
+  await subscribe({ request: signup({ email: 'a@example.com', result: { seconds: 60, ageBand: 'under-40' } }), env: { ...ready, EMAIL_CAPTURE_ENABLED: undefined } });
+  assert.equal(calls.length, 1);
+  assert.deepEqual(Object.keys(calls[0].body.attributes).sort(), ['DRIP_LAST_SENT', 'SIGNUP_DATE']);
 });

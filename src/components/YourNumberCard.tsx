@@ -4,6 +4,7 @@ import NextSessionChoices from "./NextSessionChoices";
 import { trackFeature, trackNextSessionChosen } from "../scripts/training-events.js";
 import { describeHold, parseAge, parseHold } from "../lib/your-number.mjs";
 import { starterById } from "../lib/next-session.mjs";
+import { rememberResult } from "../lib/by-age-result.mjs";
 const PlanOfferCard = lazy(() => import("./PlanOfferCard"));
 
 const LEVEL_1 = starterById("level-1")!;
@@ -36,6 +37,7 @@ export default function YourNumberCard({ planOffer = false }: { planOffer?: bool
     }
     setError("");
     setShown({ seconds: h.seconds!, out: describeHold(h.seconds!, { sex, age: a.age }), age: a.age });
+    rememberResult(h.seconds!, a.age);
     trackFeature("your_number_compared");
   }
 
