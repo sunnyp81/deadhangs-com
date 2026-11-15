@@ -1,7 +1,7 @@
 // Shared by the signup form (browser) and the subscribe handler (server). No secrets here.
 export const CONSENT_WORDING_VERSION = 'signup-2026-11-15';
 export const CONSENT_WORDING = 'By subscribing, you ask to receive DeadHangs training emails. Unsubscribe in any received message.';
-export const OFFER_WORDING = 'Optional: one welcome email with your result, your first week of holds and a re-test date four weeks out, then a short starter series when it is ready.';
+export const OFFER_WORDING = 'Optional: one welcome email with your starting hold from the free 4-week programme and a re-test date four weeks out, then a short starter series when it is ready.';
 // Pages that may carry a signup form. Anything else is recorded as "other", never as a free-text path.
 export const CONSENT_SOURCES = Object.freeze([
   '/',

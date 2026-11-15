@@ -238,6 +238,7 @@ test('consent wording version is bumped and the offer promises only what ships',
   assert.equal(consent.CONSENT_WORDING_VERSION, 'signup-2026-11-15');
   assert.equal(consent.CONSENT_WORDING, 'By subscribing, you ask to receive DeadHangs training emails. Unsubscribe in any received message.');
   assert.match(consent.OFFER_WORDING, /welcome email/);
+  assert.match(consent.OFFER_WORDING, /starting hold/);
   assert.match(consent.OFFER_WORDING, /short starter series when it is ready/);
   assert.doesNotMatch(consent.OFFER_WORDING, /weekly|reminder|progress/);
   assert.doesNotMatch(consent.OFFER_WORDING + consent.CONSENT_WORDING, BAD_CHARS);
@@ -249,30 +250,39 @@ test('result validation drops anything out of range and keeps valid values', () 
   for (const bad of [null, 'x', {}, { seconds: 0 }, { seconds: -5 }, { seconds: 3601 }, { seconds: '45' }, { seconds: NaN }, { seconds: Infinity }]) assert.equal(mail.cleanResult(bad), null);
 });
 
-test('welcome email carries the submitted seconds, the age group, week-1 holds and a date 28 days out', () => {
+test('welcome email applies the free 4-week programme rules to the submitted seconds, with a date 28 days out', () => {
   const now = new Date('2026-11-20T10:00:00Z');
   const w = mail.welcomeEmail('https://deadhangs.com', { seconds: 50, ageBand: '40-59' }, now);
   for (const text of [w.bodyHtml, w.bodyText]) {
     assert.match(text, /50 seconds/);
-    assert.match(text, /adults 40 to 59/);
+    assert.match(text, /free 4-week programme/);
+    assert.match(text, /about 80% of your max: for 50 seconds that is about 40 seconds, 3 sets, 90 seconds rest, three days a week/);
+    assert.match(text, /\/4-week-program\/\?utm_source=newsletter/);
     assert.match(text, /18 December 2026/);
-    assert.match(text, /Week 1: 3 sets of 40 seconds, rest 60 to 90 seconds/);
-    assert.match(text, /training-log\/\?mode=simple&(amp;)?hang=15/);
+    assert.match(text, /training-log\/\?mode=simple&(amp;)?hang=40&(amp;)?rest=90&(amp;)?rounds=3&(amp;)?prep=5/);
+    assert.match(text, /Open the timer set to 3 x 40 seconds/);
     assert.match(text, /£9 plan/);
+    assert.doesNotMatch(text, /compared with|adults|Week 1|60 to 90|plan card/);
   }
-  assert.match(w.subject, /50 second/);
+  assert.match(w.bodyHtml, /<a href="https:\/\/deadhangs\.com\/4-week-program\/\?[^"]+">free 4-week programme<\/a>/);
+  assert.match(w.subject, /50 second.*starting hold/);
   assert.doesNotMatch(w.subject + w.bodyHtml + w.bodyText, BAD_CHARS);
   assert.equal(mail.retestDate(new Date('2026-12-10T00:00:00Z')), '7 January 2027');
 });
 
-test('welcome email falls back to Level 1 under the plan entry hold, and caps long holds at 60', () => {
+test('starting hold uses only w4 rules: no cap at 60, no age band, entry quote under 7 seconds', () => {
   const now = new Date('2026-11-20T10:00:00Z');
-  const short = mail.welcomeEmail('https://deadhangs.com', { seconds: 12, ageBand: null }, now);
-  assert.match(short.bodyText, /Your result: 12 seconds\./);
-  assert.match(short.bodyText, /Start with Level 1: 3 hangs of 15 seconds/);
-  assert.ok(!/Week 1:/.test(short.bodyText));
-  const long = mail.welcomeEmail('https://deadhangs.com', { seconds: 300, ageBand: 'under-40' }, now);
-  assert.match(long.bodyText, /Week 1: 3 sets of 60 seconds/);
+  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 90, ageBand: 'under-40' }, now).bodyText, /about 72 seconds, 3 sets, 90 seconds rest/);
+  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 300 }, now).bodyText, /about 240 seconds, 3 sets/);
+  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 30 }, now).bodyText, /about 24 seconds, 3 sets/);
+  assert.match(mail.welcomeEmail('https://deadhangs.com', { seconds: 7 }, now).bodyText, /about 6 seconds, 3 sets/);
+  const short = mail.welcomeEmail('https://deadhangs.com', { seconds: 6, ageBand: null }, now);
+  assert.match(short.bodyText, /Your result: 6 seconds\./);
+  assert.match(short.bodyText, /"The program suits anyone who can hold the bar for about 5 seconds\."/);
+  assert.doesNotMatch(short.bodyText, /that is about|3 x \d/);
+  assert.match(short.bodyText, /Free Level 1 timer preset/);
+  assert.deepEqual(mail.startingHold(6), { entry: 'The program suits anyone who can hold the bar for about 5 seconds.' });
+  assert.equal(mail.startingHold(50).baseline, 40);
 });
 
 test('welcome email without a valid result is generic but still has a re-test date', () => {
@@ -289,8 +299,8 @@ test('subscribe passes the submitted result into the welcome email and ignores o
   let calls = fakeBrevo(t);
   assert.equal((await subscribe({ request: signup({ email: 'a@example.com', source: '/dead-hang-time-by-age/', result: { seconds: 63, ageBand: '60-plus' } }), env: ready })).status, 200);
   let send = calls.find((c) => c.url.endsWith('/smtp/email')).body;
-  assert.match(send.textContent, /Your result: 63 seconds, compared with adults 60 and over\./);
-  assert.match(send.textContent, /Week 1: 3 sets of 50 seconds/);
+  assert.match(send.textContent, /Your result: 63 seconds./);
+  assert.match(send.textContent, /about 50 seconds, 3 sets, 90 seconds rest/);
   assert.match(send.textContent, /\d{1,2} (January|February|March|April|May|June|July|August|September|October|November|December) \d{4}/);
   t.mock.restoreAll(); calls = fakeBrevo(t);
   await subscribe({ request: signup({ email: 'a@example.com', result: { seconds: 99999, ageBand: 'x' } }), env: ready });

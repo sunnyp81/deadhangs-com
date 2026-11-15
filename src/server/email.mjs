@@ -1,6 +1,6 @@
 // Every email the site sends goes through sendCompliantEmail. Nothing sends unless sendReadiness() is empty.
 import { emailFlagOn } from '../lib/email-consent.mjs';
-import { TIMER_PRESETS } from '../lib/timer-preset.mjs';
+import { TIMER_PRESETS, buildTimerQuery } from '../lib/timer-preset.mjs';
 import { AGE_BANDS, MAX_TEST_SECONDS, ruleLookup, weekOneLine } from '../lib/plan8.mjs';
 import { AGE_BAND_LABELS } from '../lib/plan8-render.mjs';
 import { PLAN_PRICE_LABEL } from '../lib/plan-offer.mjs';
@@ -185,13 +185,26 @@ export function retestDate(now = new Date()) {
   return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
-/** Week-1 line from the plan rules: the baseline is the rule's share of the max hold, held to the plan's own limits. */
-function weekOneFor(seconds) {
-  const share = Number(/\d+/.exec(String(ruleLookup(rules)('w4.baseline_fraction').value))?.[0]) / 100;
-  if (!(share > 0 && share < 1)) return null;
-  const repeat = Math.min(Math.round(seconds * share), 60);
-  const line = weekOneLine({ testSeconds: Math.max(seconds, repeat), repeatSeconds: repeat, ageBand: 'under-40', sessionsPerWeek: 3 }, rules);
-  return line ? { text: line.text, repeat } : null;
+const NUMBER_WORDS = { 1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven' };
+const firstNumber = (value) => Number(/\d+/.exec(String(value))?.[0]);
+
+/**
+ * Starting hold from the free 4-week programme's published rules only (w4.*), one arithmetic step on a quoted rule.
+ * It never runs the paid 8-week generator. Returns { entry: quote } when the max is under the programme's entry hold.
+ */
+export function startingHold(seconds) {
+  const rule = ruleLookup(rules);
+  const share = firstNumber(rule('w4.baseline_fraction').value) / 100;
+  const entry = firstNumber(rule('w4.entry_hold').value);
+  if (!(share > 0 && share < 1) || !(entry > 0)) return null;
+  // Under about 7 seconds the 80% baseline falls below the programme's entry hold, so no hold is computed.
+  if (seconds < Math.ceil(entry / share)) return { entry: rule('w4.entry_hold').quote };
+  return {
+    baseline: Math.round(seconds * share),
+    setsRest: String(rule('w4.sets_rest').value),
+    rest: firstNumber(rule('w4.rest_seconds').value),
+    days: NUMBER_WORDS[firstNumber(rule('w4.sessions_per_week').value)] ?? null,
+  };
 }
 
 /** Welcome email copy: personal when a valid result is supplied, generic otherwise. DRAFT until Sunny approves the wording. */
@@ -200,23 +213,39 @@ export function welcomeEmail(origin, result = null, now = new Date()) {
   const preset = (name) => `${origin}${TIMER_PRESETS.find((p) => p.name === name).path}&${utm}`;
   const level1 = preset('Level 1 session');
   const planUrl = `${origin}/plan/?${utm}`;
+  const programmeUrl = `${origin}/4-week-program/?${utm}`;
   const date = retestDate(now);
   const r = cleanResult(result);
-  const band = r?.ageBand ? AGE_BAND_LABELS[r.ageBand].toLowerCase() : null;
-  const week1 = r ? weekOneFor(r.seconds) : null;
-  const resultText = r ? `Your result: ${r.seconds} seconds${band ? `, compared with ${band}` : ''}.` : null;
-  const holdsText = week1
-    ? `${week1.text}. That starts at about 80% of your ${r.seconds} second max hold, three days a week.`
-    : 'Start with Level 1: 3 hangs of 15 seconds, 90 seconds of rest between them, on 3 non-consecutive days a week. Stop each hang a second or two before your grip gives out.';
+  const hold = r ? startingHold(r.seconds) : null;
+  const h = escapeHtml;
+  const resultText = r ? `Your result: ${r.seconds} seconds.` : null;
+  let holdsHtml;
+  let holdsText;
+  let timerLabel = 'Open the free Level 1 timer preset';
+  let timerText = 'Free Level 1 timer preset';
+  let timerUrl = level1;
+  if (hold?.baseline) {
+    const tail = `for ${r.seconds} seconds that is about ${hold.baseline} seconds, ${hold.setsRest}${hold.days ? `, ${hold.days} days a week` : ''}.`;
+    holdsHtml = `The <a href="${h(programmeUrl)}">free 4-week programme</a> starts at your baseline, about 80% of your max: ${h(tail)}`;
+    holdsText = `The free 4-week programme starts at your baseline, about 80% of your max: ${tail}\n4-week programme: ${programmeUrl}`;
+    timerUrl = `${origin}/training-log/?${buildTimerQuery({ config: { mode: 'simple', workSeconds: hold.baseline, restSeconds: hold.rest, rounds: 3, prepSeconds: 5 } })}&${utm}`;
+    timerLabel = `Open the timer set to 3 x ${hold.baseline} seconds`;
+    timerText = timerLabel;
+  } else if (hold?.entry) {
+    holdsHtml = `The <a href="${h(programmeUrl)}">free 4-week programme</a> says: "${h(hold.entry)}" Level 1 below is a gentle place to start.`;
+    holdsText = `The free 4-week programme says: "${hold.entry}" Level 1 below is a gentle place to start.\n4-week programme: ${programmeUrl}`;
+  } else {
+    holdsText = 'Start with Level 1: 3 hangs of 15 seconds, 90 seconds of rest between them, on 3 non-consecutive days a week. Stop each hang a second or two before your grip gives out.';
+    holdsHtml = h(holdsText);
+  }
   const retestText = `Test again on ${date}, four weeks from today, in the same way on the same bar, and compare like with like.`;
   const planText = `If you would rather have it set out for you, the ${PLAN_PRICE_LABEL} plan builds eight weeks around your own holds.`;
   const closing = 'You will also get a short starter series when it is ready. The timer and your log stay free, with no account needed.';
-  const h = escapeHtml;
   const resultHtml = resultText ? `<p>${h(resultText)}</p>\n` : '';
   const resultPlain = resultText ? `${resultText}\n\n` : '';
   return {
-    subject: r ? `Your ${r.seconds} second dead hang and your first week` : 'Your first dead hang week and your re-test date',
-    bodyHtml: `<p>Thanks for signing up to DeadHangs training emails.</p>\n${resultHtml}<p>${h(holdsText)} <a href="${h(level1)}">Open the free Level 1 timer preset</a>.</p>\n<p>${h(retestText)}</p>\n<p>${h(planText)} <a href="${h(planUrl)}">See the plan</a>.</p>\n<p>${h(closing)}</p>`,
-    bodyText: `Thanks for signing up to DeadHangs training emails.\n\n${resultPlain}${holdsText}\nFree Level 1 timer preset: ${level1}\n\n${retestText}\n\n${planText}\nSee the plan: ${planUrl}\n\n${closing}`,
+    subject: r ? `Your ${r.seconds} second dead hang and your starting hold` : 'Your starting hold and your re-test date',
+    bodyHtml: `<p>Thanks for signing up to DeadHangs training emails.</p>\n${resultHtml}<p>${holdsHtml}</p>\n<p><a href="${h(timerUrl)}">${h(timerLabel)}</a>.</p>\n<p>${h(retestText)}</p>\n<p>${h(planText)} <a href="${h(planUrl)}">See the plan</a>.</p>\n<p>${h(closing)}</p>`,
+    bodyText: `Thanks for signing up to DeadHangs training emails.\n\n${resultPlain}${holdsText}\n\n${timerText}: ${timerUrl}\n\n${retestText}\n\n${planText}\nSee the plan: ${planUrl}\n\n${closing}`,
   };
 }
