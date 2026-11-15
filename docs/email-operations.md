@@ -24,3 +24,21 @@ The mailto in `List-Unsubscribe` goes to `EMAIL_SENDER`. Check that inbox at lea
 5. Create Brevo contact attributes `CONSENT_SOURCE`, `CONSENT_AT` (text) and `CONSENT_WORDING` (text).
 6. Approve the welcome copy in `welcomeEmail()`.
 7. Test send to your own address: read the raw headers, run the one-click round trip, confirm a second send is skipped.
+
+## Switching on
+Written 15 Nov 2026 from the signup growth plan (`memory/site-directives/deadhangs.com/game-plan-2026-11-10/signup-growth-plan-2026-11-15.md`, section 4). The Brevo menu labels are as the plan records them and have not been checked against the live Brevo screens; confirm each label on the first run and note any change here.
+
+Sender address proposed: `hello@deadhangs.com` (display name "DeadHangs"). Confirm it exists in Hostinger first: hPanel > Emails > deadhangs.com > Email accounts, or Forwarders. Postal address proposed for `EMAIL_POSTAL_ADDRESS`, from the Companies House register for ND Media Ltd, company 10784524, fetched 15 Nov 2026 from https://find-and-update.company-information.service.gov.uk/company/10784524 (registered office shown as "17 Gainsborough Road, Reading, England, RG30 3DB"). Sunny confirms this before it is set; the registered office is a valid address for the footer and privacy page.
+
+### Option A (recommended): Sunny gives a Brevo API key
+1. In Brevo, click your name (top right), then "SMTP & API".
+2. Open the "API Keys" tab and choose "Generate a new API key".
+3. Name it `claude-deadhangs-local`, click Generate, and copy the key.
+4. Save it in `G:\My Drive\_SHARED\ai-memory\reference_deadhangs_credentials.md` (Drive-only, gitignored). Do not paste it into the repo, a PR, or chat.
+5. Reply "key saved". Claude then creates the three contact attributes, reads the list 3 count, adds and authenticates the sending domain, and adds the sender.
+
+### Option B: Sunny does it in Brevo
+1. Contacts > Settings > Contact attributes > "Add a new attribute". Create `CONSENT_SOURCE`, `CONSENT_AT` and `CONSENT_WORDING`, each as type Text, so the ISO timestamp is accepted.
+2. Contacts > Lists. Read the contact count on list ID 3 and send it to Claude.
+3. Your name > "Senders, Domains & Dedicated IPs" > Domains > "Add a domain". Enter the sender's domain and choose "Authenticate this domain". Send Claude the records shown (two DKIM, one Brevo verification, one DMARC) so Claude adds them in Cloudflare DNS. Then click "Verify".
+4. Senders tab > "Add a sender". Name it DeadHangs, use the address from the sender step, and save. Open the verification email in that mailbox and click the link.
