@@ -1,0 +1,12 @@
+---
+import Article from '../../../layouts/Article.astro';
+import '../../../styles/plan.css';
+---
+<Article title="Your 8-week hang plan | DeadHangs" description="Your personal 8-week hang plan." h1="Your 8-week hang plan." subtitle="Built around your own repeatable hold." crumbs={[{name:'Your plan'}]} noindex wide>
+  <div class="plan8-wrap"><Fragment set:html="<!--PLAN8-->" /><noscript></noscript></div>
+</Article>
+<script>
+  document.addEventListener('click', (e) => {
+    if ((e.target as Element | null)?.closest?.('[data-print]')) window.print();
+  });
+</script>

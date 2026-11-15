@@ -1,5 +1,5 @@
 import { getAuth, getSessionInfo } from './auth';
-import { configuredEnv, type AccountEnv, type PagesContext } from './env';
+import { baseOrigin, configuredEnv, type AccountEnv, type PagesContext } from './env';
 import { checkWriteRequest, isPlainObject, json, methodNotAllowed, readJson, signedOut } from './http';
 import { BillingError, billingConfigured, createBillingService, BILLING_PRICES } from './billing.mjs';
 
@@ -14,6 +14,8 @@ export interface BillingEnv extends AccountEnv {
   STRIPE_MONTHLY_PRICE_ID?: string;
   STRIPE_YEARLY_PRICE_ID?: string;
   STRIPE_PORTAL_CONFIGURATION_ID?: string;
+  STRIPE_PLAN_PRICE_ID?: string;
+  PLAN_LAUNCH_ENABLED?: string;
 }
 
 type Action = 'checkout' | 'portal' | 'status' | 'webhook' | 'availability';
@@ -63,5 +65,31 @@ export async function billingRequest(context: PagesContext<BillingEnv>, action: 
     if (error instanceof BillingError) return json({ error: error.code }, error.status, headers);
     // Authentication/storage errors are intentionally not exposed to the client.
     return json({ error: 'billing_unavailable' }, 503, headers);
+  }
+}
+
+/** Account-less one-off plan path. Checkout takes PlanInputs only; success takes ?session_id= only. */
+export async function planBillingRequest(context: PagesContext<BillingEnv>, action: 'checkout' | 'success'): Promise<Response> {
+  const { request, env } = context;
+  const method = action === 'success' ? 'GET' : 'POST';
+  if (request.method !== method) return methodNotAllowed(method);
+  try {
+    const origin = baseOrigin(env.AUTH_BASE_URL);
+    if (!origin || new URL(request.url).origin !== origin) return json({ error: 'billing_unavailable' }, 503);
+    const billing = createBillingService(env);
+    if (action === 'success') {
+      const url = new URL(request.url);
+      if ([...url.searchParams.keys()].join() !== 'session_id') return json({ error: 'invalid_session' }, 400);
+      return json(await billing.planSuccess(url.searchParams.get('session_id') || ''));
+    }
+    const rejected = checkWriteRequest(request, origin);
+    if (rejected) return rejected;
+    const body = await readJson(request, 1024);
+    if (!body.ok) return body.response;
+    if (!isPlainObject(body.value)) return json({ error: 'invalid_request' }, 400);
+    return json(await billing.checkoutPlan(body.value, origin));
+  } catch (error) {
+    if (error instanceof BillingError) return json({ error: error.code }, error.status);
+    return json({ error: 'billing_unavailable' }, 503);
   }
 }

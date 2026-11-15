@@ -1,3 +1,5 @@
+import { AGE_BANDS, MAX_TEST_SECONDS } from '../lib/plan8.mjs';
+
 /** Stripe snapshot API 2026-10-28.endive. Never log provider bodies or credentials. */
 export const STRIPE_API_VERSION = '2026-10-28.endive';
 export const BILLING_PRICES = Object.freeze({ monthly: 499, yearly: 3900, currency: 'GBP' });
@@ -15,6 +17,38 @@ const idOf = (value) => typeof value === 'string' ? value : value?.id;
 const paidAmount = (value, minimum) => Number.isSafeInteger(value) && value >= minimum;
 const cleanId = (id, prefix) => typeof id === 'string' && new RegExp(`^${prefix}_${prefix === 'cs' ? '(?:live_|test_)?' : ''}[A-Za-z0-9]+$`).test(id);
 const FREE = Object.freeze({ active: false, plan: 'free', paidThrough: null, cancelAtPeriodEnd: false, status: 'none' });
+
+export const PLAN_PRICE = Object.freeze({ amount: 900, currency: 'gbp', product: 'plan8' });
+
+const b64url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const hex = (bytes) => [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
+
+/** Validates PlanInputs and returns canonical JSON text, or throws invalid_plan_inputs. */
+export function canonicalPlanInputs(value) {
+  const bad = () => { throw new BillingError('invalid_plan_inputs', 400); };
+  if (!value || typeof value !== 'object' || Array.isArray(value)) bad();
+  if (Object.keys(value).sort().join(',') !== 'ageBand,repeatSeconds,sessionsPerWeek,testSeconds') bad();
+  const { testSeconds, repeatSeconds, ageBand, sessionsPerWeek } = value;
+  if (!Number.isSafeInteger(testSeconds) || testSeconds < 1 || testSeconds > MAX_TEST_SECONDS) bad();
+  if (!Number.isSafeInteger(repeatSeconds) || repeatSeconds < 1) bad();
+  if (repeatSeconds < 20) throw new BillingError('ineligible_low', 400);
+  if (repeatSeconds > 60) throw new BillingError('ineligible_high', 400);
+  if (repeatSeconds > testSeconds) bad();
+  if (!AGE_BANDS.includes(ageBand)) bad();
+  if (sessionsPerWeek !== 3) bad();
+  return JSON.stringify({ testSeconds, repeatSeconds, ageBand, sessionsPerWeek });
+}
+
+async function sha256Hex(text) {
+  return hex(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text))));
+}
+
+/** Deterministic access token so the webhook and success endpoint mint the same link. Only its hash is stored. */
+async function planToken(env, sessionId) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(env.PLAN_TOKEN_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(`deadhangs:plan8:token:${sessionId}`));
+  return b64url(new Uint8Array(mac));
+}
 
 export class BillingError extends Error {
   constructor(code, status = 503) { super(code); this.code = code; this.status = status; }
@@ -58,6 +92,10 @@ export async function verifyStripeSignature(raw, header, secret, now = Math.floo
     if (await crypto.subtle.verify('HMAC', key, signature, input)) return true;
   }
   return false;
+}
+
+export function planConfigured(env) {
+  return billingConfigured(env) && typeof env.PLAN_TOKEN_SECRET === 'string' && env.PLAN_TOKEN_SECRET.length >= 32;
 }
 
 export function billingConfigured(env) {
@@ -362,6 +400,8 @@ export function createBillingService(env, options = {}) {
     if (!cleanId(event.id, 'evt') || !event.data?.object) throw new BillingError('invalid_event', 400);
     if (event.livemode !== live || !EVENTS.has(event.type) || (event.account && event.account !== env.STRIPE_ACCOUNT_ID)) return { received: true, ignored: true };
     if (await q('SELECT stripe_event_id FROM billing_events WHERE stripe_event_id=?', event.id).first()) return { received: true, duplicate: true };
+    const planResult = await planWebhook(event);
+    if (planResult) return planResult;
     let object = event.data.object;
     if (event.type.startsWith('charge.dispute.')) {
       if (!cleanId(idOf(object.charge), 'ch')) return { received: true, ignored: true };
@@ -380,6 +420,95 @@ export function createBillingService(env, options = {}) {
       await q('INSERT OR IGNORE INTO billing_events (stripe_event_id,handled_at) VALUES (?,?)', event.id, now()).run();
       return { received: true };
     });
+  }
+
+  const planMeta = (object) => object?.metadata?.app === APP && object?.metadata?.product === PLAN_PRICE.product;
+
+  const readyPlan = () => { if (!planConfigured(env)) throw new BillingError('billing_unavailable'); };
+
+  async function checkoutPlan(inputs, origin) {
+    readyPlan();
+    if (env.PLAN_LAUNCH_ENABLED !== 'true') throw new BillingError('plan_not_launched');
+    if (!cleanId(env.STRIPE_PLAN_PRICE_ID, 'price')) throw new BillingError('billing_configuration_error');
+    if (origin !== env.AUTH_BASE_URL) throw new BillingError('billing_configuration_error');
+    const canonical = canonicalPlanInputs(inputs);
+    await verifyAccount(true);
+    const price = await stripe(`/v1/prices/${env.STRIPE_PLAN_PRICE_ID}?expand[]=product`);
+    const product = price.product;
+    if (price.id !== env.STRIPE_PLAN_PRICE_ID || price.livemode !== live || !price.active || price.currency !== PLAN_PRICE.currency ||
+        price.unit_amount !== PLAN_PRICE.amount || price.type !== 'one_time' || !product || typeof product !== 'object' ||
+        product.livemode !== live || !product.active || !planMeta(product)) throw new BillingError('billing_configuration_error');
+    const session = await stripe('/v1/checkout/sessions', 'POST', {
+      mode: 'payment',
+      'line_items[0][price]': env.STRIPE_PLAN_PRICE_ID, 'line_items[0][quantity]': '1',
+      allow_promotion_codes: 'false',
+      success_url: `${origin}/plan/success/?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/dead-hang-time-by-age/`,
+      'metadata[app]': APP, 'metadata[product]': PLAN_PRICE.product, 'metadata[inputs]': canonical,
+      'payment_intent_data[metadata][app]': APP, 'payment_intent_data[metadata][product]': PLAN_PRICE.product,
+      'branding_settings[display_name]': 'DeadHangs',
+      'consent_collection[terms_of_service]': 'required',
+      'custom_text[terms_of_service_acceptance][message]': `I agree to the [DeadHangs terms](${origin}/terms/#plan) and acknowledge the [privacy policy](${origin}/privacy/).`,
+      'custom_text[submit][message]': 'One payment of GBP 9, no subscription. Full refund within 14 days if you ask.',
+    });
+    if (!cleanId(session.id, 'cs') || session.livemode !== live || session.mode !== 'payment' || !planMeta(session)) throw new BillingError('billing_ownership_mismatch');
+    return { url: checkedUrl(session.url, 'checkout.stripe.com') };
+  }
+
+  /** Re-fetches the session from Stripe, then records the purchase once. Returns { token }, { refunded } or { pending }. */
+  async function settlePlanSession(sessionId) {
+    readyPlan();
+    if (!cleanId(sessionId, 'cs')) throw new BillingError('invalid_session', 400);
+    const session = await stripe(`/v1/checkout/sessions/${sessionId}?expand[]=payment_intent.latest_charge`);
+    if (session.id !== sessionId || session.livemode !== live || session.mode !== 'payment' || !planMeta(session)) throw new BillingError('billing_ownership_mismatch');
+    if (session.status !== 'complete' || session.payment_status !== 'paid') return { pending: true };
+    if (session.amount_total !== PLAN_PRICE.amount || session.currency !== PLAN_PRICE.currency) throw new BillingError('billing_ownership_mismatch');
+    let parsed;
+    try { parsed = JSON.parse(session.metadata.inputs || 'null'); } catch { throw new BillingError('billing_ownership_mismatch'); }
+    const inputs = canonicalPlanInputs(parsed);
+    const intentId = idOf(session.payment_intent);
+    if (!cleanId(intentId, 'pi')) throw new BillingError('billing_ownership_mismatch');
+    const charge = session.payment_intent?.latest_charge && typeof session.payment_intent.latest_charge === 'object' ? session.payment_intent.latest_charge : null;
+    const fullyRefunded = Boolean(charge && (charge.refunded === true || (paidAmount(charge.amount, 1) && charge.amount_refunded >= charge.amount)));
+    const token = await planToken(env, sessionId);
+    const hash = await sha256Hex(token);
+    const stamp = now();
+    await q('INSERT OR IGNORE INTO plan_purchases (checkout_session_id,payment_intent_id,email,token_hash,inputs,status,created_at,refunded_at) VALUES (?,?,?,?,?,?,?,?)',
+      sessionId, intentId, session.customer_details?.email || null, hash, inputs,
+      fullyRefunded ? 'refunded' : 'paid', stamp, fullyRefunded ? stamp : null).run();
+    const row = await q('SELECT status, token_hash FROM plan_purchases WHERE checkout_session_id=?', sessionId).first();
+    if (!row || row.token_hash !== hash) throw new BillingError('billing_recovery_required');
+    return row.status === 'refunded' ? { refunded: true } : { token };
+  }
+
+  /** Success endpoint: verify against Stripe, mint the same token the webhook would. Works even when the launch flag is off. */
+  async function planSuccess(sessionId) {
+    readyPlan();
+    const result = await settlePlanSession(sessionId);
+    if (result.pending) throw new BillingError('plan_payment_pending', 409);
+    if (result.refunded) throw new BillingError('plan_refunded', 410);
+    return { url: `/plan/view/?t=${result.token}` };
+  }
+
+  /** Webhook branch for payment-mode plan sessions and their refunds. Returns null when the event is not a plan event. */
+  async function planWebhook(event) {
+    const object = event.data.object;
+    if ((event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') &&
+        object.mode === 'payment' && planMeta(object) && cleanId(object.id, 'cs')) {
+      await settlePlanSession(object.id);
+    } else if (event.type === 'charge.refunded' && cleanId(idOf(object.payment_intent), 'pi')) {
+      const purchase = await q('SELECT checkout_session_id FROM plan_purchases WHERE payment_intent_id=?', idOf(object.payment_intent)).first();
+      if (!purchase) return null;
+      if (!cleanId(object.id, 'ch')) return { received: true, ignored: true };
+      const charge = await stripe(`/v1/charges/${object.id}`);
+      if (charge.livemode !== live || idOf(charge.payment_intent) !== idOf(object.payment_intent)) throw new BillingError('billing_ownership_mismatch');
+      // A partial goodwill refund keeps access; only a full refund revokes it.
+      if (charge.refunded === true || (paidAmount(charge.amount, 1) && charge.amount_refunded >= charge.amount)) {
+        await q("UPDATE plan_purchases SET status='refunded', refunded_at=? WHERE payment_intent_id=? AND status='paid'", now(), idOf(object.payment_intent)).run();
+      }
+    } else return null;
+    await q('INSERT OR IGNORE INTO billing_events (stripe_event_id,handled_at) VALUES (?,?)', event.id, now()).run();
+    return { received: true };
   }
 
   async function prepareDeletion(userId) {
@@ -431,7 +560,7 @@ export function createBillingService(env, options = {}) {
     await q('UPDATE billing_subscriptions SET eligible=0,paid_through=0,status=? WHERE user_id=? AND EXISTS (SELECT 1 FROM billing_accounts WHERE user_id=? AND lock_token=? AND lock_until>?)', 'canceled', userId, userId, token, now()).run();
   }
 
-  return { getEntitlement, checkout, portal, status, webhook, prepareDeletion };
+  return { getEntitlement, checkout, portal, status, webhook, prepareDeletion, checkoutPlan, planSuccess };
 }
 
 function checkedUrl(value, hostname) {
