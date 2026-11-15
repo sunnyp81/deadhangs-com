@@ -1,0 +1,66 @@
+---
+import Article from '../../../layouts/Article.astro';
+import { PLAN_REASONS } from '../../../lib/plan-offer.mjs';
+---
+<Article title="Your plan is ready" description="Your 8-week dead hang plan link." h1="Your plan is ready." crumbs={[{ name: 'Plan', href: '/plan/' }, { name: 'Ready' }]} noindex>
+<div class="article-body plan-page">
+<p id="plan-status" aria-live="polite">Checking your payment.</p>
+<p><a class="dh-btn" id="plan-link" href="/plan/lost-link/" hidden>Open my plan</a></p>
+<p><strong>Bookmark this page now; the link lives only here.</strong> <button type="button" class="dh-btn" id="plan-copy">Copy link</button> <span id="plan-copy-note" class="small-copy" aria-live="polite"></span></p>
+<p class="small-copy">If you lose it, see <a href="/plan/lost-link/">how to get it back</a>.</p>
+<form id="plan-reason" hidden>
+<fieldset>
+<legend>What made you buy? <span class="optional">Optional</span></legend>
+{PLAN_REASONS.map(([key, label]) => (
+<p><label><input type="radio" name="reason" value={key} /> {label}</label></p>
+))}
+</fieldset>
+<p id="plan-reason-note" class="small-copy" aria-live="polite"></p>
+</form>
+</div>
+</Article>
+<script>
+import { trackTrainingEvent } from '../../../scripts/training-events.js';
+const sessionId = new URLSearchParams(location.search).get('session_id') || '';
+const status = document.getElementById('plan-status')!;
+const link = document.getElementById('plan-link') as HTMLAnchorElement;
+const form = document.getElementById('plan-reason') as HTMLFormElement;
+const note = document.getElementById('plan-reason-note')!;
+const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+async function load() {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await fetch('/api/billing/plan/success?session_id=' + encodeURIComponent(sessionId), { headers: { Accept: 'application/json' } });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && typeof data.url === 'string' && data.url.startsWith("/plan/view/?t=")) {
+        link.href = data.url;
+        link.hidden = false;
+        form.hidden = false;
+        status.textContent = 'Payment received. Your plan is ready.';
+        const flag = 'plan_purchased:' + sessionId;
+        let seen = false;
+        try { seen = sessionStorage.getItem(flag) === '1'; sessionStorage.setItem(flag, '1'); } catch { /* storage unavailable */ }
+        if (!seen) trackTrainingEvent('plan_purchased', { source: 'plan_success' });
+        return;
+      }
+      if (res.status === 409 && attempt < 2) { await wait(2000); continue; }
+    } catch { /* fall through */ }
+    break;
+  }
+  status.textContent = 'The payment could not be confirmed from this page. If you were charged, use the recovery steps linked below.';
+}
+document.getElementById('plan-copy')!.addEventListener('click', async () => {
+  const noteEl = document.getElementById('plan-copy-note')!;
+  try { await navigator.clipboard.writeText(location.href); noteEl.textContent = 'Link copied.'; }
+  catch { noteEl.textContent = 'Copy did not work. Bookmark this page instead.'; }
+});
+form.addEventListener('change', async () => {
+  const picked = form.querySelector('input[name="reason"]:checked') as HTMLInputElement | null;
+  if (!picked) return;
+  try {
+    const res = await fetch('/api/billing/plan/reason', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: sessionId, reason: picked.value }) });
+    note.textContent = res.ok ? 'Thank you.' : 'That did not save. Nothing else is needed.';
+  } catch { note.textContent = 'That did not save. Nothing else is needed.'; }
+});
+load();
+</script>

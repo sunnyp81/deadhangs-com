@@ -1,21 +1,22 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import DialMark from "./DialMark";
 import NextSessionChoices from "./NextSessionChoices";
 import { trackFeature, trackNextSessionChosen } from "../scripts/training-events.js";
 import { describeHold, parseAge, parseHold } from "../lib/your-number.mjs";
 import { starterById } from "../lib/next-session.mjs";
+const PlanOfferCard = lazy(() => import("./PlanOfferCard"));
 
 const LEVEL_1 = starterById("level-1")!;
 
 type Described = ReturnType<typeof describeHold>;
 
-export default function YourNumberCard() {
+export default function YourNumberCard({ planOffer = false }: { planOffer?: boolean } = {}) {
   const [hydrated, setHydrated] = useState(false);
   const [hold, setHold] = useState("");
   const [sex, setSex] = useState("");
   const [age, setAge] = useState("");
   const [error, setError] = useState("");
-  const [shown, setShown] = useState<{ seconds: number; out: Described } | null>(null);
+  const [shown, setShown] = useState<{ seconds: number; out: Described; age: number | null } | null>(null);
 
   useEffect(() => setHydrated(true), []);
 
@@ -34,7 +35,7 @@ export default function YourNumberCard() {
       return;
     }
     setError("");
-    setShown({ seconds: h.seconds!, out: describeHold(h.seconds!, { sex, age: a.age }) });
+    setShown({ seconds: h.seconds!, out: describeHold(h.seconds!, { sex, age: a.age }), age: a.age });
     trackFeature("your_number_compared");
   }
 
@@ -146,6 +147,11 @@ export default function YourNumberCard() {
               Holds you log stay on this device. A free account plus Pro keeps them on every device.{" "}
               <a className="text-link" href="/pro/" data-dh-source="your_number">See what Pro adds</a>
             </p>
+            {planOffer && (
+              <Suspense fallback={null}>
+                <PlanOfferCard testSeconds={Math.round(shown.seconds)} age={shown.age} />
+              </Suspense>
+            )}
           </div>
         )}
       </div>

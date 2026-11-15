@@ -12,6 +12,11 @@ const EVENTS = new Set([
   "next_session_chosen",
   "first_training_session_saved",
   "first_test_hold_saved",
+  "plan_offer_shown",
+  "plan_offer_click",
+  "plan_offer_ineligible_low",
+  "plan_offer_ineligible_high",
+  "plan_purchased",
 ]);
 export const FEATURES = new Set([
   "your_number_compared",
@@ -59,6 +64,9 @@ export const SOURCES = new Set([
   "post_save",
   "progress",
   "your_number",
+  "plan_offer",
+  "plan_page",
+  "plan_success",
   "calculator_result",
   "pro_page",
   "article",
@@ -72,6 +80,8 @@ const PATHS = new Set([
   "/training-log/",
   "/training-programs/",
   "/dead-hang-time-by-age/",
+  "/plan/",
+  "/plan/success/",
 ]);
 
 function canonicalPathname(candidate, browser) {
