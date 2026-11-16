@@ -40,9 +40,14 @@ test('flag reads only the exact string "true"; absent means off', () => {
   assert.equal(emailFlagOn('true'), true);
 });
 
-test('flag is off in every wrangler environment and in the build flag module', async () => {
+test('flag is on only in production; preview and top-level vars stay off', async () => {
   const raw = await fs.readFile(new URL('../wrangler.jsonc', import.meta.url), 'utf8');
-  assert.ok(!raw.includes('EMAIL_CAPTURE_ENABLED'));
+  const cfg = JSON.parse(raw.replace(/^\s*\/\/.*$/gm, ''));
+  assert.equal(cfg.vars.EMAIL_CAPTURE_ENABLED, undefined);
+  assert.equal(cfg.env.preview.vars.EMAIL_CAPTURE_ENABLED, undefined);
+  assert.equal(cfg.env.production.vars.EMAIL_CAPTURE_ENABLED, 'true');
+  assert.equal(mail.postalAddress(cfg.env.production.vars) !== null, true);
+  assert.equal(mail.senderEmail(cfg.env.production.vars), 'hello@deadhangs.com');
   const { EMAIL_CAPTURE_ENABLED } = await import('../src/lib/email-flag.mjs');
   assert.equal(EMAIL_CAPTURE_ENABLED, process.env.EMAIL_CAPTURE_ENABLED === 'true');
 });

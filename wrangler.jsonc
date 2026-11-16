@@ -57,7 +57,11 @@
         "STRIPE_YEARLY_PRICE_ID": "price_1Ua2UyEp4lCx1so6ojJsesO8",
         "STRIPE_PORTAL_CONFIGURATION_ID": "bpc_1Ua2UyEp4lCx1so62gnYni3B",
         "STRIPE_PLAN_PRICE_ID": "price_1Uc3maEp4lCx1so6EXPcZr5R",
-        "PLAN_LAUNCH_ENABLED": "true"
+        "PLAN_LAUNCH_ENABLED": "true",
+        "EMAIL_CAPTURE_ENABLED": "true",
+        "EMAIL_SENDER": "hello@deadhangs.com",
+        "EMAIL_LIST_ID": "3",
+        "EMAIL_POSTAL_ADDRESS": "17 Gainsborough Road, Reading, England, RG30 3DB"
       },
       "d1_databases": [
         {
