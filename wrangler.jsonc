@@ -61,7 +61,8 @@
         "EMAIL_CAPTURE_ENABLED": "true",
         "EMAIL_SENDER": "hello@deadhangs.com",
         "EMAIL_LIST_ID": "3",
-        "EMAIL_POSTAL_ADDRESS": "17 Gainsborough Road, Reading, England, RG30 3DB"
+        "EMAIL_POSTAL_ADDRESS": "17 Gainsborough Road, Reading, England, RG30 3DB",
+        "DRIP_ENABLED": "true"
       },
       "d1_databases": [
         {

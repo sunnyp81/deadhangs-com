@@ -7,3 +7,4 @@ crons = ["0 9 * * *"]
 
 [vars]
 DRIP_ENDPOINT = "https://deadhangs.com/api/drip-cron"
+DRIP_ENABLED = "true"
