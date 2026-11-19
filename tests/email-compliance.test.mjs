@@ -1,3 +1,4 @@
+import { deliveryDb } from './delivery-db.mjs';
 // E1 email compliance gate. Every Brevo call is a fake; nothing leaves the machine.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -214,14 +215,13 @@ test('unsubscribe still works with the send flag off, and the page has no dashes
   assert.doesNotMatch(w.bodyHtml + w.bodyText + mail.footerHtml('u', 'p') + w.subject, BAD_CHARS);
 });
 
-test('drip: a contact suppressed since the list snapshot is skipped, sends carry headers and params', async (t) => {
+test('drip: a contact suppressed since the list snapshot is skipped, sends carry headers and footer', async (t) => {
   const { onRequestPost: drip } = await load('functions/api/drip-cron.ts');
-  const env = { ...ready, DRIP_CRON_SECRET: 'cron-test-only', DRIP_ENABLED: 'true', DRIP_TEMPLATE_IDS: '1,2,3,4,5,6,7,8,9,10,11,12' };
-  const contact = (email) => ({ email, attributes: { SIGNUP_DATE: '2026-01-01', DRIP_LAST_SENT: '-1' } });
+  const env = { ...ready, DB: deliveryDb(), DRIP_CRON_SECRET: 'cron-test-only', DRIP_ENABLED: 'true' };
+  const contact = (email) => ({ email, attributes: { CONSENT_AT: '2026-01-01T12:00:00.000Z', DRIP_LAST_SENT: '-1' } });
   const calls = [];
   t.mock.method(globalThis, 'fetch', async (url, options = {}) => {
     calls.push({ url, method: options.method || 'GET', body: options.body ? JSON.parse(options.body) : null });
-    if (url.includes('/smtp/templates/')) return Response.json({ isActive: true, subject: 'S', sender: { email: 'sender@example.com' }, htmlContent: '{{ params.UNSUB_URL }} {{ params.POSTAL_ADDRESS }}' });
     if (url.includes('/contacts/lists/3/')) return Response.json({ contacts: [contact('gone@example.com'), contact('ok@example.com')] });
     if (url.includes('/contacts/') && !options.method) return Response.json({ emailBlacklisted: url.includes('gone') });
     return new Response(null, { status: options.method === 'POST' ? 201 : 204 });
@@ -232,12 +232,65 @@ test('drip: a contact suppressed since the list snapshot is skipped, sends carry
   assert.equal(sends.length, 1);
   assert.equal(sends[0].body.to[0].email, 'ok@example.com');
   assert.equal(sends[0].body.headers['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click');
-  assert.equal(sends[0].body.params.POSTAL_ADDRESS, ready.EMAIL_POSTAL_ADDRESS);
+  const send = sends[0].body;
+  assert.equal(send.templateId, undefined);
+  assert.match(send.headers['List-Unsubscribe'], /<https:\/\/deadhangs\.com\/api\/unsubscribe\?u=/);
+  for (const text of [send.htmlContent, send.textContent]) {
+    assert.ok(text.includes(ready.EMAIL_POSTAL_ADDRESS));
+    assert.ok(text.includes('/api/unsubscribe?u='));
+    assert.match(text, /utm_campaign=e2/);
+    assert.match(text, /utm_content=step0/);
+  }
+  assert.doesNotMatch(send.subject + send.htmlContent + send.textContent, BAD_CHARS);
+  assert.ok(!calls.some((c) => c.url.includes('/smtp/templates/')));
   t.mock.restoreAll();
   let n = 0; t.mock.method(globalThis, 'fetch', async () => { n++; throw Error('must not call'); });
   const blocked = await drip({ request: new Request('https://deadhangs.com/api/drip-cron', { method: 'POST', headers: { 'x-cron-secret': 'cron-test-only' } }), env: { ...env, EMAIL_CAPTURE_ENABLED: undefined } });
   assert.equal(blocked.status, 503);
   assert.equal(n, 0);
+});
+
+test('both drip steps render tracked links and compliant code emails', async (t) => {
+  const { onRequestPost: drip } = await load('functions/api/drip-cron.ts');
+  for (const step of [0, 1]) {
+    t.mock.restoreAll();
+    let payload;
+    t.mock.method(globalThis, 'fetch', async (url, options = {}) => {
+      if (url.includes('/contacts/lists/')) return Response.json({ contacts: [{ email: 'ok@example.com', attributes: { CONSENT_AT: '2026-01-01T12:00:00.000Z', DRIP_LAST_SENT: String(step - 1) } }] });
+      if (url.includes('/contacts/') && !options.method) return Response.json({ emailBlacklisted: false });
+      if (url.endsWith('/smtp/email')) { payload = JSON.parse(options.body); return new Response(null, { status: 201 }); }
+      if (options.method === 'PUT') return new Response(null, { status: 204 });
+      throw Error('Unexpected provider call: ' + url);
+    });
+    const result = await drip({ request: new Request('https://deadhangs.com/api/drip-cron', { method: 'POST', headers: { 'x-cron-secret': 'cron-test-only' } }), env: { ...ready, DB: deliveryDb(), DRIP_ENABLED: 'true', DRIP_CRON_SECRET: 'cron-test-only' } });
+    assert.equal(result.status, 200);
+    assert.equal((await result.json()).sent, 1);
+    assert.equal(payload.headers['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click');
+    assert.equal(payload.templateId, undefined);
+    for (const text of [payload.bodyText || payload.textContent, payload.htmlContent]) {
+      assert.ok(text.includes(ready.EMAIL_POSTAL_ADDRESS));
+      assert.ok(text.includes('/api/unsubscribe?u='));
+      assert.doesNotMatch(text, BAD_CHARS);
+    }
+    const links = [...payload.htmlContent.matchAll(/href="(https:[^"]+)"/g)].map((m) => new URL(m[1].replaceAll('&amp;', '&'))).filter((u) => u.pathname !== '/api/unsubscribe');
+    assert.ok(links.length > 0);
+    for (const url of links) {
+      assert.equal(url.searchParams.get('utm_source'), 'email');
+      assert.equal(url.searchParams.get('utm_medium'), 'email');
+      assert.equal(url.searchParams.get('utm_campaign'), 'e2');
+      assert.equal(url.searchParams.get('utm_content'), 'step' + step);
+    }
+    if (step === 0) {
+      const timer = links.find((u) => u.pathname === '/training-log/');
+      assert.ok(timer);
+      for (const [key, value] of Object.entries({ mode: 'simple', hang: '15', rest: '90', rounds: '3' })) assert.equal(timer.searchParams.get(key), value);
+    } else {
+      assert.ok(links.some((u) => u.pathname === '/pro/'));
+      assert.match(payload.textContent, /4\.99/);
+      assert.match(payload.textContent, /39/);
+      assert.match(payload.textContent, /cancel any time/i);
+    }
+  }
 });
 
 test('consent wording version is bumped and the offer promises only what ships', async () => {

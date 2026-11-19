@@ -114,13 +114,13 @@ export function footerText(url, postal) {
 }
 
 /** True when Brevo marks the contact as opted out. Any error counts as suppressed (fail closed). */
-export async function isSuppressed(apiKey, email) {
+export async function isSuppressed(apiKey, email, requireExisting = false) {
   try {
     const res = await fetch(`${BREVO}/contacts/${encodeURIComponent(email)}`, { headers: { 'api-key': apiKey }, signal: AbortSignal.timeout(10000) });
-    if (res.status === 404) return false;
+    if (res.status === 404) return requireExisting;
     if (!res.ok) return true;
     const contact = await res.json();
-    return !contact || contact.emailBlacklisted === true;
+    return !contact || (requireExisting && typeof contact.emailBlacklisted !== 'boolean') || contact.emailBlacklisted === true;
   } catch { return true; }
 }
 
