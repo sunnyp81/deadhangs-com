@@ -145,11 +145,14 @@ export async function complianceFor(env, email) {
  * The only send path for code-built emails. Refuses while any readiness blocker exists,
  * checks suppression immediately before sending, then adds headers and footer.
  */
-export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyText }) {
+export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyText, unsubscribeUrl }) {
   const blockers = sendReadiness(env);
   if (blockers.length) return { sent: false, reason: 'not_ready', blockers };
   if (await isSuppressed(env.BREVO_API_KEY, email)) return { sent: false, reason: 'suppressed' };
-  const { url, headers, postal } = await complianceFor(env, email);
+  // A requested-reminder email carries its own signed one-click off link, so it works for addresses that are not newsletter contacts.
+  const { url, headers, postal } = unsubscribeUrl
+    ? { url: unsubscribeUrl, headers: listUnsubscribeHeaders(unsubscribeUrl, senderEmail(env)), postal: postalAddress(env) }
+    : await complianceFor(env, email);
   const sender = { email: senderEmail(env), name: env.EMAIL_SENDER_NAME || 'DeadHangs' };
   try {
     const res = await fetch(`${BREVO}/smtp/email`, {

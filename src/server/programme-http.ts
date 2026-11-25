@@ -49,7 +49,7 @@ export function programmeRoutes(content: Content) {
           const billing = createBillingService(ctx.env as ProgrammeEnv);
           const entitlement = await billing.programmeAccess(ctx.session.userId, manifest.id);
           const sales = billing.programmeSales(manifest);
-          const base = { programme: manifest.id, name: manifest.name, access: entitlement, sales: { open: sales.open, test: sales.open && sales.mode !== 'live' } };
+          const base = { accountKey: ctx.session.userId, programme: manifest.id, name: manifest.name, access: entitlement, sales: { open: sales.open, test: sales.open && sales.mode !== 'live' } };
           const stored = await readProgress(ctx.env.DB, ctx.session.userId, manifest.id);
           // Content only for current buyers. Former buyers keep their own records (read-only) and the export.
           if (!entitlement.active) return json({ ...base, progress: stored.state ? { readOnly: true, revision: stored.revision, results: stored.state.results, baseline: stored.state.baseline, route: stored.state.route, status: stored.state.status } : null });

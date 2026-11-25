@@ -38,3 +38,11 @@ CREATE TABLE IF NOT EXISTS programme_interest (
   notified_at INTEGER,
   PRIMARY KEY (email, programme_id)
 );
+-- One reminder per person per local day. A claim is never expired automatically: a timeout may have delivered the email.
+CREATE TABLE IF NOT EXISTS programme_reminder_deliveries (
+  user_id TEXT NOT NULL,
+  local_date TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('claimed', 'sent', 'skipped', 'failed')),
+  claimed_at INTEGER NOT NULL,
+  PRIMARY KEY (user_id, local_date)
+);
