@@ -1,4 +1,6 @@
 import { AGE_BANDS, MAX_TEST_SECONDS } from '../lib/plan8.mjs';
+import { PROGRAMMES } from '../data/programmes/hang4.public.mjs';
+import { programmeSalesState } from './programme-gate.mjs';
 
 /** Stripe snapshot API 2026-10-28.endive. Never log provider bodies or credentials. */
 export const STRIPE_API_VERSION = '2026-10-28.endive';
@@ -9,6 +11,7 @@ const LOCK_SECONDS = 120;
 const CACHE_SECONDS = 300;
 const TERMINAL = new Set(['canceled', 'incomplete_expired']);
 const EVENTS = new Set(['checkout.session.completed', 'checkout.session.async_payment_succeeded',
+  'checkout.session.async_payment_failed', 'checkout.session.expired',
   'customer.subscription.created', 'customer.subscription.updated', 'customer.subscription.deleted',
   'invoice.paid', 'invoice.payment_succeeded', 'invoice.payment_failed', 'invoice.voided',
   'invoice.marked_uncollectible', 'charge.refunded', 'charge.dispute.created',
@@ -19,6 +22,9 @@ const cleanId = (id, prefix) => typeof id === 'string' && new RegExp(`^${prefix}
 const FREE = Object.freeze({ active: false, plan: 'free', paidThrough: null, cancelAtPeriodEnd: false, status: 'none' });
 
 export const PLAN_PRICE = Object.freeze({ amount: 900, currency: 'gbp', product: 'plan8' });
+export const PROGRAMME_SOURCES = Object.freeze(['programme_page', 'programme_app', 'email', 'other']);
+const PENDING_SECONDS = 3600;
+const missingTable = (error) => /no such table/i.test(String(error?.message || error));
 
 const b64url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const hex = (bytes) => [...bytes].map((b) => b.toString(16).padStart(2, '0')).join('');
@@ -402,6 +408,10 @@ export function createBillingService(env, options = {}) {
     if (await q('SELECT stripe_event_id FROM billing_events WHERE stripe_event_id=?', event.id).first()) return { received: true, duplicate: true };
     const planResult = await planWebhook(event);
     if (planResult) return planResult;
+    const programmeResult = await programmeWebhook(event);
+    if (programmeResult) return programmeResult;
+    // New event types are subscribed for programme sessions only; never route them into Pro reconciliation.
+    if (event.type === 'checkout.session.expired' || event.type === 'checkout.session.async_payment_failed') return { received: true, ignored: true };
     let object = event.data.object;
     if (event.type.startsWith('charge.dispute.')) {
       if (!cleanId(idOf(object.charge), 'ch')) return { received: true, ignored: true };
@@ -511,6 +521,176 @@ export function createBillingService(env, options = {}) {
     return { received: true };
   }
 
+  const programmeFor = (id) => (typeof id === 'string' && Object.hasOwn(PROGRAMMES, id) ? PROGRAMMES[id] : null);
+  const programmeMeta = (object, manifest) => object?.metadata?.app === APP && object?.metadata?.product === manifest.billing.product &&
+    object?.metadata?.programme_id === manifest.id;
+  const programmeOf = (object) => { const manifest = programmeFor(object?.metadata?.programme_id); return manifest && programmeMeta(object, manifest) ? manifest : null; };
+  const programmeSales = (manifest) => programmeSalesState(manifest, env, billingConfigured(env));
+
+  async function programmeRows(sql, ...values) {
+    try { return (await q(sql, ...values).all()).results; }
+    catch (error) { if (missingTable(error)) throw new BillingError('programme_unavailable', 503); throw error; }
+  }
+
+  /** Entitlement for one programme, from D1 rows written only after Stripe verification. Mode-bound like Pro. */
+  async function programmeAccess(userId, programmeId) {
+    if (!db) throw new BillingError('billing_unavailable');
+    if (!programmeFor(programmeId)) throw new BillingError('invalid_programme', 400);
+    if (mode === 'test' && !billingConfigured(env)) return { active: false, status: 'unverified' };
+    const rows = await programmeRows('SELECT status, programme_version, paid_at, created_at FROM programme_purchases WHERE user_id=? AND programme_id=? AND provider_mode=? ORDER BY created_at DESC', userId, programmeId, mode);
+    const paid = rows.find((row) => row.status === 'paid');
+    if (paid) return { active: true, status: 'paid', version: paid.programme_version, paidAt: paid.paid_at ? new Date(paid.paid_at * 1000).toISOString() : null };
+    if (rows.some((row) => row.status === 'disputed')) return { active: false, status: 'disputed' };
+    if (rows.some((row) => row.status === 'pending' && row.created_at > now() - PENDING_SECONDS)) return { active: false, status: 'pending' };
+    if (rows.some((row) => row.status === 'refunded')) return { active: false, status: 'refunded' };
+    return { active: false, status: 'none' };
+  }
+
+  /** Current provider truth for a charge: paid, refunded (full refund or lost dispute) or disputed (open dispute). */
+  async function chargeOutcome(charge) {
+    if (!charge || typeof charge !== 'object' || charge.livemode !== live || charge.paid !== true) return 'pending';
+    if (charge.refunded === true || (paidAmount(charge.amount, 1) && charge.amount_refunded >= charge.amount)) return 'refunded';
+    if (!charge.disputed) return 'paid';
+    const disputes = await stripe(`/v1/disputes?charge=${charge.id}&limit=100`);
+    if (disputes.has_more || !Array.isArray(disputes.data) || !disputes.data.length || disputes.data.some((d) => d.livemode !== live || idOf(d.charge) !== charge.id)) return 'disputed';
+    if (disputes.data.some((d) => d.status === 'lost')) return 'refunded';
+    return disputes.data.every((d) => ['won', 'warning_closed'].includes(d.status)) ? 'paid' : 'disputed';
+  }
+
+  /** Re-fetches the session and its charge, then records the current outcome. Safe to repeat and independent of event order. */
+  async function settleProgrammeSession(sessionId) {
+    if (!cleanId(sessionId, 'cs')) throw new BillingError('invalid_session', 400);
+    const [purchase] = await programmeRows('SELECT * FROM programme_purchases WHERE checkout_session_id=?', sessionId);
+    const session = await stripe(`/v1/checkout/sessions/${sessionId}?expand[]=payment_intent.latest_charge`);
+    const manifest = programmeOf(session);
+    if (session.id !== sessionId || session.livemode !== live || session.mode !== 'payment' || !manifest) throw new BillingError('billing_ownership_mismatch');
+    const customerId = idOf(session.customer);
+    if (!cleanId(customerId, 'cus')) throw new BillingError('billing_ownership_mismatch');
+    const owner = await q('SELECT user_id, app_user_ref, provider_mode FROM billing_accounts WHERE stripe_customer_id=?', customerId).first();
+    if (owner && (session.metadata?.deadhangs_user_ref !== owner.app_user_ref || owner.provider_mode !== mode)) throw new BillingError('billing_ownership_mismatch');
+    if (purchase && (purchase.stripe_customer_id !== customerId || purchase.provider_mode !== mode || purchase.programme_id !== manifest.id)) throw new BillingError('billing_ownership_mismatch');
+    const userId = purchase ? purchase.user_id : owner?.user_id ?? null;
+    const stamp = now();
+    const intent = session.payment_intent && typeof session.payment_intent === 'object' ? session.payment_intent : null;
+    const failed = session.status === 'expired' ||
+      (session.status === 'complete' && session.payment_status !== 'paid' && ['requires_payment_method', 'canceled'].includes(intent?.status));
+    if (failed) {
+      await q("UPDATE programme_purchases SET status='expired', status_changed_at=? WHERE checkout_session_id=? AND status='pending'", stamp, sessionId).run();
+      return { status: 'expired', userId };
+    }
+    if (session.status !== 'complete' || session.payment_status !== 'paid') return { status: 'pending', userId };
+    const amount = purchase?.amount ?? manifest.price.amount;
+    if (session.amount_total !== amount || session.currency !== manifest.price.currency) throw new BillingError('billing_ownership_mismatch');
+    const intentId = idOf(session.payment_intent);
+    if (!cleanId(intentId, 'pi') || !intent || intent.livemode !== live || idOf(intent.customer) !== customerId ||
+        intent.status !== 'succeeded' || !paidAmount(intent.amount_received, amount)) throw new BillingError('billing_ownership_mismatch');
+    const charge = intent.latest_charge && typeof intent.latest_charge === 'object' ? intent.latest_charge : null;
+    if (charge && (idOf(charge.payment_intent) !== intentId || idOf(charge.customer) !== customerId)) throw new BillingError('billing_ownership_mismatch');
+    const status = await chargeOutcome(charge);
+    if (status === 'pending') return { status: 'pending', userId };
+    const version = /^\d+\.\d+\.\d+$/.test(session.metadata?.programme_version || '') ? session.metadata.programme_version : manifest.version;
+    // A lost checkout response leaves no pending row: recreate it from verified provider data.
+    await db.batch([
+      q(`INSERT OR IGNORE INTO programme_purchases (checkout_session_id,user_id,programme_id,programme_version,provider_mode,stripe_customer_id,amount,currency,status,source,created_at,status_changed_at)
+         VALUES (?,?,?,?,?,?,?,?,'pending','other',?,?)`, sessionId, userId, manifest.id, version, mode, customerId, amount, manifest.price.currency, stamp, stamp),
+      q(`UPDATE programme_purchases SET payment_intent_id=?, paid_at=COALESCE(paid_at, ?), status_changed_at=CASE WHEN status=? THEN status_changed_at ELSE ? END, status=?
+         WHERE checkout_session_id=?`, intentId, stamp, status, stamp, status, sessionId),
+    ]);
+    return { status, userId };
+  }
+
+  async function checkoutProgramme(user, programmeId, source) {
+    ready();
+    const manifest = programmeFor(programmeId);
+    if (!manifest) throw new BillingError('invalid_programme', 400);
+    if (!programmeSales(manifest).open) throw new BillingError('programme_not_on_sale', 403);
+    const priceId = env[manifest.billing.priceEnv];
+    const origin = env.AUTH_BASE_URL;
+    const row = await account(user.id, true);
+    return locked(row, async (fresh, token) => {
+      if (fresh.deleting) throw new BillingError('account_deleting', 409);
+      const access = await programmeAccess(fresh.user_id, manifest.id);
+      if (access.active) throw new BillingError('programme_owned', 409);
+      if (access.status === 'disputed') throw new BillingError('programme_disputed', 409);
+      await verifyAccount(true);
+      const price = await stripe(`/v1/prices/${priceId}?expand[]=product`);
+      const product = price.product;
+      if (price.id !== priceId || price.livemode !== live || !price.active || price.currency !== manifest.price.currency ||
+          price.unit_amount !== manifest.price.amount || price.type !== 'one_time' || !product || typeof product !== 'object' ||
+          product.livemode !== live || !product.active || product.metadata?.app !== APP || product.metadata?.product !== manifest.billing.product) throw new BillingError('billing_configuration_error');
+      await customer(fresh, token);
+      // Never open a second checkout while one is open or a payment is still settling.
+      const pending = await programmeRows("SELECT checkout_session_id FROM programme_purchases WHERE user_id=? AND programme_id=? AND provider_mode=? AND status='pending' ORDER BY created_at DESC", fresh.user_id, manifest.id, mode);
+      for (const open of pending) {
+        const session = await stripe(`/v1/checkout/sessions/${open.checkout_session_id}`);
+        if (session.id !== open.checkout_session_id || session.livemode !== live || session.mode !== 'payment' || !programmeMeta(session, manifest) ||
+            idOf(session.customer) !== fresh.stripe_customer_id || session.metadata?.deadhangs_user_ref !== fresh.app_user_ref) throw new BillingError('billing_ownership_mismatch');
+        if (session.status === 'open') return { url: checkedUrl(session.url, 'checkout.stripe.com') };
+        const settled = await settleProgrammeSession(session.id);
+        if (settled.status === 'paid') throw new BillingError('programme_owned', 409);
+        if (settled.status === 'pending') throw new BillingError('programme_payment_pending', 409);
+        if (settled.status === 'disputed') throw new BillingError('programme_disputed', 409);
+      }
+      await guardLock(fresh, token);
+      const amountText = (manifest.price.amount / 100).toFixed(2).replace(/\.00$/, '');
+      const meta = { app: APP, product: manifest.billing.product, programme_id: manifest.id, programme_version: manifest.version, deadhangs_user_ref: fresh.app_user_ref };
+      const fields = {
+        mode: 'payment', customer: fresh.stripe_customer_id,
+        'line_items[0][price]': priceId, 'line_items[0][quantity]': '1',
+        allow_promotion_codes: 'false', 'adaptive_pricing[enabled]': 'false',
+        expires_at: String(now() + PENDING_SECONDS),
+        success_url: `${origin}/programme/app/?purchase=complete&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/programme/?checkout=cancelled`,
+        'branding_settings[display_name]': 'DeadHangs',
+        'consent_collection[terms_of_service]': 'required',
+        'custom_text[terms_of_service_acceptance][message]': `I agree to the [DeadHangs terms](${origin}/terms/#programme) and acknowledge the [privacy policy](${origin}/privacy/).`,
+        'custom_text[submit][message]': `One payment of GBP ${amountText}, no subscription.${manifest.terms.refund ? ` ${manifest.terms.refund}` : ''}`,
+      };
+      for (const [key, value] of Object.entries(meta)) { fields[`metadata[${key}]`] = value; fields[`payment_intent_data[metadata][${key}]`] = value; }
+      const session = await stripe('/v1/checkout/sessions', 'POST', fields);
+      if (!cleanId(session.id, 'cs') || session.livemode !== live || session.mode !== 'payment' || !programmeMeta(session, manifest) ||
+          idOf(session.customer) !== fresh.stripe_customer_id || session.metadata?.deadhangs_user_ref !== fresh.app_user_ref) throw new BillingError('billing_ownership_mismatch');
+      await guardLock(fresh, token);
+      const stamp = now();
+      await q(`INSERT INTO programme_purchases (checkout_session_id,user_id,programme_id,programme_version,provider_mode,stripe_customer_id,amount,currency,status,source,created_at,status_changed_at)
+        VALUES (?,?,?,?,?,?,?,?,'pending',?,?,?)`, session.id, fresh.user_id, manifest.id, manifest.version, mode, fresh.stripe_customer_id,
+        manifest.price.amount, manifest.price.currency, PROGRAMME_SOURCES.includes(source) ? source : 'other', stamp, stamp).run();
+      return { url: checkedUrl(session.url, 'checkout.stripe.com') };
+    });
+  }
+
+  /** Return from Checkout: verified against Stripe for the signed-in owner only. A redirect alone never grants access. */
+  async function settleProgrammeForUser(userId, sessionId) {
+    ready();
+    if (!cleanId(sessionId, 'cs')) throw new BillingError('invalid_session', 400);
+    const [row] = await programmeRows('SELECT user_id FROM programme_purchases WHERE checkout_session_id=?', sessionId);
+    if (row && row.user_id !== userId) throw new BillingError('billing_ownership_mismatch', 403);
+    const settled = await settleProgrammeSession(sessionId);
+    if (settled.userId !== userId) throw new BillingError('billing_ownership_mismatch', 403);
+    return { status: settled.status };
+  }
+
+  /** Webhook branch for programme sessions, refunds and disputes. Returns null when the event is not about a programme purchase. */
+  async function programmeWebhook(event) {
+    const object = event.data.object;
+    let sessionId = null;
+    if (event.type.startsWith('checkout.session.')) {
+      if (object.mode !== 'payment' || !programmeOf(object) || !cleanId(object.id, 'cs')) return null;
+      sessionId = object.id;
+    } else if (event.type === 'charge.refunded' || event.type.startsWith('charge.dispute.')) {
+      const intentId = idOf(object.payment_intent);
+      if (!cleanId(intentId, 'pi')) return null;
+      let rows;
+      try { rows = (await q('SELECT checkout_session_id FROM programme_purchases WHERE payment_intent_id=?', intentId).all()).results; }
+      catch (error) { if (missingTable(error)) return null; throw error; }
+      if (!rows.length) return null;
+      sessionId = rows[0].checkout_session_id;
+    } else return null;
+    await settleProgrammeSession(sessionId);
+    await q('INSERT OR IGNORE INTO billing_events (stripe_event_id,handled_at) VALUES (?,?)', event.id, now()).run();
+    return { received: true };
+  }
+
   async function prepareDeletion(userId) {
     // Create a tombstone even for never-paying users: deletion and the first
     // checkout must contend on the same lock before the auth row is removed.
@@ -550,6 +730,18 @@ export function createBillingService(env, options = {}) {
         if (expired.id !== session.id || expired.status !== 'expired' || expired.livemode !== live || !owned(expired, fresh)) throw new BillingError('billing_cancellation_unconfirmed');
       }
     }
+    // An open programme checkout must not be payable after the account is gone.
+    let pendingProgramme = [];
+    try { pendingProgramme = (await q("SELECT checkout_session_id FROM programme_purchases WHERE user_id=? AND status='pending'", userId).all()).results; }
+    catch (error) { if (!missingTable(error)) throw error; }
+    for (const open of pendingProgramme) {
+      const session = await stripe(`/v1/checkout/sessions/${open.checkout_session_id}`);
+      if (session.livemode !== live || idOf(session.customer) !== fresh.stripe_customer_id) throw new BillingError('billing_ownership_mismatch');
+      if (session.status !== 'open') continue;
+      await guardLock(fresh, token);
+      const expired = await stripe(`/v1/checkout/sessions/${session.id}/expire`, 'POST', {}, `deadhangs:expire:${session.id}`);
+      if (expired.id !== session.id || expired.status !== 'expired') throw new BillingError('billing_cancellation_unconfirmed');
+    }
     const subscriptions = await listSubscriptions(fresh, true);
     for (const sub of subscriptions) if (!TERMINAL.has(sub.status)) {
       await guardLock(fresh, token);
@@ -560,7 +752,8 @@ export function createBillingService(env, options = {}) {
     await q('UPDATE billing_subscriptions SET eligible=0,paid_through=0,status=? WHERE user_id=? AND EXISTS (SELECT 1 FROM billing_accounts WHERE user_id=? AND lock_token=? AND lock_until>?)', 'canceled', userId, userId, token, now()).run();
   }
 
-  return { getEntitlement, checkout, portal, status, webhook, prepareDeletion, checkoutPlan, planSuccess };
+  return { getEntitlement, checkout, portal, status, webhook, prepareDeletion, checkoutPlan, planSuccess,
+    programmeAccess, programmeSales, checkoutProgramme, settleProgrammeForUser };
 }
 
 function checkedUrl(value, hostname) {

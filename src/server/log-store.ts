@@ -1,5 +1,6 @@
 import type { D1Database } from './env';
 import { CLOUD_SCHEMA_VERSION, type CloudEntry } from './training-log-validate';
+import { programmeDeletionStatements } from './programme-store.mjs';
 
 export interface StoredLog {
   exists: boolean;
@@ -83,7 +84,10 @@ export async function clearLog(db: D1Database, userId: string, baseRevision: num
 
 /** Removes every row owned by the user in one batch (D1 runs a batch as a single transaction). */
 export async function deleteAccountData(db: D1Database, userId: string): Promise<void> {
+  // Programme progress is deleted; a programme payment record is kept but detached from the person.
+  const programme = await programmeDeletionStatements(db, userId);
   await db.batch([
+    ...programme,
     db.prepare('DELETE FROM training_log WHERE user_id = ?').bind(userId),
     db.prepare('DELETE FROM "session" WHERE "userId" = ?').bind(userId),
     db.prepare('DELETE FROM "account" WHERE "userId" = ?').bind(userId),
