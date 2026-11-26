@@ -1,0 +1,11 @@
+---
+import Article from '../../../layouts/Article.astro';
+import GymCampaign from '../../../components/GymCampaign';
+import '../../../styles/programme.css';
+---
+<Article title="Your gym challenge | DeadHangs" description="Your gym's private dead hang challenge: record a result and see the board." h1="Your gym challenge." crumbs={[{ name: 'Gym challenge' }, { name: 'Your challenge' }]} noindex wide>
+  <div class="prg">
+    <GymCampaign client:load />
+    <noscript><p class="prg-msg is-note">The challenge needs JavaScript to sign in and load your results. Your <a href="/training-log/">free timer and log</a> still work without it.</p></noscript>
+  </div>
+</Article>
