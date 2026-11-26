@@ -1,0 +1,11 @@
+---
+import Article from '../../../layouts/Article.astro';
+import ProgrammeApp from '../../../components/ProgrammeApp';
+import '../../../styles/programme.css';
+---
+<Article title="Your guided programme | DeadHangs" description="Your four-week guided dead hang programme: next session, recorded results and weekly reviews." h1="Your guided programme." crumbs={[{ name: 'Programme', href: '/programme/' }, { name: 'Your programme' }]} noindex wide>
+  <div class="prg">
+    <ProgrammeApp client:load />
+    <noscript><p class="prg-msg is-note">The programme needs JavaScript to sign in and load your sessions. Your <a href="/training-log/">free timer and log</a> still work without it.</p></noscript>
+  </div>
+</Article>

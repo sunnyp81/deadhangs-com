@@ -1,0 +1,124 @@
+---
+import Article from '../../layouts/Article.astro';
+import ProgrammeOffer from '../../components/ProgrammeOffer';
+import ProgrammeFit from '../../components/ProgrammeFit';
+import rules from '../../data/plan-rules.json';
+import { HANG4 } from '../../data/programmes/hang4.public.mjs';
+import { programmeNumbers } from '../../lib/programme-engine.mjs';
+import { PROGRAMME_PRICE_LABEL } from '../../lib/programme-client.mjs';
+import { PLAN_PRICE_LABEL } from '../../lib/plan-offer.mjs';
+// Build time only. The one sample session and the stop signs are the only paid copy that may appear on this public page.
+import copy from '../../server/programmes/hang4.copy.json';
+import '../../styles/programme.css';
+
+const n = programmeNumbers(rules);
+const limits = {
+  minBaseline: n.minBaseline, maxBaseline: n.maxBaseline, baselinePercent: n.baselinePercent,
+  week2Add: n.week2Add, week3Add: n.week3Add, supportedSets: n.supportedSets, supportedHold: n.supportedHold,
+};
+const promised = HANG4.inclusions.filter((item) => item.promised === true);
+const sample = copy.standard.w1s1;
+const stopSigns = copy.common.stopSigns.text;
+const termsOpen = [['Refund', HANG4.terms.refund], ['Support', HANG4.terms.support], ['Access', HANG4.terms.access]];
+const termsSet = termsOpen.filter(([, text]) => typeof text === 'string' && text.trim() !== '');
+const termsMissing = termsSet.length < termsOpen.length;
+const shape = [
+  { week: 'Week 1', target: 'Your repeatable hold' },
+  { week: 'Week 2', target: `Your hold plus ${n.week2Add} seconds` },
+  { week: 'Week 3', target: `Your hold plus ${n.week2Add + n.week3Add} seconds. One session may use a neutral grip.` },
+  { week: 'Week 4', target: 'Week 3 targets for two sessions, then a test day' },
+];
+---
+<Article title="Four-week guided dead hang programme | DeadHangs" description="A four-week guided dead hang programme with your own targets, recorded results and weekly reviews. One payment, no subscription." crumbs={[{ name: 'Programme' }]} noindex wide>
+<div class="prg">
+  <nav class="article-breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><span aria-current="page">Programme</span></li></ol></nav>
+  <section class="prg-hero" aria-labelledby="prg-title">
+    <div>
+      <h1 id="prg-title">Four-week guided dead hang programme.</h1>
+      <p class="prg-lead">Guided sessions over four weeks, built from the same rules as the free four-week guide, with your own targets and records.</p>
+      <p class="prg-price"><span class="prg-num">{PROGRAMME_PRICE_LABEL}</span>, one payment, no subscription</p>
+      <p class="prg-small">Free: the <a href="/4-week-program/">four-week schedule</a>, the timer and the device log stay free. This programme adds guided sessions and saved records.</p>
+    </div>
+    <div>
+      <ProgrammeOffer client:load />
+      <noscript><p class="prg-msg is-note">The sign-up form needs JavaScript. Without it, come back to this page later.</p></noscript>
+    </div>
+  </section>
+
+  <section class="prg-section" aria-labelledby="prg-fit-title">
+    <h2 id="prg-fit-title">Is it for you?</h2>
+    <p>Enter the hold you can repeat for three clean sets. Your numbers stay in this browser and are not saved or sent.</p>
+    <ProgrammeFit client:load limits={limits} planPrice={PLAN_PRICE_LABEL} />
+    <p class="prg-small">{HANG4.eligibility.standard} {HANG4.eligibility.supported} {HANG4.eligibility.outside}</p>
+  </section>
+
+  <section class="prg-section" aria-labelledby="prg-get-title">
+    <h2 id="prg-get-title">What you get</h2>
+    <ul class="prg-list">
+      {promised.map((item) => <li>{item.text}</li>)}
+    </ul>
+    <h3>What you need</h3>
+    <ul class="prg-list">
+      {HANG4.equipment.map((line) => <li>{line}</li>)}
+      <li>{HANG4.timePerWeek}</li>
+    </ul>
+  </section>
+
+  <section class="prg-section" aria-labelledby="prg-sample-title">
+    <h2 id="prg-sample-title">A sample session</h2>
+    <p>This is the first session of the standard route. In the programme, your own targets sit beside it and the timer opens with them filled in.</p>
+    <div class="prg-card">
+      <h3>{sample.title}</h3>
+      <p><strong>{sample.focus}</strong></p>
+      <ul class="prg-list">
+        {sample.cues.map((cue) => <li>{cue}</li>)}
+      </ul>
+      <p class="prg-small"><strong>Stop signs.</strong> {stopSigns}</p>
+    </div>
+  </section>
+
+  <section class="prg-section" aria-labelledby="prg-shape-title">
+    <h2 id="prg-shape-title">The four-week shape</h2>
+    <div class="prg-table-wrap">
+      <table>
+        <caption class="prg-visually-hidden">Four-week shape, standard route</caption>
+        <thead><tr><th scope="col">Week</th><th scope="col">Sessions</th><th scope="col">Target per set</th></tr></thead>
+        <tbody>
+          {shape.map((row) => <tr><th scope="row">{row.week}</th><td class="prg-num">{n.sessionsPerWeek}</td><td>{row.target}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p class="prg-small">Each training session is <span class="prg-num">{n.sets}</span> sets with <span class="prg-num">{n.restSeconds}</span> seconds of rest. The feet-supported route is <span class="prg-num">{n.supportedSets}</span> sets of <span class="prg-num">{n.supportedHold}</span> seconds with as much foot help as you need, then a short unassisted check in week 4. The programme moves on when you finish a session, not by date.</p>
+  </section>
+
+  <section class="prg-section prg-cols" aria-labelledby="prg-not-title">
+    <div>
+      <h2 id="prg-not-title">What it is not</h2>
+      <ul class="prg-list">
+        <li>Not personal coaching or a diagnosis.</li>
+        <li>No promised hang time and no promised health outcome. These doses are common training practice, not a tested prescription.</li>
+      </ul>
+      <h3>Not for</h3>
+      <ul class="prg-list">
+        {HANG4.notFor.filter((line) => !/coaching/i.test(line)).map((line) => <li>{line}</li>)}
+      </ul>
+      <p>Read <a href="/deadhang-safety/">the safety guide</a> before you start.</p>
+    </div>
+    <div>
+      <h2>Free or paid</h2>
+      <ul class="prg-list">
+        <li>The free <a href="/4-week-program/">four-week page</a> is the schedule. The programme is guided sessions, your own targets, recorded results, weekly reviews, a final comparison, and it works across devices when you are signed in.</li>
+        <li>The {PLAN_PRICE_LABEL} <a href="/plan/">eight-week plan</a> is separate and suits holds of {n.maxBaseline} seconds or more.</li>
+        <li>The <a href="/deadhang-progressions/">levels guide</a> is free.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="prg-section" aria-labelledby="prg-terms-title">
+    <h2 id="prg-terms-title">Terms</h2>
+    <p>{PROGRAMME_PRICE_LABEL}, one payment. No subscription and no automatic renewal.</p>
+    {termsSet.length > 0 && <ul class="prg-list">{termsSet.map(([label, text]) => <li><strong>{label}.</strong> {text}</li>)}</ul>}
+    {termsMissing && <p>Refund, support and access terms will be published here before sales open.</p>}
+  </section>
+</div>
+</Article>

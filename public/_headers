@@ -18,6 +18,19 @@
   Referrer-Policy: no-referrer
   X-Robots-Tag: noindex
 
+/programme/app/*
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
+  X-Robots-Tag: noindex
+
+/gym/*
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
+  X-Robots-Tag: noindex
+
+/gym-challenge/*
+  X-Robots-Tag: noindex
+
 /pro/*
   Cache-Control: no-store
   Referrer-Policy: no-referrer

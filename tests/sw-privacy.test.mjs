@@ -20,3 +20,21 @@ test('offline worker leaves account, checkout and API requests to the network', 
   handlers.fetch({ request: { method: 'GET', mode: 'navigate', url: 'https://deadhangs.com/deadhang-guide/' }, respondWith: () => { intercepted = true; } });
   assert.equal(intercepted, true, 'public navigation retains the existing offline fallback');
 });
+
+test('offline worker never caches or intercepts the programme workspace', () => {
+  const handlers = {};
+  const source = fs.readFileSync(new URL('../scripts/sw-template.js', import.meta.url), 'utf8')
+    .replace('__BUILD_ID__', 'privacy-test').replace('__PRECACHE__', '[]');
+  vm.runInNewContext(source, {
+    self: { location: { origin: 'https://deadhangs.com' }, addEventListener: (name, fn) => handlers[name] = fn },
+    URL, Set, Response, fetch: async () => new Response('network'),
+  });
+  for (const path of ['/programme/app', '/programme/app/', '/programme/app/?purchase=complete&session_id=cs_test_1', '/api/programme/state']) {
+    let intercepted = false;
+    handlers.fetch({ request: { method: 'GET', mode: 'navigate', url: `https://deadhangs.com${path}` }, respondWith: () => { intercepted = true; } });
+    assert.equal(intercepted, false, path);
+  }
+  let intercepted = false;
+  handlers.fetch({ request: { method: 'GET', mode: 'navigate', url: 'https://deadhangs.com/programme/' }, respondWith: () => { intercepted = true; } });
+  assert.equal(intercepted, true, 'the public sales page keeps the offline fallback');
+});

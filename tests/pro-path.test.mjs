@@ -59,7 +59,7 @@ test("pricing sign-in asks for /pro/ and the pricing page link reports pro_page"
   const ws = read("src/components/AccountWorkspace.tsx");
   assert.match(ws, /json\('POST', signInBody\(pricing\)\)/);
   assert.match(ws, /<a href="\/account\/" data-dh-source="pro_page">Open your cloud log<\/a>/);
-  assert.match(read("src/server/auth.ts"), /ALLOWED_CALLBACK_PATHS = \['\/training-log\/', '\/account\/', '\/pro\/'\]/);
+  assert.match(read("src/server/auth.ts"), /ALLOWED_CALLBACK_PATHS = \['\/training-log\/', '\/account\/', '\/pro\/', '\/programme\/app\/', '\/programme\/app\/\?buy=1'\]/);
 });
 
 test("/pro/ is indexable: no noindex header, in the sitemap filter", () => {

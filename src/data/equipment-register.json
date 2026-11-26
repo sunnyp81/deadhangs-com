@@ -1,0 +1,231 @@
+{
+  "checkedAt": "2026-11-26",
+  "items": [
+    {
+      "id": "decathlon-door-frame-8584559",
+      "useCase": "doorway_no_screws",
+      "model": "Door frame pull-up bar (REF 8584559, 2023)",
+      "manufacturer": "Decathlon",
+      "sourceUrl": "https://support.decathlon.co.uk/door-frame-pull-up-bar",
+      "markets": [
+        "UK"
+      ],
+      "specs": {
+        "max_user_weight": {
+          "value": 130,
+          "unit": "kg",
+          "evidence": "manufacturer_stated",
+          "source": "https://support.decathlon.co.uk/door-frame-pull-up-bar"
+        },
+        "door_width_range": {
+          "value": "51 to 91",
+          "unit": "cm",
+          "evidence": "manufacturer_stated",
+          "source": "https://support.decathlon.co.uk/door-frame-pull-up-bar"
+        },
+        "door_frame_depth": {
+          "value": "7 to 20",
+          "unit": "cm",
+          "evidence": "manufacturer_stated",
+          "source": "https://support.decathlon.co.uk/door-frame-pull-up-bar"
+        },
+        "frame_projection": {
+          "value": "at least 1 cm proud of the wall",
+          "unit": null,
+          "evidence": "manufacturer_stated",
+          "source": "https://support.decathlon.co.uk/door-frame-pull-up-bar"
+        },
+        "screws_required": {
+          "value": "no: bar rests on the top and sides of the door frame",
+          "unit": null,
+          "evidence": "manufacturer_stated",
+          "source": "https://support.decathlon.co.uk/door-frame-pull-up-bar"
+        }
+      },
+      "fitNotes": [
+        "Not for corner doors, clip-over frames or wall mounting.",
+        "Door cannot be closed while the bar is on the frame; remove when not in use.",
+        "Domestic, non-professional use only.",
+        "Frame must be in good condition and able to carry body weight, the bar and the force applied.",
+        "Support page names no separate model; product number taken from the page."
+      ],
+      "lastChecked": "2026-11-26"
+    },
+    {
+      "id": "rogue-jammer",
+      "useCase": "wall_mounted",
+      "model": "Rogue Jammer Pull-up Bar",
+      "manufacturer": "Rogue Fitness",
+      "sourceUrl": "https://www.roguefitness.com/rogue-jammer-pull-up-bar",
+      "markets": [
+        "US"
+      ],
+      "specs": {
+        "max_user_weight": {
+          "value": null,
+          "unit": null,
+          "evidence": "not_found",
+          "source": "https://www.roguefitness.com/rogue-jammer-pull-up-bar"
+        },
+        "wall_requirement": {
+          "value": "standard wood stud wall; for any other wall type Rogue advises contacting a general contractor",
+          "unit": null,
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/theindex/gear-how-tos/installing-the-new-rogue-jammer-pull-up-bar"
+        },
+        "hardware_included": {
+          "value": "6 x 3/8 in x 2.5 in wood lags",
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-jammer-pull-up-bar"
+        },
+        "bar_diameter": {
+          "value": 1.125,
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-jammer-pull-up-bar"
+        },
+        "depth_from_wall": {
+          "value": "7 in to bar centre, 8.25 in overall",
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-jammer-pull-up-bar"
+        },
+        "stringer_length": {
+          "value": 43,
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-jammer-pull-up-bar"
+        }
+      },
+      "fitNotes": [
+        "Mounts above a doorway frame on a wood stud wall.",
+        "No load rating found on the product or install page."
+      ],
+      "lastChecked": "2026-11-26"
+    },
+    {
+      "id": "rogue-p4",
+      "useCase": "wall_mounted",
+      "model": "Rogue P-4 Pull-Up System",
+      "manufacturer": "Rogue Fitness",
+      "sourceUrl": "https://www.roguefitness.com/p4-pullup-system.php",
+      "markets": [
+        "US"
+      ],
+      "specs": {
+        "weight_capacity": {
+          "value": "500+",
+          "unit": "lb",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/p4-pullup-system.php"
+        },
+        "mounting": {
+          "value": "wall or ceiling, anchored to concrete or wood studs; mounting hardware NOT included",
+          "unit": null,
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/p4-pullup-system.php"
+        },
+        "bracket_spacing": {
+          "value": "36 in on concrete; 32 in or 48 in on wood studs",
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/p4-pullup-system.php"
+        },
+        "bar_length": {
+          "value": 52,
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/p4-pullup-system.php"
+        },
+        "depth_from_wall": {
+          "value": 30,
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/p4-pullup-system.php"
+        },
+        "bar_diameter": {
+          "value": null,
+          "unit": null,
+          "evidence": "not_found",
+          "source": "https://www.roguefitness.com/p4-pullup-system.php"
+        },
+        "ceiling_height_note": {
+          "value": "P-4 recommended above 9 ft 6 in ceilings; P-3 may suit 8 ft to 9 ft 6 in",
+          "unit": null,
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/p4-pullup-system.php"
+        }
+      },
+      "fitNotes": [
+        "The capacity is the product page figure; it depends on correct anchoring into suitable structure.",
+        "Hardware must be bought separately and matched to the wall or ceiling."
+      ],
+      "lastChecked": "2026-11-26"
+    },
+    {
+      "id": "rogue-mil-pull-up-station",
+      "useCase": "free_standing_station",
+      "model": "Rogue MIL Pull-up Station",
+      "manufacturer": "Rogue Fitness",
+      "sourceUrl": "https://www.roguefitness.com/rogue-mil-pull-up-station",
+      "markets": [
+        "US"
+      ],
+      "specs": {
+        "max_user_weight": {
+          "value": null,
+          "unit": null,
+          "evidence": "not_found",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        },
+        "footprint": {
+          "value": "48 x 67",
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        },
+        "height": {
+          "value": 93,
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        },
+        "min_ceiling_height": {
+          "value": "8 ft clear",
+          "unit": "ft",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        },
+        "bar_diameter": {
+          "value": 1.25,
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        },
+        "bar_height_range": {
+          "value": "86 to 90",
+          "unit": "in",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        },
+        "unit_weight": {
+          "value": 146,
+          "unit": "lb",
+          "evidence": "manufacturer_stated",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        },
+        "anchoring_requirement": {
+          "value": null,
+          "unit": null,
+          "evidence": "not_found",
+          "source": "https://www.roguefitness.com/rogue-mil-pull-up-station"
+        }
+      },
+      "fitNotes": [
+        "No user load rating or anchoring statement found on the product page. The support product guide returned 403 (blocked), so a manual may say more."
+      ],
+      "lastChecked": "2026-11-26"
+    }
+  ]
+}

@@ -67,7 +67,7 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/cdn-cgi/') || url.pathname === '/sw.js') return;
   // Account and checkout pages require a connection; never substitute the timer shell.
-  if (/^\/(account|pro)(\/|$)/.test(url.pathname)) return;
+  if (/^\/(account|pro|programme\/app|gym)(\/|$)/.test(url.pathname)) return;
   if (request.mode === 'navigate') {
     event.respondWith(navigate(request, url));
     return;

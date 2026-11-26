@@ -1,0 +1,648 @@
+{
+  "programmeId": "hang4",
+  "version": "0.1.0",
+  "status": "draft",
+  "common": {
+    "setup": {
+      "text": "Check the bar holds your full body weight before you hang. Hang over a rubber mat, carpet or grass. Use a step or box to reach the bar. When you start, keep your feet 15 to 30 cm from the ground. Hands about shoulder width, arms straight, and note your grip in the log.",
+      "ruleIds": [
+        "sf.hang_height",
+        "sf.surface",
+        "bg.use_step",
+        "mk.grip_width",
+        "mk.straight_arms"
+      ]
+    },
+    "warmup": {
+      "text": "Spend 2 to 3 minutes on arm circles, wrist circles and one or two short, easy hangs before your first set. Keep it light. Test day has its own warm-up.",
+      "ruleIds": [
+        "mk.warmup",
+        "w4.test_warmup"
+      ]
+    },
+    "breathing": {
+      "text": "Breathe normally from the start of each hang. Do not hold your breath.",
+      "ruleIds": [
+        "sf.breathing"
+      ]
+    },
+    "getDown": {
+      "text": "Lower yourself feet first and step down under control. Do not drop. Stop a second or two before your grip gives out.",
+      "ruleIds": [
+        "sf.get_down",
+        "sf.stop_what_to_do",
+        "sf.forearm_burning"
+      ]
+    },
+    "stopSigns": {
+      "text": "Stop and step down if you notice sharp pain, numbness, light-headedness or a pinching shoulder. Joint pain is a stop sign. If your hands go numb, release the bar. If you feel light-headed or faint, sit down until it passes. Any of these ends the hang, and you should not continue that session.",
+      "ruleIds": [
+        "bg.stop_signs",
+        "sf.stop_rule",
+        "sf.joint_pain",
+        "sf.numbness",
+        "sf.faint",
+        "sf.end_session",
+        "sf.stop_what_to_do"
+      ]
+    },
+    "painRoute": {
+      "text": "If a hang is painful, stop and step down under control. End the session. Seek medical advice if it recurs or persists, or if tingling or pain lasts after you let go. For elbow pain, stop and rest, and see a clinician if it persists. When you return you can repeat the week or pause. The programme does not ask you to describe symptoms.",
+      "ruleIds": [
+        "sf.stop_what_to_do",
+        "sf.end_session",
+        "sf.seek_advice",
+        "sf.faint_recovery",
+        "sf.elbow_pain",
+        "pg.pain_response"
+      ]
+    },
+    "assistedHowTo": {
+      "text": "Start with both feet on the ground and remove weight gradually by bending your knees. Use as much foot assistance as you need to reach the target. Note how much help you used, so later holds can be compared fairly.",
+      "ruleIds": [
+        "sf.older_adults",
+        "pg.l1",
+        "bg.first_target",
+        "bg.record_assist"
+      ]
+    },
+    "timerHowTo": {
+      "text": "The timer opens with your set times and rest already filled in. Start it when you are set on the bar. Rest runs between sets. You can stop any hang early. Never hang to failure.",
+      "ruleIds": [
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "bg.no_failure"
+      ]
+    },
+    "recordHowTo": {
+      "text": "After each set, enter the time you actually held. The plan shows your target separately. Also note bar, grip, chalk, load and any assistance, so you can compare like with like.",
+      "ruleIds": [
+        "bg.record_assist",
+        "w8.compare_like_with_like"
+      ]
+    },
+    "restDay": {
+      "text": "Leave a rest day between sessions. A common pattern is Monday, Wednesday and Friday, but any days work if they are not consecutive.",
+      "ruleIds": [
+        "w4.rest_day_between",
+        "w4.sessions_per_week",
+        "pg.sessions"
+      ]
+    },
+    "missedSession": {
+      "text": "A missed session does not need making up. Do the next session as planned. The programme moves on when you complete a session, not by date, and a missed day never adds extra sets.",
+      "ruleIds": [
+        "w8.missed_session"
+      ]
+    },
+    "pause": {
+      "text": "You can pause at any time and come back when you are ready. Your place is kept. Pausing is a normal choice.",
+      "ruleIds": []
+    },
+    "repeatWeek": {
+      "text": "You can repeat a week whenever you choose. If you are consistently missing targets by more than 5 seconds, repeating the current week is the suggested route. Repeating is not failing.",
+      "ruleIds": [
+        "w4.repeat_week"
+      ]
+    }
+  },
+  "standard": {
+    "s0": {
+      "title": "Start session: find your baseline",
+      "focus": "Find a hold you can repeat. This is not a contest.",
+      "cues": [
+        "Warm up, then hang until a second or two before your grip gives out. Step down under control.",
+        "Your baseline is about 80% of that hold. It is the hold you can repeat for three clean sets.",
+        "Enter your hold. Note bar, grip, chalk and load so you can compare later. Then take a rest day."
+      ],
+      "ruleIds": [
+        "w4.baseline_test_stop",
+        "w4.baseline_fraction",
+        "w4.baseline_definition",
+        "sf.stop_what_to_do",
+        "bg.record_assist",
+        "w4.rest_day_between"
+      ]
+    },
+    "w1s1": {
+      "title": "Week 1, session 1: baseline sets",
+      "focus": "Smooth, repeatable sets at your baseline.",
+      "cues": [
+        "Do 3 sets at your baseline hold with 90 seconds of rest between sets.",
+        "Every set uses the same hold. Do not go beyond the number on screen.",
+        "Stop a second or two before your grip gives out, then step down under control."
+      ],
+      "ruleIds": [
+        "w4.week1",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "sf.forearm_burning",
+        "sf.stop_what_to_do"
+      ]
+    },
+    "w1s2": {
+      "title": "Week 1, session 2: baseline sets",
+      "focus": "Same sets again, with steady breathing.",
+      "cues": [
+        "Do 3 sets at your baseline hold with 90 seconds of rest between sets.",
+        "Breathe normally. Do not hold your breath.",
+        "Straighten your arms at the start of every hang."
+      ],
+      "ruleIds": [
+        "w4.week1",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "sf.breathing",
+        "mk.straight_arms"
+      ]
+    },
+    "w1s3": {
+      "title": "Week 1, session 3: baseline sets",
+      "focus": "Finish the week, then review it.",
+      "cues": [
+        "Do 3 sets at your baseline hold with 90 seconds of rest between sets.",
+        "Enter your actual hold for each set and how the last set felt.",
+        "After this session you choose to carry on or repeat the week."
+      ],
+      "ruleIds": [
+        "w4.week1",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "bg.record_assist"
+      ]
+    },
+    "w2s1": {
+      "title": "Week 2, session 1: baseline plus 5 s",
+      "focus": "Each set a little longer than week 1.",
+      "cues": [
+        "Add 5 seconds to each set compared with your week 1 times. Rest 90 seconds between sets.",
+        "Falling 2 to 3 seconds short on the third set is normal. Record what you held.",
+        "Stop a second or two before your grip gives out and step down under control."
+      ],
+      "ruleIds": [
+        "w4.week2_add",
+        "w4.rest_seconds",
+        "w4.miss_third_set",
+        "sf.forearm_burning",
+        "sf.stop_what_to_do"
+      ]
+    },
+    "w2s2": {
+      "title": "Week 2, session 2: baseline plus 5 s",
+      "focus": "Your forearms may tire sooner. Keep control.",
+      "cues": [
+        "Do 3 sets, each 5 seconds above week 1, with 90 seconds of rest.",
+        "Keep your shoulders down away from your ears. Breathe normally.",
+        "If your grip fades early, end the set before control goes."
+      ],
+      "ruleIds": [
+        "w4.week2_add",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "sf.breathing",
+        "w8.stop_painful"
+      ]
+    },
+    "w2s3": {
+      "title": "Week 2, session 3: baseline plus 5 s",
+      "focus": "Finish the week, then review it.",
+      "cues": [
+        "Do 3 sets, each 5 seconds above week 1, with 90 seconds of rest.",
+        "Enter your actual hold for every set. Targets and actual holds are shown separately.",
+        "After this session you choose to carry on or repeat the week."
+      ],
+      "ruleIds": [
+        "w4.week2_add",
+        "w4.sets_rest",
+        "w4.rest_seconds"
+      ]
+    },
+    "w3s1": {
+      "title": "Week 3, session 1: step up again",
+      "focus": "Another 5 seconds on top of week 2.",
+      "cues": [
+        "Add another 5 seconds per set on top of week 2. Rest 90 seconds between sets.",
+        "Keep the same bar and grip as before, and log them.",
+        "Step down under control a second or two before your grip gives out."
+      ],
+      "ruleIds": [
+        "w4.week2_add",
+        "w4.week3_add",
+        "w4.rest_seconds",
+        "bg.record_assist",
+        "sf.forearm_burning",
+        "sf.stop_what_to_do"
+      ]
+    },
+    "w3s2": {
+      "title": "Week 3, session 2: optional neutral grip",
+      "focus": "One session this week may use a neutral grip.",
+      "cues": [
+        "If your bar has neutral handles, you may use a palms-facing-each-other grip for this session.",
+        "Targets stay the same as session 1: 3 sets, 90 seconds of rest. Log the grip you used.",
+        "If you have no neutral handles, keep your usual grip."
+      ],
+      "ruleIds": [
+        "w4.week3_neutral_grip",
+        "w4.week3_add",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "bg.record_assist"
+      ]
+    },
+    "w3s3": {
+      "title": "Week 3, session 3: step up again",
+      "focus": "Finish the week, then review it.",
+      "cues": [
+        "Do 3 sets at this week's targets with 90 seconds of rest between sets.",
+        "Return to your usual grip if you changed it last session.",
+        "After this session you choose to carry on or repeat the week."
+      ],
+      "ruleIds": [
+        "w4.week3_add",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "w4.week3_neutral_grip"
+      ]
+    },
+    "w4s1": {
+      "title": "Week 4, session 1: week 3 targets",
+      "focus": "Steady work before test day.",
+      "cues": [
+        "Do 3 sets at your week 3 targets with 90 seconds of rest between sets.",
+        "These sessions keep volume steady without draining you before test day.",
+        "Keep form strict and stop before your grip gives out."
+      ],
+      "ruleIds": [
+        "w4.week4_sessions",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "sf.forearm_burning"
+      ]
+    },
+    "w4s2": {
+      "title": "Week 4, session 2: week 3 targets",
+      "focus": "Steady work before test day.",
+      "cues": [
+        "Do 3 sets at your week 3 targets with 90 seconds of rest between sets.",
+        "Keep the effort controlled. Test day is next.",
+        "Rest well before test day. Missing a session never adds work."
+      ],
+      "ruleIds": [
+        "w4.week4_sessions",
+        "w4.sets_rest",
+        "w4.rest_seconds",
+        "w4.rest_day_between",
+        "w8.missed_session"
+      ]
+    },
+    "w4s3": {
+      "title": "Week 4, session 3: test day",
+      "focus": "One best controlled hold, recorded fairly.",
+      "cues": [
+        "Warm up with a short mobility routine and 2 easy hangs of 10 to 15 seconds each. Then rest 2 to 3 minutes.",
+        "Hang for your best controlled hold. Step down a second or two before your grip gives out.",
+        "Test day shows where you are now. It is not a fixed outcome. Log bar, grip, chalk and load."
+      ],
+      "ruleIds": [
+        "w4.test_warmup",
+        "w4.test_rest",
+        "w4.test_stop",
+        "w4.test_target",
+        "bg.record_assist",
+        "w4.dose_caveat"
+      ]
+    }
+  },
+  "supported": {
+    "s0": {
+      "title": "Start session: your starting point",
+      "focus": "Find how much help you need. This is not a test.",
+      "cues": [
+        "Start with both feet on the ground and remove weight gradually by bending your knees.",
+        "Work toward 15 seconds with as much foot assistance as you need. Note how much help you used.",
+        "If you feel steady, try one unassisted hold. If in doubt, keep it to 10 seconds or fewer. Log it separately.",
+        "Step down under control. Any stop sign ends the hang."
+      ],
+      "ruleIds": [
+        "sf.older_adults",
+        "pg.l1",
+        "bg.first_target",
+        "sf.start_short",
+        "bg.record_assist",
+        "w8.compare_like_with_like",
+        "sf.stop_rule",
+        "sf.stop_what_to_do"
+      ]
+    },
+    "w1s1": {
+      "title": "Week 1, session 1: supported sets",
+      "focus": "Find an assistance level that is steady.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Keep your feet on the floor or a step and take only as much weight as feels steady.",
+        "Note how much help you used each set."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "sf.older_adults",
+        "bg.record_assist"
+      ]
+    },
+    "w1s2": {
+      "title": "Week 1, session 2: supported sets",
+      "focus": "Same sets, steady breathing.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Breathe normally. Do not hold your breath.",
+        "Stop and step down under control if anything feels wrong."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "sf.breathing",
+        "sf.stop_what_to_do"
+      ]
+    },
+    "w1s3": {
+      "title": "Week 1, session 3: supported sets",
+      "focus": "Finish the week, then review it.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Enter your actual hold and how much help you used for each set.",
+        "After this session you choose to carry on or repeat the week."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "bg.record_assist"
+      ]
+    },
+    "w2s1": {
+      "title": "Week 2, session 1: supported sets",
+      "focus": "Keep the same setup and notice the help.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Use the same bar and grip as last week, and log them.",
+        "The aim is to need less assistance over time. Use as much as you need today."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "pg.l1_exit",
+        "bg.record_assist"
+      ]
+    },
+    "w2s2": {
+      "title": "Week 2, session 2: supported sets",
+      "focus": "Calm, controlled holds.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Keep your arms straight and shoulders down away from your ears.",
+        "End a set before control goes."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "mk.straight_arms",
+        "w8.stop_painful"
+      ]
+    },
+    "w2s3": {
+      "title": "Week 2, session 3: supported sets",
+      "focus": "Finish the week, then review it.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Enter your actual hold and how much help you used for each set.",
+        "After this session you choose to carry on or repeat the week."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "bg.record_assist"
+      ]
+    },
+    "w3s1": {
+      "title": "Week 3, session 1: supported sets",
+      "focus": "Same target. Help may feel lighter.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "If every set felt clean last session, you may try a little less help. If not, keep it the same.",
+        "Log how much help you used."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "pg.l1_exit",
+        "bg.record_assist"
+      ]
+    },
+    "w3s2": {
+      "title": "Week 3, session 2: supported sets",
+      "focus": "Steady work, no rush.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Breathe normally and step down under control at the end of each set.",
+        "Keeping the same help as last time is a fine choice."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "sf.breathing",
+        "sf.get_down"
+      ]
+    },
+    "w3s3": {
+      "title": "Week 3, session 3: supported sets",
+      "focus": "Finish the week, then review it.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Enter your actual hold and how much help you used for each set.",
+        "After this session you choose to carry on or repeat the week."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "bg.record_assist"
+      ]
+    },
+    "w4s1": {
+      "title": "Week 4, session 1: supported sets",
+      "focus": "Steady work before the unassisted check.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Keep the same setup as earlier weeks and log it.",
+        "The next session is a short unassisted check."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "bg.record_assist"
+      ]
+    },
+    "w4s2": {
+      "title": "Week 4, session 2: supported sets",
+      "focus": "Steady work before the unassisted check.",
+      "cues": [
+        "Do 3 sets of 15 seconds with as much foot assistance as you need. Rest 90 seconds between sets.",
+        "Keep the effort controlled and rest well before the check.",
+        "Missing a session never adds extra work."
+      ],
+      "ruleIds": [
+        "pg.l1",
+        "pg.sessions",
+        "w4.rest_day_between",
+        "w8.missed_session"
+      ]
+    },
+    "w4s3": {
+      "title": "Week 4, session 3: unassisted check",
+      "focus": "Short unassisted holds, recorded separately.",
+      "cues": [
+        "Today is a check, not a set of supported hangs. Do short unassisted holds. If in doubt, use 10 seconds or fewer.",
+        "Stop a second or two before your grip gives out and step down under control.",
+        "Log these holds as unassisted. They are kept apart from your assisted holds."
+      ],
+      "ruleIds": [
+        "sf.start_short",
+        "sf.forearm_burning",
+        "sf.stop_what_to_do",
+        "bg.record_assist",
+        "w8.compare_like_with_like"
+      ]
+    }
+  },
+  "reviews": {
+    "standard": {
+      "week1": {
+        "intro": "Week 1 is done. Compare what you planned with what you held in each set. Compare with your own earlier hold, not with anyone else.",
+        "continueAdvice": "If your sets stayed clean and controlled, carry on to week 2.",
+        "repeatAdvice": "If sets felt painful or you lost control before the end, repeat week 1. Seek medical advice if pain recurs or persists. Repeating is a normal choice.",
+        "ruleIds": [
+          "w4.week1",
+          "w4.week2_add",
+          "sf.seek_advice",
+          "w4.repeat_week"
+        ]
+      },
+      "week2": {
+        "intro": "Week 2 is done. Look at planned and actual holds side by side, set by set.",
+        "continueAdvice": "Falling 2 to 3 seconds short on the third set is normal. If that is you, carry on to week 3.",
+        "repeatAdvice": "If you were consistently missing targets by more than 5 seconds, repeat week 2 before moving on. Repeating is not failing.",
+        "ruleIds": [
+          "w4.miss_third_set",
+          "w4.repeat_week",
+          "w4.week3_add"
+        ]
+      },
+      "week3": {
+        "intro": "Week 3 is done. Check planned against actual holds, and which grip you used on each session.",
+        "continueAdvice": "If your sets were close to target and controlled, carry on to week 4. Week 4 ends with test day.",
+        "repeatAdvice": "If you were consistently missing targets by more than 5 seconds, repeat week 3 before test day. Repeating is not failing.",
+        "ruleIds": [
+          "w4.miss_third_set",
+          "w4.repeat_week",
+          "w4.week3_neutral_grip",
+          "w4.week4_sessions"
+        ]
+      },
+      "week4": {
+        "intro": "Week 4 is done. Your test hold is recorded next to your start result.",
+        "continueAdvice": "Continue to see your final comparison and your choices for what to do next.",
+        "repeatAdvice": "If you want to keep building, you can repeat weeks 3 and 4. Test day shows where you are now and is not a fixed outcome.",
+        "ruleIds": [
+          "w4.test_target",
+          "w4.repeat_weeks3_4"
+        ]
+      }
+    },
+    "supported": {
+      "week1": {
+        "intro": "Week 1 is done. Compare planned and actual holds, and how much help you used each set.",
+        "continueAdvice": "If your sets felt steady with the help you chose, carry on to week 2.",
+        "repeatAdvice": "If sets felt painful or unsteady, repeat week 1 with as much assistance as you need. Seek medical advice if pain recurs or persists.",
+        "ruleIds": [
+          "pg.l1",
+          "pg.pain_response",
+          "sf.seek_advice"
+        ]
+      },
+      "week2": {
+        "intro": "Week 2 is done. Compare planned and actual holds and the help you used.",
+        "continueAdvice": "If your sets stayed steady, carry on to week 3. The aim is to need less assistance over time, at your own pace.",
+        "repeatAdvice": "You can repeat week 2 with the same help. Repeating is a normal choice.",
+        "ruleIds": [
+          "pg.l1",
+          "pg.l1_exit"
+        ]
+      },
+      "week3": {
+        "intro": "Week 3 is done. Compare planned and actual holds and the help you used.",
+        "continueAdvice": "If your sets stayed steady, carry on to week 4. Week 4 ends with a short unassisted check.",
+        "repeatAdvice": "You can repeat week 3 with the same help. Repeating is a normal choice.",
+        "ruleIds": [
+          "pg.l1",
+          "pg.l1_exit",
+          "sf.start_short"
+        ]
+      },
+      "week4": {
+        "intro": "Week 4 is done. Your unassisted check is kept apart from your assisted holds.",
+        "continueAdvice": "Continue to see your final comparison and your choices for what to do next.",
+        "repeatAdvice": "You can repeat the programme weeks with the same setup. When you hold 15 seconds across all 3 sets with minimal assistance, the free levels guide describes the next stage.",
+        "ruleIds": [
+          "pg.l1",
+          "pg.l1_exit",
+          "bg.record_assist"
+        ]
+      }
+    }
+  },
+  "final": {
+    "intro": "You have finished the programme. Here is your last result next to your start result.",
+    "comparable": "Your start and final holds used the same bar, grip, chalk, load and assistance, so they are shown side by side. Compare with your own earlier hold only.",
+    "notComparable": "Something differed between your start and final holds, such as bar, grip, chalk, load or assistance. Both results are shown and labelled not comparable.",
+    "nextGoals": {
+      "maintain": "To keep a hold you have reached, the free guide suggests 2 sessions per week of 3 sets each.",
+      "repeat34": "Repeat weeks 3 and 4. The free programme suggests this if your test hold was under 30 seconds.",
+      "plan8": "A separate eight-week plan suits you once you can hold a comfortable 20 to 30 seconds. If you cannot yet, the four-week plan comes first. It is a separate product.",
+      "levels": "Read the free levels guide at /deadhang-progressions/. It shows the next stage when you hold 15 seconds across all 3 sets with minimal assistance."
+    },
+    "ruleIds": [
+      "w8.compare_like_with_like",
+      "bg.record_assist",
+      "w4.maintain",
+      "w4.repeat_weeks3_4",
+      "w8.entry_hold",
+      "w8.entry_fallback",
+      "pg.l1_exit",
+      "pg.l1"
+    ]
+  },
+  "onboarding": {
+    "routeQuestion": "Which describes your hold on a bar today?",
+    "standardRoute": "I can repeat three clean sets of about 5 to 20 seconds. You will find your baseline in a start session, then follow three sessions a week.",
+    "supportedRoute": "I cannot yet hold about 5 seconds. You will use foot assistance for each set, and aim to need less help over time.",
+    "outsideRange": "If you can already hold a comfortable 20 to 30 seconds, this programme starts below you. The separate eight-week plan or the free levels guide may suit you better.",
+    "baselineHelp": "Your baseline is the hold you can repeat for three clean sets. In the start session you hang until a second or two before your grip gives out, and your baseline is about 80% of that.",
+    "setupHelp": "You need a secure bar that holds your full body weight and a soft surface underneath. If you have shoulder hypermobility or instability, ask a physical therapist or doctor before hanging. The doses here are common training practice, not a tested prescription.",
+    "scheduleHelp": "Plan 3 sessions a week with a rest day between, for example Monday, Wednesday and Friday. The programme moves on when you complete a session, not by date.",
+    "ruleIds": [
+      "w4.entry_hold",
+      "w4.weekly_volume",
+      "w4.baseline_definition",
+      "w4.baseline_test_stop",
+      "w4.baseline_fraction",
+      "w4.under_5s",
+      "pg.l1",
+      "pg.l1_exit",
+      "w8.entry_hold",
+      "w8.entry_fallback",
+      "sf.ask_first",
+      "w4.dose_caveat",
+      "w4.sessions_per_week",
+      "w4.rest_day_between"
+    ]
+  }
+}

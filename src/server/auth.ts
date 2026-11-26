@@ -2,7 +2,12 @@ import { betterAuth, type BetterAuthOptions } from 'better-auth';
 import type { ConfiguredEnv, D1Database } from './env';
 
 export const AUTH_BASE_PATH = '/api/auth';
-export const ALLOWED_CALLBACK_PATHS = ['/training-log/', '/account/', '/pro/'] as const;
+export const ALLOWED_CALLBACK_PATHS = ['/training-log/', '/account/', '/pro/', '/programme/app/', '/programme/app/?buy=1'] as const;
+// Gym pilot return paths carry an invite token or a campaign id; only these exact same-origin shapes are accepted.
+const GYM_CALLBACKS = [/^\/gym\/join\/\?t=[A-Za-z0-9_-]{43}$/, /^\/gym\/campaign\/\?id=[A-Za-z0-9_-]{8,64}$/];
+export function isAllowedCallback(value: unknown): value is string {
+  return typeof value === 'string' && ((ALLOWED_CALLBACK_PATHS as readonly string[]).includes(value) || GYM_CALLBACKS.some((re) => re.test(value)));
+}
 export const DEFAULT_CALLBACK_PATH = '/training-log/';
 export const ERROR_PATH = '/account/';
 export const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;

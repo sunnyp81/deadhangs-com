@@ -1,5 +1,5 @@
 import { configuredEnv, type AccountEnv, type PagesContext } from '../../../src/server/env';
-import { ALLOWED_CALLBACK_PATHS, AUTH_BASE_PATH, DEFAULT_CALLBACK_PATH, getAuth } from '../../../src/server/auth';
+import { AUTH_BASE_PATH, DEFAULT_CALLBACK_PATH, getAuth, isAllowedCallback } from '../../../src/server/auth';
 import { checkWriteRequest, isPlainObject, json, readJson, serverError, unavailable } from '../../../src/server/http';
 
 const SIGN_IN_KEYS = new Set(['provider', 'callbackURL', 'errorCallbackURL', 'newUserCallbackURL']);
@@ -22,7 +22,7 @@ async function signInRequest(request: Request, origin: string): Promise<Request 
   for (const key of CALLBACK_KEYS) {
     const value = input[key];
     if (value === undefined) continue;
-    if (typeof value !== 'string' || !(ALLOWED_CALLBACK_PATHS as readonly string[]).includes(value)) return json({ error: 'invalid_callback' }, 400);
+    if (!isAllowedCallback(value)) return json({ error: 'invalid_callback' }, 400);
     clean[key] = value;
   }
   clean.callbackURL ??= DEFAULT_CALLBACK_PATH;

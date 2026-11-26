@@ -36,3 +36,17 @@ test('external redirects allow only Google or Stripe HTTPS endpoints', () => {
   assert.equal(trustedRedirect('https://checkout.stripe.com/c/pay/test','stripe'),'https://checkout.stripe.com/c/pay/test');
   for (const url of ['javascript:alert(1)','https://checkout.stripe.com.evil.test','http://checkout.stripe.com','https://a@checkout.stripe.com']) assert.throws(()=>trustedRedirect(url,'stripe'));
 });
+
+test('signInBody back is an allowlist of local paths, never a supplied URL', async () => {
+  const { signInBody, safeBack } = await import('../src/lib/account-client.mjs');
+  assert.deepEqual(signInBody(false, '/programme/app/'), { provider: 'google', callbackURL: '/programme/app/', errorCallbackURL: '/programme/app/' });
+  assert.equal(signInBody(false, '/programme/app/?buy=1').callbackURL, '/programme/app/?buy=1');
+  assert.equal(signInBody(false, '/pro/').callbackURL, '/pro/');
+  assert.equal(signInBody(true, '/account/').callbackURL, '/account/');
+  for (const bad of ['https://evil.example/', '//evil.example', '/programme/', '/programme/app/?buy=1&x=1', '/pro/?buy=1', '/programme/app/?next=//evil', '', null, 5, '/account/../x']) {
+    assert.equal(safeBack(bad), null, String(bad));
+    assert.equal(signInBody(false, bad).callbackURL, '/account/', String(bad));
+  }
+  assert.equal(signInBody(true, 'https://evil.example/').callbackURL, '/pro/');
+  assert.equal(signInBody(true).callbackURL, '/pro/');
+});
