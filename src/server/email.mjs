@@ -145,7 +145,7 @@ export async function complianceFor(env, email) {
  * The only send path for code-built emails. Refuses while any readiness blocker exists,
  * checks suppression immediately before sending, then adds headers and footer.
  */
-export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyText, unsubscribeUrl }) {
+export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyText, unsubscribeUrl = "" }) {
   const blockers = sendReadiness(env);
   if (blockers.length) return { sent: false, reason: 'not_ready', blockers };
   if (await isSuppressed(env.BREVO_API_KEY, email)) return { sent: false, reason: 'suppressed' };
