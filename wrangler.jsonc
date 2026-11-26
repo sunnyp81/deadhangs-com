@@ -33,7 +33,11 @@
         "STRIPE_YEARLY_PRICE_ID": "price_1UZYkKEiamtoGTBsMwIJt4OG",
         "STRIPE_PORTAL_CONFIGURATION_ID": "bpc_1UZYmoEiamtoGTBsUbk2l2oF",
         "STRIPE_PLAN_PRICE_ID": "price_1Uc3mYEiamtoGTBs3ZjjGCdo",
-        "PLAN_LAUNCH_ENABLED": "false"
+        "PLAN_LAUNCH_ENABLED": "false",
+        "PROGRAMME_LAUNCH_ENABLED": "true",
+        "PROGRAMME_ALLOW_DRAFT": "true",
+        "STRIPE_PROGRAMME_PRICE_ID": "price_1Ufq7BEiamtoGTBsHq7S6OZ8",
+        "GYM_PILOT_ENABLED": "true"
       },
       "d1_databases": [
         {
