@@ -242,7 +242,7 @@ function Organiser({ data, busy, act }: { data: any; busy: boolean; act: (body: 
           <p className="gym-poster-scan">Scan to join. Record one hold. Everyone follows the same rule.</p>
           {invite.qr && <img src={invite.qr} width={320} height={320} alt="" />}
           <div className="gym-poster-rule"><RuleBlock rule={campaign.rule} /></div>
-          <p>Results are self-reported. Your result stays private unless you choose to share it.</p>
+          <p>Results are self-reported. The organiser sees your results. Other members see your best only if you choose.</p>
           <p>Stop if you feel sharp pain, numbness, light-headedness or a pinching shoulder.</p>
         </div>
       )}

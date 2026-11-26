@@ -70,6 +70,13 @@ export function programmeRoutes(content: Content) {
           const entitlement = await access(ctx, manifest);
           if (!entitlement.active) return json({ error: 'programme_access_required', status: entitlement.status }, 402);
           const stored = await readProgress(ctx.env.DB, ctx.session.userId, manifest.id);
+          // A retry of a session result that already saved succeeds as a no-op, even with an old revision.
+          if (stored.revision !== value.baseRevision && stored.state && isPlainObject(value.op) && value.op.op === 'record') {
+            try {
+              const retry = applyOperation(stored.state, value.op, content.rules, new Date().toISOString());
+              if (!retry.changed) return json({ changed: false, progress: buildProgrammeView({ state: stored.state, revision: stored.revision, copy: content.copy, rules: content.rules, today: typeof value.today === 'string' && DATE.test(value.today) ? value.today : null }) });
+            } catch { /* not a retry of a saved result: report the conflict below */ }
+          }
           if (stored.revision !== value.baseRevision) return json({ error: 'revision_conflict', revision: stored.revision }, 409);
           const result = applyOperation(stored.state, value.op, content.rules, new Date().toISOString());
           let revision = stored.revision;
