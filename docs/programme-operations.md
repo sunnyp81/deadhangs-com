@@ -48,7 +48,7 @@ Existing billing variables and secrets (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SEC
 3. Apply migrations 0005 to 0007 to preview (done 26 Nov for 0003 to 0006; 0007 still to apply there), rehearse, then production: `npx wrangler@4.158.0 d1 migrations apply deadhangs-accounts --remote --env production`. They create tables and add one column; nothing existing changes. Add Cloudflare rate-limiting rules for `/api/programme/*` and `/api/gym/*` first (as already advised for auth, account and billing routes).
 4. Create the live product and one-time price in Stripe (metadata above); set `STRIPE_PROGRAMME_PRICE_ID` and `PROGRAMME_LAUNCH_ENABLED=true` in production; add the two webhook event types.
 5. Deploy, then verify `/api/programme/availability` returns `open: true` and a real-card purchase is NOT used to test; use the preview test-mode journey as the purchase evidence.
-6. Launch email: NOT ready. Anyone can type any address into the interest form, so the list is unconfirmed. Before emailing it, add a confirmation step (double opt-in) or send only through `sendCompliantEmail` with a one-click removal link and a plain "you asked to be told once" line, and set `notified_at`. The endpoint never reveals whether an address is already listed.
+6. Launch email: NOT ready. Anyone can type any address into the interest form, so the list is unconfirmed. Before emailing it, add a confirmation step (double opt-in) or send only through `sendCompliantEmail` with a one-click removal link and a plain "you asked to be told once" line, then delete the rows that were emailed (the privacy page promises one email, then deletion). The endpoint never reveals whether an address is already listed.
 
 ## Rollback
 
