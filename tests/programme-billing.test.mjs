@@ -10,7 +10,7 @@ import { programmeDeletionStatements, exportProgramme, readProgress, writeProgre
 const mf = new Miniflare({ modules: true, script: 'export default {fetch(){return new Response("ok")}}', compatibilityDate: '2025-09-01', d1Databases: ['DB'] });
 const db = await mf.getD1Database('DB');
 await db.prepare('CREATE TABLE "user" (id TEXT PRIMARY KEY)').run();
-const sql = (await Promise.all(['0002_billing.sql', '0003_plan_purchases.sql', '0005_programme.sql'].map((file) => fs.readFile(new URL(`../migrations/${file}`, import.meta.url), 'utf8')))).join(' ').replace(/^--.*$/gm, '');
+const sql = (await Promise.all(['0002_billing.sql', '0003_plan_purchases.sql', '0005_programme.sql', '0007_programme_settle_seq.sql'].map((file) => fs.readFile(new URL(`../migrations/${file}`, import.meta.url), 'utf8')))).join(' ').replace(/^--.*$/gm, '');
 await db.batch(sql.split(';').map((s) => s.trim()).filter(Boolean).map((s) => db.prepare(s)));
 test.after(() => mf.dispose());
 
@@ -234,8 +234,8 @@ test('progress writes are revision-checked; export lists progress and settled pu
 });
 
 test('interest signups are saved once, lowercased, and reported only after the write', async () => {
-  assert.deepEqual(await saveInterest(db, { email: 'Someone@Example.com ', programmeId: 'hang4', source: 'programme_page' }), { saved: true, existing: false });
-  assert.deepEqual(await saveInterest(db, { email: 'someone@example.com', programmeId: 'hang4', source: 'programme_page' }), { saved: true, existing: true });
+  assert.deepEqual(await saveInterest(db, { email: 'Someone@Example.com ', programmeId: 'hang4', source: 'programme_page' }), { saved: true });
+  assert.deepEqual(await saveInterest(db, { email: 'someone@example.com', programmeId: 'hang4', source: 'programme_page' }), { saved: true }, 'never reveals that the address was already listed');
   await assert.rejects(saveInterest(db, { email: 'not-an-email', programmeId: 'hang4', source: 'x' }), { code: 'invalid_email' });
   const rows = (await db.prepare('SELECT email, consent_version FROM programme_interest').all()).results;
   assert.deepEqual(rows, [{ email: 'someone@example.com', consent_version: 'programme-interest-v1' }]);

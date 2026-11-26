@@ -109,6 +109,16 @@ export function footerHtml(url, postal) {
 <a href="${escapeHtml(url)}" style="color:#5c5a55">Unsubscribe with one click</a>. DeadHangs is operated by ND Media Ltd, ${escapeHtml(postal)}.</p>`;
 }
 
+/** Footer for reminders the person asked for inside their programme; the link turns those reminders off. */
+export function reminderFooterHtml(url, postal) {
+  return `<hr style="border:none;border-top:1px solid #d6d3cb;margin:28px 0 16px">
+<p style="margin:0;font-size:12px;line-height:1.6;color:#5c5a55">You are getting this because you turned on programme reminders at deadhangs.com.
+<a href="${escapeHtml(url)}" style="color:#5c5a55">Turn reminders off with one click</a>. DeadHangs is operated by ND Media Ltd, ${escapeHtml(postal)}.</p>`;
+}
+export function reminderFooterText(url, postal) {
+  return `\n\n--\nYou are getting this because you turned on programme reminders at deadhangs.com.\nTurn reminders off: ${url}\nDeadHangs is operated by ND Media Ltd, ${postal}.\n`;
+}
+
 export function footerText(url, postal) {
   return `\n\n--\nYou are getting this because you signed up for training emails at deadhangs.com.\nUnsubscribe with one click: ${url}\nDeadHangs is operated by ND Media Ltd, ${postal}.`;
 }
@@ -145,7 +155,7 @@ export async function complianceFor(env, email) {
  * The only send path for code-built emails. Refuses while any readiness blocker exists,
  * checks suppression immediately before sending, then adds headers and footer.
  */
-export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyText, unsubscribeUrl = "" }) {
+export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyText, unsubscribeUrl = "", footer = "newsletter" }) {
   const blockers = sendReadiness(env);
   if (blockers.length) return { sent: false, reason: 'not_ready', blockers };
   if (await isSuppressed(env.BREVO_API_KEY, email)) return { sent: false, reason: 'suppressed' };
@@ -160,8 +170,8 @@ export async function sendCompliantEmail(env, { email, subject, bodyHtml, bodyTe
       headers: { 'Content-Type': 'application/json', 'api-key': env.BREVO_API_KEY },
       body: JSON.stringify({
         sender, replyTo: sender, to: [{ email }], subject,
-        htmlContent: bodyHtml + footerHtml(url, postal),
-        textContent: bodyText + footerText(url, postal),
+        htmlContent: bodyHtml + (footer === 'reminders' ? reminderFooterHtml(url, postal) : footerHtml(url, postal)),
+        textContent: bodyText + (footer === 'reminders' ? reminderFooterText(url, postal) : footerText(url, postal)),
         headers,
       }),
       signal: AbortSignal.timeout(10000),

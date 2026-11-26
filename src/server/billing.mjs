@@ -557,10 +557,23 @@ export function createBillingService(env, options = {}) {
     return disputes.data.every((d) => ['won', 'warning_closed'].includes(d.status)) ? 'paid' : 'disputed';
   }
 
-  /** Re-fetches the session and its charge, then records the current outcome. Safe to repeat and independent of event order. */
+  /**
+   * Re-fetches the session and its charge, then records the current outcome. Safe to repeat and independent of event order.
+   * Compare-and-set: the row is read before Stripe is fetched and written only if no other settlement wrote in between,
+   * so a slow settlement can never put back access that a newer refund or dispute removed.
+   */
   async function settleProgrammeSession(sessionId) {
     if (!cleanId(sessionId, 'cs')) throw new BillingError('invalid_session', 400);
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const result = await settleOnce(sessionId);
+      if (result) return result;
+    }
+    throw new BillingError('billing_busy', 409);
+  }
+
+  async function settleOnce(sessionId) {
     const [purchase] = await programmeRows('SELECT * FROM programme_purchases WHERE checkout_session_id=?', sessionId);
+    const seq = purchase ? purchase.settle_seq : null;
     const session = await stripe(`/v1/checkout/sessions/${sessionId}?expand[]=payment_intent.latest_charge`);
     const manifest = programmeOf(session);
     if (session.id !== sessionId || session.livemode !== live || session.mode !== 'payment' || !manifest) throw new BillingError('billing_ownership_mismatch');
@@ -575,7 +588,10 @@ export function createBillingService(env, options = {}) {
     const failed = session.status === 'expired' ||
       (session.status === 'complete' && session.payment_status !== 'paid' && ['requires_payment_method', 'canceled'].includes(intent?.status));
     if (failed) {
-      await q("UPDATE programme_purchases SET status='expired', status_changed_at=? WHERE checkout_session_id=? AND status='pending'", stamp, sessionId).run();
+      if (purchase?.status === 'pending') {
+        const written = await q("UPDATE programme_purchases SET status='expired', status_changed_at=?, settle_seq=settle_seq+1 WHERE checkout_session_id=? AND status='pending' AND settle_seq=?", stamp, sessionId, seq).run();
+        if (written.meta.changes !== 1) return null;
+      }
       return { status: 'expired', userId };
     }
     if (session.status !== 'complete' || session.payment_status !== 'paid') return { status: 'pending', userId };
@@ -589,14 +605,15 @@ export function createBillingService(env, options = {}) {
     const status = await chargeOutcome(charge);
     if (status === 'pending') return { status: 'pending', userId };
     const version = /^\d+\.\d+\.\d+$/.test(session.metadata?.programme_version || '') ? session.metadata.programme_version : manifest.version;
-    // A lost checkout response leaves no pending row: recreate it from verified provider data.
-    await db.batch([
-      q(`INSERT OR IGNORE INTO programme_purchases (checkout_session_id,user_id,programme_id,programme_version,provider_mode,stripe_customer_id,amount,currency,status,source,created_at,status_changed_at)
-         VALUES (?,?,?,?,?,?,?,?,'pending','other',?,?)`, sessionId, userId, manifest.id, version, mode, customerId, amount, manifest.price.currency, stamp, stamp),
-      q(`UPDATE programme_purchases SET payment_intent_id=?, paid_at=COALESCE(paid_at, ?), status_changed_at=CASE WHEN status=? THEN status_changed_at ELSE ? END, status=?
-         WHERE checkout_session_id=?`, intentId, stamp, status, stamp, status, sessionId),
-    ]);
-    return { status, userId };
+    if (!purchase) {
+      // A lost checkout response leaves no pending row: recreate it from verified provider data.
+      const inserted = await q(`INSERT OR IGNORE INTO programme_purchases (checkout_session_id,user_id,programme_id,programme_version,provider_mode,stripe_customer_id,payment_intent_id,amount,currency,status,source,created_at,paid_at,status_changed_at,settle_seq)
+         VALUES (?,?,?,?,?,?,?,?,?,?,'other',?,?,?,1)`, sessionId, userId, manifest.id, version, mode, customerId, intentId, amount, manifest.price.currency, status, stamp, stamp, stamp).run();
+      return inserted.meta.changes === 1 ? { status, userId } : null;
+    }
+    const written = await q(`UPDATE programme_purchases SET payment_intent_id=?, paid_at=COALESCE(paid_at, ?), status_changed_at=CASE WHEN status=? THEN status_changed_at ELSE ? END, status=?, settle_seq=settle_seq+1
+       WHERE checkout_session_id=? AND settle_seq=?`, intentId, stamp, status, stamp, status, sessionId, seq).run();
+    return written.meta.changes === 1 ? { status, userId } : null;
   }
 
   async function checkoutProgramme(user, programmeId, source) {
@@ -650,11 +667,13 @@ export function createBillingService(env, options = {}) {
       const session = await stripe('/v1/checkout/sessions', 'POST', fields);
       if (!cleanId(session.id, 'cs') || session.livemode !== live || session.mode !== 'payment' || !programmeMeta(session, manifest) ||
           idOf(session.customer) !== fresh.stripe_customer_id || session.metadata?.deadhangs_user_ref !== fresh.app_user_ref) throw new BillingError('billing_ownership_mismatch');
-      await guardLock(fresh, token);
       const stamp = now();
-      await q(`INSERT INTO programme_purchases (checkout_session_id,user_id,programme_id,programme_version,provider_mode,stripe_customer_id,amount,currency,status,source,created_at,status_changed_at)
-        VALUES (?,?,?,?,?,?,?,?,'pending',?,?,?)`, session.id, fresh.user_id, manifest.id, manifest.version, mode, fresh.stripe_customer_id,
-        manifest.price.amount, manifest.price.currency, PROGRAMME_SOURCES.includes(source) ? source : 'other', stamp, stamp).run();
+      // Fenced: written only while this request still holds the lock and no deletion has started.
+      const inserted = await q(`INSERT INTO programme_purchases (checkout_session_id,user_id,programme_id,programme_version,provider_mode,stripe_customer_id,amount,currency,status,source,created_at,status_changed_at)
+        SELECT ?,?,?,?,?,?,?,?,'pending',?,?,? WHERE EXISTS (SELECT 1 FROM billing_accounts WHERE user_id=? AND lock_token=? AND lock_until>? AND deleting=0)`,
+        session.id, fresh.user_id, manifest.id, manifest.version, mode, fresh.stripe_customer_id, manifest.price.amount, manifest.price.currency,
+        PROGRAMME_SOURCES.includes(source) ? source : 'other', stamp, stamp, fresh.user_id, token, stamp).run();
+      if (inserted.meta.changes !== 1) throw new BillingError('billing_busy', 409);
       return { url: checkedUrl(session.url, 'checkout.stripe.com') };
     });
   }
@@ -732,11 +751,15 @@ export function createBillingService(env, options = {}) {
     }
     // An open programme checkout must not be payable after the account is gone.
     let pendingProgramme = [];
-    try { pendingProgramme = (await q("SELECT checkout_session_id FROM programme_purchases WHERE user_id=? AND status='pending'", userId).all()).results; }
+    try { pendingProgramme = (await q("SELECT checkout_session_id FROM programme_purchases WHERE user_id=? AND provider_mode=? AND status='pending'", userId, mode).all()).results; }
     catch (error) { if (!missingTable(error)) throw error; }
     for (const open of pendingProgramme) {
-      const session = await stripe(`/v1/checkout/sessions/${open.checkout_session_id}`);
+      let session;
+      try { session = await stripe(`/v1/checkout/sessions/${open.checkout_session_id}`); }
+      catch (error) { if (error instanceof BillingError && error.code === 'billing_object_missing') continue; throw error; }
       if (session.livemode !== live || idOf(session.customer) !== fresh.stripe_customer_id) throw new BillingError('billing_ownership_mismatch');
+      // A payment still processing would complete after deletion and leave a paid purchase with no person.
+      if (session.status === 'complete' && session.payment_status !== 'paid') throw new BillingError('programme_payment_pending', 409);
       if (session.status !== 'open') continue;
       await guardLock(fresh, token);
       const expired = await stripe(`/v1/checkout/sessions/${session.id}/expire`, 'POST', {}, `deadhangs:expire:${session.id}`);

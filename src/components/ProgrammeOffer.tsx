@@ -41,7 +41,7 @@ export default function ProgrammeOffer() {
       const data: any = await programmeRequest("/api/programme/interest", jsonBody("POST", { email: email.trim(), programme: PROGRAMME_ID, consent: true, website, source: "programme_page" }));
       if (data.saved === true) {
         trackTrainingEvent("programme_interest_submitted", { source: "programme_page" });
-        setMessage(data.existing ? "You were already on the list. You will get one email when the programme opens." : "You are on the list. You will get one email when the programme opens, and nothing else.");
+        setMessage("Saved. You will get one email when the programme opens, and nothing else.");
         setEmail(""); setConsent(false);
       } else setError("That did not save. Nothing was recorded. Try again.");
     } catch (e: any) {

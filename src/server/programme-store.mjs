@@ -53,8 +53,9 @@ export async function exportProgramme(db, userId) {
 
 /** Statements for account deletion: progress is personal data and goes; the payment record stays, detached from the person. */
 export async function programmeDeletionStatements(db, userId) {
-  const tables = new Set((await db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('programme_progress', 'programme_purchases')").all()).results.map((row) => row.name));
+  const tables = new Set((await db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('programme_progress', 'programme_purchases', 'programme_reminder_deliveries')").all()).results.map((row) => row.name));
   const statements = [];
+  if (tables.has('programme_reminder_deliveries')) statements.push(db.prepare('DELETE FROM programme_reminder_deliveries WHERE user_id = ?').bind(userId));
   if (tables.has('programme_progress')) statements.push(db.prepare('DELETE FROM programme_progress WHERE user_id = ?').bind(userId));
   if (tables.has('programme_purchases')) statements.push(db.prepare('UPDATE programme_purchases SET user_id = NULL WHERE user_id = ?').bind(userId));
   return statements;
@@ -63,13 +64,13 @@ export async function programmeDeletionStatements(db, userId) {
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const INTEREST_CONSENT_VERSION = 'programme-interest-v1';
 
-/** Saves one "email me when it opens" request. Returns { saved: true, existing } only after the row is written. */
+/** Saves one "email me when it opens" request. Returns { saved: true } only after the row is written, and never says whether the address was already there. */
 export async function saveInterest(db, { email, programmeId, source }, now = Math.floor(Date.now() / 1000)) {
   const clean = typeof email === 'string' ? email.trim().toLowerCase() : '';
   if (clean.length > 254 || !EMAIL.test(clean)) throw new ProgrammeStoreError('invalid_email', 400);
   return guarded(async () => {
-    const result = await db.prepare(`INSERT INTO programme_interest (email, programme_id, consent_version, source, created_at)
+    await db.prepare(`INSERT INTO programme_interest (email, programme_id, consent_version, source, created_at)
       VALUES (?, ?, ?, ?, ?) ON CONFLICT(email, programme_id) DO NOTHING`).bind(clean, programmeId, INTEREST_CONSENT_VERSION, source, now).run();
-    return { saved: true, existing: result.meta.changes === 0 };
+    return { saved: true };
   });
 }

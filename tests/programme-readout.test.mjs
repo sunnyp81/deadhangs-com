@@ -16,10 +16,10 @@ test('readout SQL runs on real SQLite and counts live purchases, refunds, week 4
   try {
     const db = await mf.getD1Database('DB');
     await db.prepare('CREATE TABLE "user" (id TEXT PRIMARY KEY)').run();
-    const sql = (await fs.readFile(new URL('../migrations/0005_programme.sql', import.meta.url), 'utf8')).replace(/^--.*$/gm, '');
+    const sql = (await fs.readFile(new URL('../migrations/0005_programme.sql', import.meta.url), 'utf8') + (await fs.readFile(new URL('../migrations/0007_programme_settle_seq.sql', import.meta.url), 'utf8'))).replace(/^--.*$/gm, '');
     await db.batch(sql.split(';').map((s) => s.trim()).filter(Boolean).map((s) => db.prepare(s)));
     const t = (d) => Math.floor(Date.parse(`${d}T12:00:00Z`) / 1000);
-    const buy = (id, user, status, created, mode = 'live') => db.prepare(`INSERT INTO programme_purchases VALUES (?,?,'hang4','0.1.0',?, 'cus_x', NULL, 2900, 'gbp', ?, 'programme_page', ?, ?, ?)`)
+    const buy = (id, user, status, created, mode = 'live') => db.prepare(`INSERT INTO programme_purchases VALUES (?,?,'hang4','0.1.0',?, 'cus_x', NULL, 2900, 'gbp', ?, 'programme_page', ?, ?, ?, 0)`)
       .bind(id, user, mode, status, t(created), status === 'pending' ? null : t(created), t(created));
     const state = (keys, route = 'standard') => JSON.stringify({ v: 1, route, status: 'active', results: keys.map((k) => ({ sessionKey: k, sets: [10] })) });
     await db.batch([

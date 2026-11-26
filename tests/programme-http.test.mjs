@@ -127,7 +127,7 @@ test('programme journey over HTTP: interest, sign-in, test-mode purchase, delive
   assert.equal((await call('/api/programme/state')).status, 401);
   assert.equal((await call('/api/programme/interest', { method: 'POST', body: { email: 'x@example.test', programme: 'hang4', consent: false } })).status, 400);
   assert.equal((await call('/api/programme/interest', { method: 'POST', origin: 'https://evil.example', body: { email: 'x@example.test', programme: 'hang4', consent: true } })).status, 403);
-  assert.deepEqual((await call('/api/programme/interest', { method: 'POST', body: { email: 'X@example.test', programme: 'hang4', consent: true, website: '' } })).data, { saved: true, existing: false });
+  assert.deepEqual((await call('/api/programme/interest', { method: 'POST', body: { email: 'X@example.test', programme: 'hang4', consent: true, website: '' } })).data, { saved: true });
 
   const alice = await signIn('alice');
   const bob = await signIn('bob');
