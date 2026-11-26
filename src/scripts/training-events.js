@@ -21,6 +21,7 @@ const EVENTS = new Set([
   "programme_interest_submitted",
   "programme_checkout_started",
   "programme_fit_checked",
+  "gym_pilot_requested",
 ]);
 export const FEATURES = new Set([
   "your_number_compared",
@@ -75,6 +76,7 @@ export const SOURCES = new Set([
   "pro_page",
   "article",
   "programme_page",
+  "gym_page",
 ]);
 /** Fixed starter-session labels for next_session_chosen. Never a hold time or level score. */
 export const SESSION_CHOICES = new Set(["level_1", "level_2", "level_3"]);
@@ -90,6 +92,7 @@ const PATHS = new Set([
   "/plan/",
   "/plan/success/",
   "/programme/",
+  "/gym-challenge/",
 ]);
 
 function canonicalPathname(candidate, browser) {

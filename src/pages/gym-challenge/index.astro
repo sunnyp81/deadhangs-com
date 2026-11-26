@@ -1,0 +1,91 @@
+---
+import Article from '../../layouts/Article.astro';
+import GymEnquiry from '../../components/GymEnquiry';
+import { GYM_PILOT_ENABLED } from '../../lib/gym-flag.mjs';
+import { GYM_PRICE_LABEL } from '../../lib/gym-client.mjs';
+import '../../styles/programme.css';
+import '../../styles/gym.css';
+---
+{GYM_PILOT_ENABLED ? (
+<Article title="Dead hang challenge for gyms | DeadHangs" description="A private dead hang challenge page for your gym, with a join link, a QR code and results recorded under one hold rule." crumbs={[{ name: 'Gym challenge' }]} noindex wide>
+<div class="prg">
+  <nav class="article-breadcrumb" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><span aria-current="page">Gym challenge</span></li></ol></nav>
+  <section class="prg-hero" aria-labelledby="gym-title">
+    <div>
+      <h1 id="gym-title">A dead hang challenge for your gym.</h1>
+      <p class="prg-lead">A private challenge page, join link and QR code for your members, with every result recorded under one hold rule.</p>
+      <p class="prg-price"><span class="prg-num">{GYM_PRICE_LABEL}</span> per campaign, founding price, invoiced, no subscription</p>
+      <p class="prg-small">This is a small manual pilot. Nothing is built until you and I agree dates, the bar and the hold rule.</p>
+    </div>
+    <div>
+      <GymEnquiry client:load />
+      <noscript><p class="prg-msg is-note">The enquiry form needs JavaScript. Without it, come back to this page later.</p></noscript>
+    </div>
+  </section>
+
+  <section class="prg-section prg-cols" aria-labelledby="gym-get-title">
+    <div>
+      <h2 id="gym-get-title">What your gym gets</h2>
+      <ul class="prg-list">
+        <li>A private campaign page for your members. It is not listed on the public site and search engines are asked not to index it.</li>
+        <li>A join link and a QR code, with a poster you can print from the organiser page.</li>
+        <li>A simple member flow: join, read the hold rule, record a result.</li>
+        <li>Self-reported results under one rule, so results within the campaign are like for like.</li>
+        <li>Organiser tools to correct or remove an entry that was entered wrongly.</li>
+        <li>An optional gym board, shown to members only if you switch it on and only for people who chose to appear.</li>
+        <li>A CSV export of the results, and a closing summary at the end.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>What it does not include</h2>
+      <ul class="prg-list">
+        <li>No prizes, prize handling or payments between members.</li>
+        <li>No video check. Results are self-reported and nobody verifies a hold.</li>
+        <li>No public rankings. A result is shown on the gym board only if that member chooses.</li>
+        <li>No multi-location admin, member management or app of its own.</li>
+        <li>No medical, coaching or injury advice. It is a recreation challenge, not a training prescription.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="prg-section" aria-labelledby="gym-how-title">
+    <h2 id="gym-how-title">How it works</h2>
+    <ol class="gym-steps">
+      <li><strong>Enquire.</strong> Send the form. I reply by email to ask who the organiser is, which bar you use and your start and end dates.</li>
+      <li><strong>Agree and set up.</strong> Once the dates and the hold rule are agreed in writing, I set up your private campaign page and send the organiser link. I invoice you by email.</li>
+      <li><strong>Members join.</strong> You print the poster or share the join link. Each member signs in with Google, picks a display name and decides whether to appear on the gym board.</li>
+      <li><strong>Run and close.</strong> Members record holds under the one rule. You correct any entry entered wrongly, export the results and close the challenge at the end.</li>
+    </ol>
+    <p>The hold rule records the bar, the grip, whether chalk is used and that every hold is unassisted, so everyone in the campaign is compared like with like.</p>
+  </section>
+
+  <section class="prg-section prg-cols" aria-labelledby="gym-privacy-title">
+    <div>
+      <h2 id="gym-privacy-title">Privacy</h2>
+      <ul class="prg-list">
+        <li>Members share only their results in the campaign and the display name they choose. No health details, body weight or free text.</li>
+        <li>The organiser sees the entries for their own campaign. Other members see nothing unless the organiser turns the board on and the member chose to appear.</li>
+        <li>Public display is off by default and is the member's choice.</li>
+        <li>Results are labelled self-reported wherever they appear.</li>
+        <li>Members can leave at any time. Their own training log is unchanged.</li>
+        <li>No campaign data is shared with another gym or used in marketing. See the <a href="/privacy/">privacy policy</a>.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>A small pilot</h2>
+      <p>This is run by hand for a small number of gyms. The price is a founding price for the pilot, not a tested price. Setup, replies and invoices are handled by email, so expect a personal reply rather than an automatic sign-up.</p>
+      <p>Hanging is hard on hands, shoulders and elbows. Members stop if they feel sharp pain, numbness, light-headedness or a pinching shoulder. See the <a href="/deadhang-safety/">safety guide</a>.</p>
+    </div>
+  </section>
+</div>
+</Article>
+) : (
+<Article title="Gym challenge | DeadHangs" description="The gym challenge pilot is not open yet." crumbs={[{ name: 'Gym challenge' }]} noindex wide>
+<div class="prg">
+  <section class="prg-section" aria-labelledby="gym-closed-title">
+    <h1 id="gym-closed-title">The gym challenge is not open yet.</h1>
+    <p>Nothing can be sent from this page. The free <a href="/training-log/">timer and log</a> still work.</p>
+  </section>
+</div>
+</Article>
+)}

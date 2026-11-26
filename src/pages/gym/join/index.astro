@@ -1,0 +1,11 @@
+---
+import Article from '../../../layouts/Article.astro';
+import GymJoin from '../../../components/GymJoin';
+import '../../../styles/programme.css';
+---
+<Article title="Join a gym challenge | DeadHangs" description="Join your gym's private dead hang challenge." h1="Join the gym challenge." crumbs={[{ name: 'Gym challenge' }, { name: 'Join' }]} noindex wide>
+  <div class="prg">
+    <GymJoin client:load />
+    <noscript><p class="prg-msg is-note">Joining needs JavaScript to sign in. Your <a href="/training-log/">free timer and log</a> still work without it.</p></noscript>
+  </div>
+</Article>
