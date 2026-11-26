@@ -17,6 +17,10 @@ const EVENTS = new Set([
   "plan_offer_ineligible_low",
   "plan_offer_ineligible_high",
   "plan_purchased",
+  "programme_viewed",
+  "programme_interest_submitted",
+  "programme_checkout_started",
+  "programme_fit_checked",
 ]);
 export const FEATURES = new Set([
   "your_number_compared",
@@ -70,9 +74,12 @@ export const SOURCES = new Set([
   "calculator_result",
   "pro_page",
   "article",
+  "programme_page",
 ]);
 /** Fixed starter-session labels for next_session_chosen. Never a hold time or level score. */
 export const SESSION_CHOICES = new Set(["level_1", "level_2", "level_3"]);
+/** Programme route labels for programme_fit_checked. Never a hold time. */
+export const PROGRAMME_ROUTES = new Set(["supported", "standard", "outside"]);
 const MODES = new Set(["simple", "emom", "ladder", "test"]);
 const PATHS = new Set([
   "/",
@@ -82,6 +89,7 @@ const PATHS = new Set([
   "/dead-hang-time-by-age/",
   "/plan/",
   "/plan/success/",
+  "/programme/",
 ]);
 
 function canonicalPathname(candidate, browser) {
@@ -150,17 +158,19 @@ export function trackTrainingToolView({ source, pathname } = {}, browser = windo
  */
 export function trackTrainingEvent(
   event,
-  { source, mode, pathname, feature, choice } = {},
+  { source, mode, pathname, feature, choice, route } = {},
   browser = window,
 ) {
   try {
     const isFeature = event === "feature_used";
     const isChoice = event === "next_session_chosen";
+    const isFit = event === "programme_fit_checked";
     if (
       !EVENTS.has(event) ||
       (isFeature ? !FEATURES.has(feature) : !SOURCES.has(source)) ||
       (source !== undefined && !SOURCES.has(source)) ||
       (isChoice ? !SESSION_CHOICES.has(choice) : choice !== undefined) ||
+      (isFit ? !PROGRAMME_ROUTES.has(route) : route !== undefined) ||
       browser.localStorage.getItem("cookieConsent") !== "accepted" ||
       typeof browser.gtag !== "function"
     )
@@ -173,6 +183,7 @@ export function trackTrainingEvent(
     if (isFeature) payload.feature = feature;
     if (source) payload.tool_source = source;
     if (isChoice) payload.session_choice = choice;
+    if (isFit) payload.programme_route = route;
     if (mode) payload.timer_mode = mode;
     browser.gtag("event", event, payload);
     return true;

@@ -75,7 +75,17 @@ export const accountErrorMessage = (error) => ({
 }[error?.code] || 'That action could not finish here. Refresh your account to check its status before trying again.');
 
 /** Google sign-in request body. From /pro/ the visitor comes back to /pro/ (success or error) so the plan step stays in view. */
-export function signInBody(pricing = false) {
-  const back = pricing ? '/pro/' : '/account/';
-  return { provider: 'google', callbackURL: back, errorCallbackURL: back };
+export function signInBody(pricing = false, back) {
+  const dest = safeBack(back) || (pricing ? '/pro/' : '/account/');
+  return { provider: 'google', callbackURL: dest, errorCallbackURL: dest };
+}
+
+const BACK_PATHS = ['/pro/', '/account/', '/programme/app/'];
+/** Return paths are an allowlist, never a caller-supplied URL. Only the programme workspace may carry ?buy=1. */
+export function safeBack(back) {
+  if (typeof back !== 'string') return null;
+  const [path, ...rest] = back.split('?');
+  const query = rest.length ? `?${rest.join('?')}` : '';
+  if (!BACK_PATHS.includes(path) || (query !== '' && !(query === '?buy=1' && path === '/programme/app/'))) return null;
+  return path + query;
 }
