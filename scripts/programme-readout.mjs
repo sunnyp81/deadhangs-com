@@ -55,7 +55,7 @@ export function buildQuery({ from, to, asof, exclude }) {
   const paidBuyers = `SELECT DISTINCT p.user_id FROM ${purchases} AND p.status='paid' AND p.user_id IS NOT NULL`;
   return `SELECT
  (SELECT COUNT(*) FROM ${purchases}) checkout_started,
- (SELECT COUNT(DISTINCT p.user_id) FROM ${settled}) purchasers,
+ (SELECT COUNT(DISTINCT COALESCE(p.user_id, p.checkout_session_id)) FROM ${settled}) purchasers,
  (SELECT COUNT(*) FROM ${settled}) settled_purchases,
  (SELECT COALESCE(SUM(p.amount),0) FROM ${settled}) gross_pence,
  (SELECT COALESCE(SUM(p.amount),0) FROM ${purchases} AND p.status='refunded') refunded_pence,

@@ -7,7 +7,7 @@ Plans, decisions and evidence live in the shared harness: `harness/memory/site-d
 - Product: "Four-week guided hang programme", programme id `hang4`, GBP 29 one-off (2900 pence), no subscription. Public metadata `src/data/programmes/hang4.public.mjs`; paid session copy `src/server/programmes/hang4.copy.json` (server-only); engine `src/lib/programme-engine.mjs`; sales gate `src/server/programme-gate.mjs`.
 - Pages: `/programme/` (sales page, noindex, interest signup while closed) and `/programme/app/` (private workspace, noindex, no analytics, never cached by the service worker).
 - API: `/api/programme/availability` (public), `/api/programme/interest` (public), `/api/programme/state|progress|checkout|settle` (signed in, same-origin, account key header), `/api/programme/reminders-off` (signed link).
-- Data (migration `0005_programme.sql`): `programme_purchases`, `programme_progress`, `programme_interest`, `programme_reminder_deliveries`.
+- Data (migrations `0005_programme.sql`, `0006_gym_pilot.sql`, `0007_programme_settle_seq.sql`, applied together): `programme_purchases` (with a compare-and-set `settle_seq`), `programme_progress`, `programme_interest`, `programme_reminder_deliveries`, and the gym pilot tables.
 
 ## Access rules
 
@@ -45,10 +45,10 @@ Existing billing variables and secrets (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SEC
 
 1. Real qualified review recorded in the manifest (see the harness review pack), terms decided, `/terms/#programme` and the privacy page updated and approved.
 2. Back up production D1: `npx wrangler@4.158.0 d1 export deadhangs-accounts --remote --env production --output backup-YYYYMMDD.sql` (from an account that can reach the production Cloudflare account).
-3. Apply migration 0005 to preview, rehearse, then production: `npx wrangler@4.158.0 d1 migrations apply deadhangs-accounts --remote --env production`. It only creates tables.
+3. Apply migrations 0005 to 0007 to preview (done 26 Nov for 0003 to 0006; 0007 still to apply there), rehearse, then production: `npx wrangler@4.158.0 d1 migrations apply deadhangs-accounts --remote --env production`. They create tables and add one column; nothing existing changes. Add Cloudflare rate-limiting rules for `/api/programme/*` and `/api/gym/*` first (as already advised for auth, account and billing routes).
 4. Create the live product and one-time price in Stripe (metadata above); set `STRIPE_PROGRAMME_PRICE_ID` and `PROGRAMME_LAUNCH_ENABLED=true` in production; add the two webhook event types.
 5. Deploy, then verify `/api/programme/availability` returns `open: true` and a real-card purchase is NOT used to test; use the preview test-mode journey as the purchase evidence.
-6. Send the one launch email to `programme_interest` rows (draft in the harness pack) and set `notified_at`.
+6. Launch email: NOT ready. Anyone can type any address into the interest form, so the list is unconfirmed. Before emailing it, add a confirmation step (double opt-in) or send only through `sendCompliantEmail` with a one-click removal link and a plain "you asked to be told once" line, and set `notified_at`. The endpoint never reveals whether an address is already listed.
 
 ## Rollback
 

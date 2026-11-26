@@ -31,8 +31,11 @@ export async function gymEnquiry({ request, env }: { request: Request; env: GymE
   catch (error) { try { return handled(error); } catch { return json({ error: 'gym_unavailable' }, 503); } }
 }
 
+type Route = (ctx: { request: Request; env: GymEnv }) => Promise<Response>;
+const gated = (route: Route): Route => (ctx) => (enabled(ctx.env) ? route(ctx) : Promise.resolve(off()));
+
 /** Signed-in campaign routes. Authority comes from the caller's membership row, never from the request body. */
-export const gymRoutes = {
+const routes = {
   join: accountRoute({
     async POST(ctx) {
       if (!enabled(ctx.env as GymEnv)) return off();
@@ -91,3 +94,5 @@ export const gymRoutes = {
     },
   }),
 };
+
+export const gymRoutes = Object.fromEntries(Object.entries(routes).map(([name, route]) => [name, gated(route as Route)])) as Record<keyof typeof routes, Route>;

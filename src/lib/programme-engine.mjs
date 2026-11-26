@@ -10,6 +10,8 @@ export const MAX_RESULTS = 200;
 export const MAX_NOTE = 280;
 export const MAX_TOMBSTONES = 200;
 export const MAX_HISTORY = 10;
+/** Each week can be repeated this many times per run; keeps stored state bounded. */
+export const MAX_REPEATS = 20;
 export const MAX_SET_SECONDS = 3600;
 const ID = /^[A-Za-z0-9_-]{8,64}$/;
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
@@ -232,7 +234,7 @@ const ALLOWED = {
  * so a client may retry safely after a lost response; a discarded id can never be recorded again.
  */
 export function applyOperation(previous, op, rules, now) {
-  if (!op || typeof op !== 'object' || Array.isArray(op) || !ALLOWED[op.op]) fail('invalid_operation');
+  if (!op || typeof op !== 'object' || Array.isArray(op) || typeof op.op !== 'string' || !Object.hasOwn(ALLOWED, op.op)) fail('invalid_operation');
   for (const key of Object.keys(op)) if (!ALLOWED[op.op].includes(key)) fail('invalid_operation');
   const state = previous ? structuredClone(previous) : null;
   const done = (next, changed = true) => ({ state: next, changed });
@@ -268,8 +270,12 @@ export function applyOperation(previous, op, rules, now) {
   if (op.op === 'resume') { assertEnrolled(state); if (state.status !== 'paused') return done(state, false); state.status = 'active'; state.pausedAt = null; return done(state); }
 
   if (op.op === 'record') {
-    assertActive(state);
+    assertEnrolled(state);
     if (typeof op.id !== 'string' || !ID.test(op.id)) fail('invalid_id');
+    // A retry of a result that was already saved is a no-op, even once the programme is paused or finished.
+    const saved = state.results.find((r) => r.id === op.id);
+    if (saved && saved.sessionKey === op.sessionKey && JSON.stringify(saved.sets) === JSON.stringify(op.sets) && saved.localDate === op.localDate) return done(state, false);
+    assertActive(state);
     if (state.tombstones.includes(op.id)) fail('result_discarded', 409);
     const schedule = buildSchedule(state.route, state.baseline.seconds, rules);
     const session = schedule.find((s) => s.key === op.sessionKey);
@@ -310,9 +316,15 @@ export function applyOperation(previous, op, rules, now) {
     const index = state.results.findIndex((r) => r.id === op.id);
     if (index === -1) { if (state.tombstones.includes(op.id)) return done(state, false); fail('result_missing', 404); }
     const [removed] = state.results.splice(index, 1);
-    state.tombstones = [...state.tombstones, removed.id].slice(-MAX_TOMBSTONES);
-    // Discarding the last session's result reopens the programme; it never deletes anything else.
-    if (state.status === 'completed') { state.status = 'active'; state.completedAt = null; }
+    if (state.tombstones.length >= MAX_TOMBSTONES) fail('too_many_discards', 409);
+    state.tombstones = [...state.tombstones, removed.id];
+    // Status follows what is left: discarding a result that the finish depended on reopens the programme;
+    // discarding an older result from a repeated week leaves it finished.
+    if (state.status !== 'paused') {
+      const finished = nextStep(state, rules).type === 'final';
+      state.status = finished ? 'completed' : 'active';
+      if (!finished) state.completedAt = null;
+    }
     return done(state);
   }
 
@@ -321,6 +333,7 @@ export function applyOperation(previous, op, rules, now) {
     if (!WEEKS.includes(op.week) || op.week === 4 || !['continue', 'repeat'].includes(op.decision)) fail('invalid_review');
     const step = nextStep(state, rules);
     if (step.type !== 'review' || step.week !== op.week) fail('review_not_due', 409);
+    if (op.decision === 'repeat' && currentCycle(state, op.week) >= MAX_REPEATS) fail('repeat_limit', 409);
     state.reviews.push({ week: op.week, cycle: currentCycle(state, op.week), decision: op.decision, at: now });
     if (op.decision === 'repeat') state.cycles[String(op.week)] = currentCycle(state, op.week) + 1;
     return done(state);

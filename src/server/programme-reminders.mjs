@@ -45,20 +45,20 @@ export async function readReminderOff(env, u, s) {
   let userId;
   try { userId = new TextDecoder('utf-8', { fatal: true }).decode(Uint8Array.from(atob(u.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0))); } catch { return null; }
   if (!/^[A-Za-z0-9_-]{1,64}$/.test(userId)) return null;
-  const { sig } = await hmac(env.UNSUB_SECRET, `deadhangs:reminders-off:${userId}`);
-  return b64url(sig) === s ? userId : null;
+  let given;
+  try { given = Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)); } catch { return null; }
+  const key = await crypto.subtle.importKey('raw', enc.encode(env.UNSUB_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+  return (await crypto.subtle.verify('HMAC', key, given, enc.encode(`deadhangs:reminders-off:${userId}`))) ? userId : null;
 }
 
 /** Turns reminders off for every programme the person has, in both the flag column and the stored state. */
 export async function turnRemindersOff(db, userId, now = Date.now()) {
-  const rows = (await db.prepare('SELECT programme_id, revision, state_json FROM programme_progress WHERE user_id = ?').bind(userId).all()).results;
-  for (const row of rows) {
-    const state = parseStoredState(row.state_json);
-    if (state?.reminders) state.reminders = { ...state.reminders, enabled: false };
-    await db.prepare('UPDATE programme_progress SET reminder_enabled = 0, state_json = ?, revision = revision + 1, updated_at = ? WHERE user_id = ? AND programme_id = ?')
-      .bind(state ? JSON.stringify(state) : row.state_json, now, userId, row.programme_id).run();
-  }
-  return rows.length;
+  // One statement per person: no read-modify-write, so a progress save at the same moment is never lost.
+  // The revision moves on, so a device holding the old revision re-reads before its next write.
+  const result = await db.prepare(`UPDATE programme_progress SET reminder_enabled = 0,
+      state_json = CASE WHEN json_type(state_json, '$.reminders') = 'object' THEN json_set(state_json, '$.reminders.enabled', json('false')) ELSE state_json END,
+      revision = revision + 1, updated_at = ? WHERE user_id = ?`).bind(now, userId).run();
+  return result.meta.changes;
 }
 
 export function reminderEmail({ origin, offUrl, sessionTitle, restDayReminder }) {
@@ -98,17 +98,23 @@ export async function dispatchReminders(env, deps, instant = new Date()) {
     if (claim.meta.changes !== 1) { counts.alreadyClaimed += 1; continue; }
     const mark = (status) => env.DB.prepare('UPDATE programme_reminder_deliveries SET status = ? WHERE user_id = ? AND local_date = ?').bind(status, row.user_id, due.localDate).run();
     // Re-read right before sending: the person may have paused, turned reminders off or lost access since the scan.
+    try {
     const fresh = await env.DB.prepare('SELECT state_json, reminder_enabled FROM programme_progress WHERE user_id = ? AND programme_id = ?').bind(row.user_id, row.programme_id).first();
     const current = fresh && parseStoredState(fresh.state_json);
-    if (!fresh || fresh.reminder_enabled !== 1 || current?.status !== 'active' || !current.reminders?.enabled || !(await deps.hasAccess(row.user_id, row.programme_id))) {
+    const stillDue = current && current.status === 'active' ? reminderDue(current.reminders, instant) : null;
+    if (!fresh || fresh.reminder_enabled !== 1 || !stillDue || stillDue.localDate !== due.localDate || !(await deps.hasAccess(row.user_id, row.programme_id))) {
       await mark('skipped'); counts.skipped += 1; continue;
     }
     const step = nextStep(current, deps.rules);
     if (step.type !== 'session') { await mark('skipped'); counts.skipped += 1; continue; }
     const offUrl = await reminderOffUrl(env, row.user_id);
     const message = reminderEmail({ origin: siteOrigin(env), offUrl, sessionTitle: deps.copy?.[current.route]?.[step.session.key]?.title || '', restDayReminder: true });
-    const result = await deps.send(env, { email: row.email, ...message, unsubscribeUrl: offUrl });
+    const result = await deps.send(env, { email: row.email, ...message, unsubscribeUrl: offUrl, footer: 'reminders' });
     if (result.sent) { await mark('sent'); counts.sent += 1; } else { await mark(result.reason === 'suppressed' ? 'skipped' : 'failed'); counts[result.reason === 'suppressed' ? 'skipped' : 'failed'] += 1; }
+    } catch {
+      // One person's failure never stops the batch; the claim stays so a timeout cannot cause a second send.
+      await mark('failed').catch(() => {}); counts.failed += 1;
+    }
   }
   return counts;
 }

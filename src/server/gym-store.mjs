@@ -107,10 +107,18 @@ export async function joinCampaign(db, userId, { token, displayName, showOnBoard
     const existing = await db.prepare('SELECT role, removed_at FROM gym_members WHERE campaign_id = ? AND user_id = ?').bind(c.id, userId).first();
     if (existing?.removed_at) fail('removed', 403);
     if (existing) return { campaignId: c.id, role: existing.role, already: true };
-    const used = await db.prepare('UPDATE gym_invites SET uses = uses + 1 WHERE token_hash = ? AND uses < max_uses AND revoked_at IS NULL AND expires_at > ?').bind(hash, now).run();
-    if (used.meta.changes !== 1) fail('invite_invalid', 404);
-    await db.prepare('INSERT INTO gym_members (campaign_id, user_id, role, display_name, show_on_board, joined_at) VALUES (?,?,?,?,?,?)')
-      .bind(c.id, userId, invite.role, name, showOnBoard === true ? 1 : 0, now).run();
+    // One atomic batch: the invite use is only spent when the membership row is actually created.
+    const [used, inserted] = await db.batch([
+      db.prepare(`UPDATE gym_invites SET uses = uses + 1 WHERE token_hash = ? AND uses < max_uses AND revoked_at IS NULL AND expires_at > ?
+        AND NOT EXISTS (SELECT 1 FROM gym_members WHERE campaign_id = ? AND user_id = ?)`).bind(hash, now, c.id, userId),
+      db.prepare(`INSERT INTO gym_members (campaign_id, user_id, role, display_name, show_on_board, joined_at)
+        SELECT ?,?,?,?,?,? WHERE changes() = 1 ON CONFLICT DO NOTHING`).bind(c.id, userId, invite.role, name, showOnBoard === true ? 1 : 0, now),
+    ]);
+    if (inserted.meta.changes !== 1) {
+      const member = await db.prepare('SELECT role FROM gym_members WHERE campaign_id = ? AND user_id = ? AND removed_at IS NULL').bind(c.id, userId).first();
+      if (member) return { campaignId: c.id, role: member.role, already: true };
+      fail('invite_invalid', 404);
+    }
     return { campaignId: c.id, role: invite.role, already: false };
   });
 }
@@ -149,7 +157,7 @@ export async function campaignView(db, userId, campaignId) {
     }
     const manage = isOrganiser ? {
       members: (await db.prepare('SELECT CAST(rowid AS TEXT) memberRef, display_name, role, show_on_board, joined_at FROM gym_members WHERE campaign_id = ? AND removed_at IS NULL ORDER BY joined_at').bind(c.id).all()).results,
-      results: (await db.prepare(`SELECT r.id, m.display_name, r.seconds, r.corrected_seconds, r.correction_note, r.local_date, r.status FROM gym_results r JOIN gym_members m ON m.campaign_id = r.campaign_id AND m.user_id = r.user_id WHERE r.campaign_id = ? ORDER BY r.local_date DESC`).bind(c.id).all()).results,
+      results: (await db.prepare(`SELECT r.id, m.display_name, r.seconds, r.corrected_seconds, r.correction_note, r.local_date, r.status FROM gym_results r JOIN gym_members m ON m.campaign_id = r.campaign_id AND m.user_id = r.user_id WHERE r.campaign_id = ? AND m.removed_at IS NULL ORDER BY r.local_date DESC`).bind(c.id).all()).results,
     } : null;
     return {
       campaign: { id: c.id, gymName: c.gym_name, title: c.title, startsOn: c.starts_on, endsOn: c.ends_on, rule: JSON.parse(c.rule_json), brand: JSON.parse(c.brand_json), status: c.status, boardVisibility: c.board_visibility },
@@ -165,7 +173,7 @@ export async function organiserAction(db, userId, { campaignId, op, resultId, se
     const { campaign: c } = await organiser(db, campaignId, userId);
     if (op === 'correct' || op === 'remove_result') {
       if (typeof resultId !== 'string' || !ID.test(resultId)) fail('invalid_id');
-      const owned = await db.prepare('SELECT id FROM gym_results WHERE id = ? AND campaign_id = ?').bind(resultId, c.id).first();
+      const owned = await db.prepare('SELECT r.id FROM gym_results r JOIN gym_members m ON m.campaign_id = r.campaign_id AND m.user_id = r.user_id AND m.removed_at IS NULL WHERE r.id = ? AND r.campaign_id = ?').bind(resultId, c.id).first();
       if (!owned) fail('not_found', 404);
       if (op === 'correct') {
         if (!Number.isInteger(seconds) || seconds < 1 || seconds > 3600) fail('invalid_seconds');
