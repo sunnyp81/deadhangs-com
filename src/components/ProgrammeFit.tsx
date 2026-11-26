@@ -57,7 +57,7 @@ export default function ProgrammeFit({ limits, planPrice }: Props) {
         )}
         {result.status === "route" && result.route === "outside" && (
           <p>
-            Your hold: <span className="prg-num">{result.repeat} s</span>. This programme is not built for you, because it starts below that level. The <a href="/plan/">{planPrice} eight-week plan</a> is for holds of {limits.maxBaseline} seconds or more, and the free <a href="/deadhang-progressions/">levels guide</a> shows what comes next.
+            Your hold: <span className="prg-num">{result.repeat} s</span>. This programme is not built for you, because it starts below that level. The <a href="/plan/">{planPrice} eight-week plan</a> is for repeatable holds of 20 to 60 seconds, and the free <a href="/deadhang-progressions/">levels guide</a> shows what comes next.
           </p>
         )}
       </div>

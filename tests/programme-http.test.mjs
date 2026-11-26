@@ -157,11 +157,14 @@ test('programme journey over HTTP: interest, sign-in, test-mode purchase, delive
   assert.ok(leaks(enrol.text).length > 0, 'buyers get the session copy');
   const record = { programme: 'hang4', baseRevision: 1, op: { op: 'record', id: 'retry-safe-0001', sessionKey: 'w1s1', sets: [12, 11, null], setup: { bar: 'standard', grip: 'overhand' }, localDate: '2026-11-26' } };
   assert.equal((await call('/api/programme/progress', { method: 'POST', jar: alice, body: record })).status, 200);
-  const stale = await call('/api/programme/progress', { method: 'POST', jar: alice, body: record });
+  const retried = await call('/api/programme/progress', { method: 'POST', jar: alice, body: record });
+  assert.equal(retried.status, 200, 'a retry after a lost response, still holding the old revision, succeeds');
+  assert.equal(retried.data.changed, false, 'and changes nothing');
+  const stale = await call('/api/programme/progress', { method: 'POST', jar: alice, body: { programme: 'hang4', baseRevision: 1, op: { op: 'pause' } } });
   assert.equal(stale.status, 409);
   assert.deepEqual(stale.data, { error: 'revision_conflict', revision: 2 });
-  const retried = await call('/api/programme/progress', { method: 'POST', jar: alice, body: { ...record, baseRevision: 2 } });
-  assert.equal(retried.data.changed, false, 'a retry with the same id changes nothing');
+  const altered = await call('/api/programme/progress', { method: 'POST', jar: alice, body: { ...record, op: { ...record.op, sets: [1, 1, 1] } } });
+  assert.equal(altered.status, 409, 'a different result under an old revision is still a conflict');
 
   const bobView = await call('/api/programme/state?programme=hang4', { jar: bob });
   assert.equal(bobView.data.access.active, false);

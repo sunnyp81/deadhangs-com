@@ -83,8 +83,11 @@ const MESSAGES = {
   id_conflict: 'That result was already saved with different values. The latest version is showing now.',
   result_missing: 'That result no longer exists. The latest version is showing now.',
   too_many_results: 'The programme holds a limited number of results. Contact support.',
+  repeat_limit: 'This week has been repeated the maximum number of times in this run. Carry on, or start the programme again.',
+  too_many_discards: 'This run has reached its limit of discarded results. Start the programme again to continue.',
+  programme_payment_pending: 'A programme payment is still being processed. Try again once it has finished.',
   review_not_due: 'That review is not due. The latest version is showing now.',
-  network: 'Could not reach the server. Nothing was changed. Check your connection and try again.',
+  network: 'Could not reach the server, so this may or may not have saved. Check your connection; saving the same session again is safe and never saves it twice.',
   request_failed: 'That could not be done. Nothing was changed.',
 };
 

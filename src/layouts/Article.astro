@@ -139,7 +139,7 @@ const globalSchema = {
     {h1 && <ArticleHeader h1={h1} subtitle={subtitle} crumbs={crumbs ?? []} updated={updated} author={author} headerTimer={headerTimer} />}
     <slot />
   </main>
-  <Footer />
+  <Footer noAnalytics={isAccountPage} />
   <script>
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -151,6 +151,6 @@ const globalSchema = {
     }, { threshold: 0.15 });
     document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
   </script>
-  <CookieConsent />
+  {!isAccountPage && <CookieConsent />}
 </body>
 </html>

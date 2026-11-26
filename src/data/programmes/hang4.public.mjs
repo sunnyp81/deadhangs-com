@@ -13,7 +13,7 @@ export const HANG4 = Object.freeze({
   eligibility: Object.freeze({
     standard: 'A hold you can repeat for three clean sets of about 5 to 20 seconds.',
     supported: 'Not yet able to hold about 5 seconds: a feet-supported route.',
-    outside: 'If you can already repeat 20 seconds or more, this programme is not built for you.',
+    outside: 'If you can already repeat more than 20 seconds, this programme is not built for you.',
   }),
   audience: Object.freeze([
     'Adults with access to a pull-up bar or similar bar who have tried hanging.',
@@ -31,13 +31,13 @@ export const HANG4 = Object.freeze({
   // Inclusions shown on the sales page. Only `promised: true` items may be shown or sold; each needs its feature or asset available.
   inclusions: Object.freeze([
     Object.freeze({ id: 'route', promised: true, text: 'A starting route matched to your own repeatable hold, including a feet-supported route.' }),
-    Object.freeze({ id: 'sessions', promised: true, text: 'Twelve guided sessions over four weeks, plus a start session and a test day.' }),
+    Object.freeze({ id: 'sessions', promised: true, text: 'Eleven guided training sessions and a test day over four weeks, after a start session. The feet-supported route ends with a short unassisted check instead of the test.' }),
     Object.freeze({ id: 'timer', promised: true, text: 'Every session opens the free timer with your set times and rest already filled in.' }),
     Object.freeze({ id: 'record', promised: true, text: 'Record what you actually held, set by set, separate from the planned target.' }),
     Object.freeze({ id: 'reviews', promised: true, text: 'A short review after each week: carry on, or repeat the week.' }),
     Object.freeze({ id: 'final', promised: true, text: 'A final comparison with your start test, only when the setup matches.' }),
     Object.freeze({ id: 'devices', promised: true, text: 'Your programme progress is saved to your account, so it works on any device you sign in on.' }),
-    Object.freeze({ id: 'demos', promised: true, asset: 'illustrations', text: 'Illustrated demonstrations of setup, grip and getting on and off the bar.' }),
+    Object.freeze({ id: 'demos', promised: false, asset: 'illustrations', text: 'Illustrated demonstrations of setup, grip and getting on and off the bar.' }),
     Object.freeze({ id: 'videos', promised: false, asset: 'videos', text: 'Short demonstration videos.' }),
     Object.freeze({ id: 'reminders', promised: false, feature: 'reminders', text: 'Optional email reminders on the days you choose.' }),
   ]),
