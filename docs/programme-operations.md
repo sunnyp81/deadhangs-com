@@ -37,6 +37,7 @@ Test mode on an isolated preview may sell the draft with `BILLING_MODE=test`, `P
 | `PROGRAMME_LAUNCH_ENABLED` | Pages vars | `true` opens checkout when the content key also passes. Absent means closed. |
 | `STRIPE_PROGRAMME_PRICE_ID` | Pages vars | `price_...`, one-time, GBP 2900. Separate ids for test and live. |
 | `PROGRAMME_ALLOW_DRAFT` | Preview only | Never set in production. |
+| `GYM_PILOT_ENABLED` | Pages vars | Gym pilot routes and, at build time, the `/gym-challenge/` offer and privacy section. Verified 26 Nov that `wrangler.jsonc` env vars reach the Pages build. |
 | `PROGRAMME_REMINDERS_ENABLED` | Pages vars | Reminder sending. Off. Also needs every email readiness gate in `docs/email-operations.md`. |
 
 Existing billing variables and secrets (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, etc.) are reused. The Stripe webhook endpoint must also receive `checkout.session.expired` and `checkout.session.async_payment_failed`; the existing completed, refund and dispute events are already subscribed.
